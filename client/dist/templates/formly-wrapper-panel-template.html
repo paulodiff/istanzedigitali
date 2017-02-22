@@ -1,0 +1,12 @@
+<div class="panel panel-primary">
+          <div class="panel-heading px-nested-panel-heading clearfix">
+            <strong class="control-label" ng-if="options.templateOptions.label">
+              {{options.templateOptions.label}}
+            </strong>
+          </div>
+          <div class="panel-body px-nested-panel-body">
+          <div ng-if="options.templateOptions.info" class="alert alert-success" role="alert">{{options.templateOptions.info}}</div>
+          <div ng-if="options.templateOptions.warn" class="alert alert-danger" role="danger">{{options.templateOptions.warn}}</div>
+            <formly-transclude></formly-transclude>
+          </div>
+</div>

@@ -1,0 +1,9 @@
+{
+  "staticFileGlobs": [
+    "css/**.css",
+    "templates/**.html",
+    "images/**.*",
+    "scripts/**.js"
+  ],
+  "stripPrefix": "app/"
+}

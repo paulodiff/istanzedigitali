@@ -1,0 +1,69 @@
+<p>loginPRO</p>
+<ion-view title="Comune di Rimini" class="bar-positive">
+
+   <ion-nav-bar class="bar-royal">
+  <ion-nav-title class="bar-dark">Login</ion-nav-title>
+    <ion-nav-buttons side="left">
+      <button class="button button-icon button-clear ion-navicon" ng-click="toggleLeft()"></button>
+    </ion-nav-buttons>
+    
+  </ion-nav-bar>
+
+
+    <ion-content padding="true" class="has-header">
+
+
+               
+      <!-- <p>&nbsp;</p> -->
+
+      <div class="list">
+       <label class="item item-text-wrap item-thumbnail-left">
+        <img src="images/logo_rimini.png">
+        <h2><b>Sismic Report</b></h2>
+        <h2>Accesso regolato da password</h2>
+       </label>
+
+  <div ng-if="!currentUser">
+        <form id="loginform" class="form-horizontal" role="form" ng-submit="login(credentials)" novalidate>
+
+        <label class="item item-input item-stacked-label">
+           <span class="input-label">Utente:</span>
+           <input type="text" ng-model="credentials.username" capitalize >
+        </label>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Password:</span>
+          <input type="password" ng-model="credentials.password" placeholder="password" capitalize>
+        </label>
+
+          
+        <label class="item">
+          <button class="button button-balanced button-block" type="submit">Logon</button>
+        </label>
+      </form> 
+ </div> <!-- ng-if currentUser-->
+
+        <label class="item">
+          <button class="button button-positive button-block"  ng-click="clearPasswordCache()">Elimina Cache Password</button>
+        </label>
+
+   <div ng-if="currentUser">
+         <form id="loginform" class="form-horizontal" role="form" ng-submit="logout(credentials)" novalidate>
+            <div class="list">
+            <label class="item item-text-wrap">
+                <p>Utente autenticato : {{currentUser}}</p>
+            </label>
+            </div>
+            <div class="padding">
+                <button type="submit" id="btn-login" class="button button-block button-positive">Disconnetti</button>
+            </div>
+         </form>  
+      </div> <!-- ng-if currentUser-->
+
+ 
+          
+      </div>
+
+      
+        
+    </ion-content>
+</ion-view>

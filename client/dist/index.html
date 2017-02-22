@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Collector Data Form Application</title>
+    <link rel="shortcut icon" href="favicon.ico" />
+
+    <link href="//fonts.googleapis.com/css?family=Roboto|Montserrat:400,700|Open+Sans:400,300,600" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="fast/combined.css">
+
+
+    <!--
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    -->
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <script src="fast/combined.js"></script>
+
+    <!-- Google Recaptcha-->
+    <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit"  async defer></script>
+    <script src="fast/combined2.js"></script>
+
+     
+    
+<!--    
+-->    
+
+    <!-- <script src="scripts/service-worker-registration.js"></script> -->
+
+    
+  </head>
+
+  <body ng-app="myApp" ng-controller="AppCtrl">
+
+
+
+<nav ng-controller="SNavbarCtrl" class="navbar navbar-inverse navbar-static-top navbar-inner">
+    <div class="container">
+        
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1" ng-click="isCollapsed = !isCollapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand visible-xs" href="#">Comune di Rimini</a>
+        </div>
+
+        <nav class="hidden-xs">
+            <ul class="nav navbar-nav">
+                <a href="#top" role="button" class="navbar-brand">Comune di Rimini</a>
+                <li class="active"><a href="#/">Home</a></li>
+                <li><a href="#/form">Form1</a></li>
+                <li ng-if="isAuthenticated()"><a href="#/profile">Profile</a></li>
+                <li ng-if="isAuthenticated()"><a href="#/form">Form</a></li>
+                <li ng-if="isAuthenticated()"><a href="#/jiride">Jiride</a></li>
+                <li ng-if="isAuthenticated()"><a href="#/jlist">Jlist</a></li>
+                <li ng-if="isAuthenticated()"><a href="#/uigrid">uigrid</a></li>
+                <li><a href="#/protocollo">Istanze</a></li>
+                <li><a href="#/graphPhone">graphPhone</a></li>
+                <!-- <li><a href="#/elezioni">Elezioni</a></li> -->
+          </ul>
+
+          <ul ng-if="!isAuthenticated()" class="nav navbar-nav pull-right">
+            <li><a href="#/login">@Login</a></li>
+            <li><a href="#/signup">@Sign up</a></li>
+          </ul>
+
+          <ul ng-if="isAuthenticated()" class="nav navbar-nav pull-right">
+            <li><a href="#/logout">Esci({{getUserId()}})</a></li>
+          </ul>
+        </nav>
+        
+        <nav uib-collapse="!isCollapsed">
+            <ul class="nav navbar-nav">
+                <!-- <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li> -->
+                <li><a href="#/sigPhoto" ng-click="isCollapsed = !isCollapsed">Photo</a></li>
+                <li><a href="#/form" ng-click="isCollapsed = !isCollapsed">Form1</a></li>
+                <li><a href="#/protocollo">Istanze</a></li>
+                <li ng-if="isAuthenticated()"><a href="#/profile" ng-click="isCollapsed = !isCollapsed">Profile</a></li>
+                <li ng-if="isAuthenticated()"><a href="#/form" ng-click="isCollapsed = !isCollapsed">Form</a></li>
+                <li><a href="#/login"  ng-click="isCollapsed = !isCollapsed">@@Login</a></li>
+                <li ng-if="isAuthenticated()"><a href="#/logout">Esci({{getUserId()}})</a></li>
+            </ul>
+        </nav>
+
+
+    </div>
+</nav>
+<p>{{isAuthenticated()}}</p>
+<!--
+<header class="navbar navbar-default navbar-fixed-top navbar-inner">
+    <div class="container">    
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/"><i class="ion-ios7-pulse-strong"></i>DCA</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#/">Home</a></li>
+            <li><a href="#/form">Form1</a></li>
+            <li ng-if="isAuthenticated()"><a href="#/profile">Profile</a></li>
+            <li ng-if="isAuthenticated()"><a href="#/form">Form</a></li>
+            <li ng-if="isAuthenticated()"><a href="#/formAsync">FormAsync</a></li>
+            <li ng-if="isAuthenticated()"><a href="#/uigrid">uigrid</a></li>
+            <li><a href="#/sigPhoto">Photo</a></li>
+          </ul>
+          <ul ng-if="!isAuthenticated()" class="nav navbar-nav pull-right">
+            <li><a href="#/login">Login</a></li>
+            <li><a href="#/signup">Sign up</a></li>
+          </ul>
+          <ul ng-if="isAuthenticated()" class="nav navbar-nav pull-right">
+            <li><a href="#/logout">Logout</a></li>
+          </ul>
+       </div>
+    </div>
+</header>
+-->
+
+    <!-- loader http://pathgather.github.io/please-wait/ START 
+    <div class="inner" ng-view=""></div>
+    <script type="text/javascript" src="bower_components/please-wait/build/please-wait.min.js"></script>
+    <script type="text/javascript">
+      window.loading_screen = window.pleaseWait({
+        logo: "images/logo_comune_80x80.gif",
+        backgroundColor: '#FFFFFF',
+        loadingHtml: "<p class='loading-message'>Attendere...</p>"
+      });
+    </script>
+    loader http://pathgather.github.io/please-wait/ END -->
+
+    <span class="centeredspin" us-spinner="{radius:30, width:8, length: 16, position: relative}" spinner-key="spinner-1"></span>
+    <div role="main">
+      <section ui-view></section>
+    </div>
+  </body>
+</html>

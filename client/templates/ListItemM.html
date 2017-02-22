@@ -1,0 +1,71 @@
+<ion-view class="item-assertive" title="Preventivi" left-buttons="leftButtons" right-buttons="rightButtons">
+    
+    <ion-nav-bar class="bar-assertive">
+    <ion-nav-buttons side="left">
+      <button class="button button-icon button-clear ion-navicon" ng-click="toggleLeft()"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right" >
+      <button class="button button-icon ion-more" ng-click="popover.show($event)"></button>
+    </ion-nav-buttons>
+    </ion-nav-bar>
+    
+    <ion-content>
+        <div class="list">
+            <!-- <ion-list can-swipe="false"> -->
+                
+                <!--
+
+                <ion-item ng-repeat="item in items" class="item-icon-left" ng-click="openDetailModal(item)">
+                  <i ng-show="item.annullato_servizi==1" class="icon ion-close-circled assertive"></i>
+                  <i ng-show="item.annullato_servizi==0" class="icon ion-checkmark balanced"></i>
+                  <span class="itemTopRight">{{item.data_servizi | date:'dd/MM/yyyy' }}</span>    
+                  <p><b>({{item.id}}) {{item.nome_breve_utenti}}</b></p>
+                  <span class="itemTopRight">{{item.da_ora_servizi | date:'HH:mm' }} {{item.a_ora_servizi | date:'HH:mm' }}</span>    
+                  <p>{{item.elenco_volontari}} </p>
+                  <p>{{item.note_servizi}}</p>
+                  <p>{{item.rapporto_servizi }}</p>
+                         
+                    <ion-option-button class="button-positive"
+                       ng-click="editItem(item.id)">
+                        Dettagli
+                    </ion-option-button>
+                </ion-item>
+
+                -->
+                
+                <div class="item item-icon-left my-item-collection-repeat"
+                          ng-repeat="item in items"
+                          ng-click="openDetailModal(item)">
+                  
+         
+                     <!--
+      			          collection-item-width="'100%'"
+                          collection-item-height="83"
+
+<div ng-if="(item.annullato_servizi == 1)">
+                           <i class="icon ion-close-circled assertive"></i>
+                      </div>        
+                      <div ng-if="(item.id_rapporto_valido_servizio == null) && (item.annullato_servizi == 0)">
+                            <i class="icon ion-share balanced"></i>
+                      </div>        
+                      <div ng-if="(item.id_rapporto_valido_servizio != null) && (item.annullato_servizi == 0)">
+                             <i class="icon ion-checkmark balanced"></i>
+                      </div>        
+                    -->  
+                      <i class="{{item.image_class}}"></i>
+                      <span class="itemTopRight">{{item.data_servizi | date:'dd/MM/yyyy' }}</span>  
+      		          <p><b>({{item.id}}) {{item.nome_breve_utenti}}</b></p>
+                      <p>{{item.elenco_volontari}} </p>
+                  <!--
+                    <p>{{item.note_servizi}}</p>
+                    <p>{{item.rapporto_servizi }}</p>
+                  -->
+                  </div>       
+                    
+                
+
+    
+        </div>
+        
+    </ion-content>
+</ion-view>      

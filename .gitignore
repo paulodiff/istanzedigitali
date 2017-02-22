@@ -1,0 +1,17 @@
+node_modules
+certs
+log
+tmp
+.idea
+.temp
+.sass-cache
+client/bower_components
+client/scripts/configuration.js
+coverage
+platforms
+plugins
+*.swp
+*.swo
+*.log
+*.DS_Store
+config.js

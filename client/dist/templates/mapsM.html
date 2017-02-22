@@ -1,0 +1,64 @@
+<ion-view>
+  <ion-nav-bar class="bar-royal">
+	<ion-nav-title class="bar-dark">{{refreshTime}}</ion-nav-title>
+    <ion-nav-buttons side="left">
+      <button class="button button-icon button-clear ion-navicon" ng-click="toggleLeft()"></button>
+    </ion-nav-buttons>
+      <ion-nav-buttons side="right" >
+        <button class="button button-icon ion-refresh" ng-click="refreshMap()"></button>
+        <button class="button button-icon ion-ios-book" ng-click="openSortModal()"></button>
+      </ion-nav-buttons>
+  </ion-nav-bar>
+
+
+
+<ion-content>
+      <ui-gmap-google-map center='map.center' zoom='map.zoom' draggable="true" options="'options'">
+
+      <!-- test -->
+      <ui-gmap-layer  type="TrafficLayer" show='filterCriteria.infoTraffico'></ui-gmap-layer>
+
+
+      <!--
+      	<ui-gmap-marker coords="staticMarker.coords" 
+                        options="staticMarker.options" 
+                        events="staticMarker.events" 
+                        idKey="staticMarker.id">
+        </ui-gmap-marker>
+       --> 
+        <ui-gmap-markers models="randomMarkers" 
+                         coords="'self'" 
+                         options="'options'"
+                         click="onMarkerClicked"
+                         doRebuildAll="true">
+
+          <ui-gmap-windows show="'showWindow'" closeClick="'closeClick'" ng-cloak>
+                <div>
+                    <p ng-non-bindable>{{text2display}}</p>
+                </div>
+            </ui-gmap-windows>
+
+        </ui-gmap-markers>
+      
+
+        <ui-gmap-polyline ng-repeat="p in polylines" 
+                          path="p.path" 
+                          stroke="p.stroke" 
+                          visible='p.visible'
+                          geodesic='p.geodesic' 
+                          fit="false" 
+                          editable="p.editable" 
+                          draggable="p.draggable" icons='p.icons'>
+        </ui-gmap-polyline>
+
+
+      </ui-gmap-google-map>
+</ion-content>
+<!--
+<ion-footer-bar class="bar-dark">
+      <a ng-click="refreshMap()" class="button button-icon icon ion-navigate">Aggiorna dati</a>
+      <a ng-click="refreshMap()" class="button button-icon icon ion-navigate">Solo Pattuglie</a>
+      <a ng-click="refreshMap()" class="button button-icon icon ion-navigate">Percorso</a>
+</ion-footer-bar>
+-->
+</ion-view>

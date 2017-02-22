@@ -1,0 +1,73 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-assertive">
+        <a class="button icon-left ion-chevron-left button-clear" ng-click="closeDetailModal()"></a>
+        <h1 class="title ">Preventivo</h1>
+    </ion-header-bar>
+    <ion-content has-header="true">
+        <div class="padding">
+             <label class="item item-text-wrap">
+                <b>Associazione:</b><br/>{{currentItemDetail.nome_breve_utenti}}
+            </label>                
+            <label class="item item-text-wrap">
+                <b>Volontari:</b><br/>{{currentItemDetail.elenco_volontari}}
+            </label>
+
+            <label class="item item-input">
+                <div class="input-label"><b>Data servizio:</b></div>
+                <div class="input-label">{{currentItemDetail.data_servizi}}</div>
+            </label>
+         
+            <label class="item item-input">
+               <div class="input-label"><b>Dalle ore:</b></div>
+               <div class="input-label">{{currentItemDetail.da_ora_servizi}}</div>
+            </label>
+
+            <label class="item item-input">
+               <div class="input-label"><b>Alle ore:</b></div>
+               <div class="input-label">{{currentItemDetail.a_ora_servizi}}</div>
+            </label>
+
+            <label class="item item-text-wrap">
+                <b>Località:</b><br/>{{currentItemDetail.note_servizi}}
+            </label>
+            
+            <label class="item item-text-wrap">
+                <b>Motivazioni:</b><br/>{{currentItemDetail.rapporto_servizi}}
+            </label>
+            
+<!--            
+            <label class="item item-text-wrap">
+                <b>ID_rapporto_valido_servizio:</b><br/>{{currentItemDetail.id_rapporto_valido_servizio}}
+            </label>
+            <label class="item item-text-wrap">
+                <b>annullato_servizi:</b><br/>{{currentItemDetail.annullato_servizi}}
+            </label>
+-->                
+            <br/>
+            
+            <div class="button-bar">
+            <button class="button icon-left ion-close-round button-assertive" 
+                    ng-show="(currentItemDetail.id_rapporto_valido_servizio == null) && (currentItemDetail.annullato_servizi == 0)" 
+                    id="cancelbutton" 
+                    ng-click="cancel_action(currentItemDetail)" 
+                    name="button2id"    class="btn btn-danger">Elimina</button>
+            <button class="button icon-left ion-arrow-return-right button-balanced" 
+                    ng-show="(currentItemDetail.id_rapporto_valido_servizio != null) && (currentItemDetail.annullato_servizi == 0)"  
+                    ng-click="goto_relazione_action(currentItemDetail.id_rapporto_valido_servizio)" 
+                    name="button2id">Vai alla Relazione n. {{currentItemDetail.id_rapporto_valido_servizio}}</button>
+            <button class="button icon-right ion-plus-circled button-balanced" 
+                    ng-show="(currentItemDetail.id_rapporto_valido_servizio == null) && (currentItemDetail.annullato_servizi == 0)" 
+                    id="rapportobutton" 
+                    ng-click="new_relazione_action(currentItemDetail.id)" 
+                    name="button3id"    
+                    class="btn btn-success">Nuova Relazione di Servizio</button>
+            <button class="button  button-full button-positive" ng-show="(item.annullato_servizi == 1)" id="cancelbutton" name="button2id"    class="btn btn-danger">Elemento ANNULLATO - nessuna operazione possibile</button>
+            <button ng-show="false" class="button icon-left ion-star  button-full button-positive" id="debugBbutton" name="debugButton" ng-click="debug_action(item)"  class="btn btn-danger">DEBUG</button>                
+            </div>
+            
+        </div>
+        
+        
+        </div>
+    </ion-content>
+</ion-modal-view>

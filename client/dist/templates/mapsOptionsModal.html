@@ -1,0 +1,53 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-royal">
+        <button class="button icon-left ion-chevron-left button-clear" ng-click="closeSortModal()"></button>
+        <h1 class="title">Opzioni di ricerca</h1>
+    </ion-header-bar>
+    <ion-content has-header="true">
+       <!-- <div class="padding"> -->
+            
+            <div class="controls">
+                
+                <label class="item">
+                    <h2>Filtri :</h2>
+                </label>
+
+    
+            
+                <label class="item item-input-inset item-select">Intervallo di tempo per la validità del dato (in minuti)
+                    <select ng-model="filterCriteria.timeInterval">
+                      <option value=5>5</option>
+                      <option value=10>10</option>
+                      <option value=20>20</option>
+                      <option value=30>30</option>
+                      <option value=40>40</option>
+                      <option value=50>50</option>
+                      <option value=60>60</option>
+                    </select>
+                </label>
+            
+            
+                <ion-checkbox ng-model="filterCriteria.soloPattuglie">Solo pattuglie</ion-checkbox>
+                <ion-checkbox ng-model="filterCriteria.infoTraffico">Info traffico</ion-checkbox>
+            
+    
+
+
+   
+                <label class="item item-input-inset item-select">Numero di posizioni per la tracciatura
+                    <select ng-model="filterCriteria.numPosTracking">
+                      <option value=5>5</option>
+                      <option value=10>10</option>
+                      <option value=20>20</option>
+                      <option value=40>40</option>
+                      <option value=80>80</option>
+                      <option value=100>100</option>
+                    </select>
+                </label>
+            
+            <div class="item item-input-inset">
+                <button class="button button-positive button-block" ng-click="mapsOptionsApply()">Applica filtro</button>
+            </div>
+        </div>
+    </ion-content>
+</ion-modal-view>

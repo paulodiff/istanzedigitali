@@ -1,0 +1,132 @@
+<ion-view class="" title="Elenco relazioni di servizio" left-buttons="leftButtons" right-buttons="rightButtons">
+    
+    <ion-nav-bar class="bar-royal">
+    <ion-nav-buttons side="left">
+      <button class="button button-icon button-clear ion-navicon" ng-click="toggleLeft()"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right" >
+      <button class="button button-icon ion-more" ng-click="popover.show($event)"></button>
+    </ion-nav-buttons>
+    </ion-nav-bar>
+    
+    <ion-content has-header="true">
+        <div>
+            <ion-list>
+                <ion-item ng-repeat="item in items" class="item-icon-left">
+                  <i ng-show="item.annullato_relazioni==1" class="icon ion-close-circled"></i>
+                  <i ng-show="item.annullato_relazioni==0" class="icon ion-checkmark"></i>
+                  <span class="itemTopRight">{{item.data_relazioni | date:'dd/MM/yyyy' }}</span>
+                  <p><b>{{item.nome_breve_utenti}}</b></p>
+                  <span class="itemTopRight">{{item.da_ora_relazioni | date:'HH:mm' }} {{item.a_ora_relazioni | date:'HH:mm' }}</span>
+                  <p>{{item.elenco_volontari}} </p>
+                  <span class="itemTopRight">{{item.id}}/{{item.id_servizi}}</span>
+                  <p>Auto: {{item.auto_relazioni}} </p>
+                  <p>Note: {{item.note_relazioni}} </p>    
+                                      
+                    <ion-option-button class="button-positive"
+                       ng-click="viewItem(item.id)">
+                        Dettagli
+                    </ion-option-button>
+                </ion-item>
+            </ion-list>
+        </div>
+    </ion-content>
+</ion-view>   
+
+
+<!--
+
+
+
+<div class="container">
+ <div class="panel panel-success">  
+  <div class="panel-heading">
+      <h3 class="panel-title">Opzioni di ricerca</h3>
+  </div>
+     <div class="panel-body">
+  <form class="form-inline">
+   <div class="controls">
+    <label class="control-label" for="textinput">Associazione:</label>
+       
+       <select 
+            class="form-control" 
+            ng-model="id_utenti_selezione" 
+            ng-options="i.id_utenti as i.nome_breve_utenti for i in utentiList">
+       </select>    
+    <label class="control-label" for="textinput">Data:</label>
+    <input type="text" 
+           class="form-control" 
+           datepicker-popup="dd/MM/yyyy" 
+           ng-model="data_servizi_selezione" 
+           is-open="openedPopupDate" 
+           ng-required="true" 
+           ng-click="popupDate($event)"
+           close-text="Close" />
+  </div>
+  </form>
+</div>
+</div>
+</div>
+
+<div class="container">
+<div class="panel panel-success">
+    <div class="panel-heading">
+        
+      <div class="row">
+        <div class="col-md-8">
+            <h4>Elenco Relazioni di Servizio</h4>
+        </div>
+        <div class="col-md-4">
+        </div>
+      </div>
+        
+    </div>
+    <div class="panel-body">
+
+
+<table class="table table-hover" id="dev-table">    
+    <thead>
+	   <tr>
+		  <th>#id</th>
+		  <th class="hidden-xs hidden-sm">Associazione</th>
+		  <th>Volontari</th>
+		  <th>Data</th>
+		  <th>Auto</th>
+          <th>Note</th>
+          <th>Rapporto</th>
+          <th>Id Preventivo</th>
+		</tr>
+	</thead>
+    <tbody>
+        <tr ng-repeat='item in items'
+            ng-class="{'danger' : item.annullato_relazioni == 1 }">
+            
+          <td><a ng-click="editItem(item.id)">{{item.id}} ()</a></td>
+          <td class="hidden-xs hidden-sm">{{item.nome_breve_utenti}}</td>
+          <td>{{item.elenco_volontari}} </td>
+          <td>{{item.data_relazioni | date:'dd/MM/yyyy' }} <br/> dalle {{item.da_ora_relazioni | date:'HH:mm' }}  alle {{item.a_ora_relazioni | date:'HH:mm' }}</td>
+          <td>{{item.auto_relazioni  }}</td>
+          <td>{{item.note_relazioni }}</td>
+          <td>{{item.rapporto_relazioni  }}</td>
+          <td>{{item.id_servizi}}</td>
+            
+        </tr>
+  </tbody>
+</table>
+
+<div ng-show="totalItems == 0">
+  <h3>Nessun dato trovato, cambiare i dati di ricerca.</h3>
+</div>
+        <pagination 
+            ng-model="currentPage" 
+            total-items="totalItems" 
+            items-per-page="pageSize"
+            ng-change="selectPage()">
+        </pagination>
+        
+      </div> 
+</div> 
+</div>  
+
+-->
+        
