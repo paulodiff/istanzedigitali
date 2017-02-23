@@ -165,6 +165,7 @@
 
     <script src="scripts/rootControllers.js"></script>
     <script src="scripts/loginControllers.js"></script>
+    <script src="scripts/profileControllers.js"></script>
     <script src="scripts/sigControllers.js"></script>
     <script src="scripts/SloginControllers.js"></script>
     <script src="scripts/formlyControllers.js"></script>
@@ -211,7 +212,7 @@
             <ul class="nav navbar-nav">
                 <a href="#/" role="button" class="navbar-brand">Comune di Rimini</a>
                 <li class="active"><a href="#/">Home</a></li>
-                <li ng-if="isAuthenticated()"><a href="#/profile">Profile</a></li>
+                
                 <li ng-if="isAuthenticated()"><a href="#/form">Form</a></li>
                 <li ng-if="isAuthenticated()"><a href="#/jiride">Jiride</a></li>
                 <li ng-if="isAuthenticated()"><a href="#/jlist">Jlist</a></li>
@@ -220,9 +221,11 @@
                 <!-- <li><a href="#/elezioni">Elezioni</a></li> -->
           </ul>
 
-          <ul ng-if="!isAuthenticated()" class="nav navbar-nav pull-right">
+          <ul class="nav navbar-nav pull-right">
                 <li><a ui-sref="login" ui-sref-active="active">Login</a></li>
                 <li><a ui-sref="signup" ui-sref-active="active">Registrati</a></li>
+                <li><a ui-sref="login" ui-sref-active="active">Esci</a></li>
+                <li><a ui-sref="profile">Profile</a></li>
           </ul>
 
           <ul ng-if="isAuthenticated()" class="nav navbar-nav pull-right">
@@ -235,7 +238,7 @@
                 <!-- <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li> -->
                 <li class="active"><a href="#/">Home</a></li>
                 <li><a href="#/protocollo">Istanze</a></li>
-                <li ng-if="isAuthenticated()"><a href="#/profile" ng-click="isCollapsed = !isCollapsed">Profile</a></li>
+                <li><a href="#/profile" ng-click="isCollapsed = !isCollapsed">Profile</a></li>
                 <li ng-if="isAuthenticated()"><a href="#/form" ng-click="isCollapsed = !isCollapsed">Form</a></li>
                 <li><a href="#/login"  ng-click="isCollapsed = !isCollapsed">@@Login</a></li>
                 <li><a href="#/form" ng-click="isCollapsed = !isCollapsed">F1</a></li>

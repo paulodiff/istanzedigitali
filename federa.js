@@ -219,10 +219,11 @@ app.use(passport.session());
 var log = require('./models/loggerModule.js');
 log.log2console('Starting ...');
 
-
 var PassportAuth = require('./routes/PassportAuth')();
 app.use('/passportauth', PassportAuth);
 
+var ProfileMgr = require('./routes/ProfileMgr')();
+app.use('/profilemgr', ProfileMgr);
 
 // Define routes.
 app.get('/',

@@ -1,4 +1,7 @@
-// TEST Con Shibboleth
+
+
+
+## TEST Con Shibboleth
 // https://github.com/ritstudentgovernment/passport-saml-example
 // https://www.testshib.org/metadata/testshib-providers.xml
 
@@ -33,3 +36,8 @@
 // (`username` and `password`) submitted by the user.  The function must verify
 // that the password is correct and then invoke `cb` with a user object, which
 // will be set at `req.user` in route handlers after authentication.
+
+
+## Client - Autenticazione idee
+
+- http://jasonwatmore.com/post/2016/04/05/angularjs-jwt-authentication-example-tutorial

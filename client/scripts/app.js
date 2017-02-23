@@ -72,7 +72,6 @@ angular.module('myApp', [//'ionic',
             templateUrl: "templates/mainDashboard.html"
     });
     
-   
     $stateProvider.state('menu.home',{
             url: '/home',
             templateUrl: "templates/loginDashboard.html",
@@ -80,7 +79,6 @@ angular.module('myApp', [//'ionic',
             accessLogged: false,
             accessLevel: 'free1' 
     });
-
 
     $stateProvider.state('homeIstanze', {
         url: '/homeIstanze',
@@ -113,7 +111,7 @@ angular.module('myApp', [//'ionic',
     $stateProvider.state('profile', {
         url: '/profile',
         templateUrl: 'templates/Sprofile.html',
-        controller: 'SProfileCtrl',
+        controller: 'profileMgrCtrl',
         accessLogged: true
     });
 

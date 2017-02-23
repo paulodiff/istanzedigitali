@@ -8,8 +8,8 @@ angular.module('myApp.controllers')
 
 
 .controller("AppCtrl", 
-                    ['$scope', 'dialogs', '$rootScope', 'AuthService', 'Session', 'Restangular', '$state','ENV', '$log', '$location',
-            function($scope,    dialogs,   $rootScope,   AuthService,   Session,   Restangular,    $state, ENV,   $log,   $location) {
+                    ['$scope', 'dialogs', '$rootScope', 'AuthService', 'Session', 'Restangular', '$state','ENV', '$log', '$location','$localStorage', '$http',
+            function($scope,    dialogs,   $rootScope,   AuthService,   Session,   Restangular,    $state, ENV,   $log,   $location,  $localStorage,   $http) {
 
                 
         $log.debug("AppCtrl ... start");
@@ -46,6 +46,16 @@ angular.module('myApp.controllers')
         } else {
             $rootScope.base_url = 'https://pmlab.comune.rimini.it/federa';
         }
+
+        // autenticazione
+        // Controlla se un reload ricarica il JWT su http header
+        if ($localStorage.JWT){
+            $log.debug('AppCtrl reload JWT http header');
+            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.JWT;
+        } 
+
+        
+
 
         //$rootScope.base_url = ENV.apiEndpoint;
         //$log.debug('Restangular set base Url '+ ENV.apiEndpoint);
@@ -157,7 +167,7 @@ angular.module('myApp.controllers')
             //$log.debug('Destroy local session....');
             //delete $localStorage.Session;
 
-            $state.go('menu.home');
+            $state.go('login');
         });        
                 
    
@@ -209,17 +219,8 @@ angular.module('myApp.controllers')
             $log.debug(next);
             //$scope.currentUser = Session.nome_breve_utenti;
             
-
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Utente non autenticato o sessione di lavoro scaduta',
-                    template: 'Immettere nome utente e password'
-                });
-                alertPopup.then(function(res) {
-                    $log.debug('AppCtrl: alertPopup : OK');
-                    $state.go('menu.home');
-                });
-            
-
+            dialogs.error('Errore di autenticazione','Immettere nome utente e password');
+            $state.go('login');
 
         }); 
     
@@ -236,7 +237,7 @@ angular.module('myApp.controllers')
                 });
             alertPopup.then(function(res) {
                 $log.debug('AppCtrl: alertPopup : OK');
-                $state.go('menu.home');
+                $state.go('home');
            });
 
         }); 
@@ -378,15 +379,10 @@ angular.module('myApp.controllers')
           password: $scope.user.password
       };
 
-    AuthService.login(credentials).then(function () {
-        $log.debug('LoginController : login : store password and JWT');
+    AuthService.login(credentials).then(function (res) {
+        $log.debug('LoginController : OK');
+        $log.debug(res);
 
-        // $localStorage.password = $scope.credentials.password;
-        // $localStorage.currentUser = { username: username, token: response.token };
-        // add jwt token to auth header for all requests made by the $http service
-        // $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
-        // execute callback with true to indicate successful login
- 
         usSpinnerService.stop('spinner-1');
         //$ionicLoading.hide();
         $rootScope.$broadcast(ENV.AUTH_EVENTS.loginSuccess);
@@ -411,9 +407,9 @@ angular.module('myApp.controllers')
       $log.debug(credentials);
       
     AuthService.logout(credentials).then(function () {
-        $log.debug('LoginController : logout remove JWT');
-        delete $localStorage.counter;
+        $log.debug('LoginController : broadcast... ');
         $rootScope.$broadcast(ENV.AUTH_EVENTS.logoutSuccess);
+        
     }, function () {
       $rootScope.$broadcast(ENV.AUTH_EVENTS.logoutSuccess);
     });

@@ -34,26 +34,38 @@ angular.module('myApp.services', [])
             $log.debug('AuthService login then');
             $log.debug(res.data.token);
             
+            $log.debug( 'AuthService set JWT to storage');
             $localStorage.JWT = res.data.token;
+            $log.debug( 'AuthService set http common header');
+            $http.defaults.headers.common.Authorization = 'Bearer ' + res.data.token;
             // $localStorage.currentUser = { username: username, token: response.token };
             // add jwt token to auth header for all requests made by the $http service
-            // $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
  
-        });
+        }).catch(function(response) {
+            $log.debug('AuthService login ERROR');
+            $log.debug(response);
+            throw new Error('thrown in then');
+       });
     },
       
     logout: function (credentials) {
         $log.debug('AuthService logout');
-        $log.debug( $rootScope.base_url + ENV.apiLogout);
+        var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogout; 
+        $log.debug(fullApiEndpoint);
       return $http
-        .get( $rootScope.base_url + ENV.apiLogout, credentials)
+        .post(fullApiEndpoint, credentials)
         .then(function (res) {
-            $log.debug('AuthService logout ...');
             $log.debug(res);
-            $log.debug(res.data.id_utenti);
-            $log.debug('Destroy session ...');
+            $log.debug('AuthService logout: delete JWT');
+            delete $localStorage.JWT;
+            $log.debug('AuthService logout: remove http header');
+            $http.defaults.headers.common.Authorization = '';
             // Session.destroy();
-        });
+        }).catch(function(response) {
+            $log.debug('AuthService logout ERROR');
+            $log.debug(response);
+            throw new Error('thrown in then');
+       });
     },  
       
     isAuthenticated: function () {

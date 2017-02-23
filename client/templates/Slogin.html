@@ -23,6 +23,15 @@
           </div>
         </form>
 
+
+          <div ng-if="!isAuthenticated()" class="nav navbar-nav pull-right">
+              <button class="btn btn-block btn-success" ng-click="logout('')">
+                <i class="ion-social-linkedin"></i> DISCONNETTI 1
+              </button>
+          </div>
+            
+            <hr>
+
         
          <button class="btn btn-block" ng-click="NTLMLogin()">NTLM - Windows</button>
 
