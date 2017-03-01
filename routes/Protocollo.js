@@ -1,5 +1,4 @@
-// Route for Protccollo
-
+// Route for Protocollo
 
 // Note sicurezza:
 // - controllo CaptCha
@@ -36,7 +35,7 @@ var multiparty = require('multiparty');
 var jwt = require('jwt-simple');
 var ENV   = require('../config.js'); // load configuration data
 var ENV_PROT   = require('../tmp/configPROTOCOLLO.js'); // load user configuration data
-var mongocli = require('../models/mongocli');
+// var mongocli = require('../models/mongocli');
 var spark = require('spark-md5');
 var md5File = require('md5-file');
 var _ = require('lodash');
@@ -47,6 +46,7 @@ var moment = require('moment');
 var mime = require('mime');
 var async = require('async');
 var handlebars = require('handlebars');
+var validator = require('validator');
 // var Segnalazione  = require('../models/segnalazione.js'); // load configuration data
 // var flow = require('../models/flow-node.js')('tmp'); // load configuration data
 var utilityModule  = require('../models/utilityModule.js'); 
@@ -91,6 +91,8 @@ module.exports = function(){
 var WS_IRIDE =  "";
 var MODO_OPERATIVO = "TEST";
 
+/* Chiamata di TEST /ping */
+
 router.get('/ping', function (req, res) {
     var p = {};
 
@@ -112,6 +114,7 @@ router.get('/ping', function (req, res) {
     model.reqId = 'AAAAAAAAAAAAAA@MARIO';
     model.annoProtocollo = '2016';
     model.numeroProtocollo = '12345678';
+    model.dataProtocollo = '01/01/2017';
     model.nomeRichiedente = 'MARIO';
     model.cognomeRichiedente = 'ROSSI';
     model.emailRichiedente = 'ruggero.ruggeri@comune.rimini.it';
@@ -165,7 +168,8 @@ router.get('/ping', function (req, res) {
 });
 
 
-// invia un documento ad ElasticSearch
+
+/* Funzione di verifica per Captch di Google */
     function verifyReCaptcha(ReCaptcha) {
         console.log('verifyReCaptcha');
         return new Promise(function (resolve, reject) {
@@ -214,6 +218,8 @@ router.get('/ping', function (req, res) {
 
 router.get('/mail',  function (req, res) {
 
+
+
     // create reusable transporter object using the default SMTP transport
     var smtpConfig = {
         host: 'srv-mail.comune.rimini.it',
@@ -224,16 +230,17 @@ router.get('/mail',  function (req, res) {
         //    pass: 'pass'
         //}
     };
-    var transporter = nodemailer.createTransport(smtpConfig)
+
+    var transporter = nodemailer.createTransport(smtpConfig);
 
 
     // setup e-mail data with unicode symbols
     var mailOptions = {
-        from: '"Ruggero Ruggeri ?" <ruggero.ruggeri@comune.rimini.it>', // sender address
+        from: '"Comune di Rimini - Portale Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
         to: 'ruggero.ruggeri@comune.rimini.it, paulo.difficiliora@gmail.com', // list of receivers
-        subject: 'Hello ✔', // Subject line
-        text: 'Hello world ?', // plaintext body
-        attachments: [ {  path: './storage/pdf/Report.pdf' }]
+        subject: 'Ricevuta ricevimento istanza', // Subject line
+        text: 'Hello world ?' // plaintext body
+        // attachments: [ {  path: './storage/pdf/Report.pdf' }]
     };
 
     // send mail with defined transport object
@@ -243,6 +250,8 @@ router.get('/mail',  function (req, res) {
         }
         console.log('Message sent: ' + info.response);
     });
+
+
 
     res.status(200).send('Mail ok');
 
@@ -347,9 +356,12 @@ router.get('/getTestToken', function (req, res) {
     res.send(utilityModule.createJWT(demoData));
 });
 
+
+
 /* SAVING FILES  --------------------------------------------------------------------------------------------------------- */
 function savingFiles(fileList, fieldsObj, reqId) {
     logConsole.info('savingFiles');
+    logConsole.info(ENV_PROT.storageFolder);
     // var transactionId = req.body.fields.transactionId;
     var DW_PATH = ENV_PROT.storageFolder;
     var dir = DW_PATH + "/" + reqId;
@@ -453,7 +465,7 @@ function sanitizeInput(fieldList, fieldsObj,  reqId) {
     logConsole.info('validate obj');
     var bValid = true;
     var msgValidator = '';
-    var validator = require('validator');
+    
  
     // test lunghezze
 
@@ -491,7 +503,7 @@ function sanitizeInput(fieldList, fieldsObj,  reqId) {
     if( !validator.isDate(fieldsObj.dataNascitaRichiedente) ){
         bValid = false;
         msgValidator = 'Data di Nascita non valida';
-    }
+    } 
 
 
     // sanitize oggettoRichiedente
@@ -520,6 +532,9 @@ function protocolloWS(objFilesList,  reqId) {
 
     logConsole.info(WS_IRIDE);
     logConsole.info(WS_IRIDE_ENDPOINT);
+
+    // formattazione data per il WS
+    logConsole.info(objFilesList.dataNascitaRichiedente);
 
 
     // preparazione dati
@@ -653,14 +668,19 @@ router.post('/upload', function(req, res) {
 
     var bRaisedError = false;
     var ErrorMsg = {};
+
+    // richiesta di identificatore unico di transazione
     var reqId = utilityModule.getTimestampPlusRandom();
+
     ErrorMsg.reqId = reqId;
-    var supportMsg = '<br>Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it utilizzando il seguente identificativo di richiesta:<br><b>' + reqId + '</b><br>Grazie.';
+    var supportMsg = '<br>Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it o telefonare allo 0541/704607 o 0541/704612 utilizzando il seguente identificativo di richiesta:<br><b>' + reqId + '</b><br>Grazie.';
+
     var objFilesList = {};
     var objFieldList = {};
     var objFieldSanitized = {};
     var objDatiProtocollo = {};
     var htmlResponseMsg = '';
+
     logConsole.info('start upload: ' + reqId);
 
     // limite upload
@@ -826,18 +846,19 @@ router.post('/upload', function(req, res) {
                 logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo);
 
                 // var msg = "Comune di Rimini - Protocollo " +  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo + "/" + objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
+                // create reusable transporter object using the default SMTP transport
 
-                    // create reusable transporter object using the default SMTP transport
+
                 var smtpConfig = {
                     host: 'srv-mail.comune.rimini.it',
                     port: 25,
-                    secure: false//, // use SSL
+                    secure: false  //, // use SSL
                     //auth: {
                     //    user: 'user@gmail.com',
                     //    pass: 'pass'
                     //}
                 };
-                var transporter = nodemailer.createTransport(smtpConfig)
+                var transporter = nodemailer.createTransport(smtpConfig);
                 var mailOptions = {
                     from: '"Ruggero Ruggeri" <ruggero.ruggeri@comune.rimini.it>', // sender address
                     to: objFieldSanitized.emailRichiedente, // list of receivers
@@ -861,6 +882,9 @@ router.post('/upload', function(req, res) {
                     }
                     
                 });
+
+
+
             },
 
               
@@ -877,8 +901,9 @@ router.post('/upload', function(req, res) {
             // results.msg = htmlResponseMsg;
             logConsole.info(htmlResponseMsg);
             var Msg = {
-                           title: 'Istanza ricevuta con successo!',
+                            title: 'Istanza ricevuta con successo!',
                             msg: objFieldSanitized,
+                            htmlMsg: htmlResponseMsg,
                             reqId: reqId,
                             code : 200
                         }
@@ -1436,18 +1461,6 @@ router.get('/leggiProtocollo', function(req, res) {
 });
 
 
-router.get('/token', function(req, res) {
-    var user = {
-        "userCompany": "BRAV S.R.L.",
-        "userId": "utente",
-        "userEmail": "info@brav.it",
-        "userDescription": "Via del Portello 4/B 41058 Vignola (MO)",
-        "userPassword": "password"
-    };
-    res.status(200).send(utilityModule.createJWT(user));
-
-});
-
 router.get('/j', function(req, res) {
     var Ajv = require('ajv');
     var ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
@@ -1494,8 +1507,7 @@ router.get('/j', function(req, res) {
     console.log(schema);
     console.log(j2validate);
 
-
-    
+   
     var validate = ajv.compile(schema);
     var valid = validate(j2validate);
     console.log(valid);
@@ -1704,321 +1716,7 @@ router.post('/protocollo', multipartMiddleware, /* utilityModule.ensureAuthentic
 });
 
 
-router.post('/hdupload', utilityModule.ensureAuthenticated,  multipartMiddleware, function(req, res) {
-  console.log('/hduploading.....');
-  console.log(req.files);
-  console.log('/body.....');
-  console.log(req.user);
-  console.log(req.body);
 
-  console.log('Counting insert'); 
-
-  //var transactionId = req.body.fields.transactionId;
-  var transactionId = 'segnalazioni';
-  var ts = utilityModule.getTimestampPlusRandom();
-  var dir = DW_PATH + "/" +  transactionId;
-  var listOfFiles = [];
-
-  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
-
-  if (req.files && req.files.files && req.files.files.length) {
-    for (var i = 0; i < req.files.files.length; i++) {
-      console.log(req.files.files[i].path);
-      console.log(req.files.files[i].originalFilename);
-      console.log(req.files.files[i].size);
-
-      fs.renameSync(req.files.files[i].path, dir + "/" + ts + "-" + req.files.files[i].originalFilename);
-
-      var oneFile = {
-          path : dir,
-          ts : ts,
-          originalFilename: req.files.files[i].originalFilename,
-          type: req.files.files[i].type,
-          size :  req.files.files[i].size
-      };
-
-      console.log(oneFile);
-
-      listOfFiles.push(oneFile);
-    }
-  }
-  
-  console.log(listOfFiles);
-
-  var fileUploadedObj = { "fileUploaded" : oneFile};
-  var tsObj = {
-        "type" : 'helpdesk', 
-        "ts" : new Date()
-      };
-  var userD = { "userData" : req.user };
-  var fullObj = _.merge(req.body.fields, fileUploadedObj, tsObj, userD);
-
-  //console.log(fullObj);
-
-  var collection = mongocli.get().collection('helpdesk'); 
-
-   collection.insert( fullObj, function(err, result) {
-      if(err){
-        console.log(err);
-        return res.status(500).json({ message: 'Error insert segnalazione' });
-      } else {
-       return res.status(200).json({ message: 'Segnalazione inserted!' }); 
-      }
-
-    });
-    
-});
-
-
-router.get('/getList', function(req, res) {
-      console.log('/getList .... ');
-      console.log(req.query);
-      console.log(req.user);
-      var pagesize = parseInt(req.query.pageSize); 
-      var n =  parseInt(req.query.currentPage);
-      var collection = mongocli.get().collection('helpdesk');
-      var rand = Math.floor(Math.random()*100000000).toString();
-      //db.users.find().skip(pagesize*(n-1)).limit(pagesize)
-      //var searchCriteria = { "userData.userProvider": req.user.userProvider, $and: [ { "userData.userId": req.user.userId } ] };
-
-      var searchCriteria = {};
-
-      // from button OR
-      var filterObjArray = [];
-      if (req.query.filterButton) {
-        if(_.isArray(req.query.filterButton)) {
-          _(req.query.filterButton).forEach(function(v){
-              console.log(v);
-              var regex = new RegExp(".*" + v + ".*", "i");
-              var obj1 =  {  "formModel.segnalazione.softwareLista": v   };
-              filterObjArray.push(obj1);
-          });
-        } else {
-              var regex = new RegExp(".*" + req.query.filterButton + ".*", "i");
-              var obj1 =  {  "formModel.segnalazione.softwareLista": req.query.filterButton   };
-              filterObjArray.push(obj1);
-        }
-      }
-
-
-      console.log(filterObjArray);      
-
-      // from input text
-      if(req.query.filterData){
-        var filterData = JSON.parse(req.query.filterData);
-        console.log(filterData);
-      }
-
-      if(filterData) {
-        console.log('1');
-        console.log(req.query.filterData);
-        if(filterData.globalTxt){
-          console.log('2');
-
-          //var stringToGoIntoTheRegex = "abc";
-          var regex = new RegExp(".*" + filterData.globalTxt + ".*", "i");
-          // at this point, the line above is the same as: var regex = /#abc#/g;
-
-          var filterDataSearchCriteria =  {  "formModel.segnalazione.utenteRichiedenteAssistenza": regex   };
-          searchCriteria["formModel.segnalazione.utenteRichiedenteAssistenza"] = regex;
-        };    
-      }
-       
-      console.log('----------------searchCriteria----------------------');
-      if (!_.isEmpty(filterObjArray)){
-          searchCriteria['$or'] =  filterObjArray;
-      }
-      console.log(searchCriteria);
-
-      collection.find( searchCriteria ).skip(pagesize*(n-1)).limit(pagesize).toArray(function(err, docs) {
-        console.log("Found the following records ... ");
-        //console.dir(err);
-        console.log(err);
-        if(err){
-            res.status(500).json(err);
-        }else{
-            res.status(201).json(docs);
-        }
-      });      
-});
-
-
-//##############################################################################################################
-//##############################################################################################################
-//##############################################################################################################
-//##############################################################################################################
-//##############################################################################################################
-//##############################################################################################################
-
-router.get('/testSIO', function(req, res) {
-  
-
-  var socketId = req.query.socketId;
-  var io = req.app.get('socketio');
-
-  io.emit('send:message', { msg: new Date() });
-  io.to(socketId).emit('log:message', { msg: new Date(), progress: 0});
-  
-
-  logConsole.info(socketId, 'TESTSIO - START!');
-
- async.series([
-            function(callback){
-                setTimeout(
-                            function () {   
-                                logConsole.info(socketId, ' - ASYNC 1');   
-                                io.to(socketId).emit('log:message', { msg: new Date(), progress: 10});     
-                                callback(null, 'OK1');
-                           }, 2000);
-            },
-
-            function(callback){
-                setTimeout(
-                    function () {
-                        logConsole.info(socketId, ' - ASYNC 2');    
-                        io.to(socketId).emit('log:message', { msg: new Date(), progress:50 });
-                        callback(null, 'OK2');
-                }, 2000);
-            },
-
-            function(callback){
-                setTimeout(
-                    function () {
-                        logConsole.info(socketId, ' - ASYNC 3');    
-                        io.to(socketId).emit('log:message', { msg: new Date(), progress: 75 });
-                        callback(null, 'OK3');
-                }, 2000);
-            },
-
-            function(callback){
-                setTimeout(
-                    function () {
-                        logConsole.info(socketId, ' - ASYNC 4');    
-                        io.to(socketId).emit('log:message', { msg: new Date(), progress: 100 });
-                        callback(null, 'OK4');
-                }, 2000);
-            }
-
-            
-/*
-            function(callback){
-                logConsole.info('ASYNC 2');
-                io.emit('send:message', { msg: new Date() });
-                callback(null, 'OK2');
-            }
-*/
-        ],function(err, results) {
-            // results is now equal to: {one: 1, two: 2}
-            logConsole.info(socketId, ' - ASYNC FINAL!');
-            if(err){
-                log2file.error(err);
-                logConsole.error(err);
-                res.status(ErrorMsg.code).send(ErrorMsg);
-            } else {
-                logConsole.info(socketId, ' - ASYNC OK!');
-                res.status(200).send('ok');
-            }
-        });
-
-
-
-});
-
-
-
-/*
-router.get('/download/:identifier', function(req, res) {
-  console.log('Get /download/identifier : '+ req.params.identifier);
-  flow.write(req.params.identifier, res);
-});
-
-
-
-router.get('/map',function(req, res) {
-  console.log('/map');
-  
-  var gUrl = "http://maps.googleapis.com/maps/api/geocode/json?address="+ req.query.address +  "&sensor=false";
-
-  console.log(req.query);
-
-  request.get({
-          url: gUrl,
-          proxy:'http://M05831:_Giugno2016@proxy1.comune.rimini.it:8080'
-        },function (error, response, body) {
-            //console.log(body);
-            //console.log(response);
-            if(error){
-              return res.status(500).json(error);    
-            } else {
-              return res.status(200).send(body);    
-            }
-        });
-  
-});
-
-
-router.post('/add-task', function(req, res) {
-  models.Tasks
-        .build({
-            title: req.body.taskName,
-            completed: false})
-        .save()
-        .then(function() {
-          models.Tasks.findAll({}).then(function(taskList) {
-                return res.status(200).json(taskList);
-            });
-        });
-});
-
-router.post('/create', function(req, res) {
-  console.log(req.body.DICHIARANTI);
-  console.log(req.body.NUCLEOFAMILIARE);
-  console.log(req.body.UPLOADFILE);
-  models.Person
-        .build({
-            email: req.body.DICHIARANTI.dichiarantePadre,
-            title: req.body.DICHIARANTI.dichiaranteMadre,
-            name: 'name',
-            Blobs : req.body.UPLOADFILE,
-            Tasks : [
-              { title : 't1', completed : false},
-              { title : 't2', completed : true}
-              ],
-            
-            Nucleos: req.body.NUCLEOFAMILIARE,
-            },
-          {
-             include: [ models.Tasks, models.Nucleos, models.Blobs ]
-          })
-        .save()
-        .then(function() {
-            models.Person.findAll({
-                              include: [{
-                                  model: models.Tasks
-        //where: { state: Sequelize.col('project.state') }
-                                        },
-                                      {
-                                  model: models.Nucleos
-        //where: { state: Sequelize.col('project.state') }
-                                        },
-                                      {
-                                  model: models.Blobs
-        //where: { state: Sequelize.col('project.state') }
-                                        },
-
-                                        ]
-                              }).then(function(taskList) {
-                return res.status(200).json(taskList);
-            });
-        })
-        .catch(function(error) {
-          console.log(error);
-          return res.status(500).json(error);
-        });
-
-});
-
-*/
 
   return router;
 }

@@ -1,0 +1,30 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:elet="http://it.mininterno.sie/elettorale">
+    <soapenv:Header/>
+    <soapenv:Body>
+    <elet:DatiInvioSezioni>
+    <elet:Utente>
+        <elet:UserID>{{UserID}}</elet:UserID>
+        <elet:Password>{{Password}}</elet:Password>
+    </elet:Utente> 
+    <elet:Evento>
+        <elet:TipoElezione>{{TipoElezione}}</elet:TipoElezione>
+        <elet:DataElezione>{{DataElezione}}</elet:DataElezione>
+    </elet:Evento>
+    <elet:InfoSezioni> 
+        <elet:DatiComuneSezioni> 
+            <elet:CodiceProvincia>{{CodiceProvincia}}</elet:CodiceProvincia>
+            <elet:CodiceComune>{{CodiceComune}}</elet:CodiceComune>
+            <elet:Sezioni>
+            {{#each Sezioni}}
+                <elet:DatiSezione>
+                    <elet:DescrizioneSezione>{{DescrizioneSezione}}</elet:DescrizioneSezione>
+                    <elet:NumeroPosizione>{{NumeroPosizione}}</elet:NumeroPosizione>
+                    <elet:CodiceTipoSezione>{{CodiceTipoSezione}}</elet:CodiceTipoSezione>
+                </elet:DatiSezione>
+            {{/each}}
+            </elet:Sezioni>
+        </elet:DatiComuneSezioni> 
+    </elet:InfoSezioni>
+    </elet:DatiInvioSezioni>
+</soapenv:Body>
+</soapenv:Envelope>

@@ -112,7 +112,11 @@ var samlStrategy = new SamlStrategy(
     cert: fs.readFileSync('./certs/federa-test.pem', 'utf-8'), 
 
     decryptionPvk: myCert,
-    logoutCallbackUrl: 'https://pmlab.comune.rimini.it/federa/logout'
+    logoutCallbackUrl: 'https://pmlab.comune.rimini.it/federa/logout',
+    identifierFormat : 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+    validateInResponseTo: true,
+
+    // skipRequestCompression: true
 
 
 
@@ -225,17 +229,23 @@ app.use('/passportauth', PassportAuth);
 var ProfileMgr = require('./routes/ProfileMgr')();
 app.use('/profilemgr', ProfileMgr);
 
+var Protocollo = require('./routes/Protocollo')();
+app.use('/segnalazioni', Protocollo);
+
 // Define routes.
 app.get('/',
   function(req, res) {
-    //res.render('login', { user: req.user });
-	  res.redirect('home/');
+    res.render('login');
+	  //res.redirect('home/');
 });
 
-app.get('/login',
-  function(req, res){
-    res.render('login');
-  });
+ app.get('/login',
+    passport.authenticate('saml',
+      {
+        successRedirect: '/',
+        failureRedirect: '/login'
+      })
+  );
 
 app.post('/login',
   passport.authenticate('saml', { failureRedirect: '/login/fail', failureFlash: true }),
@@ -250,6 +260,7 @@ app.get('/metadata',
         console.log('/metadata');
         res.type('application/xml');
         res.status(200).send(samlStrategy.generateServiceProviderMetadata(myCert));
+        //res.status(200).send(fs.readFileSync('./metadata.xml'));
     }
 );
 

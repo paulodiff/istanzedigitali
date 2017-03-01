@@ -11,43 +11,31 @@ var log = require('../models/loggerModule.js');
 module.exports = function(){
 
 // GET /api/me
-router.get('/me/:id', utilityModule.ensureAuthenticated, function(req, res) {
-    log.log2console('ProfileMgr get /me : '+ req.params.id);
-    //console.log(profiles.data);
+router.get('/me', utilityModule.ensureAuthenticated, function(req, res) {
+    log.log2console('ProfileMgr get /me : ');
+    log.log2console(req.user);
 
-    if (req.params.id) {
-      profileFileName = req.params.id;  
+    var key = req.user;  
+    var jsonFile = './data/profiles/profiles.json';
+    var data = JSON.parse(fs.readFileSync(jsonFile)); 
+
+    // log.log2console(data);
+
+    if (data[key]) {
+      return res.status(200).send(data[key]);
     } else {
-      profileFileName = 'default';
+      return res.status(200).send(data['default']);
     }
-
-    //var DW_PATH = ENV_PROT.storageFolder;
-    //var dir = DW_PATH + "/" + reqId;
-    dir = './data/profiles/';
-    var jsonFile = dir + profileFileName + '.json';
-    var contents;
-
-    if (fs.existsSync(jsonFile)) {
-      log.log2console('ProfileMgr reading : '+ jsonFile);
-      contents = fs.readFileSync(jsonFile);
-    } else {
-      log.log2console('ProfileMgr reading : default');
-      contents = fs.readFileSync( dir + 'default.json');
-    }
-
-    var data =  JSON.parse(contents);
-    log.log2console(data);
-  
-    return res.status(200).send(data);
+    
 });
 
 
 router.put('/me', utilityModule.ensureAuthenticated, function(req, res) {
   log.log2console('ProfileMgr PUT /me');
+  log.log2console(req.user);
+  log.log2console(req.data);
   try {
-    var profiles = db.addCollection('profiles');
-    profiles.insert({id: 200, name:'Mario', age: 88});
-    log.log2console('ProfileMgr POST /me SAVED!');
+    log.log2console('ProfileMgr PUT /me SAVED!');
   } catch (err){
     console.log(err);
   }
@@ -57,8 +45,6 @@ router.put('/me', utilityModule.ensureAuthenticated, function(req, res) {
 router.post('/me', utilityModule.ensureAuthenticated, function(req, res) {
   log.log2console('ProfileMgr POST /me');
   try {
-    var profiles = db.addCollection('profiles');
-    profiles.insert({id: 200, name:'Mario', age: 88});
     log.log2console('ProfileMgr POST /me SAVED!');
   } catch (err){
     console.log(err);

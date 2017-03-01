@@ -10,7 +10,7 @@ angular.module('myApp.controllers')
     $scope.getProfile = function() {
 
         $log.debug('profileMgrCtrl: getProfile');
-        var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiProfile + '/9999'; 
+        var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiProfile; 
         $log.debug('profileMgrCtrl: api : ' + fullApiEndpoint );
 
          return $http({ 
@@ -18,8 +18,8 @@ angular.module('myApp.controllers')
                     method: "GET"
                   })
         .then(function (res) {
-            $log.debug(res);
-            $scope.user = res.data.user;
+            $log.debug('profileMgrCtrl : setting data');
+            $scope.user = res.data;
          })
         .catch(function(response) {
                     var dlg = dialogs.confirm(response.data.message, response.status);
@@ -30,9 +30,7 @@ angular.module('myApp.controllers')
                         $state.go('login');
 						$scope.confirmed = 'You confirmed "No."';
 					});
-
-
-          
+       
         });
 
     };

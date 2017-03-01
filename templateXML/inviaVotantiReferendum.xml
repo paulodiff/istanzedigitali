@@ -1,0 +1,31 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:elet="http://it.mininterno.sie/elettorale">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <elet:DatiInvioVotantiReferendum>
+         <elet:Utente>
+            <elet:UserID>{{UserID}}</elet:UserID>
+            <elet:Password>{{Password}}</elet:Password>
+         </elet:Utente>
+         <elet:Evento>
+            <elet:TipoElezione>{{TipoElezione}}</elet:TipoElezione>
+            <elet:DataElezione>{{DataElezione}}</elet:DataElezione>
+         </elet:Evento>
+         <elet:VotantiReferendum>
+            <elet:CodiceProvincia>{{CodiceProvincia}}</elet:CodiceProvincia>
+            <elet:CodiceComune>{{CodiceComune}}</elet:CodiceComune>
+            <elet:LivelloAcquisizione>{{LivelloAcquisizione}}</elet:LivelloAcquisizione>
+            <elet:CodiceSezione>{{CodiceSezione}}</elet:CodiceSezione>
+            <elet:NumeroProgressivoArea>{{NumeroProgressivoArea}}</elet:NumeroProgressivoArea>
+            <elet:DatiScheda>
+               <elet:NumeroScheda>{{NumeroScheda}}</elet:NumeroScheda>
+               <elet:DatiVotanti>
+                  <elet:DataOraInizioComunicazione>{{DataOraInizioComunicazione}}</elet:DataOraInizioComunicazione>
+                  <elet:NumeroTotale>{{NumeroTotale}}</elet:NumeroTotale>
+                  <elet:NumeroMaschi>{{NumeroMaschi}}</elet:NumeroMaschi>
+                  <elet:NumeroFemmine>{{NumeroFemmine}}</elet:NumeroFemmine>
+               </elet:DatiVotanti>
+            </elet:DatiScheda>
+         </elet:VotantiReferendum>
+      </elet:DatiInvioVotantiReferendum>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,12 @@
+<soapenv:Envelope xmlns:elet='http://it.mininterno.sie/elettorale' xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'> 
+    <soapenv:Header />
+    <soapenv:Body>
+        <elet:ParametriRichiestaEventiElettorali> 
+            <elet:Utente>
+                <elet:UserID>{{UserID}}</elet:UserID> 
+                <elet:Password>{{Password}}</elet:Password>
+            </elet:Utente> 
+        <elet:DataElezione>{{DataElezione}}</elet:DataElezione> 
+        </elet:ParametriRichiestaEventiElettorali>
+    </soapenv:Body>
+</soapenv:Envelope>

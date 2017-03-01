@@ -1,0 +1,26 @@
+{
+  "user": {
+	"name": "typicode",
+	"displayName":"USER dspNameAAAA",
+	"age" : 28,
+	"email": "aaaa@123123123.com",
+	"description": "this is a desc..."
+
+  },
+  "default": {
+	"name": "DEFAULT-NAME",
+	"displayName":"DEFAULT-DISPLAY-NAME",
+	"age" : 28,
+	"email": "aaaa@123123123.com",
+	"description": "this is a desc..."
+
+  },
+  "1": {
+	"name": "1- DEFAULT-NAME",
+	"displayName":"1- DEFAULT-DISPLAY-NAME",
+	"age" : 111,
+	"email": "1-aaaa@123123123.com",
+	"description": "1- this is a desc..."
+
+  }
+}

@@ -1,0 +1,1 @@
+{"InserisciProtocolloEAnagraficheResult":{"IdDocumento":139668,"AnnoProtocollo":"2017","NumeroProtocollo":46,"DataProtocollo":"2017-03-01T13:52:06.819Z","Messaggio":"Inserimento Protocollo eseguito con successo, senza Avvio Iter","Allegati":{"Allegato":[{"Serial":"53564","IDBase":"53564","Versione":"0"},{"Serial":"53563","IDBase":"53563","Versione":"0"}]}}}

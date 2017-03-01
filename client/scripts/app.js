@@ -26,7 +26,7 @@ angular.module('myApp', [//'ionic',
                          // 'ngTable',
                          // 'ui.grid',
                          // 'ui.grid.selection',
-                         // 'ui.validate',
+                         'ui.validate',
                          // 'chart.js',
                          'vcRecaptcha',
                          //'uiGmapgoogle-maps',
@@ -82,7 +82,7 @@ angular.module('myApp', [//'ionic',
 
     $stateProvider.state('homeIstanze', {
         url: '/homeIstanze',
-        controller: 'SHomeCtrl',
+        controller: 'homeCtrl',
         templateUrl: 'templates/Shome.html',
         accessLogged: false,
         accessLevel: 'free1' 

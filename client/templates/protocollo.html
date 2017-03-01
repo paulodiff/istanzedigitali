@@ -76,8 +76,8 @@
                     class="form-control" 
                     name="codiceFiscaleRichiedente" 
                     ng-model="vm.model.codiceFiscaleRichiedente"
-                    ng-minlength="1"
-                    ng-maxlength="100"
+                    ng-minlength="16"
+                    ng-maxlength="16"
                     required>
                 
             <div ng-messages="vm.userForm.codiceFiscaleRichiedente.$error" style="color:maroon" role="alert">
@@ -92,11 +92,14 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label>Data di Nascita</label>
-                <input type="text" 
-                    name="dataNascitaRichiedente" class="form-control" 
+                <input type="text"
+                    placeholder="GG/MM/AAAA" 
+                    name="dataNascitaRichiedente" class="form-control"
+                    min="01-01-1900"
+                    max="31-12-2100" 
                     ng-model="vm.model.dataNascitaRichiedente"
-                    ng-minlength="1"
-                    ng-maxlength="100"
+                    ng-minlength="10"
+                    ng-maxlength="10"
                     required>
                     
                 <div ng-messages="vm.userForm.dataNascitaRichiedente.$error" style="color:maroon" role="alert">
@@ -111,7 +114,7 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label>Cellulare</label>
-                <input type="text" 
+                <input type="number" 
                     name="cellulareRichiedente" class="form-control" 
                     ng-model="vm.model.cellulareRichiedente"
                     ng-minlength="1"
@@ -201,11 +204,11 @@
                     <label>CAP</label>
 
                     <input  name="capRichiedente" 
-                            type="text" 
+                            type="number" 
                             class="form-control" 
                             required 
                             ng-model="vm.model.capRichiedente" 
-                            placeholder="conferma password">
+                            placeholder="CAP">
          
                 <div ng-messages="vm.userForm.capRichiedente.$error" style="color:maroon" role="alert">
                         <div ng-message="required"  class="label label-danger">Campo richiesto</div>
@@ -255,7 +258,7 @@
                 <div ng-messages="vm.userForm.confirm_password.$error" style="color:maroon" role="alert">
                         <div ng-message="required"  class="label label-danger">Campo richiesto</div>
                         <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
-                        <div ng-message="email" class="label label-danger">MMMMMNO MATCH</div>
+                        <div ng-message="email" class="label label-danger">Email non valida</div>
                         <div ng-message="validator" class="label label-danger">Email non identiche</div>
                 </div>
             </div>
@@ -274,13 +277,13 @@
 
         <!-- nome field -->
         <div class="form-group">
-            <label>Descrizione / Oggetto istanza</label>
+            <label>Descrizione / Oggetto istanza (Max 300 caratteri)</label>
             <textarea  
                     class="form-control" 
                     name="oggettoRichiedente" 
                     ng-model="vm.model.oggettoRichiedente"
                     ng-minlength="1"
-                    ng-maxlength="500"
+                    ng-maxlength="300"
                     placeholder="inserire qui la descrizione dell'istanza"
                     required></textarea>
                 
@@ -299,62 +302,63 @@
 
 
    <div class="form-group">
-     <label  for="inputFile2">Allegato Istanza - (dimensione massima 20Mb) {{vm.model.picFile1_info}}</label>
-      <input    id="inputFile2"
+     <label  for="inputFile1">Carta Identità Fronte - (dimensione massima 10Mb) {{vm.model.picFile1_info}}</label>
+      <input    id="inputFile1"
                 class="btn btn-raised btn-success btn-block"
                 type="file" 
                 ng-model="vm.model.picFile1" 
                 name="file1"    
                 accept="*/*" 
-               
                 ngf-select 
-                ngf-max-size="20MB" 
+                ngf-min-size="1"
+                ngf-max-size="10MB" 
                 ngf-change="vm.calcHash($file)"
                 ngf-model-invalid="errorFile">
  
 
       <span class="label label-danger" ng-show="vm.userForm.file1.$error.required">Allegato obbligatorio</span>
-      <span class="label label-danger" ng-show="vm.userForm.file1.$error.maxSize" class="badge">File troppo grande 
-          {{errorFile.size / 1000000|number:1}}MB: max 2M</span>
+      <span class="label label-danger" ng-show="vm.userForm.file1.$error.maxSize" class="badge">File troppo grande {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
+      <span class="label label-danger" ng-show="vm.userForm.file1.$error.minSize" class="badge">File troppo piccolo {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
    </div>
 
    <div class="form-group">
-     <label  for="inputFile2">Carta Identità Fronte - (dimensione massima 20Mb)</label>
+     <label  for="inputFile2">Carta Identità Retro - (dimensione massima 10Mb)</label>
       <input    id="inputFile2"
                 class="btn btn-raised btn-success  btn-block"
-                type="file" 
-                ng-model="vm.model.ciFile1" 
-                name="ciFile1"    
-                accept="*/*" 
-                ngf-select 
-                ngf-max-size="20MB" 
-                ngf-change="vm.calcHash($file)"
-                ngf-model-invalid="errorFile">
- 
-
-      <span class="label label-danger" ng-show="vm.userForm.ciFile1.$error.maxSize" class="badge">File troppo grande 
-          {{errorFile.size / 1000000|number:1}}MB: max 2M</span>
-   </div>
-
-   <div class="form-group">
-     <label  for="inputFile2">Carta Identità Retro - (dimensione massima 200Mb)</label>
-     
-      <input    id="inputFile2"
-                class="btn btn-raised btn-success btn-block"
                 type="file" 
                 ng-model="vm.model.ciFile2" 
                 name="ciFile2"    
                 accept="*/*" 
                 ngf-select 
-                ngf-max-size="200MB" 
+                ngf-max-size="10MB" 
                 ngf-change="vm.calcHash($file)"
                 ngf-model-invalid="errorFile">
  
 
       <span class="label label-danger" ng-show="vm.userForm.ciFile2.$error.maxSize" class="badge">File troppo grande 
-          {{errorFile.size / 1000000|number:1}}MB: max 2M</span>
+          {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
    </div>
 
+   <div class="form-group">
+     <label  for="inputFile3">Scansione Istanza - (dimensione massima 10Mb)</label>
+     
+      <input    id="inputFile3"
+                class="btn btn-raised btn-success btn-block"
+                type="file" 
+                ng-model="vm.model.ciFile3" 
+                name="ciFile3"    
+                accept="*/*" 
+                ngf-select 
+                ngf-max-size="10MB" 
+                ngf-change="vm.calcHash($file)"
+                ngf-model-invalid="errorFile">
+ 
+
+      <span class="label label-danger" ng-show="vm.userForm.ciFile3.$error.maxSize" class="badge">File troppo grande 
+          {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
+   </div>
+
+<!--
 
    <div class="form-group">
      <label  for="inputFileCSS" class="btn btn-block btn-raised btn-success"><i class="material-icons">note_add</i> {{vm.labelInputFileCSS}}</label>
@@ -375,7 +379,7 @@
           {{errorFile.size / 1000000|number:1}}MB: max 2M</span>
    </div>
 
-
+-->
 
   </div>
 </div>
@@ -407,10 +411,15 @@
 
 
   <div class="form-group">
+
+    <p>SEGNAPOSTO..TEST</p>
+
+    <!--
     <div    vc-recaptcha   
             ng-model="vm.model.RecaptchaResponse"
             key="'6Ldg6AwUAAAAAPgKoqezNrIVEsmdm7uafTop0r84'"></div>
   </div>
+  -->
 </div>
 </div>
 

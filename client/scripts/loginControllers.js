@@ -416,6 +416,12 @@ angular.module('myApp.controllers')
   };
 
     
+  $scope.isAuthenticated = function(){
+      $log.debug('LoginController : isAuthenticated : ' + AuthService.isAuthenticated());
+      return  AuthService.isAuthenticated();  
+  }
+
+
 }])
 
 // AboutController ------------------------------------------------------------------------------------

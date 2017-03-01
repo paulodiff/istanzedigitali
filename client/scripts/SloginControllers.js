@@ -147,6 +147,9 @@ angular.module('myApp.controllers')
 
 
 .controller('SHomeCtrl', function($scope, $http) {
+
+  $scope.btnCheck = false;
+
   /*
     $http.jsonp('https://api.github.com/repos/sahat/satellizer?callback=JSON_CALLBACK')
       .success(function(data) {

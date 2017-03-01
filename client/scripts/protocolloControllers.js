@@ -11,7 +11,9 @@ angular.module('myApp.controllers')
           ['$rootScope','$scope', '$state', '$location', 'Session', '$log', '$timeout','ENV','formlyConfig','$q','$http','formlyValidationMessages', 'FormlyService','usSpinnerService','dialogs','UtilsService', 'Upload', '$anchorScroll', 
    function($rootScope,  $scope,   $state,   $location,   Session,   $log,   $timeout,  ENV,  formlyConfig,  $q,  $http,  formlyValidationMessages,   FormlyService,  usSpinnerService,  dialogs,   UtilsService,  Upload, $anchorScroll) {
     
-  $log.debug('ProtocolloCtrl>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');                                 
+    $log.debug('ProtocolloCtrl');
+    var apiUploadUrl = $rootScope.base_url + '/' + ENV.apiUpload;  
+    $log.debug(apiUploadUrl);
 
 
     // http://www.technofattie.com/2014/07/01/using-angular-forms-with-controller-as-syntax.html
@@ -20,34 +22,6 @@ angular.module('myApp.controllers')
     var vm = this;
     var unique = 1;
     var _progress = 0;
-
-    var ElencoSoftware = [
-      { "id": "IRIDE", "label":"IRIDE"  },
-      { "id": "JIRIDE", "label":"JIRIDE"  },
-      { "id": "FIRMA_DIGITALE",  "label":"FIRMA_DIGITALE" },
-      { "id": "WORD_PROCESSOR",  "label":"WORD_PROCESSOR" },
-      { "id": "VELOX_PM",  "label":"VELOX_PM" },
-      { "id": "PDF_CREATOR",  "label":"PDF_CREATOR" },
-      { "id": "ALTRO",  "label":"ALTRO" }
-    ];
-
-
- // richiede la lista degli utenti IRIDE da Mysql
- function refreshUtenteIride(address, field) {
-      var promise;
-      if (!address) {
-        promise = $q.when({data: {results: []}});
-      } else {
-        var params = {address: address, sensor: false};
-        var endpoint = '/api/seq/user';
-        promise = $http.get(endpoint, {params: params});
-      }
-      return promise.then(function(response) {
-        //console.log(response);
-        field.templateOptions.options = response.data.rows;
-      });
-  };
-
 
 
     
@@ -65,11 +39,11 @@ angular.module('myApp.controllers')
     vm.model.emailRichiedente = 'ruggero.ruggeri@comune.rimini.it';
     vm.model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
     vm.model.codiceFiscaleRichiedente = 'RGGRGR70E25H294T';
-    vm.model.cellulareRichiedente = '3355703086';
-    vm.model.dataNascitaRichiedente = '11/12/1912';
+    vm.model.cellulareRichiedente = 3355703086;
+    vm.model.dataNascitaRichiedente = '01/11/1912';
     vm.model.indirizzoRichiedente = 'VIA ROMA, 1';
     vm.model.cittaRichiedente = 'RIMINI';
-    vm.model.capRichiedente = '47921';
+    vm.model.capRichiedente = 47921;
     vm.model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
     vm.model.oggettoRichiedente = 'Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....';
     vm.model.hash = [];
@@ -165,15 +139,13 @@ angular.module('myApp.controllers')
     function onSubmit() {
         console.log('onSubmit ...');
         console.log(vm.model);
-        var uploadUrl = $rootScope.base_url + '/api/protocollo/upload';
-        console.log(uploadUrl);
-
+        
        if (vm.userForm.$valid) {
           // vm.options.updateInitialValue();
           //alert(JSON.stringify(vm.model), null, 2);
           //usSpinnerService.spin('spinner-1');
 
-          var dlg = dialogs.wait(undefined,undefined,_progress);
+          var dlg = dialogs.wait('Elaborazione in corso',undefined,_progress);
 
           console.log('upload!!');
           
@@ -184,7 +156,7 @@ angular.module('myApp.controllers')
           
 
         Upload.upload({
-            url: uploadUrl,
+            url: apiUploadUrl,
             method: 'POST',
             //files: vm.options.data.fileList
             //data: {files : upFiles, fields: vm.model  }
@@ -194,7 +166,7 @@ angular.module('myApp.controllers')
             console.log(resp);
 
                $rootScope.$broadcast('dialogs.wait.complete'); 
-               // dialogs.notify('Richiesta correttamente pervenuta', resp.data);
+               dialogs.notify('Richiesta correttamente pervenuta', resp.data);
                vm.responseMessage = resp.data;
                vm.bshowForm = false;
                console.log(vm.responseMessage);
@@ -215,7 +187,7 @@ angular.module('myApp.controllers')
             }
 
             vm.bshowForm = false;
-            // dialogs.error('Errore - ' + resp.status, resp.data.msg);
+            dialogs.error('Errore - ' + resp.status, resp.data.msg);
             console.log(vm.responseMessage);
         }, function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);

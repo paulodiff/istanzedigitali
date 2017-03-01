@@ -41,3 +41,8 @@
 ## Client - Autenticazione idee
 
 - http://jasonwatmore.com/post/2016/04/05/angularjs-jwt-authentication-example-tutorial
+
+
+Gestione accesso con passport
+
+Lato nodejs - password + topken JWT

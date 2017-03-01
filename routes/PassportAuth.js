@@ -6,6 +6,8 @@ var request = require('request');
 var qs = require('querystring');
 var path = require('path');
 var passport = require('passport');
+var fs = require('fs');
+
 
 // http://mherman.org/blog/2015/07/02/handling-user-authentication-with-the-mean-stack/#.WKxfkG_hBpg
 LocalStrategy = require('passport-local').Strategy;
@@ -13,13 +15,17 @@ LocalStrategy = require('passport-local').Strategy;
 passport.use(new LocalStrategy(
   function(username, password, done) {
 
-      console.log('checking local strategy ... ',username,password);
-      if (username === password) {
-        return done(null, username);
-      }
-      
-      return done(null, false, { message: 'Incorrect username or password.' });
-      
+      console.log('PASSPORT checking local strategy ... ',username,password);
+        var jsonFile = './data/users.json';
+        var data = JSON.parse(fs.readFileSync(jsonFile));
+        console.log(data[username]);
+        if (data[username]){
+            console.log(data[username].password);
+            if (data[username].password == password) {
+                return done(null, username);
+            } 
+        }
+        return done(null, false, { message: 'Incorrect username or password.' });
       
   }
 ));

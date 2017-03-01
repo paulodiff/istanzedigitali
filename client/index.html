@@ -138,10 +138,9 @@
     <script type="text/javascript" src="bower_components/angular-recaptcha/release/angular-recaptcha.js"></script>
 
 
-    <!-- UI-Validate 
+    <!-- UI-Validate -->
     <script type="text/javascript" src="bower_components/angular-ui-validate/dist/validate.js"></script>
-    -->
-
+    
     <!-- ng-table 
     <link rel="stylesheet"; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
     <script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
@@ -165,6 +164,7 @@
 
     <script src="scripts/rootControllers.js"></script>
     <script src="scripts/loginControllers.js"></script>
+    <script src="scripts/homeControllers.js"></script>
     <script src="scripts/profileControllers.js"></script>
     <script src="scripts/sigControllers.js"></script>
     <script src="scripts/SloginControllers.js"></script>
@@ -212,20 +212,20 @@
             <ul class="nav navbar-nav">
                 <a href="#/" role="button" class="navbar-brand">Comune di Rimini</a>
                 <li class="active"><a href="#/">Home</a></li>
-                
-                <li ng-if="isAuthenticated()"><a href="#/form">Form</a></li>
-                <li ng-if="isAuthenticated()"><a href="#/jiride">Jiride</a></li>
-                <li ng-if="isAuthenticated()"><a href="#/jlist">Jlist</a></li>
-                <li ng-if="isAuthenticated()"><a href="#/uigrid">uigrid</a></li>
+                <!--
+                    <li ng-if="isAuthenticated()"><a href="#/form">Form</a></li>
+                    <li ng-if="isAuthenticated()"><a href="#/jiride">Jiride</a></li>
+                    <li ng-if="isAuthenticated()"><a href="#/jlist">Jlist</a></li>
+                    <li ng-if="isAuthenticated()"><a href="#/uigrid">uigrid</a></li>
+                -->
                 <li><a href="#!/protocollo">Presentazione Istanze</a></li>
                 <!-- <li><a href="#/elezioni">Elezioni</a></li> -->
           </ul>
 
           <ul class="nav navbar-nav pull-right">
-                <li><a ui-sref="login" ui-sref-active="active">Login</a></li>
-                <li><a ui-sref="signup" ui-sref-active="active">Registrati</a></li>
-                <li><a ui-sref="login" ui-sref-active="active">Esci</a></li>
-                <li><a ui-sref="profile">Profile</a></li>
+                <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Esci</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="profile">Profile</a></li>
           </ul>
 
           <ul ng-if="isAuthenticated()" class="nav navbar-nav pull-right">
@@ -239,13 +239,9 @@
                 <li class="active"><a href="#/">Home</a></li>
                 <li><a href="#/protocollo">Istanze</a></li>
                 <li><a href="#/profile" ng-click="isCollapsed = !isCollapsed">Profile</a></li>
-                <li ng-if="isAuthenticated()"><a href="#/form" ng-click="isCollapsed = !isCollapsed">Form</a></li>
-                <li><a href="#/login"  ng-click="isCollapsed = !isCollapsed">@@Login</a></li>
-                <li><a href="#/form" ng-click="isCollapsed = !isCollapsed">F1</a></li>
-                <li><a href="#/sigPhoto" ng-click="isCollapsed = !isCollapsed">P1</a></li>
-                <li><a href="#/sseChat" ng-click="isCollapsed = !isCollapsed">SSE</a></li>
-                <li><a href="#/push">P</a></li>
-                <li ng-if="isAuthenticated()"><a href="#/login">Esci({{getUserId()}})</a></li>
+                <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Esci</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="profile">Profile</a></li>                
             </ul>
         </nav>
 

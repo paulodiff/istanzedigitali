@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://pmlab.comune.rimini.it/federa" ID="https___pmlab_comune_rimini_it_federa">
+  <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <KeyDescriptor>
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>MIIEDzCCAvegAwIBAgIJAOVFCVZrmQZfMA0GCSqGSIb3DQEBCwUAMIGdMQswCQYD
+VQQGEwJJVDEOMAwGA1UECAwFSVRBTFkxDzANBgNVBAcMBlJJTUlOSTEZMBcGA1UE
+CgwQQ29tdW5lIGRpIFJpbWluaTEMMAoGA1UECwwDQ0VEMRMwEQYDVQQDDApzcnYt
+d2ViYXBpMS8wLQYJKoZIhvcNAQkBFiBydWdnZXJvLnJ1Z2dlcmlAY29tdW5lLnJp
+bWluaS5pdDAeFw0xNzAyMDkxNTAzMjFaFw0yNzAyMDkxNTAzMjFaMIGdMQswCQYD
+VQQGEwJJVDEOMAwGA1UECAwFSVRBTFkxDzANBgNVBAcMBlJJTUlOSTEZMBcGA1UE
+CgwQQ29tdW5lIGRpIFJpbWluaTEMMAoGA1UECwwDQ0VEMRMwEQYDVQQDDApzcnYt
+d2ViYXBpMS8wLQYJKoZIhvcNAQkBFiBydWdnZXJvLnJ1Z2dlcmlAY29tdW5lLnJp
+bWluaS5pdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALd5mrI6fXR0
+jGM6wv4yn/qs/LS+WrpG0nNR0yFxOACb6pvNRVD212Zqne2AcdG/Wsx1JLhARME9
+u8PUqEKMYrsFIuwc3wKVRsetDgBvTlVvFBXKQMWO+7Fv/0RqhCXBqIhzsbiF4LKQ
++su4tP3sD7S+mF7O2wa0WYgUSrK/IiJ8+OfvuEEorIAQfvsOXz9WH0HOgeHscOaY
+6fxd9ny3amqEYZvbzOdxFp8TmplHdpKmR5bW4iYNa1ooB9WJHfWeKhV50PkI7Vhl
+HzZ9d9UQZVPNevAwlqVb2bximOR/bV7SsH0KBHzuwaxvM/SJblLBNoPEz0JJE8yT
+cqO3Omyl/QMCAwEAAaNQME4wHQYDVR0OBBYEFPtq/EYjdenZ25aNh+vmWAbKXMjO
+MB8GA1UdIwQYMBaAFPtq/EYjdenZ25aNh+vmWAbKXMjOMAwGA1UdEwQFMAMBAf8w
+DQYJKoZIhvcNAQELBQADggEBAAPAPAbZmokhojFJBykWQ2js6TcbhUaRCrYF0r+L
+4xA07Z36R0iLdejNTY6taClfqdmsKl6+SwwbDzML7yuHD3evhbIPGMPXjBaEgakj
+MWGE++zjpPRd1yz6UMWqEjvI6xM9KLowNbQXsmICA9ZiPotcHKnxP6Or1ycHU4lu
+bqvxiU4tOwyULW3w6AfMIHLMsa4IgehZP3ZZEmDxKyVUWUiqydhfhXcNMbrcoicP
+QAPwss6dIjN9b7/wPfYONBXQqHMZD4MZpwct7TGD5YaEPMY2uWxJNw2YqAoQzoMs
+yAHhvXWmvqV3HUIKWCwOhzBiMvGrlidvxsZJoNJJdomrLOI=
+</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+      <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/>
+      <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
+      <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+    </KeyDescriptor>
+    <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://pmlab.comune.rimini.it/federa/logout"/>
+    <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+    <AssertionConsumerService index="1" isDefault="true" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://pmlab.comune.rimini.it/federa/login/callback"/>
+  </SPSSODescriptor>
+</EntityDescriptor>

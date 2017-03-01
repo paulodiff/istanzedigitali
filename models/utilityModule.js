@@ -62,7 +62,7 @@ module.exports = {
 
         //"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiY29tcGFueU5hbWUiOiJDb211bmVfZGlfUmltaW5pIiwiYXBwIjoicHJvdG9jb2xsbyJ9LCJpYXQiOjE0Nzk5OTkwMzQsImV4cCI6MTU2NjM5NTQzNH0.5Ako1xZ9If5bNrKN3ns8sZ8YaqaJD7FWDt07zcRb8c0"
 
-        console.log('[#AUTH#] ensureAuthenticated ....');
+        console.log('[#AUTH#] ensureAuthenticated (start)');
         if (!req.header('Authorization')) {
             console.log('[#AUTH#] ensureAuthenticated : 401 NO TOKEN');
             return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });

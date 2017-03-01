@@ -2,6 +2,7 @@ node_modules
 certs
 log
 tmp
+docs
 .idea
 .temp
 .sass-cache
