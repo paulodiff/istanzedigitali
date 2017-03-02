@@ -8,8 +8,8 @@ angular.module('myApp.controllers')
 
 
 .controller("AppCtrl", 
-                    ['$scope', 'dialogs', '$rootScope', 'AuthService', 'Session', 'Restangular', '$state','ENV', '$log', '$location','$localStorage', '$http',
-            function($scope,    dialogs,   $rootScope,   AuthService,   Session,   Restangular,    $state, ENV,   $log,   $location,  $localStorage,   $http) {
+                    ['$scope', 'dialogs', '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log', '$location','$localStorage', '$http',
+            function($scope,    dialogs,   $rootScope,   AuthService,   Session,   $state, ENV,   $log,   $location,  $localStorage,   $http) {
 
                 
         $log.debug("AppCtrl ... start");
@@ -59,16 +59,16 @@ angular.module('myApp.controllers')
 
         //$rootScope.base_url = ENV.apiEndpoint;
         //$log.debug('Restangular set base Url '+ ENV.apiEndpoint);
-        $log.debug('Restangular Url '+ $rootScope.base_url);
+        $log.debug('rootScope Url '+ $rootScope.base_url);
 
 
 
         //$rootScope.base_url = ENV.apiEndpoint;
         //$log.debug('Restangular set base Url:'+ ENV.apiEndpoint);
-        Restangular.setBaseUrl($rootScope.base_url);
+        // Restangular.setBaseUrl($rootScope.base_url);
 
 
-        Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
+        /*Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
 
             if(response.status === 0) {
                     $ionicLoading.hide();
@@ -117,7 +117,7 @@ angular.module('myApp.controllers')
 
             //return false; // error handled
             return true; // error not handled
-        });
+        });*/
         
 
         /*
@@ -142,7 +142,7 @@ angular.module('myApp.controllers')
             $log.debug(next);
 
             $scope.currentUser = Session.nome_breve_utenti;
-            Restangular.setDefaultHeaders({'rr-access-token': Session.token});
+            //Restangular.setDefaultHeaders({'rr-access-token': Session.token});
 
             //storePassword
             // $log.debug('set storage login to:',Session.token);
@@ -162,7 +162,7 @@ angular.module('myApp.controllers')
             $log.debug('AppCtrl: destroy session & token ... ');
             $scope.currentUser = '';
             Session.token = '123';
-            Restangular.setDefaultHeaders({token: ''});
+            //Restangular.setDefaultHeaders({token: ''});
 
             //$log.debug('Destroy local session....');
             //delete $localStorage.Session;
@@ -502,8 +502,8 @@ angular.module('myApp.controllers')
 
 // HelpController ------------------------------------------------------------------------------------
 .controller('HelpController', 
-                   [ '$scope', 'Restangular', '$rootScope', 'ENV', 'AuthService','Session','$location','$ionicLoading','$http', '$ionicPopup','$ionicSlideBoxDelegate','$state','$log',
-            function ($scope,   Restangular,   $rootScope,   ENV,   AuthService,  Session,  $location,  $ionicLoading,  $http,   $ionicPopup,  $ionicSlideBoxDelegate,  $state,$log ) {
+                   [ '$scope', '$rootScope', 'ENV', 'AuthService','Session','$location','$ionicLoading','$http', '$ionicPopup','$ionicSlideBoxDelegate','$state','$log',
+            function ($scope,   $rootScope,   ENV,   AuthService,  Session,  $location,  $ionicLoading,  $http,   $ionicPopup,  $ionicSlideBoxDelegate,  $state,$log ) {
     $log.debug('HelpController...');
     
     //Restangular.setBaseUrl($rootScope.base_url); 
@@ -518,22 +518,48 @@ angular.module('myApp.controllers')
     $scope.change_Api1 = function() {
         $scope.UrlApi = "http://localhost:9988/segnalazioni/upload";
         $rootScope.base_url = $scope.UrlApi;
-        Restangular.setBaseUrl($rootScope.base_url); 
+        //Restangular.setBaseUrl($rootScope.base_url); 
     }
 
     $scope.change_Api2 = function() {
         $scope.UrlApi = "https://pmlab.comune.rimini.it/api/";
         $rootScope.base_url = $scope.UrlApi;
-        Restangular.setBaseUrl($rootScope.base_url); 
+        //Restangular.setBaseUrl($rootScope.base_url); 
     }
 
 
 }])
 
+// SNavbarCtrl ------------------------------------------------------------------------------------
+.controller('SNavbarCtrl',
+
+           ['$scope', 'dialogs', '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log',
+    function($scope,   dialogs,   $rootScope,   AuthService,   Session,   $state,  ENV ,  $log ) {
+
+    $scope.isAuthenticated = function() {
+      // return $auth.isAuthenticated();
+      return AuthService.isAuthenticated();
+    };
+
+
+    $scope.getUserId = function() {
+
+      if ($auth.isAuthenticated()) {
+        return $auth.getPayload().sub.userId;
+      } else {
+        return '';
+      }
+      
+    };
+
+
+  }])
+
+
 // HelpController ------------------------------------------------------------------------------------
 .controller('ModalController', 
-            [  '$uibModalInstance','$scope', 'Restangular', '$rootScope', 'ENV', 'AuthService','Session','$location','$http', '$state','$log',
-       function ( $uibModalInstance, $scope, Restangular, $rootScope, ENV, AuthService, Session, $location,  $http, $state,$log ) {
+            [  '$uibModalInstance','$scope', '$rootScope', 'ENV', 'AuthService','Session','$location','$http', '$state','$log',
+       function ( $uibModalInstance, $scope,  $rootScope, ENV, AuthService, Session, $location,  $http, $state,$log ) {
     $log.debug('HelpController...');
     
     //Restangular.setBaseUrl($rootScope.base_url); 

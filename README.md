@@ -38,6 +38,9 @@
 // will be set at `req.user` in route handlers after authentication.
 
 
+
+
+
 ## Client - Autenticazione idee
 
 - http://jasonwatmore.com/post/2016/04/05/angularjs-jwt-authentication-example-tutorial
@@ -46,3 +49,35 @@
 Gestione accesso con passport
 
 Lato nodejs - password + topken JWT
+
+
+
+<!--
+    <pre>vm.userForm.$valid = {{ vm.userForm.$valid | json }}</pre>
+    <pre>vm.userForm.name.$error = {{ vm.userForm.name.$error | json }}</pre>
+    <pre>vm.userForm.name.$touched = {{ vm.userForm.name.$touched | json }}</pre>
+    <pre>vm.userForm = {{ vm.userForm| json }}</pre>
+    <pre>vm.model.picFile1 = {{ vm.model.picFile1 }}</pre>
+    
+    
+      
+      <p>Form Data</p>
+      <pre>{{vm.model | json}}</pre>
+      <p>Form Error</p>
+      <pre>{{vm.errors | json}}</pre>
+    </div>
+    <p>reCaptcha - http://vividcortex.github.io/angular-recaptcha/ </p>
+    <p>hashMe.js - https://github.com/marcu87/hashme </p>
+    <p>ng-file-upload - https://github.com/danialfarid/ng-file-upload </p>
+    <p>csrf - https://www.theodo.fr/blog/2015/04/preventing-csrf-attacks-with-express-and-angularjs/ </p>
+    <p>Serve static files in route - http://stackoverflow.com/questions/11569181/serve-static-files-on-a-dynamic-route-using-express </p>
+    <p>CSS Input Style - http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/</p>
+    <p>Double Mail - http://stackoverflow.com/questions/22173016/comparing-two-input-values-in-a-form-validation-with-angularjs</p>
+    <p>UI-Validate - https://github.com/angular-ui/ui-validate </p>
+    <div>
+        <p>Output</p>
+        <pre>{{outputStatusCode}}</pre>
+        <pre>{{outputResponse}}</pre>
+    </div>
+
+-->

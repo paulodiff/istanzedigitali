@@ -1,0 +1,1 @@
+{"InserisciProtocolloEAnagraficheResult":{"IdDocumento":12345678,"AnnoProtocollo":2099,"NumeroProtocollo":2100,"DataProtocollo":"GG/MM/AAAA","Messaggio":"Inserimento Protocollo eseguito con successo, senza Avvio Iter"}}

@@ -673,7 +673,7 @@ router.post('/upload', function(req, res) {
     var reqId = utilityModule.getTimestampPlusRandom();
 
     ErrorMsg.reqId = reqId;
-    var supportMsg = '<br>Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it o telefonare allo 0541/704607 o 0541/704612 utilizzando il seguente identificativo di richiesta:<br><b>' + reqId + '</b><br>Grazie.';
+    var supportMsg = 'Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it o telefonare allo 0541/704607 o 0541/704612 utilizzando il seguente identificativo di richiesta: ' + reqId + '. Grazie.';
 
     var objFilesList = {};
     var objFieldList = {};
@@ -683,56 +683,107 @@ router.post('/upload', function(req, res) {
 
     logConsole.info('start upload: ' + reqId);
 
+
+    //                 var p = {"nomeRichiedente":"MARIO","cognomeRichiedente":"ROSSI","emailRichiedente":"ruggero.ruggeri@comune.rimini.it","codiceFiscaleRichiedente":"RGGRGR70E25H294T","cellulareRichiedente":"3355703086","dataNascitaRichiedente":"11/12/1912","indirizzoRichiedente":"VIA ROMA, 1","cittaRichiedente":"RIMINI","capRichiedente":"47921","oggettoRichiedente":"Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....","files":[],"reqId":"20161209@112659@342@52188","idProtocollo":139364,"annoProtocollo":"2016","numeroProtocollo":100144};
+    //
+
+    var fakeConfig = {
+        captCha : 0, // 1 abilitata 0 disabilitata/fake 2 errore
+        parsingValues: 1, // 1 sempre decodifica  i parametri dei form
+        savingToDisk: 1,
+        protocollazione: 0,
+        emailsend: 1
+    }
+
+
     // limite upload
     // https://github.com/expressjs/node-multiparty
 
     async.series([
 
+            // #####  CAPTCHA ------------------------------------------------
             function(callback){
-                logConsole.info('ASYNC Gmail Recaptcha test:');
-                var p = {"nomeRichiedente":"MARIO","cognomeRichiedente":"ROSSI","emailRichiedente":"ruggero.ruggeri@comune.rimini.it","codiceFiscaleRichiedente":"RGGRGR70E25H294T","cellulareRichiedente":"3355703086","dataNascitaRichiedente":"11/12/1912","indirizzoRichiedente":"VIA ROMA, 1","cittaRichiedente":"RIMINI","capRichiedente":"47921","oggettoRichiedente":"Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....","files":[],"reqId":"20161209@112659@342@52188","idProtocollo":139364,"annoProtocollo":"2016","numeroProtocollo":100144};
+                logConsole.info('ASYNC Gmail Recaptcha ...:');
                 ErrorMsg = {
                                             title: 'Errore controllo ReCaptcha',
-                                            msg: 'Si è verificato un errore nel controllo del codice antifrode ReCaptcha',
-                                            //msg : p,
+                                            msg: 'Si è verificato un errore nel controllo del codice antifrode ReCaptcha. ' + supportMsg,
                                             reqId: reqId,
-                                            code : 999
-                                        };
+                                            code : 480
+                            };
+    
 
+                if(fakeConfig.captCha == 1) {
 
+                  verifyReCaptcha(req.body.fields.RecaptchaResponse).then(function (result) {
+                        if (result.statusCode == 200) {
+                            logConsole.info('Gmail Recaptcha OK!');
+                            // console.log(result.response);
+                            callback(null, 'Gmail Recaptcha OK!');
+                        } else {
+                            //console.log(result);
+                           logConsole.error('Gmail Recaptcha ERROR! code:' + result.statusCode);
+                           callback(ErrorMsg, null);
+                        }
+                    }).catch(function (err) {
+                        // console.log(err);
+                        logConsole.error('Gmail Recaptcha ERRORE GENERICO!');
+                        logConsole.error(err);
+                        log2file.error('Gmail Recaptcha ERRORE GENERICO!');
+                        log2file.error(err);
+                        callback(ErrorMsg, null);
+                    });
 
-                //callback(ErrorMsg, null);
-                callback(null, 'Gmail Recaptcha ... ok');
+                } 
+            
+                if(fakeConfig.captCha == 0) {
+                    logConsole.info('ASYNC Gmail Recaptcha DISABLED!!! - OK:');
+                    callback(null, 'Gmail Recaptcha ... DISABLED ok');
+                }
+
+                if(fakeConfig.captCha == 2) {
+                    logConsole.info('ASYNC Gmail Recaptcha TEST ERROR !!! - OK:');
+                    callback(ErrorMsg, null);
+                }
 
             },
+
+            // ##### PARSING ------------------------------------------------
             
             function(callback) {
                 logConsole.info('ASYNC form parsing');
-                var options = {  maxFilesSize: ENV_PROT.upload_size  };
-                var form = new multiparty.Form(options);
-                form.parse(req, 
-                    function(err, fields, files) {
-                        if(err){
-                            ErrorMsg = {
-                                            title: 'Check input error',
-                                            msg: 'Errore nella decodifica dei dati ricevuti. (MAXSIZE)' + supportMsg,
+    
+                if(fakeConfig.parsingValues == 1) {
+
+                    var options = {  maxFilesSize: ENV_PROT.upload_size  };
+                    var form = new multiparty.Form(options);
+                    form.parse(req, 
+                        function(err, fields, files) {
+                            if(err){
+                                logConsole.error(err);
+                                log2file.error(err);                                        
+                                ErrorMsg = {
+                                            title: 'Parsing values input error',
+                                            msg: 'Errore nella decodifica dei dati ricevuti. ' + supportMsg,
+                                            reqId: reqId,
                                             code : 455
-                                        }
-                            logConsole.error(err);
-                            log2file.error(err);                                        
-                            callback(ErrorMsg, null);
-                        } else {
-                            objFieldList = fields;
-                            objFilesList = files;
-                            logConsole.info(objFieldList);
-                            logConsole.info(objFilesList);
-                            callback(null, 'Form ... ok');
-                        }
-                });
+                                };
+                                callback(ErrorMsg, null);
+                            } else {
+                                objFieldList = fields;
+                                objFilesList = files;
+                                logConsole.info(objFieldList);
+                                logConsole.info(objFilesList);
+                                callback(null, 'Form ... ok');
+                            }
+                    });
+                }
             },
+
+            // ##### Input sanitizer ------------------------------------------------------------------------
 
             function(callback){
                 logConsole.info('ASYNC sanitizeInput:');
+
                 if (sanitizeInput(objFieldList, objFieldSanitized, reqId)){
                     logConsole.info('sanitizeInput: ok');
                     logConsole.info(objFieldSanitized);
@@ -750,8 +801,11 @@ router.post('/upload', function(req, res) {
                 }
             },
 
+            // ##### Saving files ------------------------------------------------------------------------
+
             function(callback){
                 logConsole.info('ASYNC savingFiles:');
+
                 if (savingFiles(objFilesList, objFieldSanitized, reqId )){
                     logConsole.info('savingFiles: ok');
                     logConsole.info(objFieldSanitized);
@@ -759,7 +813,7 @@ router.post('/upload', function(req, res) {
                 } else {
                     ErrorMsg = {
                         title: 'saving file error',
-                        msg: 'Errore nella memorizzazione remota dei files. Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it utilizzando il seguente identificativo di richiesta:<br><b>' + reqId + '</b><br>Grazie.',
+                        msg: 'Errore nella memorizzazione remota dei files.' + supportMsg,
                         code : 457
                     }
                     log2file.error(reqId);
@@ -774,40 +828,85 @@ router.post('/upload', function(req, res) {
                 callback(null, 'Hash file check ... ok');
             },
 
+            // ##### Protocollazione ------------------------------------------------------------------------
 
             function(callback){
+
                 logConsole.info('ASYNC protocolloWS:');
-                protocolloWS(objFieldSanitized, reqId)
-                .then( function (result) {
-                    logConsole.info(result);
-                    objDatiProtocollo = result;
-                    callback(null, 'protocolloWS ... ok');
-                })
-                .catch(function (err) {
-                    // console.log(err);
-                    logConsole.error('ASYNC protocolloWS:');
-                    log2file.error(reqId);
-                    log2file.error(err);
-                    ErrorMsg = {
-                        title: 'Errore di protocollo',
-                        msg: 'Errore nella protocollazione della richiesta.' + supportMsg,
-                        code : 458
-                    }
-                    callback(ErrorMsg, null);
-                });
+                if(fakeConfig.protocollazione == 1) {
+                    protocolloWS(objFieldSanitized, reqId)
+                    .then( function (result) {
+                        logConsole.info(result);
+                        console.log(result);
+                        console.log(result.InserisciProtocolloEAnagraficheResult.Allegati);
+                        objDatiProtocollo = result;
+                        callback(null, 'protocolloWS ... ok');
+                    })
+                    .catch(function (err) {
+                        // console.log(err);
+                        logConsole.error('ASYNC protocolloWS:');
+                        log2file.error(reqId);
+                        log2file.error(err);
+                        ErrorMsg = {
+                            title: 'Errore di protocollo',
+                            msg: 'Errore nella protocollazione della richiesta.' + supportMsg,
+                            code : 458
+                        };
+                        callback(ErrorMsg, null);
+                    });
+                }
+
+                if(fakeConfig.protocollazione == 0) {
+                    logConsole.info('ASYNC protocolloWS: DISABLED!');
+                    objDatiProtocollo = {};
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult = {};
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento = 12345678;
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo = 2099;
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo = 2100;
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo = 'GG/MM/AAAA';
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.Messaggio = 'Inserimento Protocollo eseguito con successo, senza Avvio Iter';
+                    callback(null, 'protocolloWS ... FAKE!!!! ok');
+                }
+
+
             },
 
+            // ##### SAVING TO DISK ------------------------------------------------------------------------
+
             function(callback){
-                logConsole.info('ASYNC salvataggio dati protocollo nella cartella:');
-                // save protocollo
-                var DW_PATH = ENV_PROT.storageFolder;
-                var dir = DW_PATH + "/" + reqId;
-                var jsonFile = dir + "/PROTOCOLLO.txt";
-                logConsole.info(jsonFile);
-                logConsole.info(objDatiProtocollo);
-                fs.writeFileSync(jsonFile, JSON.stringify(objDatiProtocollo));
-                callback(null, 'salvataggio dati protocollo nella cartella ... ok');
+
+                if (fakeConfig.savingToDisk == 1){
+
+                    logConsole.info('ASYNC salvataggio dati protocollo nella cartella:');
+                    // save protocollo
+                    var DW_PATH = ENV_PROT.storageFolder;
+                    var dir = DW_PATH + "/" + reqId;
+                    var jsonFile = dir + "/PROTOCOLLO.txt";
+                    logConsole.info(jsonFile);
+                    logConsole.info(objDatiProtocollo);
+                    fs.writeFileSync(jsonFile, JSON.stringify(objDatiProtocollo));
+                    callback(null, 'salvataggio dati protocollo nella cartella ... ok');
+                }
+
+                if (fakeConfig.savingToDisk == 0){
+                    logConsole.info('ASYNC salvataggio dati FAKE FAKE protocollo nella cartella:');
+                    callback(null, 'salvataggio dati protocollo nella cartella ... FAKE ok');
+                }
+
+                if (fakeConfig.savingToDisk == 2){
+                    logConsole.info('ASYNC salvataggio dati FAKE FAKE protocollo nella cartella:');
+                    ErrorMsg = {
+                        title: 'saving file error',
+                        msg: 'Errore nella memorizzazione remota dei files.' + supportMsg,
+                        code : 457
+                    };
+                    callback(ErrorMsg, 'salvataggio dati protocollo nella cartella ... FAKE ERROR');
+                }
+                
+
             },
+
+            // ###### BUILD Response Message ----------------------------------------------------------------
 
             function(callback){
                 logConsole.info('ASYNC preparazione messaggio risposta:');
@@ -831,6 +930,7 @@ router.post('/upload', function(req, res) {
                 objFieldSanitized.idProtocollo =  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento;
                 objFieldSanitized.annoProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo;
                 objFieldSanitized.numeroProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
+                objFieldSanitized.dataProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo;
             
                 var template = handlebars.compile(fileContents);
                 htmlResponseMsg = template(objFieldSanitized);
@@ -838,52 +938,59 @@ router.post('/upload', function(req, res) {
 
             },
 
-            function(callback){
-                logConsole.info('ASYNC invio mail:');
+            // ##### Mail Send ------------------------------------------------------------------------
 
-                logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento);
-                logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo);
-                logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo);
+            function(callback){
+
+                if(fakeConfig.emailsend == 1){
+
+                    logConsole.info('ASYNC invio mail:');
+
+                    logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento);
+                    logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo);
+                    logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo);
 
                 // var msg = "Comune di Rimini - Protocollo " +  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo + "/" + objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
                 // create reusable transporter object using the default SMTP transport
 
-
-                var smtpConfig = {
-                    host: 'srv-mail.comune.rimini.it',
-                    port: 25,
-                    secure: false  //, // use SSL
-                    //auth: {
-                    //    user: 'user@gmail.com',
-                    //    pass: 'pass'
-                    //}
-                };
-                var transporter = nodemailer.createTransport(smtpConfig);
-                var mailOptions = {
-                    from: '"Ruggero Ruggeri" <ruggero.ruggeri@comune.rimini.it>', // sender address
-                    to: objFieldSanitized.emailRichiedente, // list of receivers
-                    subject: 'Promemoria - Presentazione Istanza', 
-                    // text: msg, // plaintext body
-                    html: htmlResponseMsg // html body
-                };
-                transporter.sendMail(mailOptions, function(error, info){
-                    if(error){
-                        log2file.error(reqId);
-                        log2file.error(err);
-                        ErrorMsg = {
-                           title: 'Errore di protocollo',
-                            msg: 'Errore durante invio mail. ' + supportMsg,
-                            code : 459
+                    var smtpConfig = {
+                        host: 'srv-mail.comune.rimini.it',
+                        port: 25,
+                        secure: false  //, // use SSL
+                        //auth: {
+                        //    user: 'user@gmail.com',
+                        //    pass: 'pass'
+                        //}
+                    };
+                    var transporter = nodemailer.createTransport(smtpConfig);
+                    var mailOptions = {
+                        from: '"Comune di Rimini - Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
+                        to: objFieldSanitized.emailRichiedente, // list of receivers
+                        subject: 'Promemoria presentazione istanza digitale', 
+                        // text: msg, // plaintext body
+                        html: htmlResponseMsg // html body
+                    };
+                    transporter.sendMail(mailOptions, function(error, info){
+                        if(error){
+                            log2file.error(reqId);
+                            log2file.error(err);
+                            ErrorMsg = {
+                            title: 'Errore di protocollo',
+                                msg: 'Errore durante invio mail. ' + supportMsg,
+                                code : 459
+                            }
+                            callback(ErrorMsg, null);
+                        } else {
+                            logConsole.info('Email sent!');
+                            callback(null, 'Invio mail ... ok');
                         }
-                        callback(ErrorMsg, null);
-                    } else {
-                        logConsole.info('Email sent!');
-                        callback(null, 'Invio mail ... ok');
-                    }
-                    
-                });
+                    });
+                }
 
-
+                 if(fakeConfig.emailsend == 0){
+                      logConsole.info('ASYNC invio mail: DISABILITATO!');
+                      callback(null, 'Invio mail .FAKE FAKE .. ok');
+                 }
 
             },
 

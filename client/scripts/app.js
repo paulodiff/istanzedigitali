@@ -9,16 +9,16 @@ angular.module('myApp', [//'ionic',
                          'ui.router',
                          'ui.select',
                          'dialogs.main',
-                         'formly',
-                         'formlyBootstrap',
-                         'satellizer',
+                         // 'formly',
+                         // 'formlyBootstrap',
+                         //'satellizer',
                          'ngResource',
                          'ngSanitize',
                          'ngMessages',
                          //'naif.base64',
                          //'ngCordova',
-                         'angularSpinner',
-                         'restangular',
+                         // 'angularSpinner',
+                         //'restangular',
                          'ngAnimate',
                          //'ngMockE2E',
                          'ngStorage',
@@ -37,6 +37,11 @@ angular.module('myApp', [//'ionic',
                          'myApp.config'])
                          //'myApp.mockBackend',
                          //'myApp.mockService'])
+
+// PATCH Possibly unhandled rejection with Angular 1.5.9
+.config(['$qProvider', function ($qProvider) {
+    $qProvider.errorOnUnhandledRejections(false);
+}])
 
 
 // enable disable LOG
@@ -66,19 +71,15 @@ angular.module('myApp', [//'ionic',
     // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
     $urlRouterProvider.otherwise('homeIstanze');
     
+/*
     $stateProvider.state('menu', {
             url: "/menu",
             abstract: true,
             templateUrl: "templates/mainDashboard.html"
     });
+    */
     
-    $stateProvider.state('menu.home',{
-            url: '/home',
-            templateUrl: "templates/loginDashboard.html",
-            controller:'LoginController',
-            accessLogged: false,
-            accessLevel: 'free1' 
-    });
+    
 
     $stateProvider.state('homeIstanze', {
         url: '/homeIstanze',
@@ -88,15 +89,43 @@ angular.module('myApp', [//'ionic',
         accessLevel: 'free1' 
     });
 
+    $stateProvider.state('protocollo', {
+        url: '/protocollo',
+        templateUrl: 'templates/protocollo.html',
+        controller: 'ProtocolloCtrl',
+        controllerAs: 'vm',
+        resolve: {
+          //loginRequired: loginRequired
+        }
+    });
+
+
+
+    /*
+    
+        $stateProvider.state('menu.home',{
+            url: '/home',
+            templateUrl: "templates/loginDashboard.html",
+            controller:'LoginController',
+            accessLogged: false,
+            accessLevel: 'free1' 
+    });
+
+    
+    
+    
+    
+    
+    
     $stateProvider.state('login', {
         url: '/login',
         templateUrl: 'templates/Slogin.html',
         // controller: 'SLoginCtrl',
         controller: 'LoginController',
         accessLogged: false
-    });
+    });*/
 
-    $stateProvider.state('signup', {
+/*    $stateProvider.state('signup', {
         url: '/signup',
         templateUrl: 'templates/Ssignup.html',
         controller: 'SSignupCtrl',
@@ -113,9 +142,9 @@ angular.module('myApp', [//'ionic',
         templateUrl: 'templates/Sprofile.html',
         controller: 'profileMgrCtrl',
         accessLogged: true
-    });
+    });*/
 
-    $stateProvider.state('form', {
+/*    $stateProvider.state('form', {
         url: '/form',
         templateUrl: 'templates/formly.html',
         controller: 'SFormlyCtrl',
@@ -189,15 +218,6 @@ angular.module('myApp', [//'ionic',
         }
     });
 
-    $stateProvider.state('protocollo', {
-        url: '/protocollo',
-        templateUrl: 'templates/protocollo.html',
-        controller: 'ProtocolloCtrl',
-        controllerAs: 'vm',
-        resolve: {
-          //loginRequired: loginRequired
-        }
-    });
 
     $stateProvider.state('batch', {
         url: '/batch',
@@ -260,8 +280,8 @@ angular.module('myApp', [//'ionic',
         }
     });
 
-
-    function skipIfLoggedIn($q, AuthService) {
+*/
+/*    function skipIfLoggedIn($q, AuthService) {
       var deferred = $q.defer();
       if (AuthService.isAuthenticated()) {
         console.log('skipIfLoggedIn ... REJECT!');
@@ -284,14 +304,14 @@ angular.module('myApp', [//'ionic',
       }
       return deferred.promise;
     }
-
+*/
     // material design
     $.material.init();
 
 }])
 
-/*
-// satellizer
+
+/*// satellizer
 
 .config(function($authProvider) {
 
@@ -335,7 +355,7 @@ angular.module('myApp', [//'ionic',
 })
 */
 
-
+/*
 //formly configuration GLOBALE
 .config(function(formlyConfigProvider) {
 
@@ -478,7 +498,7 @@ angular.module('myApp', [//'ionic',
     ]);
 
 
-})
+})*/
 
 
 .run(function() {

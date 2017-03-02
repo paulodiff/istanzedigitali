@@ -8,8 +8,8 @@ angular.module('myApp.controllers')
 
 // SFormlyCtrl ---------------------------------------------------------------------------------
 .controller('ProtocolloCtrl', 
-          ['$rootScope','$scope', '$state', '$location', 'Session', '$log', '$timeout','ENV','formlyConfig','$q','$http','formlyValidationMessages', 'FormlyService','usSpinnerService','dialogs','UtilsService', 'Upload', '$anchorScroll', 
-   function($rootScope,  $scope,   $state,   $location,   Session,   $log,   $timeout,  ENV,  formlyConfig,  $q,  $http,  formlyValidationMessages,   FormlyService,  usSpinnerService,  dialogs,   UtilsService,  Upload, $anchorScroll) {
+          ['$rootScope','$scope', '$state', '$location', 'Session', '$log', '$timeout','ENV','$q','$http', 'dialogs', 'UtilsService', 'Upload', '$anchorScroll', 
+   function($rootScope,  $scope,   $state,   $location,   Session,   $log,   $timeout,  ENV,  $q,  $http,   dialogs,   UtilsService,   Upload,   $anchorScroll) {
     
     $log.debug('ProtocolloCtrl');
     var apiUploadUrl = $rootScope.base_url + '/' + ENV.apiUpload;  
@@ -23,13 +23,16 @@ angular.module('myApp.controllers')
     var unique = 1;
     var _progress = 0;
 
-
+    $scope.bshowForm = true;
+    $scope.apiReturnCode = 0;
     
     /*  ---  */
 
     vm.id = 'form01';
     vm.showError = true;
-    vm.bshowForm = true;
+    
+
+    //vm.bshowForm = true;
     vm.name  = "NAME01";
     vm.email  = "a@a.com";
     vm.userForm = {};
@@ -55,8 +58,8 @@ angular.module('myApp.controllers')
     vm.onSubmit = onSubmit;
     vm.calcHash = calcHash;
     vm.onInputFileChange = onInputFileChange;
-    vm.show_Form = function(){ vm.bshowForm = true};
-    vm.hide_Form = function(){ vm.bshowForm = false};
+    vm.show_Form = function(){ $scope.bshowForm = true};
+    vm.hide_Form = function(){ $scope.bshowForm = false};
 
     function onInputFileChange(f){
         console.log('onInputFileChange', f);
@@ -70,6 +73,10 @@ angular.module('myApp.controllers')
 
     function calcHash(f){
         console.log('calcHash', f);
+
+        // EXIT !!!!!! NO CALC
+        return true;
+
         vm.model.picFile1_info = "";
 
         if(f) {
@@ -147,7 +154,7 @@ angular.module('myApp.controllers')
 
           var dlg = dialogs.wait('Elaborazione in corso',undefined,_progress);
 
-          console.log('upload!!');
+          console.log('onSubmit: upload!!');
           
           //var upFiles = [];
           //upFiles.push(vm.model.picFile1);
@@ -162,32 +169,37 @@ angular.module('myApp.controllers')
             //data: {files : upFiles, fields: vm.model  }
             data: {fields: vm.model  }
         }).then(function (resp) {
-            console.log('Success ');
+            console.log('onSubmit: Success ');
             console.log(resp);
 
-               $rootScope.$broadcast('dialogs.wait.complete'); 
-               dialogs.notify('Richiesta correttamente pervenuta', resp.data);
-               vm.responseMessage = resp.data;
-               vm.bshowForm = false;
-               console.log(vm.responseMessage);
-              //dialogs.error('500 - Errore server',response.data.message, response.status);
+            $rootScope.$broadcast('dialogs.wait.complete'); 
+            //dialogs.notify('Richiesta correttamente pervenuta', resp.data);
+            vm.responseMessage = resp.data;
+            $scope.bshowForm = false;
+            $scope.apiReturnCode = resp.data.code;
+            $scope.btnTextSendButton = "PROCEDI AD ALTRO INVIO";
+            console.log(vm.responseMessage);
+            //dialogs.error('500 - Errore server',response.data.message, response.status);
           
             //usSpinnerService.stop('spinner-1');
         }, function (resp) {
             $rootScope.$broadcast('dialogs.wait.complete');
-            console.log('Error status: ' + resp.status);
+            console.log('onSubmit: Error status: ' + resp.status);
             console.log(resp);
 
             if (resp.status == -1){
                 vm.responseMessage.title = "Errore di connessione";
                 vm.responseMessage.msg = "Verificare la connessione internet e riprovare la trasmissione";
                 vm.responseMessage.code = 999;
+                $scope.apiReturnCode = 999;
             } else {
                 vm.responseMessage = resp.data;
+                $scope.apiReturnCode = resp.data.code;
             }
 
-            vm.bshowForm = false;
-            dialogs.error('Errore - ' + resp.status, resp.data.msg);
+            $scope.bshowForm = false;
+            $scope.btnTextSendButton = "RIPROVA LA TRASMISSIONE";
+            //dialogs.error('Errore - ' + resp.status, resp.data.msg);
             console.log(vm.responseMessage);
         }, function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
@@ -201,8 +213,7 @@ angular.module('myApp.controllers')
             }
         });
 
-    
-          
+              
         }
     }
 

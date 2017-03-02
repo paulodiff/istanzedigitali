@@ -6,9 +6,9 @@
     
 
     
-
+<div  ng-if="bshowForm">
        <!-- create our form -->
-    <form name="vm.userForm" ng-show="vm.bshowForm">
+    <form name="vm.userForm">
 
 <div class="panel panel-success">
   <div class="panel-heading">Dati</div>
@@ -306,13 +306,12 @@
       <input    id="inputFile1"
                 class="btn btn-raised btn-success btn-block"
                 type="file" 
-                ng-model="vm.model.picFile1" 
+                ng-model="vm.model.ciFile1" 
                 name="file1"    
                 accept="*/*" 
                 ngf-select 
                 ngf-min-size="1"
                 ngf-max-size="10MB" 
-                ngf-change="vm.calcHash($file)"
                 ngf-model-invalid="errorFile">
  
 
@@ -327,16 +326,18 @@
                 class="btn btn-raised btn-success  btn-block"
                 type="file" 
                 ng-model="vm.model.ciFile2" 
-                name="ciFile2"    
+                name="file2"    
                 accept="*/*" 
                 ngf-select 
+                ngf-min-size="1"
                 ngf-max-size="10MB" 
-                ngf-change="vm.calcHash($file)"
                 ngf-model-invalid="errorFile">
  
 
-      <span class="label label-danger" ng-show="vm.userForm.ciFile2.$error.maxSize" class="badge">File troppo grande 
+      <span class="label label-danger" ng-show="vm.userForm.file2.$error.required">Allegato obbligatorio</span>
+      <span class="label label-danger" ng-show="vm.userForm.file2.$error.maxSize" class="badge">File troppo grande 
           {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
+       <span class="label label-danger" ng-show="vm.userForm.file2.$error.minSize" class="badge">File troppo piccolo {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>          
    </div>
 
    <div class="form-group">
@@ -346,16 +347,17 @@
                 class="btn btn-raised btn-success btn-block"
                 type="file" 
                 ng-model="vm.model.ciFile3" 
-                name="ciFile3"    
+                name="file3"    
                 accept="*/*" 
                 ngf-select 
+                ngf-min-size="1"
                 ngf-max-size="10MB" 
-                ngf-change="vm.calcHash($file)"
                 ngf-model-invalid="errorFile">
  
-
-      <span class="label label-danger" ng-show="vm.userForm.ciFile3.$error.maxSize" class="badge">File troppo grande 
+      <span class="label label-danger" ng-show="vm.userForm.file3.$error.required">Allegato obbligatorio</span>
+      <span class="label label-danger" ng-show="vm.userForm.file3.$error.maxSize" class="badge">File troppo grande 
           {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
+      <span class="label label-danger" ng-show="vm.userForm.file3.$error.minSize" class="badge">File troppo piccolo {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>                    
    </div>
 
 <!--
@@ -434,12 +436,18 @@
 
         
     </form>
+</div>
 
 
-<div id="responseArea" ng-show="!vm.bshowForm">
+<!-- ---------------------------------------- FORM RISULTATO ------------------------------------------------------ -->
 
 
-    <div class="alert alert-success" ng-if="vm.responseMessage.code === 200">
+[{{bshowForm}}-{{apiReturnCode}}]
+
+
+<div ng-if="!bshowForm">
+    <p>#######################################################</p>
+    <div class="alert alert-success" ng-if="apiReturnCode === 200">
        <h4><i class="material-icons">done</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
        <p>Promemoria - Presentazione Istanza</p>
        <p>Con la presente si conferma la ricezione della istanza presentata con i seguenti dati:<p>
@@ -465,7 +473,6 @@
        </tbody>
        </table>
   
-
        <p>Le è stata inviata una mail all'indirizzo specificato nella richiesta con i presenti dati di riepilogo.</p>
        <p>Per ogni informazione può contattare ....</p>
 
@@ -473,51 +480,66 @@
                     class="btn btn-raised btn-info btn-block btn-lg"  
                     ng-click="vm.show_Form()">Nuova trasmissione</button>
 
-
     </div>
-    <div class="alert alert-danger" ng-if="vm.responseMessage.code != 200">
-       <h4><i class="material-icons">error</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
-        <h5> {{vm.responseMessage.msg}} </h5>
-        <h5> Riprovare più tardi.</h5>
-        <h5> Una segnalazione è già stata inviata all'amministratore di sistema.</h5>
-        <p><b>Identificativo della richiesta:{{vm.responseMessage.reqId}} <b><br><br>Grazie</p>
 
-         <button type="submit"
-                    class="btn btn-raised btn-info btn-block btn-lg"  
-                    ng-click="vm.show_Form()">Riprova la trasmissione</button>
+
+    <div class="alert alert-danger" ng-if="apiReturnCode != 200">
+       <h4><i class="material-icons">error</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
+       <h5>{{vm.responseMessage.msg}}</h5>
+       <h5>Riprovare più tardi.</h5>
+       <h5>Una segnalazione è già stata inviata all'amministratore di sistema.</h5>
+       <p><b>Identificativo della richiesta:{{vm.responseMessage.reqId}} <b><br><br>Grazie</p>
+
+        <button type="submit"
+                class="btn btn-raised btn-info btn-block btn-lg"  
+                ng-click="vm.show_Form()">Riprova la trasmissione</button>
         
     </div>
 
+
 </div>
 
-<!--
-    <pre>vm.userForm.$valid = {{ vm.userForm.$valid | json }}</pre>
-    <pre>vm.userForm.name.$error = {{ vm.userForm.name.$error | json }}</pre>
-    <pre>vm.userForm.name.$touched = {{ vm.userForm.name.$touched | json }}</pre>
-    <pre>vm.userForm = {{ vm.userForm| json }}</pre>
-    <pre>vm.model.picFile1 = {{ vm.model.picFile1 }}</pre>
-    
-    
-      
-      <p>Form Data</p>
-      <pre>{{vm.model | json}}</pre>
-      <p>Form Error</p>
-      <pre>{{vm.errors | json}}</pre>
-    </div>
-    <p>reCaptcha - http://vividcortex.github.io/angular-recaptcha/ </p>
-    <p>hashMe.js - https://github.com/marcu87/hashme </p>
-    <p>ng-file-upload - https://github.com/danialfarid/ng-file-upload </p>
-    <p>csrf - https://www.theodo.fr/blog/2015/04/preventing-csrf-attacks-with-express-and-angularjs/ </p>
-    <p>Serve static files in route - http://stackoverflow.com/questions/11569181/serve-static-files-on-a-dynamic-route-using-express </p>
-    <p>CSS Input Style - http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/</p>
-    <p>Double Mail - http://stackoverflow.com/questions/22173016/comparing-two-input-values-in-a-form-validation-with-angularjs</p>
-    <p>UI-Validate - https://github.com/angular-ui/ui-validate </p>
-    <div>
-        <p>Output</p>
-        <pre>{{outputStatusCode}}</pre>
-        <pre>{{outputResponse}}</pre>
-    </div>
-
--->
 
 </div>      
+
+
+
+<div ng-if="!bshowForm" >
+       
+    
+  
+    <div  ng-switch on="apiReturnCode">
+        <div ng-switch-when="200">
+            <div class="alert alert-success"
+                <h4><i class="material-icons">done</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
+            </div>
+            <div class="well" role="alert">
+                <p ng-bind-html="vm.responseMessage.htmlMsg"></p>
+                <hr>
+                <p>Le è stata inviata una mail all'indirizzo specificato nella richiesta con i presenti dati di riepilogo.</p>
+            </div>
+        
+        </div>
+
+         <div class="animate-switch" ng-switch-default>
+                    <div class="alert alert-danger">
+                    <h4><i class="material-icons">error</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
+                    <h5>{{vm.responseMessage.msg}}</h5>
+                    <h5>Riprovare più tardi.</h5>
+                    <h5>Una segnalazione è già stata inviata all'amministratore di sistema.</h5>
+                    <p><b>Identificativo della richiesta:{{vm.responseMessage.reqId}} <b><br><br>Grazie</p>
+           
+         </div>
+
+     </div>
+
+
+           <button     type="submit"
+                                class="btn btn-raised btn-info btn-block btn-lg"  
+                                ng-click="vm.show_Form()">{{btnTextSendButton}}</button>
+         
+
+            
+    </div>
+
+</div>

@@ -14,7 +14,7 @@ angular.module('myApp.services', [])
 
 
 .factory('AuthService',           ['ENV', '$http', 'Session', '$rootScope', '$log', '$localStorage',
-                         function ( ENV,   $http,   Session,   $rootScope,   $log, $localStorage) {
+                         function ( ENV,   $http,   Session,   $rootScope,   $log,   $localStorage) {
   return {
 
     login: function (credentials) {
