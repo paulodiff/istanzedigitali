@@ -9,7 +9,7 @@
     <link href="//fonts.googleapis.com/css?family=Roboto|Montserrat:400,700|Open+Sans:400,300,600" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <!-- build:css fast/combined.css -->
+    <!-- build:css combined.css -->
     <link href="css/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
     <link href="lib/bootstrap.min.css" rel="stylesheet">
@@ -38,7 +38,7 @@
     <link href="css/ionic.app.css" rel="stylesheet">
     -->
 
-    <!-- build:js fast/combined.js -->
+    <!-- build:js vendor-combined.js -->
 
     <!-- ionic/angularjs js -->
     <!-- <script src="lib/ionic/js/ionic.bundle.js"></script> -->
@@ -141,22 +141,28 @@
 
     <!-- Google Recaptcha-->
     <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit"  async defer></script>
-    <!-- build:js fast/combined2.js -->
-    <script type="text/javascript" src="bower_components/angular-recaptcha/release/angular-recaptcha.min.js"></script>
 
+    <!-- build:js vendor-combined2.js -->
+    <script type="text/javascript" src="bower_components/angular-recaptcha/release/angular-recaptcha.min.js"></script>
 
     <!-- UI-Validate -->
     <script type="text/javascript" src="bower_components/angular-ui-validate/dist/validate.min.js"></script>
     
+
     <!-- ng-table 
     <link rel="stylesheet"; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
     <script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
     -->
     
 
+
     <!-- socket.io 
     <script src="/socket.io/socket.io.js"></script>
-    -->
+     -->
+
+     <!-- endbuild -->
+
+    <!-- build:js app-combined2.js -->
 
     <!-- your app's js -->
     <script src="scripts/app.js"></script>
@@ -172,7 +178,7 @@
     <script src="scripts/rootControllers.js"></script>
     <script src="scripts/loginControllers.js"></script>
     <script src="scripts/homeControllers.js"></script>
-    <script src="scripts/profileControllers.js"></script>
+    <!-- <script src="scripts/profileControllers.js"></script> -->
     <!-- <script src="scripts/sigControllers.js"></script> -->
     <!-- <script src="scripts/SloginControllers.js"></script> -->
     <!-- <script src="scripts/formlyControllers.js"></script> -->

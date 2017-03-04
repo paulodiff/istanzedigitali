@@ -34,12 +34,12 @@ app.use(morgan('dev'));
 // available under the req.body property
 var bodyParser   = require('body-parser');
 var jsonParser = bodyParser.json({
-                              limit:1024*1024*20, 
+                              limit:1024*1024*35, 
                               type:'application/json'
                             });
 var urlencodedParser = bodyParser.urlencoded({ 
                               extended:true,
-                              limit:1024*1024*20,
+                              limit:1024*1024*35,
                               type:'application/x-www-form-urlencoding' 
                             });
 
@@ -301,6 +301,7 @@ app.get('/profile',
 
 app.use('/home', express.static(__dirname + '/home'));
 app.use('/cli', express.static(__dirname + '/client'));
+app.use('/dist', express.static(__dirname + '/client/dist'));
 
 log.log2console('Server started at:' + ENV.nodejs.NODEJSport);
 log.log2file('Server started at:' + ENV.nodejs.NODEJSport);

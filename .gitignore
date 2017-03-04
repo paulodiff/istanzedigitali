@@ -2,12 +2,14 @@ node_modules
 certs
 log
 tmp
+storage
 docs
 .idea
 .temp
 .sass-cache
 client/bower_components
 client/scripts/configuration.js
+client/dist
 coverage
 platforms
 plugins

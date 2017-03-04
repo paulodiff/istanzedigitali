@@ -37,18 +37,24 @@ angular.module('myApp.controllers')
     vm.email  = "a@a.com";
     vm.userForm = {};
     vm.model = {};
-    vm.model.nomeRichiedente = 'MARIO';
-    vm.model.cognomeRichiedente = 'ROSSI';
-    vm.model.emailRichiedente = 'ruggero.ruggeri@comune.rimini.it';
-    vm.model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
-    vm.model.codiceFiscaleRichiedente = 'RGGRGR70E25H294T';
-    vm.model.cellulareRichiedente = 3355703086;
-    vm.model.dataNascitaRichiedente = '01/11/1912';
-    vm.model.indirizzoRichiedente = 'VIA ROMA, 1';
-    vm.model.cittaRichiedente = 'RIMINI';
-    vm.model.capRichiedente = 47921;
-    vm.model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
-    vm.model.oggettoRichiedente = 'Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....';
+
+    if (ENV.debugFormDefaultData) {
+
+        vm.model.nomeRichiedente = 'MARIO';
+        vm.model.cognomeRichiedente = 'ROSSI';
+        vm.model.emailRichiedente = 'ruggero.ruggeri@comune.rimini.it';
+        vm.model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
+        vm.model.codiceFiscaleRichiedente = 'RGGRGR70E25H294T';
+        vm.model.cellulareRichiedente = 3355703086;
+        vm.model.dataNascitaRichiedente = '01/11/1912';
+        vm.model.indirizzoRichiedente = 'VIA ROMA, 1';
+        vm.model.cittaRichiedente = 'RIMINI';
+        vm.model.capRichiedente = 47921;
+        vm.model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
+        vm.model.oggettoRichiedente = 'Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....';
+
+    }
+
     vm.model.hash = [];
     vm.responseMessage = {};
     vm.labelInputFileCSS = 'Scegli un file...';

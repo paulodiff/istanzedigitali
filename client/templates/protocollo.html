@@ -1,8 +1,9 @@
 <div class="container">
-    <div class="well" role="alert">
-     <h4>COMUNE DI RIMINI - RICEVIMENTO ISTANZE</h4>
+
+<div class="well" ng-if="bshowForm" role="alert">
+     <h4>COMUNE DI RIMINI - ISTANZE E DICHIARAZIONI ONLINE</h4>
      <p>Compilare accuratamente i dati sottostanti per la trasmissione di una istanza generica</p>
-    </div>
+</div>
     
 
     
@@ -414,14 +415,14 @@
 
   <div class="form-group">
 
-    <p>SEGNAPOSTO..TEST</p>
+    <p>--------</p>
 
     <!--
     <div    vc-recaptcha   
             ng-model="vm.model.RecaptchaResponse"
-            key="'6Ldg6AwUAAAAAPgKoqezNrIVEsmdm7uafTop0r84'"></div>
+            key="'6Ldg6AwUAAAAAPgKoqezNrIVEsmdm7uafTop0r84'"></div> -->
   </div>
-  -->
+
 </div>
 </div>
 
@@ -441,76 +442,13 @@
 
 <!-- ---------------------------------------- FORM RISULTATO ------------------------------------------------------ -->
 
-
-[{{bshowForm}}-{{apiReturnCode}}]
-
-
-<div ng-if="!bshowForm">
-    <p>#######################################################</p>
-    <div class="alert alert-success" ng-if="apiReturnCode === 200">
-       <h4><i class="material-icons">done</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
-       <p>Promemoria - Presentazione Istanza</p>
-       <p>Con la presente si conferma la ricezione della istanza presentata con i seguenti dati:<p>
-
-       <table class="table">
-       <tbody>
-       <tr>
-            <td>Protocollo:</td>
-            <td>{{vm.responseMessage.msg.annoProtocollo}}/{{vm.responseMessage.msg.numeroProtocollo}}</td>
-      </tr>
-             <tr>
-            <td>Nome Cognome:</td>
-            <td>{{vm.responseMessage.msg.nomeRichiedente}}/{{vm.responseMessage.msg.cognomeRichiedente}}</td>
-      </tr>
-             <tr>
-            <td>CodiceFiscale:</td>
-            <td>{{vm.responseMessage.msg.codiceFiscaleRichiedente}}</td>
-      </tr>
-             <tr>
-            <td>Email:</td>
-            <td>{{vm.responseMessage.msg.emailRichiedente}}</td>
-      </tr>
-       </tbody>
-       </table>
-  
-       <p>Le è stata inviata una mail all'indirizzo specificato nella richiesta con i presenti dati di riepilogo.</p>
-       <p>Per ogni informazione può contattare ....</p>
-
-         <button type="submit"
-                    class="btn btn-raised btn-info btn-block btn-lg"  
-                    ng-click="vm.show_Form()">Nuova trasmissione</button>
-
-    </div>
-
-
-    <div class="alert alert-danger" ng-if="apiReturnCode != 200">
-       <h4><i class="material-icons">error</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
-       <h5>{{vm.responseMessage.msg}}</h5>
-       <h5>Riprovare più tardi.</h5>
-       <h5>Una segnalazione è già stata inviata all'amministratore di sistema.</h5>
-       <p><b>Identificativo della richiesta:{{vm.responseMessage.reqId}} <b><br><br>Grazie</p>
-
-        <button type="submit"
-                class="btn btn-raised btn-info btn-block btn-lg"  
-                ng-click="vm.show_Form()">Riprova la trasmissione</button>
-        
-    </div>
-
-
-</div>
-
-
-</div>      
-
-
-
 <div ng-if="!bshowForm" >
        
     
   
     <div  ng-switch on="apiReturnCode">
         <div ng-switch-when="200">
-            <div class="alert alert-success"
+            <div class="alert alert-success">
                 <h4><i class="material-icons">done</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
             </div>
             <div class="well" role="alert">
@@ -527,8 +465,6 @@
                     <h5>{{vm.responseMessage.msg}}</h5>
                     <h5>Riprovare più tardi.</h5>
                     <h5>Una segnalazione è già stata inviata all'amministratore di sistema.</h5>
-                    <p><b>Identificativo della richiesta:{{vm.responseMessage.reqId}} <b><br><br>Grazie</p>
-           
          </div>
 
      </div>

@@ -1,15 +1,1 @@
-<div class="formly-error-summary">
-        <p>Error summary</p>
-        <div ng-repeat="field in vm.fields" ng-class="{'color-success': field.formControl.$valid, 'color-error': field.formControl.$invalid}">
-           <i class="glyphicon glyphicon-{{field.formControl.$invalid ? 'remove' : 'ok'}}"></i>
-          {{field.templateOptions.label}} is
-          V{{field.formControl.$valid}}
-          I{{field.formControl.$invalid}}
-          <span ng-if="field.formControl.$invalid">
-            invalid! {{vm.getErrorAsList(field)}}
-          </span>
-          <span ng-if="field.formControl.$valid">
-            valid!
-          </span>
-        </div>
-      </div>
+<div class="formly-error-summary"><p>Error summary</p><div ng-repeat="field in vm.fields" ng-class="{'color-success': field.formControl.$valid, 'color-error': field.formControl.$invalid}"><i class="glyphicon glyphicon-{{field.formControl.$invalid ? 'remove' : 'ok'}}"></i> {{field.templateOptions.label}} is V{{field.formControl.$valid}} I{{field.formControl.$invalid}} <span ng-if="field.formControl.$invalid">invalid! {{vm.getErrorAsList(field)}} </span><span ng-if="field.formControl.$valid">valid!</span></div></div>

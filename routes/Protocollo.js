@@ -71,6 +71,20 @@ log4js.configure({
       category: 'access-file-logger-protocollo',
       maxLogSize: 120480,
       backups: 10 
+    },
+    {
+     type: 'smtp',
+     recipients: 'ruggero.ruggeri@comune.rimini.it',
+     sender: 'ruggero.ruggeri@comune.rimini.it',
+     category: 'email-log',
+     subject : 'ERRORE - ISTANZE DIGITALI',
+     sendInterval: 60,
+     'SMTP': {
+            "host": "srv-mail.comune.rimini.it",
+            "secure": false,
+            "port": 25
+            // , "auth": { "user": "foo@bar.com", "pass": "bar_foo"  }
+        }
     }
   ]
 });
@@ -79,6 +93,8 @@ var logger = log4js.getLogger();
 // init logging
 var logConsole  = log4js.getLogger();
 // var loggerDB = log4js.getLogger('mongodb');
+var log2Email = log4js.getLogger('email-log');
+
 
 var log2file = log4js.getLogger('error-file-logger-protocollo');
 log2file.setLevel(ENV_PROT.log_level);
@@ -134,7 +150,7 @@ router.get('/ping', function (req, res) {
 
     res.send(xmlBuilded);
 
-
+    log2Email.info('Ciao');
 
 
     async.series([
@@ -220,18 +236,7 @@ router.get('/mail',  function (req, res) {
 
 
 
-    // create reusable transporter object using the default SMTP transport
-    var smtpConfig = {
-        host: 'srv-mail.comune.rimini.it',
-        port: 25,
-        secure: false//, // use SSL
-        //auth: {
-        //    user: 'user@gmail.com',
-        //    pass: 'pass'
-        //}
-    };
-
-    var transporter = nodemailer.createTransport(smtpConfig);
+    var transporter = nodemailer.createTransport(ENV_PROT.smtpConfig);
 
 
     // setup e-mail data with unicode symbols
@@ -521,6 +526,34 @@ function sanitizeInput(fieldList, fieldsObj,  reqId) {
      
 }
 
+/* EMAIL SENDER -------------------------------------------------------------------------------------------------------- */
+
+function emailSend(mailOptions){
+        var transporter = nodemailer.createTransport(ENV_PROT.smtpConfig);
+        /*
+        var mailOptions = {
+                        from: '"Comune di Rimini - Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
+                        to: objFieldSanitized.emailRichiedente, // list of receivers
+                        subject: 'Promemoria presentazione istanza digitale', 
+                        // text: msg, // plaintext body
+                        html: htmlResponseMsg // html body
+                    };
+        */
+        return new Promise(function (resolve, reject) {
+            transporter.sendMail(mailOptions, function(error, info){
+                    if(error){
+                            logConsole.error('emailSend ERROR!');
+                            logConsole.error(error);
+                            reject(error);
+                    } else {
+                            logConsole.info('Email sent!');
+                            resolve('Email Sent!');
+                        }
+                    });
+                });   
+}
+
+
 /* PROTOCOLLO  --------------------------------------------------------------------------------------------------------- */
 
 function protocolloWS(objFilesList,  reqId) {
@@ -673,7 +706,7 @@ router.post('/upload', function(req, res) {
     var reqId = utilityModule.getTimestampPlusRandom();
 
     ErrorMsg.reqId = reqId;
-    var supportMsg = 'Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it o telefonare allo 0541/704607 o 0541/704612 utilizzando il seguente identificativo di richiesta: ' + reqId + '. Grazie.';
+    var supportMsg = 'Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it o telefonare allo 0541/704607 o 0541/704612 utilizzando il seguente codice unico di transazione: ' + reqId + '. Grazie.';
 
     var objFilesList = {};
     var objFieldList = {};
@@ -691,7 +724,7 @@ router.post('/upload', function(req, res) {
         captCha : 0, // 1 abilitata 0 disabilitata/fake 2 errore
         parsingValues: 1, // 1 sempre decodifica  i parametri dei form
         savingToDisk: 1,
-        protocollazione: 0,
+        protocollazione: 1,
         emailsend: 1
     }
 
@@ -868,6 +901,16 @@ router.post('/upload', function(req, res) {
                     callback(null, 'protocolloWS ... FAKE!!!! ok');
                 }
 
+                if(fakeConfig.protocollazione == 2) {
+                    logConsole.info('ASYNC protocolloWS: FAKE ERRORE!');
+                    ErrorMsg = {
+                        title: 'Errore di protocollo',
+                        msg: 'Errore nella protocollazione della richiesta.' + supportMsg,
+                        code : 458
+                    };
+                    callback(ErrorMsg, null);
+                }
+
 
             },
 
@@ -953,16 +996,7 @@ router.post('/upload', function(req, res) {
                 // var msg = "Comune di Rimini - Protocollo " +  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo + "/" + objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
                 // create reusable transporter object using the default SMTP transport
 
-                    var smtpConfig = {
-                        host: 'srv-mail.comune.rimini.it',
-                        port: 25,
-                        secure: false  //, // use SSL
-                        //auth: {
-                        //    user: 'user@gmail.com',
-                        //    pass: 'pass'
-                        //}
-                    };
-                    var transporter = nodemailer.createTransport(smtpConfig);
+                    var transporter = nodemailer.createTransport(ENV_PROT.smtpConfig);
                     var mailOptions = {
                         from: '"Comune di Rimini - Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
                         to: objFieldSanitized.emailRichiedente, // list of receivers
@@ -1002,6 +1036,7 @@ router.post('/upload', function(req, res) {
         if(err){
             log2file.error(err);
             logConsole.error(err);
+            log2Email.info(err);
             res.status(ErrorMsg.code).send(ErrorMsg);
         } else {
             logConsole.info('ALL OK!!!!');
@@ -1463,8 +1498,7 @@ router.post('/inserisciProtocollo',  utilityModule.ensureAuthenticated, function
 
         }); //client.InserisciProtocollo
 
-
-            // res.status(200).send('ok');
+        // res.status(200).send('ok');
 
 	}); //soap.createClient
 
@@ -1499,7 +1533,6 @@ router.post('/inserisciProtocollo',  utilityModule.ensureAuthenticated, function
     } catch (err) {
         log2file.error('Errore save file!');
     }
-    
 
 });
 
@@ -1515,7 +1548,6 @@ router.get('/leggiProtocollo', function(req, res) {
         var soapOptions = {
             endpoint: 'http://10.10.129.111:58000/client/services/ProtocolloSoap?CID=COCATEST'
         };
-
 
         soap.createClient(WS_IRIDE, soapOptions, function(err, client){
         
@@ -1624,7 +1656,7 @@ router.get('/j', function(req, res) {
 
 
 
-router.get('/i',function(req, res) {
+/*router.get('/i',function(req, res) {
 
     console.log('i--protocollazione---------------');
     
@@ -1746,21 +1778,14 @@ router.get('/i',function(req, res) {
 
 });
 
-
+*/
 // route per la protocollazione
-router.post('/protocollo', multipartMiddleware, /* utilityModule.ensureAuthenticated, */  function(req, res) {
+router.post('/protocolloTEST', multipartMiddleware, /* utilityModule.ensureAuthenticated, */  function(req, res) {
       console.log('/protocollo .... ');
       
       console.log(req.body);
       console.log(req.query);
       console.log(req.user);
-
-      // var pagesize = parseInt(req.query.pageSize); 
-      // var n =  parseInt(req.query.currentPage);
-      // var collection = mongocli.get().collection('helpdesk');
-      // var rand = Math.floor(Math.random()*100000000).toString();
-      // db.users.find().skip(pagesize*(n-1)).limit(pagesize)
-      // var searchCriteria = { "userData.userProvider": req.user.userProvider, $and: [ { "userData.userId": req.user.userId } ] };
 
       var searchCriteria = {};
 

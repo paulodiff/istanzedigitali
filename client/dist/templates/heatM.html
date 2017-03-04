@@ -1,58 +1,12 @@
-<style type="text/css">
-  .btn-warning {
+<style type="text/css">.btn-warning {
        background-color:#EC971F;
      }
    #legend {
     background: white;
     padding: 5px;
-  }
-  </style>
-<script type="text/ng-template" id="control.tpl.html">
-  <div id="legend">
+  }</style><script type="text/ng-template" id="control.tpl.html"><div id="legend">
     <p>CodiceRadio:{{legend.CodiceRadio}}</p>
     <!-- <p>Raggio:{{legend.raggio}}</p> -->
     <p>Opacita:{{legend.opacita}}</p>
     <!-- <button class="btn btn-sm btn-primary" ng-click="controlClick()">www</button> -->
-  </div>
-</script>
-
-
-
-<ion-view>
-  <ion-nav-bar class="bar-royal">
-	<ion-nav-title class="bar-dark">Heat</ion-nav-title>
-    <ion-nav-buttons side="left">
-      <button class="button button-icon button-clear ion-navicon" ng-click="toggleLeft()"></button>
-    </ion-nav-buttons>
-      <ion-nav-buttons side="right" >
-        <button class="button button-icon ion-ios-refresh" ng-click="refreshMap()"></button>
-        <button class="button button-icon ion-ios-book" ng-click="openSortModal()"></button>
-      </ion-nav-buttons>
-  </ion-nav-bar>
-
-
-
-<ion-content>    
-<div id="map_canvas" >
-<ui-gmap-google-map center='map.center' 
-                    zoom='map.zoom' 
-                    draggable="true" 
-                    options="'options'"
-                    events='map.events'
-                    control="map.control"
-                    >
-<ui-gmap-map-control template="control.tpl.html" controller="HeatLegendController" position="top-right" index="999999">
-  <div id="legend">My first legend!</div>
-</ui-gmap-map-control>
-<ui-gmap-layer namespace="visualization" 
-               type="HeatmapLayer" 
-               show="map.showHeat" 
-               onCreated="getHeatData"></ui-gmap-layer>
-
-
-</ui-gmap-google-map>
-</div>
-
-</ion-content>
-
-</ion-view>
+  </div></script><ion-view><ion-nav-bar class="bar-royal"><ion-nav-title class="bar-dark">Heat</ion-nav-title><ion-nav-buttons side="left"><button class="button button-icon button-clear ion-navicon" ng-click="toggleLeft()"></button></ion-nav-buttons><ion-nav-buttons side="right"><button class="button button-icon ion-ios-refresh" ng-click="refreshMap()"></button> <button class="button button-icon ion-ios-book" ng-click="openSortModal()"></button></ion-nav-buttons></ion-nav-bar><ion-content><div id="map_canvas"><ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="'options'" events="map.events" control="map.control"><ui-gmap-map-control template="control.tpl.html" controller="HeatLegendController" position="top-right" index="999999"><div id="legend">My first legend!</div></ui-gmap-map-control><ui-gmap-layer namespace="visualization" type="HeatmapLayer" show="map.showHeat" oncreated="getHeatData"></ui-gmap-layer></ui-gmap-google-map></div></ion-content></ion-view>
