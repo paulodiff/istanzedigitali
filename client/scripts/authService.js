@@ -27,11 +27,12 @@ angular.module('myApp.services', [])
         
       return $http({ 
                     url: fullApiEndpoint, 
-                    method: "POST",
+                    method: "GET",
                     params: {username: credentials.username, password: credentials.password }
                   })
         .then(function (res) {
             $log.debug('AuthService login then');
+            $log.debug(res);
             $log.debug(res.data.token);
             
             $log.debug( 'AuthService set JWT to storage');
@@ -48,6 +49,21 @@ angular.module('myApp.services', [])
        });
     },
       
+    storeToken: function(token) {
+
+      if(token){
+          $log.debug('AuthService store token');
+          $log.debug(token);
+          
+          $log.debug( 'AuthService store set JWT to storage');
+          $localStorage.JWT = token;
+          $log.debug( 'AuthService store set http common header');
+          $http.defaults.headers.common.Authorization = 'Bearer ' + token;
+      }
+
+    },
+
+
     logout: function (credentials) {
         $log.debug('AuthService logout');
         var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogout; 

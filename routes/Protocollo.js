@@ -1,5 +1,14 @@
 // Route for Protocollo
 
+var fakeConfig = {
+        parsingValues: 1, // 1 sempre decodifica  i parametri dei form
+        captCha : 1, // 1 abilitata 0 disabilitata/fake 2 errore
+        savingToDisk: 1,
+        protocollazione: 1,
+        emailsend: 1
+};
+
+
 // Note sicurezza:
 // - controllo CaptCha
 // - limite UPLOAD
@@ -24,6 +33,7 @@ var router = express.Router();
 // var request = require('request');
 var os = require('os');
 var fs = require('fs');
+var fsExtra = require('fs-extra');
 var path = require('path');
 var util = require('util');
 var soap = require('soap');
@@ -39,7 +49,7 @@ var ENV_PROT   = require('../tmp/configPROTOCOLLO.js'); // load user configurati
 var spark = require('spark-md5');
 var md5File = require('md5-file');
 var _ = require('lodash');
-var Report = require('fluentreports').Report;
+// var Report = require('fluentreports').Report;
 var nodemailer = require('nodemailer');
 var request = require('request');
 var moment = require('moment');
@@ -77,7 +87,7 @@ log4js.configure({
      recipients: 'ruggero.ruggeri@comune.rimini.it',
      sender: 'ruggero.ruggeri@comune.rimini.it',
      category: 'email-log',
-     subject : 'ERRORE - ISTANZE DIGITALI',
+     subject : '[ISTANZE DIGITALI]',
      sendInterval: 60,
      'SMTP': {
             "host": "srv-mail.comune.rimini.it",
@@ -255,11 +265,7 @@ router.get('/mail',  function (req, res) {
         }
         console.log('Message sent: ' + info.response);
     });
-
-
-
     res.status(200).send('Mail ok');
-
 });
 
 router.get('/testCaptcha',  function (req, res) {
@@ -306,6 +312,7 @@ router.get('/testCaptcha',  function (req, res) {
        
 });
 
+/*
 router.get('/pdf',  function (req, res) {
 
     var rptFileName = "./storage/pdf/Report.pdf";
@@ -342,16 +349,8 @@ router.get('/pdf',  function (req, res) {
     
     
     res.download(rptFileName); // Set disposition and send it.
-
-    /*
-    var file = fs.createReadStream(rptFileName);
-    var stat = fs.statSync(rptFileName);
-    res.setHeader('Content-Length', stat.size);
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
-    file.pipe(res);
-    */
 });
+*/
 
 router.get('/getTestToken', function (req, res) {
     var demoData = {
@@ -379,13 +378,17 @@ function savingFiles(fileList, fieldsObj, reqId) {
         if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
         logConsole.info(dir);
         Object.keys(fileList).forEach(function(name) {
-            logConsole.info('savingFiles:save: ' + name);
+            logConsole.info('SAVING FILE:save: ' + name);
 
             var originalFilename = fileList[name][0].originalFilename;
             var destFile = dir + "/" + fileList[name][0].originalFilename;
             var sourceFile = fileList[name][0].path;
+            logConsole.info(sourceFile);
             logConsole.info(destFile);
-            fs.renameSync(sourceFile, destFile);
+            //fs.renameSync(sourceFile, destFile);
+            // fs.createReadStream(sourceFile).pipe(fs.createWriteStream(destFile));
+            //fs.copySync(path.resolve(__dirname,'./init/xxx.json'), 'xxx.json');
+            fsExtra.copySync(sourceFile, destFile);
             var hash2 = md5File.sync(destFile);
             logConsole.info(destFile);
             logConsole.info(hash2);
@@ -695,6 +698,9 @@ function protocolloWS(objFilesList,  reqId) {
 }
 
 /* UPLOAD ROUTE  --------------------------------------------------------------------------------------------------------- */
+/* UPLOAD ROUTE  --------------------------------------------------------------------------------------------------------- */
+/* UPLOAD ROUTE  --------------------------------------------------------------------------------------------------------- */
+/* UPLOAD ROUTE  --------------------------------------------------------------------------------------------------------- */
 
 //router.post('/upload', multipartMiddleware, function(req, res) {
 router.post('/upload', function(req, res) {
@@ -720,66 +726,13 @@ router.post('/upload', function(req, res) {
     //                 var p = {"nomeRichiedente":"MARIO","cognomeRichiedente":"ROSSI","emailRichiedente":"ruggero.ruggeri@comune.rimini.it","codiceFiscaleRichiedente":"RGGRGR70E25H294T","cellulareRichiedente":"3355703086","dataNascitaRichiedente":"11/12/1912","indirizzoRichiedente":"VIA ROMA, 1","cittaRichiedente":"RIMINI","capRichiedente":"47921","oggettoRichiedente":"Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....","files":[],"reqId":"20161209@112659@342@52188","idProtocollo":139364,"annoProtocollo":"2016","numeroProtocollo":100144};
     //
 
-    var fakeConfig = {
-        captCha : 0, // 1 abilitata 0 disabilitata/fake 2 errore
-        parsingValues: 1, // 1 sempre decodifica  i parametri dei form
-        savingToDisk: 1,
-        protocollazione: 1,
-        emailsend: 1
-    }
-
-
+    
     // limite upload
     // https://github.com/expressjs/node-multiparty
 
     async.series([
 
-            // #####  CAPTCHA ------------------------------------------------
-            function(callback){
-                logConsole.info('ASYNC Gmail Recaptcha ...:');
-                ErrorMsg = {
-                                            title: 'Errore controllo ReCaptcha',
-                                            msg: 'Si è verificato un errore nel controllo del codice antifrode ReCaptcha. ' + supportMsg,
-                                            reqId: reqId,
-                                            code : 480
-                            };
-    
-
-                if(fakeConfig.captCha == 1) {
-
-                  verifyReCaptcha(req.body.fields.RecaptchaResponse).then(function (result) {
-                        if (result.statusCode == 200) {
-                            logConsole.info('Gmail Recaptcha OK!');
-                            // console.log(result.response);
-                            callback(null, 'Gmail Recaptcha OK!');
-                        } else {
-                            //console.log(result);
-                           logConsole.error('Gmail Recaptcha ERROR! code:' + result.statusCode);
-                           callback(ErrorMsg, null);
-                        }
-                    }).catch(function (err) {
-                        // console.log(err);
-                        logConsole.error('Gmail Recaptcha ERRORE GENERICO!');
-                        logConsole.error(err);
-                        log2file.error('Gmail Recaptcha ERRORE GENERICO!');
-                        log2file.error(err);
-                        callback(ErrorMsg, null);
-                    });
-
-                } 
-            
-                if(fakeConfig.captCha == 0) {
-                    logConsole.info('ASYNC Gmail Recaptcha DISABLED!!! - OK:');
-                    callback(null, 'Gmail Recaptcha ... DISABLED ok');
-                }
-
-                if(fakeConfig.captCha == 2) {
-                    logConsole.info('ASYNC Gmail Recaptcha TEST ERROR !!! - OK:');
-                    callback(ErrorMsg, null);
-                }
-
-            },
-
+           
             // ##### PARSING ------------------------------------------------
             
             function(callback) {
@@ -787,7 +740,12 @@ router.post('/upload', function(req, res) {
     
                 if(fakeConfig.parsingValues == 1) {
 
-                    var options = {  maxFilesSize: ENV_PROT.upload_size  };
+                    var options = {  
+                        maxFilesSize: ENV_PROT.upload_size,
+                        autoFiles: true,
+                        uploadDir: ENV_PROT.upload_dir
+                      };
+                    logConsole.info(options);  
                     var form = new multiparty.Form(options);
                     form.parse(req, 
                         function(err, fields, files) {
@@ -795,7 +753,7 @@ router.post('/upload', function(req, res) {
                                 logConsole.error(err);
                                 log2file.error(err);                                        
                                 ErrorMsg = {
-                                            title: 'Parsing values input error',
+                                            title: 'Errore nella validazione dei parametri di input',
                                             msg: 'Errore nella decodifica dei dati ricevuti. ' + supportMsg,
                                             reqId: reqId,
                                             code : 455
@@ -809,8 +767,78 @@ router.post('/upload', function(req, res) {
                                 callback(null, 'Form ... ok');
                             }
                     });
+                } else {
+                    logConsole.error('ASYNC - PARSING - FAKE ERROR');
+                    ErrorMsg = {
+                                title: 'Parsing values input error',
+                                msg: 'Errore nella decodifica dei dati ricevuti. ' + supportMsg,
+                                reqId: reqId,
+                                code : 455
+                    };
+                    callback(ErrorMsg, null);
                 }
             },
+
+            // #####  CAPTCHA ------------------------------------------------
+
+
+            function(callback){
+                logConsole.info('ASYNC Gmail Recaptcha ...:');
+                var RecaptchaResponse = 'NULL';
+
+                if(objFieldList['fields[RecaptchaResponse]'] && objFieldList['fields[RecaptchaResponse]'][0] ){
+                    console.log(objFieldList['fields[RecaptchaResponse]'][0]);
+                    var RecaptchaResponse = objFieldList['fields[RecaptchaResponse]'][0];
+                }
+                
+
+                console.log('ASYNC:TEST:',RecaptchaResponse);
+                ErrorMsg = {
+                                            title: 'Errore controllo ReCaptcha',
+                                            msg: 'Si è verificato un errore nel controllo del codice antifrode ReCaptcha. ' + supportMsg,
+                                            reqId: reqId,
+                                            code : 480
+                            };
+                console.log(req.body);
+
+                if(fakeConfig.captCha == 1) {
+
+                    verifyReCaptcha(RecaptchaResponse).then(function (result) {
+                            if (result.statusCode == 200) {
+                                logConsole.info('Gmail Recaptcha OK!');
+                                // console.log(result.response);
+                                callback(null, 'Gmail Recaptcha OK!');
+                            } else {
+                                //console.log(result);
+                            logConsole.error('Gmail Recaptcha ERROR! code:' + result.statusCode);
+                            callback(ErrorMsg, null);
+                            }
+                        }).catch(function (err) {
+                            // console.log(err);
+                            logConsole.error('Gmail Recaptcha ERRORE GENERICO!');
+                            logConsole.error(err);
+                            log2file.error('Gmail Recaptcha ERRORE GENERICO!');
+                            log2file.error(err);
+                            callback(ErrorMsg, null);
+                        });
+
+                }
+
+            
+                if(fakeConfig.captCha == 0) {
+                    logConsole.info('ASYNC Gmail Recaptcha DISABLED!!! - OK:');
+                    callback(null, 'Gmail Recaptcha ... DISABLED ok');
+                }
+
+                if(fakeConfig.captCha == 2) {
+                    logConsole.info('ASYNC Gmail Recaptcha TEST ERROR !!! - OK:');
+                    callback(ErrorMsg, null);
+                }
+
+            },
+
+
+
 
             // ##### Input sanitizer ------------------------------------------------------------------------
 
@@ -1049,214 +1077,13 @@ router.post('/upload', function(req, res) {
                             reqId: reqId,
                             code : 200
                         }
+            log2Email.info(Msg);                        
             res.status(200).send(Msg);
         }
     });
 
 
 
-/*
-    var form = new multiparty.Form(options);
-
-    // parsind data
-    form.parse(req, function(err, fields, files) {
-        
-    
-        logConsole.info('parsing ... data:', reqId);
-
-        if(err){
-            bRaisedError = true;
-            logConsole.error('PARSE ERROR');
-            logConsole.error(err);
-            log2file.error('PARSE ERROR');
-            log2file.error(err);
-            res.status(500).json({  msg : 'parse error',  message : err  });
-        } else {
-
-
- 
-            if(!bRaisedError){
-                if (sanitizeInput(fields, objFilesList, reqId)){
-                    logConsole.info('ok');
-                } else {
-                       bRaisedError = true;
-                    ErrorMsg = {
-                        title: 'Check input error',
-                        msg: 'Errore nei dati di input. Riprovare con altri dati o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it utilizzando il seguente identificativo di richiesta:<br><b>' + reqId + '</b><br>Grazie.',
-                        code : 451
-                    }
-                    log2file.error(reqId);
-                    log2file.error(ErrorMsg);
-                    logConsole.error(ErrorMsg);
-                }
-            }  
-
-            // salvataggio file allegati e metadati
-            if(!bRaisedError){
-                if (savingFiles(files, objFilesList, reqId )){
-                    logConsole.info('ok');
-                } else {
-                    bRaisedError = true;
-                    ErrorMsg = {
-                        title: 'saving file error',
-                        msg: 'Errore nella memorizzazione remota dei files. Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it utilizzando il seguente identificativo di richiesta:<br><b>' + reqId + '</b><br>Grazie.',
-                        code : 450
-                    }
-                    log2file.error(reqId);
-                    log2file.error(ErrorMsg);
-                    logConsole.error(ErrorMsg);
-                }
-            }
-
-            // salvataggio file allegati e metadati
-            if(!bRaisedError){
-                protocolloWS(files, objFilesList, reqId )
-                .then( function (result) {
-                    logConsole.info(result);
-                    // save to file
-                })
-                .catch(function (err) {
-                    // console.log(err);
-                    log2file.error(reqId);
-                    log2file.error(err);
-                    
-                    console.log('verifyReCaptcha:ERROR2:', err.body);
-                    res.status(500).send(err);
-                });
-            }
-
-            //google recapcha
-
-            // hashFilesCheck(files)
-
-            // protocollo()
-
-            // reportEmail() 
-
-        
-            if (bRaisedError){
-                res.status(ErrorMsg.code).send(ErrorMsg);
-            } else {                    
-                ErrorMsg = {
-                        title: 'saving file error',
-                        msg: 'Ecco i dati della sua richiesta<br>Identificativo:<b>' + reqId + '</b><br>Protocollo:<b>2016/1505455</b><br>Le è stata inviata una mail a titolo di promemoria all\' indirizzo mail@adsajsd.com.<br> In caso di ....<br>Grazie.',                        
-                        code : 200
-                    }
-
-                res.status(ErrorMsg.code).send(ErrorMsg);
-            }
-        }
-
-    });
-*/
-
-  // console.log(req.body.fields.hash);
-  
-  
-
-  // verifyReCaptcha
-
-
-
-  // SANITIZE
-
-  /*
-  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
-
-  if(req.files) console.log('1');
-  if(req.files.files) console.log('2');
-  console.log(req.files.files.length);
-  if(req.files.files.length) console.log(req.files.files.length);
-
-  if (req.files && req.files.files && req.files.files.length) {
-
-    console.log('Saving files ...');
-    
-    for (var i = 0; i < req.files.files.length; i++) {
-      
-      console.log(req.files.files[i].path);
-      console.log(req.files.files[i].originalFilename);
-      console.log(req.files.files[i].size);
-
-      var destFile = dir + "/" + req.files.files[i].originalFilename;
-
-      fs.renameSync(req.files.files[i].path, destFile);
-
-
-      var hash2 = md5File.sync(destFile);
-      console.log(destFile, hash2);
-
-
-
-
-    }
-  } else {
-      console.log('No files. ...');
-  }
-  */
-
-  // controllo recapcha
-  /*
-  if (req.body.fields.RecaptchaResponse) {
-      console.log('Recaptcha trovato ... verifica.');
-
-      verifyReCaptcha(req.body.fields.RecaptchaResponse).then(function (result) {
-                if (result.statusCode == 200) {
-                    console.log('verifyReCaptcha:sendXML statusCode:', result.statusCode);
-                    // console.log(result.response);
-                    res.status(200).send(result);
-                } else {
-                    //console.log(result);
-                    console.log('verifyReCaptcha:ERROR1:', result.statusCode);
-                    res.status(401).send('ERRORE GRAVE verifyReCaptcha - VEDERE LOG.');
-                }
-            }).catch(function (err) {
-                    // console.log(err);
-                    console.log('verifyReCaptcha:ERROR2:', err.body);
-                    res.status(500).send(err);
-            });
-
-
-  } else {
-      msg = {
-          'title' : 'errore',
-          'obj' : 'Recaptcha non trovato!'
-      };
-      res.status(500).json({'msg' : msg});
-  }
-  */
-
-
-/*
-//Lets configure and request
-request({
-    url: 'https://modulus.io/contact/demo', //URL to hit
-    qs: {from: 'blog example', time: +new Date()}, //Query string data
-    method: 'POST',
-    headers: {
-        'Content-Type': 'MyContentType',
-        'Custom-Header': 'Custom Value'
-    },
-    body: 'Hello Hello! String body!' //Set the body as a string
-}, function(error, response, body){
-    if(error) {
-        console.log(error);
-    } else {
-        console.log(response.statusCode, body);
-    }
-});
-*/
-
-
-  // controllo hash file
-
-
-  // protocollazione
-  
-
-  // risposta
-
-  // invio mail di conferma con pdf
 
   
 
@@ -1274,14 +1101,7 @@ router.post('/inserisciProtocollo',  utilityModule.ensureAuthenticated, function
     WS_IRIDE = ENV_PROT.wsJiride.url_test;
     log2fileAccess.info(WS_IRIDE);
 
-    /*
-    if(req.body.produzione) {
-        console.log('[##PRODUZIONE##]');
-        WS_IRIDE = ENV_BRAV.wsiride.url_produzione;
-        MODO_OPERATIVO = "PRODUZIONE";
-    } 
-    */
-
+        
     log2fileAccess.info('MODO_OPERATIVO:', MODO_OPERATIVO);
     log2fileAccess.info('WS_IRIDE:',WS_IRIDE);
     // ## log info ip

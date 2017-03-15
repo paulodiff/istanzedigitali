@@ -5,7 +5,7 @@ var passport = require('passport');
 var fs = require('fs');
 //var Strategy = require('passport-local').Strategy;
 var SamlStrategy = require('passport-saml').Strategy;
-var db = require('./db');
+// var db = require('./db');
 
 var uuid = require('node-uuid');
 
@@ -22,8 +22,11 @@ app.use(helmet.noSniff());
 
 // CORS is a node.js package for providing a Connect/Express middleware 
 // that can be used to enable CORS with various options.
-var cors         = require('cors');
-app.use(cors());
+var cors  = require('cors');
+app.use(cors({
+      origin: 'https://idp.ssocircle.com',
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
+  }));
 
 // logger http to console.
 var morgan       = require('morgan');
@@ -45,11 +48,11 @@ var urlencodedParser = bodyParser.urlencoded({
 
 app.use(bodyParser.json({
   type: ['json', 'application/csp-report'],
-  limit: 1024 //50mb
+  limit: '50mb'
 }));
 
 app.use(bodyParser.urlencoded({ 
-  limit:1024, 
+  limit: '50mb', 
   extended: true 
 }));
 
@@ -239,7 +242,7 @@ app.get('/',
 	  //res.redirect('home/');
 });
 
- app.get('/login',
+ app.get('/AAlogin',
     passport.authenticate('saml',
       {
         successRedirect: '/',
@@ -247,7 +250,7 @@ app.get('/',
       })
   );
 
-app.post('/login',
+app.post('/AAlogin',
   passport.authenticate('saml', { failureRedirect: '/login/fail', failureFlash: true }),
   function(req, res) {
       console.log('get /login');
@@ -255,7 +258,7 @@ app.post('/login',
         }
 );
 
-app.get('/metadata', 
+app.get('/AAmetadata', 
     function(req, res) {
         console.log('/metadata');
         res.type('application/xml');
@@ -264,44 +267,65 @@ app.get('/metadata',
     }
 );
 
-app.get('/login',
+app.get('/AAlogin',
   passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
   function(req, res) {
-      console.log('get /login');
+      console.log('root get /login');
         res.redirect('/profile');
         }
 );
   
-app.post('/login/callback',
+app.post('/AAlogin/callback',
    passport.authenticate('saml', { failureRedirect: '/login/fail', failureFlash: true }),
   function(req, res) {
-        console.log('POST o/login/callback');
+        console.log('root post /login/callback');
         console.log(req.user);
         res.redirect('/profile');
   });
 
-app.get('/login/fail', 
+app.get('/AAlogin/fail', 
     function(req, res) {
-        console.log('/login/fail');
+        console.log('root /login/fail');
         res.send(401, 'Login failed');
     }
 );  
 
-app.get('/logout',
+app.get('/AAlogout',
   function(req, res){
     req.logout();
     res.redirect('/');
   });
 
-app.get('/profile',
+app.get('/AAprofile',
   require('connect-ensure-login').ensureLoggedIn(),
   function(req, res){
     res.render('profile', { user: req.user });
   });
 
+
 app.use('/home', express.static(__dirname + '/home'));
-app.use('/cli', express.static(__dirname + '/client'));
-app.use('/dist', express.static(__dirname + '/client/dist'));
+
+var options = {
+  // dotfiles: 'ignore',
+  // etag: false,
+  // extensions: ['htm', 'html'],
+  // index: false,
+  // maxAge: '1d',
+  // redirect: false,
+  setHeaders: function (res, path, stat) {
+    //console.log(path);
+    //console.log(stat);
+    //console.log(res);
+    res.set('x-timestamp', Date.now());
+    res.set('Access-Control-Allow-Origin', 'https://idp.ssocircle.com');
+    res.set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE');
+    res.set('Access-Control-Max-Age', '3600');
+    res.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  }
+}
+
+app.use('/cli',  express.static(__dirname + '/client', options));
+app.use('/dist', express.static(__dirname + '/client/dist', options));
 
 log.log2console('Server started at:' + ENV.nodejs.NODEJSport);
 log.log2file('Server started at:' + ENV.nodejs.NODEJSport);

@@ -8,8 +8,8 @@ angular.module('myApp.controllers')
 
 // SFormlyCtrl ---------------------------------------------------------------------------------
 .controller('ProtocolloCtrl', 
-          ['$rootScope','$scope', '$state', '$location', 'Session', '$log', '$timeout','ENV','$q','$http', 'dialogs', 'UtilsService', 'Upload', '$anchorScroll', 
-   function($rootScope,  $scope,   $state,   $location,   Session,   $log,   $timeout,  ENV,  $q,  $http,   dialogs,   UtilsService,   Upload,   $anchorScroll) {
+          ['$rootScope','$scope', '$state', '$location', '$log', '$timeout','ENV','$q','$http', 'UtilsService', 'Upload', '$anchorScroll', 'usSpinnerService', 'dialogs',
+   function($rootScope,  $scope,   $state,   $location,   $log,   $timeout,  ENV,  $q,  $http,   UtilsService,   Upload,   $anchorScroll,  usSpinnerService, dialogs ) {
     
     $log.debug('ProtocolloCtrl');
     var apiUploadUrl = $rootScope.base_url + '/' + ENV.apiUpload;  
@@ -86,7 +86,7 @@ angular.module('myApp.controllers')
         vm.model.picFile1_info = "";
 
         if(f) {
-            var dlg = dialogs.wait('Controllo...','calcolo codice di controllo',0);
+            //var dlg = dialogs.wait('Controllo...','calcolo codice di controllo',0);
 
             var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
                     file = f,
@@ -159,6 +159,7 @@ angular.module('myApp.controllers')
           //usSpinnerService.spin('spinner-1');
 
           var dlg = dialogs.wait('Elaborazione in corso',undefined,_progress);
+          // usSpinnerService.spin('spinner-1');
 
           console.log('onSubmit: upload!!');
           
@@ -177,7 +178,7 @@ angular.module('myApp.controllers')
         }).then(function (resp) {
             console.log('onSubmit: Success ');
             console.log(resp);
-
+            // usSpinnerService.stop('spinner-1');
             $rootScope.$broadcast('dialogs.wait.complete'); 
             //dialogs.notify('Richiesta correttamente pervenuta', resp.data);
             vm.responseMessage = resp.data;
@@ -190,6 +191,7 @@ angular.module('myApp.controllers')
             //usSpinnerService.stop('spinner-1');
         }, function (resp) {
             $rootScope.$broadcast('dialogs.wait.complete');
+            // usSpinnerService.stop('spinner-1');
             console.log('onSubmit: Error status: ' + resp.status);
             console.log(resp);
 
@@ -203,8 +205,15 @@ angular.module('myApp.controllers')
                 $scope.apiReturnCode = resp.data.code;
             }
 
-            $scope.bshowForm = false;
-            $scope.btnTextSendButton = "RIPROVA LA TRASMISSIONE";
+
+            //$timeout(function(){ 
+                $scope.bshowForm = false;
+                $scope.btnTextSendButton = "RIPROVA LA TRASMISSIONE";
+                console.log($scope.apiReturnCode);
+                console.log('--------------------------ok');
+            //}, 1000);
+
+            
             //dialogs.error('Errore - ' + resp.status, resp.data.msg);
             console.log(vm.responseMessage);
         }, function (evt) {
@@ -215,7 +224,7 @@ angular.module('myApp.controllers')
               $rootScope.$broadcast('dialogs.wait.progress',{'msg' : progressPercentage, 'progress' : _progress});
             }else{
               //$rootScope.$broadcast('dialogs.wait.complete');
-              $rootScope.$broadcast('dialogs.wait.progress',{'msg' : 'Elaborazione in corso', 'progress' : _progress});
+              $rootScope.$broadcast('dialogs.wait.progress',{'msg' : 'Salvataggio e protocollazione in corso (un attimo ancora..)', 'progress' : _progress});
             }
         });
 

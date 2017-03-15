@@ -2,8 +2,8 @@ angular.module('myApp.controllers')
 
   .controller('profileMgrCtrl', 
 
-           ['$scope', '$http', 'dialogs', '$auth', '$rootScope', 'AuthService', 'Session', 'Restangular', '$state','ENV', '$log', 
-    function($scope,   $http,  dialogs,   $auth,   $rootScope,   AuthService,   Session,   Restangular,  $state,  ENV ,  $log ) {
+           ['$scope', '$http', 'dialogs',  '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log', 
+    function($scope,   $http,  dialogs,     $rootScope,   AuthService,   Session,   $state,  ENV ,  $log ) {
 
         $scope.user = {};
 
@@ -19,6 +19,7 @@ angular.module('myApp.controllers')
                   })
         .then(function (res) {
             $log.debug('profileMgrCtrl : setting data');
+            $log.debug(res.data);
             $scope.user = res.data;
          })
         .catch(function(response) {

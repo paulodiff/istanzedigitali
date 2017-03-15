@@ -17,7 +17,7 @@ angular.module('myApp', [//'ionic',
                          'ngMessages',
                          //'naif.base64',
                          //'ngCordova',
-                         // 'angularSpinner',
+                         'angularSpinner',
                          //'restangular',
                          'ngAnimate',
                          //'ngMockE2E',
@@ -115,7 +115,7 @@ angular.module('myApp', [//'ionic',
     
     
     
-    
+    /* Login/Logout/Auth/Profile */
     
     $stateProvider.state('login', {
         url: '/login',
@@ -123,9 +123,9 @@ angular.module('myApp', [//'ionic',
         // controller: 'SLoginCtrl',
         controller: 'LoginController',
         accessLogged: false
-    });*/
+    });
 
-/*    $stateProvider.state('signup', {
+    $stateProvider.state('signup', {
         url: '/signup',
         templateUrl: 'templates/Ssignup.html',
         controller: 'SSignupCtrl',
@@ -133,8 +133,8 @@ angular.module('myApp', [//'ionic',
 
     $stateProvider.state('logout', {
         url: '/logout',
-        template: null,
-        controller: 'SLogoutCtrl'
+        templateUrl: 'templates/Slogin.html',
+        controller: 'LoginController'
     });
       
     $stateProvider.state('profile', {
@@ -142,7 +142,15 @@ angular.module('myApp', [//'ionic',
         templateUrl: 'templates/Sprofile.html',
         controller: 'profileMgrCtrl',
         accessLogged: true
-    });*/
+    });
+
+    $stateProvider.state('landingSAML', {
+        url: '/landingSAML/{tokenId}',
+        templateUrl: 'templates/landingSAML.html',
+        controller: 'landingSAMLCtrl',
+        accessLogged: false
+    });
+
 
 /*    $stateProvider.state('form', {
         url: '/form',

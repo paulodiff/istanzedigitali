@@ -44,7 +44,8 @@ angular.module('myApp.controllers')
         if( host  == 'localhost') {
             $rootScope.base_url = 'http://localhost:8009';
         } else {
-            $rootScope.base_url = 'https://pmlab.comune.rimini.it/federa';
+            //$rootScope.base_url = 'https://istanze-dichiarazioni.comune.rimini.it/federa';
+            $rootScope.base_url = ENV.apiEndpoint;
         }
 
         // autenticazione
@@ -334,6 +335,9 @@ angular.module('myApp.controllers')
         $scope.credentials.password = $localStorage.password;
      }
 
+  var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogin;
+  console.log(fullApiEndpoint);
+  $scope.fullApiEndpoint = fullApiEndpoint;
     
   // title ion-view
   // console.log('LoginController...set title' );
@@ -535,6 +539,44 @@ angular.module('myApp.controllers')
 
            ['$scope', 'dialogs', '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log',
     function($scope,   dialogs,   $rootScope,   AuthService,   Session,   $state,  ENV ,  $log ) {
+
+    $scope.isAuthenticated = function() {
+      // return $auth.isAuthenticated();
+      return AuthService.isAuthenticated();
+    };
+
+
+    $scope.getUserId = function() {
+
+      if ($auth.isAuthenticated()) {
+        return $auth.getPayload().sub.userId;
+      } else {
+        return '';
+      }
+      
+    };
+
+
+  }])
+
+
+// SNavbarCtrl ------------------------------------------------------------------------------------
+.controller('landingSAMLCtrl',
+
+           ['$scope', '$stateParams', 'dialogs', '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log',
+    function($scope,   $stateParams,   dialogs,   $rootScope,   AuthService,   Session,   $state,  ENV ,  $log ) {
+
+
+    $log.debug('landingSAMLCtrl...');
+    
+
+    if($stateParams.tokenId) {
+        $scope.tokenId = $stateParams.tokenId;
+        $log.debug($scope.tokenId);
+        AuthService.storeToken($stateParams.tokenId);
+    } else {
+        $log.debug('NO TOKEN');
+    }
 
     $scope.isAuthenticated = function() {
       // return $auth.isAuthenticated();

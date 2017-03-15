@@ -1,4 +1,8 @@
 
+## Istanze digitali
+
+Per il build del Client dentro la cartella ./Client eseguire gulp build:dest 
+
 
 
 ## TEST Con Shibboleth

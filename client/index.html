@@ -68,14 +68,14 @@
     -->
 
 
-    <!-- spinner 
+    <!-- spinner -->
     <script src="bower_components/spin.js/spin.js"></script>
     <script src="bower_components/angular-spinner/angular-spinner.js"></script>
-    -->
+    
 
 
     <!-- angular-dialog-service -->
-    <script src="bower_components/angular-dialog-service/dist/dialogs.min.js"></script>
+    <script src="bower_components/angular-dialog-service/dist/dialogs.min.js"></script> 
 
     <!--
     <script src="bower_components/satellizer/dist/satellizer.js"></script>
@@ -178,7 +178,7 @@
     <script src="scripts/rootControllers.js"></script>
     <script src="scripts/loginControllers.js"></script>
     <script src="scripts/homeControllers.js"></script>
-    <!-- <script src="scripts/profileControllers.js"></script> -->
+    <script src="scripts/profileControllers.js"></script>
     <!-- <script src="scripts/sigControllers.js"></script> -->
     <!-- <script src="scripts/SloginControllers.js"></script> -->
     <!-- <script src="scripts/formlyControllers.js"></script> -->
@@ -229,11 +229,9 @@
           </ul>
 
           <ul class="nav navbar-nav pull-right">
-              <!--
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
-                <li ng-if="isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Esci</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="profile">Profile</a></li>
-              -->
           </ul>
 
           <ul ng-if="isAuthenticated()" class="nav navbar-nav pull-right">
@@ -246,7 +244,7 @@
                 <!-- <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li> -->
                 <li class="active"><a href="#/">Home</a></li>
                 <li><a href="#/protocollo">Istanze</a></li>
-                <li><a href="#/profile" ng-click="isCollapsed = !isCollapsed">Profile</a></li>
+                <!-- <li><a href="#/profile" ng-click="isCollapsed = !isCollapsed">Profile</a></li> -->
                 <!--
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Esci</a></li>

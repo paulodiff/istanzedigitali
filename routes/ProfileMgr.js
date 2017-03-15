@@ -16,16 +16,17 @@ router.get('/me', utilityModule.ensureAuthenticated, function(req, res) {
     log.log2console(req.user);
 
     var key = req.user;  
-    var jsonFile = './data/profiles/profiles.json';
-    var data = JSON.parse(fs.readFileSync(jsonFile)); 
+    return res.status(200).send(key);
+    // var jsonFile = './data/profiles/profiles.json';
+    // var data = JSON.parse(fs.readFileSync(jsonFile)); 
 
     // log.log2console(data);
 
-    if (data[key]) {
-      return res.status(200).send(data[key]);
-    } else {
-      return res.status(200).send(data['default']);
-    }
+    // if (data[key]) {
+    //  return res.status(200).send(data[key]);
+    // } else {
+    //   return res.status(200).send(data['default']);
+    // }
     
 });
 

@@ -1,13 +1,13 @@
 <div class="container">
 
-<div class="well" ng-if="bshowForm" role="alert">
+<div class="well" ng-show="bshowForm" role="alert">
      <h4>COMUNE DI RIMINI - ISTANZE E DICHIARAZIONI ONLINE</h4>
      <p>Compilare accuratamente i dati sottostanti per la trasmissione di una istanza generica</p>
 </div>
     
 
     
-<div  ng-if="bshowForm">
+<div  ng-show="bshowForm">
        <!-- create our form -->
     <form name="vm.userForm">
 
@@ -303,7 +303,7 @@
 
 
    <div class="form-group">
-     <label  for="inputFile1">Carta Identità Fronte - (dimensione massima 10Mb) {{vm.model.picFile1_info}}</label>
+     <label  for="inputFile1">Scansione Istanza - (dimensione massima 10Mb)</label>
       <input    id="inputFile1"
                 class="btn btn-raised btn-success btn-block"
                 type="file" 
@@ -322,7 +322,7 @@
    </div>
 
    <div class="form-group">
-     <label  for="inputFile2">Carta Identità Retro - (dimensione massima 10Mb)</label>
+     <label  for="inputFile2">Carta Identità Fronte - (dimensione massima 10Mb) {{vm.model.picFile1_info}}</label>
       <input    id="inputFile2"
                 class="btn btn-raised btn-success  btn-block"
                 type="file" 
@@ -342,7 +342,7 @@
    </div>
 
    <div class="form-group">
-     <label  for="inputFile3">Scansione Istanza - (dimensione massima 10Mb)</label>
+     <label  for="inputFile3">Carta Identità Retro - (dimensione massima 10Mb)</label>
      
       <input    id="inputFile3"
                 class="btn btn-raised btn-success btn-block"
@@ -415,13 +415,14 @@
 
   <div class="form-group">
 
-    <p>--------</p>
-
-    <!--
+    
+<!--  
     <div    vc-recaptcha   
             ng-model="vm.model.RecaptchaResponse"
-            key="'6Ldg6AwUAAAAAPgKoqezNrIVEsmdm7uafTop0r84'"></div> -->
+            key="'6Ldg6AwUAAAAAPgKoqezNrIVEsmdm7uafTop0r84'"></div> 
   </div>
+  
+-->  
 
 </div>
 </div>
@@ -440,11 +441,35 @@
 </div>
 
 
-<!-- ---------------------------------------- FORM RISULTATO ------------------------------------------------------ -->
+</div>
 
-<div ng-if="!bshowForm" >
-       
+<!-- DEBUG
+{{bshowForm}}-{{apiReturnCode}}
+<div ng-show="bshowForm" >T
+    <p>TRUE</p>
+    <div ng-show="apiReturnCode == 200" >SHOW 200</div>
+    <div ng-show="apiReturnCode == 488" >SW 200</div>
+    {{vm.responseMessage.title}}  
+    {{vm.responseMessage.code}}
+    {{vm.responseMessage.msg}}
     
+</div>
+
+<div ng-show="!bshowForm" >F
+    <p>FALSE</p>
+    <div ng-show="apiReturnCode == 200" >SHOW 200</div>
+    <div ng-show="apiReturnCode == 488" >SW 200</div>
+    {{vm.responseMessage.title}}  
+    {{vm.responseMessage.code}}
+    {{vm.responseMessage.msg}}
+    {{btnTextSendButton}}
+</div>
+-->
+
+
+<!-- ---------------------------------------- FORM RISULTATO ------------------------------------------------------ -->
+<div class="container">
+<div ng-show="!bshowForm" >
   
     <div  ng-switch on="apiReturnCode">
         <div ng-switch-when="200">
@@ -459,7 +484,7 @@
         
         </div>
 
-         <div class="animate-switch" ng-switch-default>
+         <div  ng-switch-default>
                     <div class="alert alert-danger">
                     <h4><i class="material-icons">error</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
                     <h5>{{vm.responseMessage.msg}}</h5>
@@ -474,8 +499,7 @@
                                 class="btn btn-raised btn-info btn-block btn-lg"  
                                 ng-click="vm.show_Form()">{{btnTextSendButton}}</button>
          
-
             
     </div>
-
+</div>
 </div>

@@ -181,13 +181,11 @@ gulp.task('clean', function () {
 });
 
 gulp.task('default', function () {
-    return gulp.src('./index.html')
-        .pipe(useref())
-        .pipe(gulp.dest('./dist/'));
+  console.log('########################### Use gulp build:dist ################################');
 });
 
 
-gulp.task('build:seq', function(callback) {
+gulp.task('build:dist', function(callback) {
   runSequence('clean',
               ['copyImages', 'userefIndex', 'htmlminTemplates'],
               'htmlminIndex',
