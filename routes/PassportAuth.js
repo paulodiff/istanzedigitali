@@ -7,6 +7,7 @@ var qs = require('querystring');
 var path = require('path');
 var passport = require('passport');
 var fs = require('fs');
+var saml2 = require('saml2-js');
 
 
 // http://mherman.org/blog/2015/07/02/handling-user-authentication-with-the-mean-stack/#.WKxfkG_hBpg
@@ -95,6 +96,72 @@ var samlStrategy = new SamlStrategy(
     */
 
   });
+ 
+myCertStringFormatted = fs.readFileSync('./certs/saml-string-format.crt', 'utf-8');
+var spidStrategy = new SamlStrategy(
+  {
+    callbackUrl: 'https://pmlab.comune.rimini.it/federa/passportAuth/login/callback',
+    entryPoint:  'https://idp.ssocircle.com:443/sso/SSORedirect/metaAlias/ssocircle',
+    // entryPoint: 'https://idp.testshib.org/idp/profile/SAML2/POST/SSO',
+
+    // SSOCIRCLE
+ 
+    issuer: 'PMLAB-COMUNE-RIMINI-TEST-SPID',
+    // Authentication requests sent by Passport-SAML can be signed using RSA-SHA1. To sign them you need to provide a private key in the PEM format via the privateCert configuration key. For example:
+
+    // privateCert: fs.readFileSync('./certs/saml-string-format.crt', 'utf-8'),
+
+    /* FEDERA
+    cert: 'MIIDJDCCAgygAwIBAgIVAIq/MUgxPKO0cuX/GtD7YUvk87GtMA0GCSqGSIb3DQEBBQUAMBkxFzAVBgNVBAMTDmlkcC5tYWNoaW5lLml0MB4XDTA5MDMyNTEwNTM1OFoXDTI5MDMyNTA5NTM1OFowGTEXMBUGA1UEAxMOaWRwLm1hY2hpbmUuaXQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQClXV18x0/yhZ+D3pHlmhrK4paA+xdJKAT7U7R9DeaTQygwtCjKmCrJbzdohckLz5pax7eaGeA53pPCY+JdiU0Uq4ES8nG2DCZgCtl4QGLUcTuUtJdPq+DbYD1cWBwEeeffsiClVyuhgLRPO1OQLl/TJp4slfoYTi0aONgQp03uG+ixL48myL7GrINHYXtDUDqo2BimyU0yrOe6ZmvxJchZ8nBuWKy0J8wsO/Mnasbvo79/c8gcn0HTst0QDlHXQlzwZ4Suq2os9qKjXAYOzA1VqmTyzJIge/ynHiJ0Fkw0HNxBaVFTJRNL8RvwJsMuBT7YZKRoNK7gjT5/6bGagYM/AgMBAAGjYzBhMEAGA1UdEQQ5MDeCDmlkcC5tYWNoaW5lLml0hiVodHRwczovL2lkcC5tYWNoaW5lLml0L2lkcC9zaGliYm9sZXRoMB0GA1UdDgQWBBSBOsPZiWZRXFqNINIguHfv7jnidDANBgkqhkiG9w0BAQUFAAOCAQEAeVLN9jczRINuPUvpXbgibL2c99dUReMcl47nSVtYeYEBkPPZrSz0h3AyVZyar2Vo+/fC3fRNmaOJvfiVSm+bo1069iROI1+dGGq2gAwWuQI1q0F7PNPX4zooY+LbZI0oUhuoyH81xed0WtMlpJ1aRSBMpR6oV3rguAkH6pdr725yv6m5WxKcOM/LzdD5Xt9fQRL7ino4HfiPPJNDG3UOKhoAWkVn/Y/CuMLcBPWh/3LxIv4A1bQbnkpdty+Qtwfp4QUKkisv7gufQP91aLqUvvRE6Uz8r51VH13e4mEJjJGxLKXWzlP50gp7b27AXCTKSS6fW6iBpfA14PGcWvDiPQ==',
+    */
+
+    // cert: fs.readFileSync('./certs/federa-test.pem', 'utf-8'),
+    /*
+    cert : 'MIIEYzCCAkugAwIBAgIDIAZmMA0GCSqGSIb3DQEBCwUAMC4xCzAJBgNVBAYTAkRFMRIwEAYDVQQKDAlTU09DaXJjbGUxCzAJBgNVBAMMAkNBMB4XDTE2MDgwMzE1MDMyM1oXDTI2MDMwNDE1MDMyM1owPTELMAkGA1UEBhMCREUxEjAQBgNVBAoTCVNTT0NpcmNsZTEaMBgGA1UEAxMRaWRwLnNzb2NpcmNsZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCAwWJyOYhYmWZF2TJvm1VyZccs3ZJ0TsNcoazr2pTWcY8WTRbIV9d06zYjngvWibyiylewGXcYONB106ZNUdNgrmFd5194Wsyx6bPvnjZEERny9LOfuwQaqDYeKhI6c+veXApnOfsY26u9Lqb9sga9JnCkUGRaoVrAVM3yfghv/Cg/QEg+I6SVES75tKdcLDTt/FwmAYDEBV8l52bcMDNF+JWtAuetI9/dWCBe9VTCasAr2Fxw1ZYTAiqGI9sW4kWS2ApedbqsgH3qqMlPA7tg9iKy8Yw/deEn0qQIx8GlVnQFpDgzG9k+jwBoebAYfGvMcO/BDXD2pbWTN+DvbURlAgMBAAGjezB5MAkGA1UdEwQCMAAwLAYJYIZIAYb4QgENBB8WHU9wZW5TU0wgR2VuZXJhdGVkIENlcnRpZmljYXRlMB0GA1UdDgQWBBQhAmCewE7aonAvyJfjImCRZDtccTAfBgNVHSMEGDAWgBTA1nEA+0za6ppLItkOX5yEp8cQaTANBgkqhkiG9w0BAQsFAAOCAgEAAhC5/WsF9ztJHgo+x9KV9bqVS0MmsgpG26yOAqFYwOSPmUuYmJmHgmKGjKrj1fdCINtzcBHFFBC1maGJ33lMk2bM2THx22/O93f4RFnFab7t23jRFcF0amQUOsDvltfJw7XCal8JdgPUg6TNC4Fy9XYv0OAHc3oDp3vl1Yj8/1qBg6Rc39kehmD5v8SKYmpE7yFKxDF1ol9DKDG/LvClSvnuVP0b4BWdBAA9aJSFtdNGgEvpEUqGkJ1osLVqCMvSYsUtHmapaX3hiM9RbX38jsSgsl44Rar5Ioc7KXOOZFGfEKyyUqucYpjWCOXJELAVAzp7XTvA2q55u31hO0w8Yx4uEQKlmxDuZmxpMz4EWARyjHSAuDKEW1RJvUr6+5uA9qeOKxLiKN1jo6eWAcl6Wr9MreXR9kFpS6kHllfdVSrJES4ST0uh1Jp4EYgmiyMmFCbUpKXifpsNWCLDenE3hllF0+q3wIdu+4P82RIM71n7qVgnDnK29wnLhHDat9rkC62CIbonpkVYmnReX0jze+7twRanJOMCJ+lFg16BDvBcG8u0n/wIDkHHitBI7bU1k6c6DydLQ+69h8SCo6sO9YuD+/3xAGKad4ImZ6vTwlB4zDCpu6YgQWocWRXE+VkOb+RBfvP755PUaLfL63AFVlpOnEpIio5++UjNJRuPuAA=',
+    */
+
+
+    decryptionPvk: 'MIIEJzCCAw+gAwIBAgIJAII//nn+7ZE+MA0GCSqGSIb3DQEBCwUAMIGpMQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSVRBTFkxDzANBgNVBAcMBlJJTUlOSTEZMBcGA1UECgwQQ09NVU5FIERJIFJJTUlOSTEMMAoGA1UECwwDQ0VEMR8wHQYDVQQDDBZwbWxhYi5jb211bmUucmltaW5pLml0MS8wLQYJKoZIhvcNAQkBFiBydWdnZXJvLnJ1Z2dlcmlAY29tdW5lLnJpbWluaS5pdDAeFw0xNzAzMDkxNTEzNTNaFw0yNzAzMDkxNTEzNTNaMIGpMQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSVRBTFkxDzANBgNVBAcMBlJJTUlOSTEZMBcGA1UECgwQQ09NVU5FIERJIFJJTUlOSTEMMAoGA1UECwwDQ0VEMR8wHQYDVQQDDBZwbWxhYi5jb211bmUucmltaW5pLml0MS8wLQYJKoZIhvcNAQkBFiBydWdnZXJvLnJ1Z2dlcmlAY29tdW5lLnJpbWluaS5pdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMg1Jw6LutKoUIzlNOnKNu4WK+wr4d5TYUoYpOdI6BLwcGEdqIx+DXoyRmJNnGBTU205Ub6mj31qMMuzxfp05F4fcNPH317UQgbcMcpfEB2Kt/K5mF1NNzp4R+OC8h6oEcSDgm+DKvk6U1HkoImyne3govAZK+J2QTk0epzpG3IM93lYxlS/94veENltuVjQ2ZIYZg45obmIkHByqlE4pVbBamGIHpxoeqbmFsDACuuunqlBuZvaAcLiEd/pipjdC9OKDvd47MYLip8+4KmtHs+ktlIaDDbAfeyh7Vxd7BroGKzfrBj21qXPRDcuyk1luUJNB3sXqRVgbhz3OuXcU8sCAwEAAaNQME4wHQYDVR0OBBYEFM0It0bwMs15UQ1XizJf6Jd6JrmrMB8GA1UdIwQYMBaAFM0It0bwMs15UQ1XizJf6Jd6JrmrMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBACwOWHKVng6GOwg2n6hnNBlWOSQXL5uV8ngpISqev7NIIjuCvkuNnqAM2+Aos0UI3y/Ao6/iQyi25W4jLonuVoqRd1/V8IRlTbF+ghDTfvN/G5ceBQYNeffenzZToWLtuZz23f/4xa+iI/3+zMLA3fgRFauKOSFjqp1D28uCy4fQHgdgCw/eh3F79Sq1NyA5hwjNLsP2OpzG0pATSUObPHXaA8jnBPIdp1whASUP1Jx3YLClE1DvQoaV1qycZJ+kxCNA45pJdWDj4puBK1AOc+TjA59gEy5HfNhx9ff2/2nBF3d/2eHNVxnedrKxpek8CZwcZW4xZQXr9Yx8T0aAhDM=',
+    logoutUrl: 'https://pmlab.comune.rimini.it/federa/passportAuth/logout',
+    logoutCallbackUrl: 'https://pmlab.comune.rimini.it/federa/passportAuth/logout',
+
+    identifierFormat : 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+    validateInResponseTo: true,
+
+
+    // skipRequestCompression: true
+    /*
+    authnContext: [
+        'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',	// autenticazione tramite username e password
+        // 'urn:oasis:names:tc:SAML:2.0:ac:classes:SecureRemotePassword',
+        'urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard'			// autenticazione tramite smartcard
+    ]
+    */
+    //privateCert: fs.readFileSync('./cert.pem', 'utf-8')
+  },
+  function(profile, done) {
+      console.log("PassportAuth with:", profile);
+      return done(null, profile);
+
+      /*
+    findByEmail(profile.email, function(err, user) {
+      if (err) {
+          console.log(err);
+        return done(err);
+      }
+     if (!user) {
+          // "Auto-registration"
+          users.push(profile);
+          return done(null, profile);
+        }
+        return done(null, user);
+    });
+
+    */
+
+  });
+
+
 
 passport.use(samlStrategy);
 passport.serializeUser(function (user, done) {  done(null, user); });
@@ -136,7 +203,7 @@ function(req, res) {
     console.log('JWT?????');
     res.redirect('/federa/cli/#!/landingSAML/46544asdgjòtigjòsdtigjòsdtilgjsòdtgijsòldtgijsòldtigjslgsijdtg');
 });
-
+ 
 router.get('/metadata',
     function(req, res) {
         console.log('PassportAuth:/login/callback ... ');
@@ -145,6 +212,14 @@ router.get('/metadata',
         //res.status(200).send(fs.readFileSync('./metadata.xml'));
 });
 
+
+router.get('/metadataSPID',
+    function(req, res) {
+        console.log('PassportAuth:/login/callback ... ');
+        res.type('application/xml');
+        res.status(200).send(spidStrategy.generateServiceProviderMetadata(myCertStringFormatted));
+        //res.status(200).send(fs.readFileSync('./metadata.xml'));
+});
 
 // esegue una chiamata alla strategy "local" con req.logIn e se ok invia un token JWT
 
@@ -183,6 +258,40 @@ router.post('/logout',  utilityModule.ensureAuthenticated, function(req, res){
     res.status(200).send({ token: '', status : 'Logged out!' });
 });
 
+// esegue il logout dal sistema
+router.get('/logout',  utilityModule.ensureAuthenticated, function(req, res){
+    console.log('PASSPORT:/logout ... ');
+    console.log(req.csrfToken());
+    req.logout();
+    res.status(200).send({ token: '', status : 'Logged out!' });
+});
+
+
+/* SAML2 LOGIN ------------------------------------------------------------------------------------------------- */
+/* SAML2 LOGIN ------------------------------------------------------------------------------------------------- */
+/* SAML2 LOGIN ------------------------------------------------------------------------------------------------- */
+/* SAML2 LOGIN ------------------------------------------------------------------------------------------------- */
+/* SAML2 LOGIN ------------------------------------------------------------------------------------------------- */
+/* SAML2 LOGIN ------------------------------------------------------------------------------------------------- */
+
+  var sp_options = {
+    entity_id: "PMLAB-TEST-SAML2-JS-SPID",
+    private_key: fs.readFileSync("./certs/saml.pem").toString(),
+    certificate: fs.readFileSync("./certs/saml.crt").toString(),
+    assert_endpoint: "https://sp.example.com/assert1",
+    auth_context: { comparison: "exact", class_refs: ["urn:oasis:names:tc:SAML:1.0:am:password"] },
+    nameid_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
+    sign_get_request: false,
+    allow_unencrypted_assertion: true
+  };
+
+  var sp = new saml2.ServiceProvider(sp_options);
+
+// Endpoint to retrieve metadata 
+  router.get("/metadata2", function(req, res) {
+    res.type('application/xml');
+    res.send(sp.create_metadata());
+  });
 
 	return router;
 }

@@ -46,7 +46,7 @@ angular.module('myApp.controllers')
         vm.model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
         vm.model.codiceFiscaleRichiedente = 'RGGRGR70E25H294T';
         vm.model.cellulareRichiedente = 3355703086;
-        vm.model.dataNascitaRichiedente = '01/11/1912';
+        vm.model.dataNascitaRichiedente = '25/12/1912';
         vm.model.indirizzoRichiedente = 'VIA ROMA, 1';
         vm.model.cittaRichiedente = 'RIMINI';
         vm.model.capRichiedente = 47921;

@@ -68,14 +68,15 @@ angular.module('myApp.services', [])
         $log.debug('AuthService logout');
         var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogout; 
         $log.debug(fullApiEndpoint);
+        $log.debug('AuthService logout: delete JWT');
+        delete $localStorage.JWT;
+        $log.debug('AuthService logout: remove http header');
+        $http.defaults.headers.common.Authorization = '';
+       
       return $http
         .post(fullApiEndpoint, credentials)
         .then(function (res) {
             $log.debug(res);
-            $log.debug('AuthService logout: delete JWT');
-            delete $localStorage.JWT;
-            $log.debug('AuthService logout: remove http header');
-            $http.defaults.headers.common.Authorization = '';
             // Session.destroy();
         }).catch(function(response) {
             $log.debug('AuthService logout ERROR');

@@ -6,6 +6,8 @@ var fs = require('fs');
 //var Strategy = require('passport-local').Strategy;
 var SamlStrategy = require('passport-saml').Strategy;
 // var db = require('./db');
+var saml2 = require('saml2-js');
+
 
 var uuid = require('node-uuid');
 
@@ -301,6 +303,91 @@ app.get('/AAprofile',
   function(req, res){
     res.render('profile', { user: req.user });
   });
+
+// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
+// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
+// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
+// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
+
+
+  var sp_options = {
+      entity_id: "https://pmlab.comune.rimini.it/simplesaml",
+      private_key: fs.readFileSync("./certs/saml.pem").toString(),
+      certificate: fs.readFileSync("./certs/saml.crt").toString(),
+      assert_endpoint: "https://pmlab.comune.rimini.it/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp",
+      single_logout_service: "https://pmlab.comune.rimini.it/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp",
+      auth_context: { class_refs: ["urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard"] },
+      nameid_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
+      sign_get_request: false,
+      relay_state: 'SAML2JS',
+      sign_get_request: true,
+      allow_unencrypted_assertion: true
+  };
+       
+  
+  var sp = new saml2.ServiceProvider(sp_options);
+
+
+  // Create identity provider 
+  var idp_options = {
+    sso_login_url: 'https://federatest.lepida.it/gw/SSOProxy/SAML2',
+    sso_logout_url: 'https://federatest.lepida.it/gw/SSOProxy/SAML2',
+    relay_state: 'SAML2JS',
+    certificates: [fs.readFileSync("./certs/saml.pem").toString()]
+  };
+  var idp = new saml2.IdentityProvider(idp_options);
+
+  app.get('/module.php/saml/sp/metadata.php/default-sp', function(req, res) {
+      res.type('application/xml');
+      res.send(sp.create_metadata());
+      //res.status(200).send(fs.readFileSync('./metadata.xml'));
+  });
+
+
+  app.get("/FEDERAlogin", function(req, res) {
+    sp.create_login_request_url(idp, {relay_state: 'SAML2JS'}, function(err, login_url, request_id) {
+      if (err != null)
+        return res.send(500);
+      res.redirect(login_url);
+    });
+  });
+
+
+  // Assert endpoint for when login completes 
+  app.post("/module.php/saml/sp/saml2-acs.php/default-sp", function(req, res) {
+    var options = {request_body: req.body};
+    sp.post_assert(idp, options, function(err, saml_response) {
+      if (err != null)
+        return res.send(500);
+  
+      // Save name_id and session_index for logout 
+      // Note:  In practice these should be saved in the user session, not globally. 
+      name_id = saml_response.user.name_id;
+      session_index = saml_response.user.session_index;
+  
+      res.send("Hello #{saml_response.user.name_id}!");
+    });
+  });
+
+  // Starting point for logout 
+  app.get("/module.php/saml/sp/saml2-logout.php/default-sp", function(req, res) {
+  var options = {
+    name_id: name_id,
+    session_index: session_index
+  };
+ 
+  sp.create_logout_request_url(idp, options, function(err, logout_url) {
+    if (err != null)
+      return res.send(500);
+    res.redirect(logout_url);
+  });
+});
+
+
+// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
+// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
+// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
+// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
 
 
 app.use('/home', express.static(__dirname + '/home'));

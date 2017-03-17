@@ -3,6 +3,10 @@
 
 Per il build del Client dentro la cartella ./Client eseguire gulp build:dest 
 
+FEDERA TEST
+Username: RUGGERO_RUGGERI_FEDERATEST
+Dominio: federa.it
+Passowd: NLepida.it
 
 
 ## TEST Con Shibboleth

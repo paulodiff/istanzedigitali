@@ -52,6 +52,7 @@ var _ = require('lodash');
 // var Report = require('fluentreports').Report;
 var nodemailer = require('nodemailer');
 var request = require('request');
+// http://embed.plnkr.co/iwZplV/
 var moment = require('moment');
 var mime = require('mime');
 var async = require('async');
@@ -508,7 +509,7 @@ function sanitizeInput(fieldList, fieldsObj,  reqId) {
     }
 
     console.log(fieldsObj.dataNascitaRichiedente);
-    if( !validator.isDate(fieldsObj.dataNascitaRichiedente) ){
+    if( !moment( fieldsObj.dataNascitaRichiedente, 'DD/MM/YYYY', true).isValid() ){
         bValid = false;
         msgValidator = 'Data di Nascita non valida';
     } 

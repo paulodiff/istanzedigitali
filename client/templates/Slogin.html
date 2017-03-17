@@ -1,11 +1,15 @@
 <div class="container">
   <div class="row">
     <div class="center-form panel">
+      <div class="panel-heading">Autenticazione</div>
       <div class="panel-body">
+
+
 
       <div ng-if="!isAuthenticated()">
 
-        <h2 class="text-center">Log in</h2>
+        <h2 class="text-center">Accesso tramite FEDERA/SPID</h2>
+        <!--
         <form method="post" ng-submit="login()" name="loginForm">
           <div class="form-group has-feedback">
             <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
@@ -25,23 +29,24 @@
             <hr>
           </div>
         </form>
+        -->
+
+        <a class="btn btn-block btn-success btn-raised" href="{{fullApiEndpoint}}">
+            <i class="ion-social-linkedin"></i>LOG IN - SAML 2.0 - SSCIRCLE (SPID)
+        </a>
+
 
         </div>
 
 
-        <a class="btn btn-block btn-success" href="{{fullApiEndpoint}}">
-            <i class="ion-social-linkedin"></i>LOG IN BACKEND
-        </a>
-
-        <a class="btn btn-block btn-success" href="https://idp.ssocircle.com/sso/idpssoinit?metaAlias=%2Fpublicidp&spEntityID=PASSPORTSAMLSSOCIRCLE">
-            <i class="ion-social-linkedin"></i>LOG IN SSOCIRCLE
-        </a>
+     
 
 
 
-          <div ng-if="isAuthenticated()" class="nav navbar-nav">
-              <button class="btn btn-block btn-success" ng-click="logout('')">
-                <i class="ion-social-linkedin"></i> DISCONNETTI
+
+          <div ng-if="isAuthenticated()">
+              <button class="btn btn-block btn-warning btn-raised btn-block" ng-click="logout('')">
+                DISCONNETTI
               </button>
           </div>
             
@@ -68,11 +73,14 @@
         <button class="btn btn-block btn-google-plus" ng-click="authenticate('google')">
           <span class="ion-social-googleplus"></span>Sign in with Google
         </button>
--->
 
-        <button class="btn btn-block" ng-click="authenticate('google')">
+   <button class="btn btn-block" ng-click="authenticate('google')">
           <img src="images/spid.png">
         </button>
+
+-->
+
+     
 
 <!--        
         <button class="btn btn-block btn-linkedin" ng-click="authenticate('linkedin')">
