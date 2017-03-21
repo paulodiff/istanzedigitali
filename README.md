@@ -1,3 +1,15 @@
+## Integrazione Federa 
+
+Client AngularJs - Server NodeJs
+
+1) Il Client create un Token di Sessione per l'autorizzazione AuthToken
+2) il token viene passato alla chiamata di autorizzazione e messo in sessione locale (localStorage)
+3) il client chiama l'autenticazione SSO di FEDERA e passa nel RelayState il token
+4) Avviene la procedura di autenticazione e l'IdP chiama la callback in post con il token
+5) Viene creato un JWT token ed il clien viene rediretto con JWT e AuthToken
+6) Nella landingPage viene verificato l'AuthToken che viene distrutto ed usato il JWT per le interazioni successive.
+
+
 
 ## Istanze digitali
 
@@ -7,6 +19,9 @@ FEDERA TEST
 Username: RUGGERO_RUGGERI_FEDERATEST
 Dominio: federa.it
 Passowd: NLepida.it
+
+
+
 
 
 ## TEST Con Shibboleth

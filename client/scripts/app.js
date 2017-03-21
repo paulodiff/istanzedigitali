@@ -145,7 +145,7 @@ angular.module('myApp', [//'ionic',
     });
 
     $stateProvider.state('landingSAML', {
-        url: '/landingSAML/{tokenId}',
+        url: '/landingSAML/{tokenId}/{RelayState}',
         templateUrl: 'templates/landingSAML.html',
         controller: 'landingSAMLCtrl',
         accessLogged: false

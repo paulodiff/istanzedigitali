@@ -4,7 +4,7 @@ var app = express();
 var passport = require('passport');
 var fs = require('fs');
 //var Strategy = require('passport-local').Strategy;
-var SamlStrategy = require('passport-saml').Strategy;
+//var SamlStrategy = require('passport-saml').Strategy;
 // var db = require('./db');
 var saml2 = require('saml2-js');
 
@@ -29,7 +29,7 @@ app.use(cors({
       origin: 'https://idp.ssocircle.com',
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
   }));
-
+ 
 // logger http to console.
 var morgan       = require('morgan');
 app.use(morgan('dev'));
@@ -41,7 +41,7 @@ var bodyParser   = require('body-parser');
 var jsonParser = bodyParser.json({
                               limit:1024*1024*35, 
                               type:'application/json'
-                            });
+                            });   
 var urlencodedParser = bodyParser.urlencoded({ 
                               extended:true,
                               limit:1024*1024*35,
@@ -55,7 +55,7 @@ app.use(bodyParser.json({
 
 app.use(bodyParser.urlencoded({ 
   limit: '50mb', 
-  extended: true 
+  extended: true    
 }));
 
 // Parse Cookie header and populate req.cookies 
@@ -85,96 +85,51 @@ app.use(function (err, req, res, next) {
 })
 
 
-
-
 // load configuration data
 var ENV   = require('./config.js'); // load configuration data
 
+/*
+var myCert = fs.readFileSync('./certs/saml.pem', 'utf-8');
+var myCertStringFormat = fs.readFileSync('./certs/saml-string-format.crt', 'utf-8');
+var myCertFull = fs.readFileSync('./certs/saml-full.pem', 'utf-8');
 
-var myCert = fs.readFileSync('./certs/saml.crt', 'utf-8');
 
 var samlStrategy = new SamlStrategy(
   {
-    callbackUrl: 'https://pmlab.comune.rimini.it/federa/login/callback',
+    callbackUrl: 'https://pmlab.comune.rimini.it/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp',
     entryPoint: 'https://federatest.lepida.it/gw/SSOProxy/SAML2',
     // entryPoint: 'https://idp.testshib.org/idp/profile/SAML2/POST/SSO',
 
-    // ---- FOR Shibboleth START
-    // identifierFormat: null, 
-    // validateInResponseTo: false,
-    // disableRequestedAuthnContext: true,
-    // ----- FOR Shibboleth END
 
-
-
-    issuer: 'https://pmlab.comune.rimini.it/federa',
+    issuer: 'https://pmlab.comune.rimini.it/simplesaml',
     // Authentication requests sent by Passport-SAML can be signed using RSA-SHA1. To sign them you need to provide a private key in the PEM format via the privateCert configuration key. For example:
     privateCert: myCert,
-    /* FEDERA
-    cert: 'MIIDJDCCAgygAwIBAgIVAIq/MUgxPKO0cuX/GtD7YUvk87GtMA0GCSqGSIb3DQEBBQUAMBkxFzAVBgNVBAMTDmlkcC5tYWNoaW5lLml0MB4XDTA5MDMyNTEwNTM1OFoXDTI5MDMyNTA5NTM1OFowGTEXMBUGA1UEAxMOaWRwLm1hY2hpbmUuaXQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQClXV18x0/yhZ+D3pHlmhrK4paA+xdJKAT7U7R9DeaTQygwtCjKmCrJbzdohckLz5pax7eaGeA53pPCY+JdiU0Uq4ES8nG2DCZgCtl4QGLUcTuUtJdPq+DbYD1cWBwEeeffsiClVyuhgLRPO1OQLl/TJp4slfoYTi0aONgQp03uG+ixL48myL7GrINHYXtDUDqo2BimyU0yrOe6ZmvxJchZ8nBuWKy0J8wsO/Mnasbvo79/c8gcn0HTst0QDlHXQlzwZ4Suq2os9qKjXAYOzA1VqmTyzJIge/ynHiJ0Fkw0HNxBaVFTJRNL8RvwJsMuBT7YZKRoNK7gjT5/6bGagYM/AgMBAAGjYzBhMEAGA1UdEQQ5MDeCDmlkcC5tYWNoaW5lLml0hiVodHRwczovL2lkcC5tYWNoaW5lLml0L2lkcC9zaGliYm9sZXRoMB0GA1UdDgQWBBSBOsPZiWZRXFqNINIguHfv7jnidDANBgkqhkiG9w0BAQUFAAOCAQEAeVLN9jczRINuPUvpXbgibL2c99dUReMcl47nSVtYeYEBkPPZrSz0h3AyVZyar2Vo+/fC3fRNmaOJvfiVSm+bo1069iROI1+dGGq2gAwWuQI1q0F7PNPX4zooY+LbZI0oUhuoyH81xed0WtMlpJ1aRSBMpR6oV3rguAkH6pdr725yv6m5WxKcOM/LzdD5Xt9fQRL7ino4HfiPPJNDG3UOKhoAWkVn/Y/CuMLcBPWh/3LxIv4A1bQbnkpdty+Qtwfp4QUKkisv7gufQP91aLqUvvRE6Uz8r51VH13e4mEJjJGxLKXWzlP50gp7b27AXCTKSS6fW6iBpfA14PGcWvDiPQ==',
-    */
 
     cert: fs.readFileSync('./certs/federa-test.pem', 'utf-8'), 
 
     decryptionPvk: myCert,
-    logoutCallbackUrl: 'https://pmlab.comune.rimini.it/federa/logout',
+    logoutCallbackUrl: 'https://pmlab.comune.rimini.it/simplesaml/logout',
     identifierFormat : 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
-    validateInResponseTo: true,
+    validateInResponseTo: true
 
+    // additionalParams: {'RelayState' : 'passportSAML', 'myPar' : '1'}
     // skipRequestCompression: true
 
-
-
-	/*
-	authnContext: [
-			'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',	// autenticazione tramite username e password
-			// 'urn:oasis:names:tc:SAML:2.0:ac:classes:SecureRemotePassword',
-			'urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard'			// autenticazione tramite smartcard
-	]
-	*/
-    //privateCert: fs.readFileSync('./cert.pem', 'utf-8')
+    //
+    //  authnContext: [
+    //      'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',	// autenticazione tramite username e password
+    //      // 'urn:oasis:names:tc:SAML:2.0:ac:classes:SecureRemotePassword',
+    //      'urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard'			// autenticazione tramite smartcard
+    //  ]
+    
+    // privateCert: fs.readFileSync('./cert.pem', 'utf-8')
   },
   function(profile, done) {
-      console.log("Auth with", profile);
-    findByEmail(profile.email, function(err, user) {
-      if (err) {
-          console.log(err);
-        return done(err);
-      }
-     if (!user) {
-          // "Auto-registration"
-          users.push(profile);
-          return done(null, profile);
-        }
-        return done(null, user);
-    });
+      console.log("Authorization!!!! with", profile);
+      return done(null, profile);
   });
 
-passport.use(samlStrategy);
-
-/*
-passport.use(new Strategy(
-  function(username, password, cb) {
-    db.users.findByUsername(username, function(err, user) {
-      if (err) {
-          console.log('ERRORE');
-          console.log(err); 
-          return cb(err); 
-        }
-      if (!user) {
-            console.log('USER NOT FOUND');
-          return cb(null, false); 
-        }
-      if (user.password != password) { 
-            console.log('USER PASSWORD ERROR');    
-            return  cb(null, false); 
-        
-       }
-
-      console.log('FOUND');
-      return cb(null, user);
-    });
-  }));
+  passport.use(samlStrategy);
 */
 
 // Configure Passport authenticated session persistence.
@@ -185,28 +140,9 @@ passport.use(new Strategy(
 // serializing, and querying the user record by ID from the database when
 // deserializing.
 
-/*
-passport.serializeUser(function(user, cb) {
-  cb(null, user.id);
-});
 
-passport.deserializeUser(function(id, cb) {
-  db.users.findById(id, function (err, user) {
-    if (err) { return cb(err); }
-    cb(null, user);
-  });
-});
-*/
-
-passport.serializeUser(function(user, done){
-    done(null, user);
-});
-
-passport.deserializeUser(function(user, done){
-    done(null, user);
-});
-
-
+// passport.serializeUser(function(user, done){    done(null, user); });
+// passport.deserializeUser(function(user, done){     done(null, user); });
 
 // Configure view engine to render EJS templates.
 app.set('views', __dirname + '/views');
@@ -230,6 +166,7 @@ log.log2console('Starting ...');
 
 var PassportAuth = require('./routes/PassportAuth')();
 app.use('/passportauth', PassportAuth);
+app.use('/module.php', PassportAuth);
 
 var ProfileMgr = require('./routes/ProfileMgr')();
 app.use('/profilemgr', ProfileMgr);
@@ -244,70 +181,53 @@ app.get('/',
 	  //res.redirect('home/');
 });
 
- app.get('/AAlogin',
+
+/*
+app.get("/FEDERAlogin", 
+    function(req, res, next) {
+      console.log('Setting RelayState');
+      req.query.RelayState = 'TOKEN123454566';
+      next();
+    },
     passport.authenticate('saml',
       {
         successRedirect: '/',
         failureRedirect: '/login'
       })
-  );
-
-app.post('/AAlogin',
-  passport.authenticate('saml', { failureRedirect: '/login/fail', failureFlash: true }),
-  function(req, res) {
-      console.log('get /login');
-        res.redirect('/profile');
-        }
 );
 
-app.get('/AAmetadata', 
-    function(req, res) {
+app.get('/module.php/saml/sp/metadata.php/default-sp', function(req, res) {  
         console.log('/metadata');
         res.type('application/xml');
-        res.status(200).send(samlStrategy.generateServiceProviderMetadata(myCert));
+        res.status(200).send(samlStrategy.generateServiceProviderMetadata(myCertStringFormat));
         //res.status(200).send(fs.readFileSync('./metadata.xml'));
     }
 );
 
-app.get('/AAlogin',
-  passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
-  function(req, res) {
-      console.log('root get /login');
-        res.redirect('/profile');
-        }
-);
   
-app.post('/AAlogin/callback',
+app.post("/module.php/saml/sp/saml2-acs.php/default-sp", 
    passport.authenticate('saml', { failureRedirect: '/login/fail', failureFlash: true }),
   function(req, res) {
         console.log('root post /login/callback');
         console.log(req.user);
-        res.redirect('/profile');
+        res.render('home', { user: req.user} );
   });
+*/
 
-app.get('/AAlogin/fail', 
-    function(req, res) {
-        console.log('root /login/fail');
-        res.send(401, 'Login failed');
-    }
-);  
 
-app.get('/AAlogout',
-  function(req, res){
-    req.logout();
-    res.redirect('/');
-  });
+// ##################################################################################
+// express-saml2 --------------------------------------------------------------- TEST 
 
-app.get('/AAprofile',
-  require('connect-ensure-login').ensureLoggedIn(),
-  function(req, res){
-    res.render('profile', { user: req.user });
-  });
+// var saml = require('express-saml2');
+
+
 
 // FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
 // FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
 // FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
 // FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
+
+/***
 
 
   var sp_options = {
@@ -324,18 +244,18 @@ app.get('/AAprofile',
       allow_unencrypted_assertion: true
   };
        
-  
+      
   var sp = new saml2.ServiceProvider(sp_options);
-
 
   // Create identity provider 
   var idp_options = {
     sso_login_url: 'https://federatest.lepida.it/gw/SSOProxy/SAML2',
     sso_logout_url: 'https://federatest.lepida.it/gw/SSOProxy/SAML2',
     relay_state: 'SAML2JS',
-    certificates: [fs.readFileSync("./certs/saml.pem").toString()]
+    certificates: [fs.readFileSync("./certs/federa-test.pem").toString()]
   };
   var idp = new saml2.IdentityProvider(idp_options);
+
 
   app.get('/module.php/saml/sp/metadata.php/default-sp', function(req, res) {
       res.type('application/xml');
@@ -352,14 +272,22 @@ app.get('/AAprofile',
     });
   });
 
-
+      
   // Assert endpoint for when login completes 
   app.post("/module.php/saml/sp/saml2-acs.php/default-sp", function(req, res) {
+    console.log("ASSERT POST.....................");
     var options = {request_body: req.body};
     sp.post_assert(idp, options, function(err, saml_response) {
-      if (err != null)
+
+      console.log(saml_response);
+
+      if (err != null) {
+        console.log(err);
         return res.send(500);
+      }
   
+      
+
       // Save name_id and session_index for logout 
       // Note:  In practice these should be saved in the user session, not globally. 
       name_id = saml_response.user.name_id;
@@ -383,6 +311,7 @@ app.get('/AAprofile',
   });
 });
 
+****/
 
 // FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
 // FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP

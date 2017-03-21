@@ -10,19 +10,19 @@
         </div>
         <div class="form-group">
           <label class="control-label"><i class="ion-person"></i>Name</label>
-          {{user.FirstName}} - {{user.LastName}}
+          {{user.nome}} - {{user.cognome}}
         </div>
         <div class="form-group">
           <label class="control-label"><i class="ion-at"></i> Email Address</label>
-          <input type="email" class="form-control" ng-model="user.EmailAddress" />
+          <input type="email" class="form-control" ng-model="user.CodiceFiscale" />
         </div>
         <div class="form-group">
           <label class="control-label"><i class="ion-at"></i> Description</label>
-          <input type="text" class="form-control" ng-model="user.description" />
+          <input type="text" class="form-control" ng-model="user.userid" />
         </div>
         <div class="form-group">
           <label class="control-label"><i class="ion-at"></i> Age</label>
-          <input type="text" class="form-control" ng-model="user.age" />
+          <input type="text" class="form-control" ng-model="user.dataNascita" />
         </div>
         <button class="btn btn-lg btn-success btn-raised">Update Information</button>
       </form>

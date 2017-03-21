@@ -23,10 +23,7 @@ angular.module('myApp.controllers')
             $log.debug("AppCtrl ... go");
             $state.go(path);
         };
-                
-        if(window.ionic){
-            $log.debug('IONIC defined! : ' + window.ionic.version);
-        }
+
                 
         $scope.toggleLeft = function() {
              $log.debug("AppCtrl ... toggleLeft");
@@ -300,8 +297,8 @@ angular.module('myApp.controllers')
 // LoginController ------------------------------------------------------------------------------------
 // LoginController ------------------------------------------------------------------------------------
 .controller('LoginController', 
-                    [ '$scope', 'usSpinnerService', '$localStorage', '$rootScope', 'ENV', 'AuthService','$state', '$log',
-            function ( $scope,   usSpinnerService,   $localStorage,   $rootScope,   ENV,   AuthService,  $state,   $log) {
+                    [ '$scope', 'usSpinnerService', '$localStorage', '$rootScope', 'ENV', 'AuthService', 'UtilsService', '$state', '$log',
+            function ( $scope,   usSpinnerService,   $localStorage,   $rootScope,   ENV,   AuthService,   UtilService,    $state,   $log) {
                 
     $log.debug('LoginController...');
     $log.debug('LoginController...currentUser:' + $scope.currentUser );
@@ -335,8 +332,14 @@ angular.module('myApp.controllers')
         $scope.credentials.password = $localStorage.password;
      }
 
-  var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogin;
+
+  
+
+  $log.debug('LoginController...fullApiEndpoint');
+  var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogin + '/' + AuthService.getRelayStateToken();
+
   console.log(fullApiEndpoint);
+
   $scope.fullApiEndpoint = fullApiEndpoint;
     
   // title ion-view
@@ -411,11 +414,13 @@ angular.module('myApp.controllers')
       $log.debug(credentials);
       
     AuthService.logout(credentials).then(function () {
-        $log.debug('LoginController : broadcast... ');
+        $log.debug('LoginController : logout broadcast... ');
         $rootScope.$broadcast(ENV.AUTH_EVENTS.logoutSuccess);
-        
-    }, function () {
-      $rootScope.$broadcast(ENV.AUTH_EVENTS.logoutSuccess);
+       
+    }, function (err) {
+        $log.debug('LoginController : logout err');
+        $log.debug(err);
+        $rootScope.$broadcast(ENV.AUTH_EVENTS.logoutSuccess);
     });
   };
 
@@ -569,15 +574,26 @@ angular.module('myApp.controllers')
 
     $log.debug('landingSAMLCtrl...');
     
-
-    if($stateParams.tokenId) {
-        $scope.tokenId = $stateParams.tokenId;
-        $log.debug($scope.tokenId);
-        AuthService.storeToken($stateParams.tokenId);
-    } else {
-        $log.debug('NO TOKEN');
+    // Verifica RelayState
+    if($stateParams.RelayState) {
+        // Match RelayState 
+        if(AuthService.checkRelayStateToken($stateParams.RelayState)){
+            if($stateParams.tokenId) {
+                //$scope.tokenId = $stateParams.tokenId;
+                //$log.debug($scope.tokenId);        
+                AuthService.storeToken($stateParams.tokenId);
+            } else{
+                $log.debug('No TokenId');
+            }
+        }else{
+          $log.debug('RelayState NO MATCH!');  
+        }
+    } else{
+        $log.debug('No RelayState');
     }
 
+
+    
     $scope.isAuthenticated = function() {
       // return $auth.isAuthenticated();
       return AuthService.isAuthenticated();
@@ -593,7 +609,6 @@ angular.module('myApp.controllers')
       }
       
     };
-
 
   }])
 

@@ -50,7 +50,6 @@ angular.module('myApp.services', [])
     },
       
     storeToken: function(token) {
-
       if(token){
           $log.debug('AuthService store token');
           $log.debug(token);
@@ -60,7 +59,34 @@ angular.module('myApp.services', [])
           $log.debug( 'AuthService store set http common header');
           $http.defaults.headers.common.Authorization = 'Bearer ' + token;
       }
+    },
 
+    // imposta e ritorna il 
+    getRelayStateToken: function(){
+          $log.debug('AuthService: getRelayStateToken');
+          $log.debug('AuthService store set JWT to storage');
+          $localStorage.RelayStateToken = Math.random() * 100000000000000000;
+          return $localStorage.RelayStateToken;
+    },
+
+    checkRelayStateToken: function(RelayStateToken){
+      $log.debug('AuthService: checkRelayStateToken');
+      if(RelayStateToken){
+        if($localStorage.RelayStateToken){
+          if($localStorage.RelayStateToken == RelayStateToken){
+            return true;
+          }else{
+            $log.debug('AuthService: checkRelayStateToken <>');
+            return false;
+          }
+        }else{
+          $log.debug('AuthService: checkRelayStateToken NOT EXIST');
+          return false;
+        }
+      }else{
+        $log.debug('AuthService: checkRelayStateToken null parameter');
+        return false;
+      }
     },
 
 
@@ -68,19 +94,24 @@ angular.module('myApp.services', [])
         $log.debug('AuthService logout');
         var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogout; 
         $log.debug(fullApiEndpoint);
+        /*
         $log.debug('AuthService logout: delete JWT');
         delete $localStorage.JWT;
         $log.debug('AuthService logout: remove http header');
         $http.defaults.headers.common.Authorization = '';
+        */
        
       return $http
-        .post(fullApiEndpoint, credentials)
+        .get(fullApiEndpoint, credentials)
         .then(function (res) {
             $log.debug(res);
-            // Session.destroy();
+            delete $localStorage.JWT;
+            $http.defaults.headers.common.Authorization = '';
         }).catch(function(response) {
             $log.debug('AuthService logout ERROR');
             $log.debug(response);
+            delete $localStorage.JWT;
+            $http.defaults.headers.common.Authorization = '';
             throw new Error('thrown in then');
        });
     },  
@@ -91,7 +122,7 @@ angular.module('myApp.services', [])
     },
       
     isAuthorized: function (authorizedRoles) {
-        $log.debug('AuthService isAuthorized');
+        // $log.debug('AuthService isAuthorized');
       if (!angular.isArray(authorizedRoles)) {
         authorizedRoles = [authorizedRoles];
       }
