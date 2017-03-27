@@ -1,8 +1,14 @@
 # Istanze Digitali
 ## Un framework per far diventare digitali i procedimenti amministrativi che non ci riescono
 
+## Descrizine
 
-E' un framework/progetto che permette di gestire la ricezione e lo stato delle istanze di procedimento in maniera digitale.
+Nella pubblica amministrazione molti procedimenti interni sono gestiti attraverso piccoli gestionali, 
+fogli di calcolo o file e cartelle. Per questo tipo di procedimenti risulta molto difficile e dispendioso
+poter disporre di una interfaccia web per raccogliere le istanze in ingresso, essere integrati con SPID ed il
+gestore documentale, ed inviare le notifiche sullo stato del procedimento in maniera automatica al cittadino.
+
+Questo framework vuole rispondere a questa esigenza.
 
 ### Le principali caratteristiche sono:
 
@@ -14,34 +20,26 @@ E' un framework/progetto che permette di gestire la ricezione e lo stato delle i
 -   Interfacciamento dei flussi dati con i gestionali dell'ufficio
 -	Open Source
 
-## Descrizinoe
-
-Nella pubblica amministrazione molti procedimenti interni sono gestiti attraverso piccoli gestionali, 
-fogli di calcolo o file e cartelle. Per questo tipo di procedimenti risulta molto difficile e dispendioso
-poter disporre di una interfaccia web per raccogliere le istanze in
-
-Le principali caratteristiche sono:
 
 ## Il caso d'uso tipico
 
-Richiesta di prenotazione e rinnovo di una tipologia di autorizzazione.
+Richiesta di prenotazione e rinnovo di una tipologia di autorizzazione. L'ufficio gestisce le autorizzazioni utilizzando un file di excel.
 
     1) Si prepara il form dati per la richiesta dati con la possibilitò di allegare dei documenti
     2) Si comunica il link sul sito web dell'ente (il link sarà attivo per tutta la durata del rinnovo)
     3) I cittadini richiedenti si autenticano con SPID compilano i dati ed inviano l'istanza
     4) L'istanza viene protocollata, inoltrata all'ufficio competente
     5) Al cittadino viene inviata una informativa di avvio procedimento con il protocollo e tutte le informazioni necessarie
-    6) I dati inviati vengono raccolti nella modalità più comoda per la gestione 
+    6) I dati inviati vengono raccolti nella modalità più comoda per la gestione (excel)
     7) Al cittadino vengono inviate le notifiche sullo stato di avanzamento del procedimento
-    
+   
 
-Scadenza  l'ufficio gestisce i dati su excel il protocollo
 
-Tecnologie
+## Tecnologie
 
 - Le Tecnologie utilizzate per il progetto sono AngularJs per il client e NodeJs per il server
 
-Stato del progetto
+## Stato del progetto
 
 - Integrazione con FEDERA/SPID - (fatto)
 - Integrazione con il software di Gestione Documentale (fatto)
