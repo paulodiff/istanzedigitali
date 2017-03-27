@@ -1,7 +1,7 @@
 # Istanze Digitali
 ## Un framework per far diventare digitali i procedimenti amministrativi che non ci riescono
 
-## Descrizine
+## Descrizione
 
 Nella pubblica amministrazione molti procedimenti interni sono gestiti attraverso piccoli gestionali, 
 fogli di calcolo o file e cartelle. Per questo tipo di procedimenti risulta molto difficile e dispendioso
@@ -10,7 +10,7 @@ gestore documentale, ed inviare le notifiche sullo stato del procedimento in man
 
 Questo framework vuole rispondere a questa esigenza.
 
-### Le principali caratteristiche sono:
+### Le principali caratteristiche del framework sono:
 
 -	Integrazione con FEDERA/SPID
 -	Integrazione con il software di Gestione Documentale
@@ -23,7 +23,8 @@ Questo framework vuole rispondere a questa esigenza.
 
 ## Il caso d'uso tipico
 
-Richiesta di prenotazione e rinnovo di una tipologia di autorizzazione. L'ufficio gestisce le autorizzazioni utilizzando un file di excel.
+Richiesta di prenotazione e rinnovo di una tipologia di autorizzazione. 
+L'ufficio gestisce le autorizzazioni utilizzando un file di excel che non è integrato neanche con il protocollo.
 
     1) Si prepara il form dati per la richiesta dati con la possibilitò di allegare dei documenti
     2) Si comunica il link sul sito web dell'ente (il link sarà attivo per tutta la durata del rinnovo)
