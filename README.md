@@ -1,3 +1,27 @@
+# Istanze Digitali
+## Un framework per far diventare digitali i procedimenti amministrativi che non ci riescono
+
+
+E' un framework/progetto che permette di gestire la ricezione e lo stato delle istanze di procedimento in maniera digitale.
+Le principali caratteristiche sono:
+-	Integrazione con SPID
+-	Integrazione con il software di Gestione Documentale
+-	Interfacce che seguono le specifiche di design.italia.it
+-	Notifiche al cittadino dello stato dell'istanza
+-	Interfaccia di accoglimento istanze facilmente personalizzabile
+-	Open Source
+
+Nella pubblica amministrazione molti procedimenti interni sono gestiti attraverso piccoli gestionali, fogli di calcolo o file e cartelle. Per questo tipo di procedimenti risulta molto difficile e dispendioso
+
+
+
+Tecnologie
+
+
+Stato del progetto
+
+
+
 ## Integrazione Federa 
 
 Client AngularJs - Server NodeJs
