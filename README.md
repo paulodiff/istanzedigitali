@@ -47,6 +47,9 @@ L'ufficio gestisce le autorizzazioni utilizzando un file di excel che non è int
 - Interfacce che seguono le specifiche di design.italia.it (in sviluppo)
 - Interfaccia di accoglimento istanze facilmente personalizzabile (in sviluppo)
 - Interfacciamento dei flussi dati con i gestionali dell'ufficio (fatto filesystem, xls. In sviluppo Mdb)
+- Invio della prima notifica ad avvenuta ricezione dell'istanza (fatto)
+- Invio delle notifiche successive sullo stato dell'istanza (in sviluppo)
+- Invio della notifica di completamente procediemento (in sviluppo)
 - Open Source (fatto)
 
 
