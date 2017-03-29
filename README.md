@@ -67,8 +67,3 @@ Dominio: federa.it
 Passowd: NLepida.it
 
 
-http://du.ilsole24ore.com/utenti/authfiles/loginaziende.aspx?caller_id=ComuneRimini&user_uniqueid=comrimini&user_role=comrimini
-
-
-
-http://du.ilsole24ore.com/utenti/authfiles/loginaziende.aspx?caller_id=ComuneRimini&user_uniqueid=comrimini&user_role=comrimini&ignore_x_ip=1
