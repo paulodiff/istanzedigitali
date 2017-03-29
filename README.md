@@ -1,14 +1,15 @@
 # Istanze Digitali
-## Un framework per far diventare digitali i procedimenti amministrativi che non ci riescono
+## Piccoli procedimenti digitali "crescono"
 
 ## Descrizione
 
 Nella pubblica amministrazione molti procedimenti interni sono gestiti attraverso piccoli gestionali, 
-fogli di calcolo o file e cartelle. Per questo tipo di procedimenti risulta molto difficile e dispendioso
-poter disporre di una interfaccia web per raccogliere le istanze in ingresso, essere integrati con SPID ed il
-gestore documentale, ed inviare le notifiche sullo stato del procedimento in maniera automatica al cittadino.
+fogli di calcolo o file e cartelle. Inoltre spesso vi sono procedimenti che nascono e muoiono velocemente.
+Per questo tipo di procedimenti risulta molto difficile e dispendioso poter disporre di una interfaccia web per 
+raccogliere le istanze in ingresso, essere integrati con SPID ed il gestore documentale, ed inviare le notifiche 
+sullo stato del procedimento in maniera automatica al cittadino.
 
-Questo framework vuole rispondere a questa esigenza.
+> Questo framework vuole rispondere a questa esigenza.
 
 ### Le principali caratteristiche del framework sono:
 
@@ -19,7 +20,6 @@ Questo framework vuole rispondere a questa esigenza.
 -	Interfaccia di accoglimento istanze facilmente personalizzabile
 -   Interfacciamento dei flussi dati con i gestionali dell'ufficio
 -	Open Source
-
 
 ## Il caso d'uso tipico
 
@@ -33,8 +33,6 @@ L'ufficio gestisce le autorizzazioni utilizzando un file di excel che non è int
     5) Al cittadino viene inviata una informativa di avvio procedimento con il protocollo e tutte le informazioni necessarie
     6) I dati inviati vengono raccolti nella modalità più comoda per la gestione (excel)
     7) Al cittadino vengono inviate le notifiche sullo stato di avanzamento del procedimento
-   
-
 
 ## Tecnologie
 
@@ -57,6 +55,7 @@ L'ufficio gestisce le autorizzazioni utilizzando un file di excel che non è int
 - Comune di Rimini - Ruggero Ruggeri ruggero.ruggeri AT comune.rimini.it 0541/7014607
 
 
+
 #### FINE DODUMENTO
 
 
@@ -66,3 +65,10 @@ FEDERA TEST
 Username: RUGGERO_RUGGERI_FEDERATEST
 Dominio: federa.it
 Passowd: NLepida.it
+
+
+http://du.ilsole24ore.com/utenti/authfiles/loginaziende.aspx?caller_id=ComuneRimini&user_uniqueid=comrimini&user_role=comrimini
+
+
+
+http://du.ilsole24ore.com/utenti/authfiles/loginaziende.aspx?caller_id=ComuneRimini&user_uniqueid=comrimini&user_role=comrimini&ignore_x_ip=1
