@@ -6,6 +6,7 @@ var ENV   = require('../config.js'); // load configuration data
 // var User  = require('../models/user.js'); // load configuration data
 var utilityModule  = require('../models/utilityModule.js'); // load configuration data
 var log = require('../models/loggerModule.js');
+var models = require("../modelsSequelize");
 
 
 module.exports = function(){
@@ -16,7 +17,21 @@ router.get('/me', utilityModule.ensureAuthenticated, function(req, res) {
     log.log2console(req.user);
 
     var key = req.user;  
-    return res.status(200).send(key);
+
+    // caricamento lista eventi di autenticazione
+    models.SpidLog.findAll({
+      where: {
+        userid : req.user.userid
+      }
+    }).then(function(taskList) {
+        key.AuthEvents = taskList;
+        log.log2console(key);
+
+        return res.status(200).send(key);
+    });
+
+
+
     // var jsonFile = './data/profiles/profiles.json';
     // var data = JSON.parse(fs.readFileSync(jsonFile)); 
 

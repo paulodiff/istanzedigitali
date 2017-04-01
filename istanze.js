@@ -174,149 +174,16 @@ app.use('/profilemgr', ProfileMgr);
 var Protocollo = require('./routes/Protocollo')();
 app.use('/segnalazioni', Protocollo);
 
+var IstanzeMgr = require('./routes/IstanzeMgr')();
+app.use('/istanzemgr', IstanzeMgr);
+
+
 // Define routes.
 app.get('/',
   function(req, res) {
     res.render('login');
 	  //res.redirect('home/');
 });
-
-
-/*
-app.get("/FEDERAlogin", 
-    function(req, res, next) {
-      console.log('Setting RelayState');
-      req.query.RelayState = 'TOKEN123454566';
-      next();
-    },
-    passport.authenticate('saml',
-      {
-        successRedirect: '/',
-        failureRedirect: '/login'
-      })
-);
-
-app.get('/module.php/saml/sp/metadata.php/default-sp', function(req, res) {  
-        console.log('/metadata');
-        res.type('application/xml');
-        res.status(200).send(samlStrategy.generateServiceProviderMetadata(myCertStringFormat));
-        //res.status(200).send(fs.readFileSync('./metadata.xml'));
-    }
-);
-
-  
-app.post("/module.php/saml/sp/saml2-acs.php/default-sp", 
-   passport.authenticate('saml', { failureRedirect: '/login/fail', failureFlash: true }),
-  function(req, res) {
-        console.log('root post /login/callback');
-        console.log(req.user);
-        res.render('home', { user: req.user} );
-  });
-*/
-
-
-// ##################################################################################
-// express-saml2 --------------------------------------------------------------- TEST 
-
-// var saml = require('express-saml2');
-
-
-
-// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
-// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
-// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
-// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
-
-/***
-
-
-  var sp_options = {
-      entity_id: "https://pmlab.comune.rimini.it/simplesaml",
-      private_key: fs.readFileSync("./certs/saml.pem").toString(),
-      certificate: fs.readFileSync("./certs/saml.crt").toString(),
-      assert_endpoint: "https://pmlab.comune.rimini.it/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp",
-      single_logout_service: "https://pmlab.comune.rimini.it/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp",
-      auth_context: { class_refs: ["urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard"] },
-      nameid_format: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
-      sign_get_request: false,
-      relay_state: 'SAML2JS',
-      sign_get_request: true,
-      allow_unencrypted_assertion: true
-  };
-       
-      
-  var sp = new saml2.ServiceProvider(sp_options);
-
-  // Create identity provider 
-  var idp_options = {
-    sso_login_url: 'https://federatest.lepida.it/gw/SSOProxy/SAML2',
-    sso_logout_url: 'https://federatest.lepida.it/gw/SSOProxy/SAML2',
-    relay_state: 'SAML2JS',
-    certificates: [fs.readFileSync("./certs/federa-test.pem").toString()]
-  };
-  var idp = new saml2.IdentityProvider(idp_options);
-
-
-  app.get('/module.php/saml/sp/metadata.php/default-sp', function(req, res) {
-      res.type('application/xml');
-      res.send(sp.create_metadata());
-      //res.status(200).send(fs.readFileSync('./metadata.xml'));
-  });
-
-
-  app.get("/FEDERAlogin", function(req, res) {
-    sp.create_login_request_url(idp, {relay_state: 'SAML2JS'}, function(err, login_url, request_id) {
-      if (err != null)
-        return res.send(500);
-      res.redirect(login_url);
-    });
-  });
-
-      
-  // Assert endpoint for when login completes 
-  app.post("/module.php/saml/sp/saml2-acs.php/default-sp", function(req, res) {
-    console.log("ASSERT POST.....................");
-    var options = {request_body: req.body};
-    sp.post_assert(idp, options, function(err, saml_response) {
-
-      console.log(saml_response);
-
-      if (err != null) {
-        console.log(err);
-        return res.send(500);
-      }
-  
-      
-
-      // Save name_id and session_index for logout 
-      // Note:  In practice these should be saved in the user session, not globally. 
-      name_id = saml_response.user.name_id;
-      session_index = saml_response.user.session_index;
-  
-      res.send("Hello #{saml_response.user.name_id}!");
-    });
-  });
-
-  // Starting point for logout 
-  app.get("/module.php/saml/sp/saml2-logout.php/default-sp", function(req, res) {
-  var options = {
-    name_id: name_id,
-    session_index: session_index
-  };
- 
-  sp.create_logout_request_url(idp, options, function(err, logout_url) {
-    if (err != null)
-      return res.send(500);
-    res.redirect(logout_url);
-  });
-});
-
-****/
-
-// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
-// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
-// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
-// FAKE SIMPLESAMLPHP -------------------------------------------------------------------- SIMPLESAMLPHP
 
 
 app.use('/home', express.static(__dirname + '/home'));
@@ -343,6 +210,25 @@ var options = {
 app.use('/cli',  express.static(__dirname + '/client', options));
 app.use('/dist', express.static(__dirname + '/client/dist', options));
 
+// Sequelize START Bootstrap
+var models = require("./modelsSequelize");
+
+log.log2console('Sequelize START');
+
 log.log2console('Server started at:' + ENV.nodejs.NODEJSport);
 log.log2file('Server started at:' + ENV.nodejs.NODEJSport);
-app.listen(ENV.nodejs.NODEJSport);
+//app.listen(ENV.nodejs.NODEJSport);
+
+
+models.sequelize.sync().then(function() {
+  // models.Istanze.sync({_____force: ____true});
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+  var port = ENV.nodejs.NODEJSport;
+  app.listen(port, function() {
+    log.log2console('Express server listening on port ' + port);
+  });
+  app.on('error', function(error) { log.log2console(error); });
+  app.on('listening', function() { log.log2console('listening'); });
+});

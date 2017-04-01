@@ -23,7 +23,10 @@
   "dependencies": {
     "angular-ui-router": "^0.4.2",
     "fs-extra": "^2.0.0",
+    "mysql": "^2.13.0",
     "nodemailer": "^3.1.4",
+    "sequelize": "^3.30.4",
+    "uuid": "^3.0.1",
     "validator": "^6.2.0"
   }
 }

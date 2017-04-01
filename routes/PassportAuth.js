@@ -8,6 +8,9 @@ var path = require('path');
 var passport = require('passport');
 var fs = require('fs');
 var saml2 = require('saml2-js');
+var models = require("../modelsSequelize");
+var log = require('../models/loggerModule.js');
+var uuidV4 = require('uuid/v4');
 
 
 // http://mherman.org/blog/2015/07/02/handling-user-authentication-with-the-mean-stack/#.WKxfkG_hBpg
@@ -75,17 +78,24 @@ module.exports = function(){
 
 // PATCH compatibilità SimpleSaml chiamata dall'Idp al login callback
 //router.post('/login/callback', function(req, res, next) { console.log('PassportAuth:/login/callback'); next(); },
+//Punto di ingresso della chiamata
 router.post("/saml/sp/saml2-acs.php/default-sp", 
    function(req, res, next) { console.log('PassportAuth: PATCH /saml/sp/saml2-acs.php/default-sp'); next(); },
    passport.authenticate('saml', { failureRedirect: '/login/fail', failureFlash: true }),
   function(req, res) {
         console.log('root post /login/callback');
-        console.log(req.user);
-        console.log(req.body);
         console.log(req.body.RelayState);
-        console.log('PassportAuth:/login/callback CREATE AUTH TOKEN');
-        var token = utilityModule.createJWT(req.user);
-        res.redirect('/simplesaml/cli/#!/landingSAML/' + token + '/' + req.body.RelayState);
+        console.log('Save auth transaction to db');
+        req.user.uuidV4 = uuidV4();
+        saveAuthTransaction(req.user).then(function (response) {
+          console.log('PassportAuth:/login/callback CREATE AUTH TOKEN');
+          var token = utilityModule.createJWT(req.user);
+          res.redirect('/simplesaml/cli/#!/landingSAML/' + token + '/' + req.body.RelayState);
+        }).catch(function (err) {
+            console.log(err)
+          var token = 'ERRORSAVINGTODATABASE';
+          res.redirect('/simplesaml/cli/#!/landingSAML/' + token + '/' + req.body.RelayState);
+        });
   });
 
 
@@ -144,6 +154,78 @@ router.get('/logout',  utilityModule.ensureAuthenticated, function(req, res){
     });
 
 });
+
+// rende persistente su database i dati della transazione di autenticazione
+function saveAuthTransaction(user){
+
+  return new Promise(function(resolve, reject) {
+
+    console.log('saveAuthTransaction');
+    console.log(user);
+    models.SpidLog.build(
+      { 
+          ts: new Date(),
+          issuer: user.issuer,
+          nameID: user.nameID,
+          nameIDFormat: user.nameIDFormat,
+          nameQualifier: user.nameQualifier,
+          spNameQualifier: user.spNameQualifier,        
+          authenticationMethod: user.authenticationMethod,
+          dataNascita: user.dataNascita,
+          userid: user.userid,
+          statoNascita: user.statoNascita,
+          policyLevel: user.policyLevel,
+          nome: user.nome,
+          CodiceFiscale: user.CodiceFiscale,
+          trustLevel: user.trustLevel,
+          luogoNascita: user.luogoNascita,
+          authenticatingAuthority: user.authenticatingAuthority,
+          cognome: user.cognome,
+          getAssertionXml: user.getAssertionXml,
+          uuidV4:  user.uuidV4,
+      })
+    .save()
+    .then(function(anotherTask) {
+      resolve(anotherTask)
+    }).catch(function(error) {
+       reject(error);
+    });
+  });
+
+}
+
+
+// esegue il logout da FEDERA
+router.get('/debug',  function(req, res){
+    console.log('/debug');
+    var demoUser = { 
+          ts : new Date(),
+          issuer: 'ISS1',
+          nameID: 'NN',
+          nameIDFormat: 'AAAA',
+          uuidV4: uuidV4()
+    };
+
+    
+    saveAuthTransaction(demoUser).then(function (response) {
+            console.log(response.body);
+            res.status(200).send({ token: '', status : 'SAVED!' });
+        }
+     ).catch(function (err) {
+            console.log(err)
+            console.log('ERRORE');
+            res.status(500).send({ token: '', status : 'SAVE ERROR!' });
+    });
+
+});
+
+
+
+
+
+
+
+
 
 /*
 https://federatest.lepida.it/logout?

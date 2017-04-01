@@ -1,35 +1,60 @@
 <div class="container">
   <div class="panel panel-default">
-    <div class="panel-heading">Profile</div>
+    <div class="panel-heading">Informazioni utente</div>
     <div class="panel-body">
-      <legend><i class="ion-clipboard"></i>My Profile</legend>
+      <legend><i class="ion-clipboard"></i>Dati relativi all'autenticazione</legend>
       <form method="post" ng-submit="updateProfile()">
         <div class="form-group">
           <label class="control-label"><i class="ion-person"></i>Issuer</label>
           {{user.issuer}}
         </div>
         <div class="form-group">
-          <label class="control-label"><i class="ion-person"></i>Name</label>
+          <label class="control-label"><i class="ion-person"></i>Nome</label>
           {{user.nome}} - {{user.cognome}}
         </div>
         <div class="form-group">
-          <label class="control-label"><i class="ion-at"></i> Email Address</label>
-          <input type="email" class="form-control" ng-model="user.CodiceFiscale" />
+          <label class="control-label"><i class="ion-at"></i>Codice Fiscale</label>
+          <input type="text" class="form-control" ng-model="user.CodiceFiscale" />
         </div>
         <div class="form-group">
-          <label class="control-label"><i class="ion-at"></i> Description</label>
+          <label class="control-label"><i class="ion-at"></i>userid</label>
           <input type="text" class="form-control" ng-model="user.userid" />
         </div>
         <div class="form-group">
-          <label class="control-label"><i class="ion-at"></i> Age</label>
+          <label class="control-label"><i class="ion-at"></i>Data Nascita</label>
           <input type="text" class="form-control" ng-model="user.dataNascita" />
         </div>
-        <button class="btn btn-lg btn-success btn-raised">Update Information</button>
+        <!-- <button class="btn btn-lg btn-success btn-raised">Update Information</button> -->
       </form>
     </div>
   </div>
 
 <a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">logout</a>
+
+<div class="table-responsive">
+<table class="table table-responsive">
+  <thead>
+  <tr>
+    <th>#</th>
+    <th>nameID</th>
+    <th>trustLevel</th>
+    <th>policyLevel</th>
+    <th>uuidV4</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="authEvent in user.AuthEvents">
+          <td>{{$index + 1}}</td>
+          <td>{{authEvent.nameID}}</td>
+          <td>{{authEvent.trustLevel}}</td>
+          <td>{{authEvent.policyLevel}}</td>
+          <td>{{authEvent.uuidV4}}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 
 <!--

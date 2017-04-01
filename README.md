@@ -1,5 +1,5 @@
 # Istanze Digitali
-## Piccoli procedimenti digitali "crescono"
+## Piccoli procedimenti "crescono" (in digitale)
 
 ## Descrizione
 
@@ -64,6 +64,48 @@ Per il build del Client dentro la cartella ./Client eseguire gulp build:dest
 FEDERA TEST
 Username: RUGGERO_RUGGERI_FEDERATEST
 Dominio: federa.it
-Passowd: NLepida.it
+Passowd: _1Lepida.it
 
+
+Modellazione dello storico istanze
+
+Lato utente:
+
+Invio di una istanza
+Riepilogo delle istanze inviate con stato.
+
+
+Lato operatore
+
+Visualizzazione istanza di un dato tipo
+Modifica stato dell'istanza
+
+
+
+
+
+-------------------------------------------------------------- 
+
+##istanza##
+tipoIstanza:
+templateFormly : todo
+templateFormlyValidator : todo
+AuthUuidV4 : identificativo autenticazione
+statoIter relativi agli stati iter del tipo istanza
+emailNotifiche: 
+fileSystemId : ID di memorizzazione su FS
+protocolloIdDocumento, protocolloAnno,  protocolloNumero : riferimenti protocollo
+
+##tipoIstanza##
+storage
+validazione
+form
+ufficio
+fascicolo
+tipodocumento
+iterdocumentale
+stati esterni (accettata, lavorazione, conclusione)
+ogni stato ha una notifica
+
+##operatore##
 

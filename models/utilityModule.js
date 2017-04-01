@@ -108,7 +108,8 @@ module.exports = {
           var payload = {
             sub: user,
             iat: moment().unix(),
-            exp: moment().add(1, 'days').unix()
+            // timeout di 2 ore
+            exp: moment().add(4, 'h').unix()
           };
           return jwt.sign(payload, ENV.secret);
     },
