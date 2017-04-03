@@ -11,8 +11,12 @@
        <!-- create our form -->
     <form name="vm.userForm">
 
-<div class="panel panel-success">
-  <div class="panel-heading">Dati</div>
+
+
+<!-- DATI DA FORNITI DA AUTENTICAZIONE ##############################################################################  -->
+
+<div class="panel panel-warning">
+  <div class="panel-heading">Dati forniti da autenticazione: <b>{{vm.model.issuer}}</b></div>
   <div class="panel-body">
 
 
@@ -28,6 +32,7 @@
                             ng-model="vm.model.nomeRichiedente"
                             ng-minlength="1"
                             ng-maxlength="100"
+                            readonly
                             required>
                         
                     <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:maroon" role="alert">
@@ -50,6 +55,7 @@
                 ng-model="vm.model.cognomeRichiedente"
                 ng-minlength="1"
                 ng-maxlength="100"
+                readonly
                 required>
                 
             <div ng-messages="vm.userForm.cognomeRichiedente.$error" style="color:maroon" role="alert">
@@ -66,27 +72,88 @@
 </div>  <!-- row -->
 
 
+<div class="row">
+
+          <div class="col-md-6">
+
+                <!-- nome field -->
+                <div class="form-group">
+                    <label>Codice Fiscale</label>
+                    <input  type="text" 
+                            class="form-control" 
+                            name="codiceFiscaleRichiedente" 
+                            ng-model="vm.model.codiceFiscaleRichiedente"
+                            ng-minlength="16"
+                            ng-maxlength="16"
+                            readonly
+                            required>
+                        
+                    <div ng-messages="vm.userForm.codiceFiscaleRichiedente.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                    </div>
+                </div>
+
+        </div>
+
+
+         <div class="col-md-6">
+            <div class="form-group">
+                <label>Data di Nascita</label>
+                <input type="text"
+                    placeholder="GG/MM/AAAA" 
+                    name="dataNascitaRichiedente" class="form-control"
+                    min="01-01-1900"
+                    max="31-12-2100" 
+                    ng-model="vm.model.dataNascitaRichiedente"
+                    ng-minlength="10"
+                    ng-maxlength="10"
+                    readonly
+                    required>
+                    
+                <div ng-messages="vm.userForm.dataNascitaRichiedente.$error" style="color:maroon" role="alert">
+                    <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                    <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                    <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                </div>
+            </div>
+        </div>
+
+
+</div>
+
+
+</div>
+</div>
+
+<!-- DATI DA COMPILARE  ###########################################################################################  -->
+
+<div class="panel panel-success">
+  <div class="panel-heading">Dati</div>
+  <div class="panel-body">
+
+<!--
       <div class="row">
 
           <div class="col-md-6">
 
-        <!-- nome field -->
-        <div class="form-group">
-            <label>Codice Fiscale</label>
-            <input  type="text" 
-                    class="form-control" 
-                    name="codiceFiscaleRichiedente" 
-                    ng-model="vm.model.codiceFiscaleRichiedente"
-                    ng-minlength="16"
-                    ng-maxlength="16"
-                    required>
-                
-            <div ng-messages="vm.userForm.codiceFiscaleRichiedente.$error" style="color:maroon" role="alert">
-                <div ng-message="required"  class="label label-danger">Campo richiesto</div>
-                <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
-                <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
-            </div>
-        </div>
+                <div class="form-group">
+                    <label>Codice Fiscale</label>
+                    <input  type="text" 
+                            class="form-control" 
+                            name="codiceFiscaleRichiedente" 
+                            ng-model="vm.model.codiceFiscaleRichiedente"
+                            ng-minlength="16"
+                            ng-maxlength="16"
+                            required>
+                        
+                    <div ng-messages="vm.userForm.codiceFiscaleRichiedente.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                    </div>
+                </div>
 
         </div>
 
@@ -110,27 +177,11 @@
                 </div>
             </div>
         </div>
+-->
 
+   
 
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>Cellulare</label>
-                <input type="number" 
-                    name="cellulareRichiedente" class="form-control" 
-                    ng-model="vm.model.cellulareRichiedente"
-                    ng-minlength="1"
-                    ng-maxlength="100"
-                    required>
-                    
-                <div ng-messages="vm.userForm.cellulareRichiedente.$error" style="color:maroon" role="alert">
-                    <div ng-message="required"  class="label label-danger">Campo richiesto</div>
-                    <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
-                    <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
-                </div>
-            </div>
-        </div>
-
-</div>  <!-- row -->
+ <!-- row -->
 
 
 <!--
@@ -180,7 +231,7 @@
               </div>
           </div>
 
-          <div class="col-md-3">
+          <div class="col-md-6">
                 <div class="form-group">
                     <label>Città</label>
 
@@ -199,8 +250,29 @@
                 </div>
             </div>
         </div>
+    </div>
 
-          <div class="col-md-3">
+    <div class="row">
+             <div class="col-md-6">
+            <div class="form-group">
+                <label>Cellulare</label>
+                <input type="number" 
+                    name="cellulareRichiedente" class="form-control" 
+                    ng-model="vm.model.cellulareRichiedente"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    required>
+                    
+                <div ng-messages="vm.userForm.cellulareRichiedente.$error" style="color:maroon" role="alert">
+                    <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                    <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                    <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                </div>
+            </div>
+        </div>
+
+
+          <div class="col-md-6">
                 <div class="form-group">
                     <label>CAP</label>
 

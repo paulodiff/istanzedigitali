@@ -86,6 +86,10 @@ Modifica stato dell'istanza
 
 -------------------------------------------------------------- 
 
+todo
+
+* check su post per sicurezza (token)
+
 ##istanza##
 tipoIstanza:
 templateFormly : todo

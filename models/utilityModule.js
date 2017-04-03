@@ -65,7 +65,7 @@ module.exports = {
         console.log('[#AUTH#] ensureAuthenticated (start)');
         if (!req.header('Authorization')) {
             console.log('[#AUTH#] ensureAuthenticated : 401 NO TOKEN');
-            return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });
+            return res.status(401).send({ message: 'Effettuare login prima di procedere (401 NO TOKEN)' });
         }
           var token = req.header('Authorization').split(' ')[1];
          
@@ -86,7 +86,10 @@ module.exports = {
             if (payload.exp) {
               if (payload.exp <= moment().unix()) {
                 console.log('[#AUTH#] token expired');
-                return res.status(401).send({ message: 'Token has expired' });
+                return res.status(401).send({ 
+                  title: 'Sessione scaduta',
+                  message: 'Accedere alla pagina di login, disconnettersi poi rifare la procedura di autenticazione'
+                });
               }
             } else {
               var msg = '[#AUTH#] ensureAuthenticated decoded error - exp NOT FOUND';

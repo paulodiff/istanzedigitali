@@ -168,6 +168,7 @@
     <script src="scripts/app.js"></script>
     <script src="scripts/configuration.js"></script>
     <script src="scripts/authService.js"></script>
+    <script src="scripts/profileService.js"></script>
     <!-- <script src="scripts/accountService.js"></script> -->
     <!-- <script src="scripts/formlyService.js"></script> -->
     <script src="scripts/utilsService.js"></script>
@@ -243,10 +244,10 @@
             <ul class="nav navbar-nav">
                 <!-- <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li> -->
                 <li class="active"><a href="#/">Home</a></li>
-                <li><a href="#/protocollo">Istanze</a></li>
-                <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
-                <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
-                <li ng-if="isAuthenticated()"><a ui-sref="profile">Profile</a></li>
+                <li><a ui-sref="protocollo" ng-click="switchCollapsed()">Istanze1</a></li>
+                <li ng-if="!isAuthenticated()"><a ui-sref="login" ng-click="switchCollapsed()" ui-sref-active="active">Login1</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="logout" ng-click="switchCollapsed()" ui-sref-active="active">Esci1</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="profile" ng-click="switchCollapsed()">Profile1</a></li>
                 <!-- <li><a href="#/profile" ng-click="isCollapsed = !isCollapsed">Profile</a></li> -->
                 <!--
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>

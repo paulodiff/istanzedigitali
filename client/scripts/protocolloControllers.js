@@ -8,8 +8,8 @@ angular.module('myApp.controllers')
 
 // SFormlyCtrl ---------------------------------------------------------------------------------
 .controller('ProtocolloCtrl', 
-          ['$rootScope','$scope', '$state', '$location', '$log', '$timeout','ENV','$q','$http', 'UtilsService', 'Upload', '$anchorScroll', 'usSpinnerService', 'dialogs',
-   function($rootScope,  $scope,   $state,   $location,   $log,   $timeout,  ENV,  $q,  $http,   UtilsService,   Upload,   $anchorScroll,  usSpinnerService, dialogs ) {
+          ['$rootScope','$scope', '$state', '$location', '$log', '$timeout','ENV','$q','$http', 'UtilsService', 'ProfileService', 'Upload', '$anchorScroll', 'usSpinnerService', 'dialogs',
+   function($rootScope,  $scope,   $state,   $location,   $log,   $timeout,  ENV,  $q,  $http,   UtilsService,   ProfileService,  Upload,   $anchorScroll,  usSpinnerService,    dialogs ) {
     
     $log.debug('ProtocolloCtrl');
     var apiUploadUrl = $rootScope.base_url + '/' + ENV.apiUpload;  
@@ -40,13 +40,13 @@ angular.module('myApp.controllers')
 
     if (ENV.debugFormDefaultData) {
 
-        vm.model.nomeRichiedente = 'MARIO';
-        vm.model.cognomeRichiedente = 'ROSSI';
+        vm.model.nomeRichiedente = 'AAAAAAAAAAAAAAA';
+        vm.model.cognomeRichiedente = 'AAAAAAAAAAAAAAAAAAAAAAA';
         vm.model.emailRichiedente = 'ruggero.ruggeri@comune.rimini.it';
         vm.model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
-        vm.model.codiceFiscaleRichiedente = 'RGGRGR70E25H294T';
+        vm.model.codiceFiscaleRichiedente = 'AAARGR70E25H294T';
         vm.model.cellulareRichiedente = 3355703086;
-        vm.model.dataNascitaRichiedente = '25/12/1912';
+        vm.model.dataNascitaRichiedente = '00/00/0000';
         vm.model.indirizzoRichiedente = 'VIA ROMA, 1';
         vm.model.cittaRichiedente = 'RIMINI';
         vm.model.capRichiedente = 47921;
@@ -247,6 +247,37 @@ angular.module('myApp.controllers')
      // call $anchorScroll()
     $anchorScroll();
    
+
+   console.log('loading Auth Data');
+
+   $scope.getProfile = function() {
+        usSpinnerService.spin('spinner-1');
+        $log.debug('profileMgrCtrl : getProfile...');
+        ProfileService.getProfile().then(function (res) {
+            usSpinnerService.stop('spinner-1');
+            $log.debug('profileMgrCtrl : setting data');
+            $log.debug(res.data);
+            vm.model.nomeRichiedente = res.data.nome;
+            vm.model.cognomeRichiedente = res.data.cognome;
+            vm.model.codiceFiscaleRichiedente = res.data.CodiceFiscale;
+            vm.model.dataNascitaRichiedente = res.data.dataNascita;
+            vm.model.issuer = res.data.issuer;
+         }).catch(function(response) {
+            usSpinnerService.stop('spinner-1');
+            $log.debug(response);
+            var dlg = dialogs.error(response.data.title, response.data.message, {});
+					  dlg.result.then(function(btn){
+                        $state.go('login');
+						$scope.confirmed = 'You confirmed "Yes."';
+					},function(btn){
+                        $state.go('login');
+						$scope.confirmed = 'You confirmed "No."';
+					});
+         });
+
+    };
+
+    $scope.getProfile();
 
                                  
 }]);

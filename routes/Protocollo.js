@@ -364,12 +364,12 @@ router.get('/getTestToken', function (req, res) {
 
 
 /* SAVING FILES  --------------------------------------------------------------------------------------------------------- */
-function savingFiles(fileList, fieldsObj, reqId) {
+function savingFiles(fileList, fieldsObj, userObj) {
     logConsole.info('savingFiles');
     logConsole.info(ENV_PROT.storageFolder);
     // var transactionId = req.body.fields.transactionId;
     var DW_PATH = ENV_PROT.storageFolder;
-    var dir = DW_PATH + "/" + reqId;
+    var dir = DW_PATH + "/" + userObj.reqId;
 
     fieldsObj.files = [];
 
@@ -397,9 +397,9 @@ function savingFiles(fileList, fieldsObj, reqId) {
             fieldsObj.files.push({ 'name' : originalFilename});
         });
 
-        // save metadata
-        fieldsObj.reqId = reqId;
-        var jsonFile = dir + "/" + reqId + ".txt";
+        // save metadata metadati
+        fieldsObj.userObj = userObj;
+        var jsonFile = dir + "/" + userObj.reqId + ".txt";
         logConsole.info(jsonFile);
         fs.writeFileSync(jsonFile, JSON.stringify(fieldsObj));
         
@@ -409,9 +409,9 @@ function savingFiles(fileList, fieldsObj, reqId) {
 
     } catch (e){
         logConsole.info('savingFiles: ', e);
-        logConsole.info('savingFiles:' + reqId);
+        logConsole.info('savingFiles:' + userObj.reqId);
         log2file.error('savingFiles:');
-        log2file.error(reqId);
+        log2file.error(userObj.reqId);
         log2file.error(e);
         return false;
     }
@@ -426,6 +426,8 @@ function sanitizeInput(fieldList, fieldsObj,  reqId) {
     // var dir = DW_PATH + "/" +  transactionId;
     var dir = DW_PATH + "/" + reqId;
     // var fieldsObj = {};
+
+    fieldsObj.reqId = reqId;
 
     Object.keys(fieldList).forEach(function(name) {
         logConsole.info('got field named ' + name);
@@ -704,7 +706,9 @@ function protocolloWS(objFilesList,  reqId) {
 /* UPLOAD ROUTE  --------------------------------------------------------------------------------------------------------- */
 
 //router.post('/upload', multipartMiddleware, function(req, res) {
-router.post('/upload', function(req, res) {
+router.post('/upload', 
+    utilityModule.ensureAuthenticated,
+    function(req, res) {
 
     var bRaisedError = false;
     var ErrorMsg = {};
@@ -713,6 +717,7 @@ router.post('/upload', function(req, res) {
     var reqId = utilityModule.getTimestampPlusRandom();
 
     ErrorMsg.reqId = reqId;
+    req.user.reqId = reqId;
     var supportMsg = 'Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it o telefonare allo 0541/704607 o 0541/704612 utilizzando il seguente codice unico di transazione: ' + reqId + '. Grazie.';
 
     var objFilesList = {};
@@ -841,7 +846,7 @@ router.post('/upload', function(req, res) {
 
 
 
-            // ##### Input sanitizer ------------------------------------------------------------------------
+            // ##### Input sanitizer & validator------------------------------------------------------------------------
 
             function(callback){
                 logConsole.info('ASYNC sanitizeInput:');
@@ -868,7 +873,7 @@ router.post('/upload', function(req, res) {
             function(callback){
                 logConsole.info('ASYNC savingFiles:');
 
-                if (savingFiles(objFilesList, objFieldSanitized, reqId )){
+                if (savingFiles(objFilesList, objFieldSanitized, req.user )){
                     logConsole.info('savingFiles: ok');
                     logConsole.info(objFieldSanitized);
                     callback(null, 'savingFiles ... ok');

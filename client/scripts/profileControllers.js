@@ -2,29 +2,27 @@ angular.module('myApp.controllers')
 
   .controller('profileMgrCtrl', 
 
-           ['$scope', '$http', 'dialogs',  '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log', 
-    function($scope,   $http,  dialogs,     $rootScope,   AuthService,   Session,   $state,  ENV ,  $log ) {
+           ['$scope', '$http', 'dialogs',  '$rootScope', 'AuthService', 'ProfileService', '$state','ENV', '$log','usSpinnerService',
+    function($scope,   $http,  dialogs,     $rootScope,   AuthService,   ProfileService, $state,  ENV ,  $log, usSpinnerService ) {
 
         $scope.user = {};
 
     $scope.getProfile = function() {
 
         $log.debug('profileMgrCtrl: getProfile');
-        var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiProfile; 
-        $log.debug('profileMgrCtrl: api : ' + fullApiEndpoint );
-
-         return $http({ 
-                    url: fullApiEndpoint, 
-                    method: "GET"
-                  })
-        .then(function (res) {
+        usSpinnerService.spin('spinner-1');
+        
+        ProfileService.getProfile().then(function (res) {
             $log.debug('profileMgrCtrl : setting data');
             $log.debug(res.data);
             $scope.user = res.data;
+             usSpinnerService.stop('spinner-1');
          })
         .catch(function(response) {
-                    var dlg = dialogs.confirm(response.data.message, response.status);
-					dlg.result.then(function(btn){
+           usSpinnerService.stop('spinner-1');
+            console.log(response);
+            var dlg = dialogs.error(response.data.title, response.data.message, {});
+					  dlg.result.then(function(btn){
                         $state.go('login');
 						$scope.confirmed = 'You confirmed "Yes."';
 					},function(btn){
