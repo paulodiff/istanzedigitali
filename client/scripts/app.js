@@ -89,10 +89,20 @@ angular.module('myApp', [//'ionic',
         accessLevel: 'free1' 
     });
 
+
+    $stateProvider.state('elencoIstanze', {
+        url: '/elencoIstanze',
+        controller: 'homeCtrl',
+        templateUrl: 'templates/elencoIstanze.html',
+        accessLogged: false,
+        accessLevel: 'free1' 
+    });
+
     $stateProvider.state('protocollo', {
         url: '/protocollo',
         templateUrl: 'templates/protocollo.html',
         controller: 'ProtocolloCtrl',
+        accessLogged: true,
         controllerAs: 'vm',
         resolve: {
           //loginRequired: loginRequired

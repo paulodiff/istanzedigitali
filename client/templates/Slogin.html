@@ -8,7 +8,7 @@
 
       <div ng-if="!isAuthenticated()">
 
-        <h2 class="text-center">Accesso tramite FEDERA/SPID</h2>
+        <h2 class="text-center">Accesso tramite SPID o FEDERA</h2>
         <!--
         <form method="post" ng-submit="login()" name="loginForm">
           <div class="form-group has-feedback">
@@ -32,8 +32,15 @@
         -->
 
         <a class="btn btn-block btn-success btn-raised" href="{{fullApiEndpoint}}">
-            <i class="ion-social-linkedin"></i>LOG IN - FEDERA - SPID
+            <i class="ion-social-linkedin"></i>LOG IN con SPID o FEDERA
         </a>
+
+
+<h3>Istruzioni per l'accesso al servizio</h3>
+<p>Per accedere al servizio è necessario avere o un account FedERa o un account SPID</p>
+<a class="btn btn-block btn-raised btn-info btn-sm" href=" http://federazione.lepida.it/ ">GUIDA ACCOUNT FEDERA</a>
+<a class="btn btn-block btn-raised btn-info btn-sm" href="https://www.spid.gov.it/">GUIDA ACCOUNT SPID</a>
+
 
 
         </div>

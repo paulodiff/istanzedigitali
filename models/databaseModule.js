@@ -54,23 +54,73 @@ saveAuthTransaction: function(user){
 
 },
 
-
+// memorizza i dati di una istanza per consultazioni
 saveIstanza: function(data){
 
-    console.log('saveIstanza');
-    console.log(data);
-    models.Istanza.build({
-
-        ts: new Date(),
-        tipoIstanza: 0
+    return new Promise(function(resolve, reject) {
+        console.log('saveIstanza');
+        console.log(data);
+        models.Istanze.build({
+            ts: new Date(),
+            tipoIstanza: data.tipoIstanza,
+            userid: data.userid,
+            AuthUuidV4 : data.AuthUuidV4,
+            statoIter : data.statoIter,
+            emailNotifiche: data.emailNotifiche,
+            fileSystemId : data.fileSystemId,
+            protocolloIdDocumento : data.protocolloIdDocumento,
+            protocolloAnno : data.protocolloAnno,
+            protocolloNumero : data.protocolloNumero
+        })
+        .save()
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
     })
-    .save()
-    .then(function(anotherTask) {
-      resolve(anotherTask)
-    }).catch(function(error) {
-       reject(error);
-    });
-  }
+},
+
+getAuthList: function(userid){
+
+    return new Promise(function(resolve, reject) {
+
+        console.log('getAuthList');
+        console.log(userid);
+
+        models.SpidLog.findAll({
+          where: {
+            userid : userid
+        } 
+        }).then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+
+getIstanzeList: function(userid){
+
+    return new Promise(function(resolve, reject) {
+
+        console.log('getIstanzeList');
+        console.log(userid);
+
+        models.Istanze.findAll({
+          where: {
+            userid : userid
+        } 
+        }).then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+}
+
+
 
     /*
         userid : {

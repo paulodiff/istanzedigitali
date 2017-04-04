@@ -226,13 +226,14 @@
             <ul class="nav navbar-nav">
                 <a href="#/" role="button" class="navbar-brand">Comune di Rimini</a>
                 <li class="active"><a href="#/">Home</a></li>
-                <li><a href="#!/protocollo">Presentazione Istanze</a></li>
+                <!-- <li><a href="#!/protocollo">Istanza1</a></li> -->
           </ul>
 
           <ul class="nav navbar-nav pull-right">
+                <li><a ui-sref="elencoIstanze">Elenco Istanze</a></li>
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="profile">Profilo</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
-                <li ng-if="isAuthenticated()"><a ui-sref="profile">Profile</a></li>
           </ul>
 
           <ul ng-if="isAuthenticated()" class="nav navbar-nav pull-right">
@@ -243,11 +244,12 @@
         <nav uib-collapse="!isCollapsed">
             <ul class="nav navbar-nav">
                 <!-- <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li> -->
-                <li class="active"><a href="#/">Home</a></li>
-                <li><a ui-sref="protocollo" ng-click="switchCollapsed()">Istanze1</a></li>
+                <li class="active" ng-click="switchCollapsed()"><a href="#/">Home</a></li>
+                <!-- <li><a ui-sref="protocollo" ng-click="switchCollapsed()">Istanze1</a></li> -->
+                <li><a ui-sref="elencoIstanze" ng-click="switchCollapsed()">Elenco Istanze</a></li>
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ng-click="switchCollapsed()" ui-sref-active="active">Login1</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="profile" ng-click="switchCollapsed()">Profilo1</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="logout" ng-click="switchCollapsed()" ui-sref-active="active">Esci1</a></li>
-                <li ng-if="isAuthenticated()"><a ui-sref="profile" ng-click="switchCollapsed()">Profile1</a></li>
                 <!-- <li><a href="#/profile" ng-click="isCollapsed = !isCollapsed">Profile</a></li> -->
                 <!--
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>

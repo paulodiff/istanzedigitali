@@ -159,6 +159,35 @@ router.get('/logout',  utilityModule.ensureAuthenticated, function(req, res){
 // esegue il logout da FEDERA
 router.get('/debug',  function(req, res){
     console.log('/debug');
+
+
+    var demoUser = { 
+          ts : new Date(),
+            tipoIstanza: 0,
+            userid: 'data.userid',
+            AuthUuidV4 : 'data.AuthUuidV4',
+            statoIter : 0,
+            emailNotifiche: 'data.emailNotifiche',
+            fileSystemId : 'data.fileSystemId',
+            protocolloIdDocumento : 1,
+            protocolloAnno : 2,
+            protocolloNumero : 3
+    };
+
+
+    databaseModule.saveIstanza(demoUser).then(function (response) {
+            console.log(response.body);
+            res.status(200).send({ token: '', status : 'SAVED!' });
+        }
+     ).catch(function (err) {
+            console.log(err)
+            console.log('ERRORE');
+            res.status(500).send({ token: '', status : 'SAVE ERROR!' });
+    });
+
+
+/*
+
     var demoUser = { 
           ts : new Date(),
           issuer: 'ISS1',
@@ -167,7 +196,7 @@ router.get('/debug',  function(req, res){
           uuidV4: uuidV4()
     };
 
-    
+
     databaseModule.saveAuthTransaction(demoUser).then(function (response) {
             console.log(response.body);
             res.status(200).send({ token: '', status : 'SAVED!' });
@@ -177,6 +206,8 @@ router.get('/debug',  function(req, res){
             console.log('ERRORE');
             res.status(500).send({ token: '', status : 'SAVE ERROR!' });
     });
+
+*/
 
 });
 

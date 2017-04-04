@@ -1,6 +1,6 @@
 <div class="container">
   <div class="panel panel-default">
-    <div class="panel-heading">Informazioni utente ( {{user.issuer}} )</div>
+    <div class="panel-heading"><h3>Benvenuto {{user.nome}} {{user.cognome}} </h3></div>
     <div class="panel-body">
 
 
@@ -26,20 +26,44 @@
   </tbody>
 </table>
 
+<h3>Azioni che è possibile effettuare:</h3>
+<p><b>Presentare una nuova istanza cliccando il bottone seguente:</b></p>
+<a class="btn btn-block btn-success btn-raised" ui-sref="elencoIstanze" ui-sref-active="active">Presenta una nuova istanza</a>
 
-<a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">Disconnetti</a>
+<p><b>Visualizzare un breve elenco delle istanze già presentate cliccando il bottone seguente:</b></p>
 
+<button class="btn btn-block btn-info btn-raised" data-toggle="collapse" data-target="#istanzepresentate">Mostra istanze presentate</button>
+  <div id="istanzepresentate" class="panel panel-info collapse">
+    <div class="panel-heading">Istanze presentate</div>
+    <div class="panel-body">
+
+      <table class="table table-responsive">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Protocollo</th>
+          <th>tipo</th>
+          <th>stato</th>
+          <th>azione</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="istanza in user.Istanze">
+                <td>{{$index + 1}}</td>
+                <td>{{istanza.protocolloIdDocumento}}/{{istanza.protocolloAnno}}/{{istanza.protocolloNumero}}</td>
+                <td>{{istanza.tipoIstanza}}</td>
+                <td>{{istanza.statoIter}}</td>
+                <td class="pull-right"><a class="btn btn-raised btn-success">Dettagli <span class="glyphicon glyphicon-print"></span></a></td>
+          </tr>
+        </tbody>
+      </table>
 
     </div>
   </div>
 
 
-
-
-<a class="btn btn-block btn-success btn-raised" ui-sref="protocollo" ui-sref-active="active">Richiesta di autorizzazione</a>
-<a class="btn btn-block btn-success btn-raised" ui-sref="protocollo" ui-sref-active="active">Richiesta ferie</a>
-
-<button class="btn btn-block btn-info btn-raised" data-toggle="collapse" data-target="#demo">Mostra storico autenticazioni</button>
+<p><b>Mostrare lo storico degli accessi al portale cliccando il bottone seguente</b></p>
+<button class="btn btn-block btn-info btn-raised" data-toggle="collapse" data-target="#demo">Mostra storico accessi</button>
 
 
 <div id="demo" class="panel panel-info collapse">
@@ -67,13 +91,18 @@
     </tr>
   </tbody>
 </table>
+</div>
+
 
 </div>
 </div>
 
-</div>
+<p><b>Disconnetersi dall'account di autenticazionei cliccando il bottone seguente</b></p>
+<a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">Disconnetti</a>
 
 
+    </div>
+  </div>
 
 
 <!--

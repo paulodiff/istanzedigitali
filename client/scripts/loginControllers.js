@@ -217,7 +217,7 @@ angular.module('myApp.controllers')
             $log.debug(next);
             //$scope.currentUser = Session.nome_breve_utenti;
             
-            dialogs.error('Errore di autenticazione','Immettere nome utente e password');
+            dialogs.error('Utente non autenticato','Provvedere ad autenticarsi mediante uno dei metodi previsti.');
             $state.go('login');
 
         }); 

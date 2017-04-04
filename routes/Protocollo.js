@@ -60,6 +60,8 @@ var validator = require('validator');
 // var Segnalazione  = require('../models/segnalazione.js'); // load configuration data
 // var flow = require('../models/flow-node.js')('tmp'); // load configuration data
 var utilityModule  = require('../models/utilityModule.js'); 
+var databaseModule = require("../models/databaseModule.js");
+
 
 var ACCESS_CONTROLL_ALLOW_ORIGIN = false;
 // var DW_PATH = (path.join(__dirname, './storage'));
@@ -979,6 +981,43 @@ router.post('/upload',
                 
 
             },
+
+            // ###### SAVING ISTANZA TO DB ----------------------------------------------------------------------
+            function(callback){
+                logConsole.info('ASYNC salvataggio istanza to DB:');
+
+                var istanzaData = { 
+                    ts : new Date(),
+                    tipoIstanza: 0,
+                    userid: req.user.userid,
+                    AuthUuidV4 : req.user.uuidV4,
+                    statoIter : 0,
+                    emailNotifiche: objFieldSanitized.emailRichiedente,
+                    fileSystemId : reqId,
+                    protocolloIdDocumento : objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento,
+                    protocolloAnno : objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo,
+                    protocolloNumero : objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo
+                };
+
+
+                databaseModule.saveIstanza(istanzaData).then(function (response) {
+                        logConsole.info('ASYNC dati istanza salvati OK!');
+                        callback(null, 'Dati istanza salvati su database');
+                    }
+                ).catch(function (err) {
+                    log2file.error(reqId);
+                    log2file.error(err);
+                    ErrorMsg = {
+                        title: 'Errore salvataggio istanza su DB',
+                        msg: 'Errore salvataggio istanza su DB '  + supportMsg,
+                        code : 459
+                    }
+                    callback(ErrorMsg, null);
+                });
+
+            },
+
+
 
             // ###### BUILD Response Message ----------------------------------------------------------------
 
