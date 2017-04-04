@@ -221,7 +221,7 @@ log.log2file('Server started at:' + ENV.nodejs.NODEJSport);
 
 
 models.sequelize.sync().then(function() {
-  // models.Istanze.sync({_____force: ____true});
+  // models.Istanze.sync({force:false});
   /**
    * Listen on provided port, on all network interfaces.
    */

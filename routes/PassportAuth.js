@@ -8,7 +8,7 @@ var path = require('path');
 var passport = require('passport');
 var fs = require('fs');
 var saml2 = require('saml2-js');
-var models = require("../modelsSequelize");
+var databaseModule = require("../models/databaseModule.js");
 var log = require('../models/loggerModule.js');
 var uuidV4 = require('uuid/v4');
 
@@ -87,7 +87,7 @@ router.post("/saml/sp/saml2-acs.php/default-sp",
         console.log(req.body.RelayState);
         console.log('Save auth transaction to db');
         req.user.uuidV4 = uuidV4();
-        saveAuthTransaction(req.user).then(function (response) {
+        databaseModule.saveAuthTransaction(req.user).then(function (response) {
           console.log('PassportAuth:/login/callback CREATE AUTH TOKEN');
           var token = utilityModule.createJWT(req.user);
           res.redirect('/simplesaml/cli/#!/landingSAML/' + token + '/' + req.body.RelayState);
@@ -155,45 +155,6 @@ router.get('/logout',  utilityModule.ensureAuthenticated, function(req, res){
 
 });
 
-// rende persistente su database i dati della transazione di autenticazione
-function saveAuthTransaction(user){
-
-  return new Promise(function(resolve, reject) {
-
-    console.log('saveAuthTransaction');
-    console.log(user);
-    models.SpidLog.build(
-      { 
-          ts: new Date(),
-          issuer: user.issuer,
-          nameID: user.nameID,
-          nameIDFormat: user.nameIDFormat,
-          nameQualifier: user.nameQualifier,
-          spNameQualifier: user.spNameQualifier,        
-          authenticationMethod: user.authenticationMethod,
-          dataNascita: user.dataNascita,
-          userid: user.userid,
-          statoNascita: user.statoNascita,
-          policyLevel: user.policyLevel,
-          nome: user.nome,
-          CodiceFiscale: user.CodiceFiscale,
-          trustLevel: user.trustLevel,
-          luogoNascita: user.luogoNascita,
-          authenticatingAuthority: user.authenticatingAuthority,
-          cognome: user.cognome,
-          getAssertionXml: user.getAssertionXml,
-          uuidV4:  user.uuidV4,
-      })
-    .save()
-    .then(function(anotherTask) {
-      resolve(anotherTask)
-    }).catch(function(error) {
-       reject(error);
-    });
-  });
-
-}
-
 
 // esegue il logout da FEDERA
 router.get('/debug',  function(req, res){
@@ -207,7 +168,7 @@ router.get('/debug',  function(req, res){
     };
 
     
-    saveAuthTransaction(demoUser).then(function (response) {
+    databaseModule.saveAuthTransaction(demoUser).then(function (response) {
             console.log(response.body);
             res.status(200).send({ token: '', status : 'SAVED!' });
         }

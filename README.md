@@ -82,8 +82,6 @@ Modifica stato dell'istanza
 
 
 
-
-
 -------------------------------------------------------------- 
 
 todo
@@ -91,22 +89,22 @@ todo
 * check su post per sicurezza (token)
 
 ##istanza##
-tipoIstanza:
+tipoIstanza: (idTipoIstanza)
 templateFormly : todo
 templateFormlyValidator : todo
 AuthUuidV4 : identificativo autenticazione
 statoIter relativi agli stati iter del tipo istanza
 emailNotifiche: 
-fileSystemId : ID di memorizzazione su FS
+fileSystemId : ID di memorizzazione su FS (reqId)
 protocolloIdDocumento, protocolloAnno,  protocolloNumero : riferimenti protocollo
 
 ##tipoIstanza##
 storage
 validazione
 form
-ufficio
-fascicolo
-tipodocumento
+ufficioProtocollo
+fascicoloProtocollo
+tipodocumentoProtocollo
 iterdocumentale
 stati esterni (accettata, lavorazione, conclusione)
 ogni stato ha una notifica

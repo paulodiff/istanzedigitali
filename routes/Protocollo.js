@@ -20,7 +20,6 @@ var fakeConfig = {
 
   // protocollazione
   
-
   // risposta
 
   // invio mail di conferma con pdf
@@ -106,12 +105,10 @@ var logConsole  = log4js.getLogger();
 // var loggerDB = log4js.getLogger('mongodb');
 var log2Email = log4js.getLogger('email-log');
 
-
 var log2file = log4js.getLogger('error-file-logger-protocollo');
 log2file.setLevel(ENV_PROT.log_level);
 
 var log2fileAccess = log4js.getLogger('access-file-logger-protocollo');
-
 
 module.exports = function(){
 

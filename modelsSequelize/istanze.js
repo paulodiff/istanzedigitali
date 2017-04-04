@@ -8,6 +8,11 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        /* che deriva dall'autenticazione */
+        userid : {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         AuthUuidV4 : {
             type: DataTypes.STRING,
             allowNull: false
@@ -21,21 +26,22 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false
         },
+        /* reqId identificativo di salvataggio sul fileSystem*/
         fileSystemId : {
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue : 0
         },
         protocolloIdDocumento : {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         protocolloAnno : {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         protocolloNumero : {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false
         }
     },

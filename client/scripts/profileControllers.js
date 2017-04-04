@@ -19,7 +19,7 @@ angular.module('myApp.controllers')
              usSpinnerService.stop('spinner-1');
          })
         .catch(function(response) {
-           usSpinnerService.stop('spinner-1');
+            usSpinnerService.stop('spinner-1');
             console.log(response);
             var dlg = dialogs.error(response.data.title, response.data.message, {});
 					  dlg.result.then(function(btn){

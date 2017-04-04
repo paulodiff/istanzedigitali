@@ -590,6 +590,7 @@ angular.module('myApp.controllers')
                 //$scope.tokenId = $stateParams.tokenId;
                 //$log.debug($scope.tokenId);        
                 AuthService.storeToken($stateParams.tokenId);
+                $state.go('profile');
             } else{
                 $log.debug('No TokenId');
             }

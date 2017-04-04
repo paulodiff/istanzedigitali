@@ -1,42 +1,57 @@
 <div class="container">
   <div class="panel panel-default">
-    <div class="panel-heading">Informazioni utente</div>
+    <div class="panel-heading">Informazioni utente ( {{user.issuer}} )</div>
     <div class="panel-body">
-      <legend><i class="ion-clipboard"></i>Dati relativi all'autenticazione</legend>
-      <form method="post" ng-submit="updateProfile()">
-        <div class="form-group">
-          <label class="control-label"><i class="ion-person"></i>Issuer</label>
-          {{user.issuer}}
-        </div>
-        <div class="form-group">
-          <label class="control-label"><i class="ion-person"></i>Nome</label>
-          {{user.nome}} - {{user.cognome}}
-        </div>
-        <div class="form-group">
-          <label class="control-label"><i class="ion-at"></i>Codice Fiscale</label>
-          <input type="text" class="form-control" ng-model="user.CodiceFiscale" />
-        </div>
-        <div class="form-group">
-          <label class="control-label"><i class="ion-at"></i>userid</label>
-          <input type="text" class="form-control" ng-model="user.userid" />
-        </div>
-        <div class="form-group">
-          <label class="control-label"><i class="ion-at"></i>Data Nascita</label>
-          <input type="text" class="form-control" ng-model="user.dataNascita" />
-        </div>
-        <!-- <button class="btn btn-lg btn-success btn-raised">Update Information</button> -->
-      </form>
+
+
+
+<table class="table table-responsive">
+  <tbody>
+    <tr>
+          <td><b>Nome<b></td>
+          <td>{{user.nome}} - {{user.cognome}}</td>
+    </tr>
+    <tr>
+          <td><b>Codice Fiscale<b></td>
+          <td>{{user.CodiceFiscale}}</td>
+    </tr>
+    <tr>
+          <td><b>userid<b></td>
+          <td>{{user.userid}}</td>
+    </tr>
+    <tr>
+          <td><b>Data Nascita<b></td>
+          <td>{{user.dataNascita}}</td>
+    </tr>    
+  </tbody>
+</table>
+
+
+<a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">Disconnetti</a>
+
+
     </div>
   </div>
 
-<a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">logout</a>
+
+
+
+<a class="btn btn-block btn-success btn-raised" ui-sref="protocollo" ui-sref-active="active">Richiesta di autorizzazione</a>
+<a class="btn btn-block btn-success btn-raised" ui-sref="protocollo" ui-sref-active="active">Richiesta ferie</a>
+
+<button class="btn btn-block btn-info btn-raised" data-toggle="collapse" data-target="#demo">Mostra storico autenticazioni</button>
+
+
+<div id="demo" class="panel panel-info collapse">
+    <div class="panel-heading">Storico autenticazioni</div>
+    <div class="panel-body">
 
 <div class="table-responsive">
 <table class="table table-responsive">
   <thead>
   <tr>
     <th>#</th>
-    <th>nameID</th>
+    <th>ts</th>
     <th>trustLevel</th>
     <th>policyLevel</th>
     <th>uuidV4</th>
@@ -45,13 +60,17 @@
   <tbody>
     <tr ng-repeat="authEvent in user.AuthEvents">
           <td>{{$index + 1}}</td>
-          <td>{{authEvent.nameID}}</td>
+          <td>{{authEvent.ts}}</td>
           <td>{{authEvent.trustLevel}}</td>
           <td>{{authEvent.policyLevel}}</td>
           <td>{{authEvent.uuidV4}}</td>
     </tr>
   </tbody>
 </table>
+
+</div>
+</div>
+
 </div>
 
 
