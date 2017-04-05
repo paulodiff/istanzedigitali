@@ -1,0 +1,38 @@
+<section>
+<div class="container">
+  <div class="row">
+    <div class="center-form panel">
+      <div class="panel-heading">Autenticazione</div>
+      <div class="panel-body">
+
+      <div ng-if="!isAuthenticated()">
+
+        <h2 class="text-center">Accesso tramite SPID o FEDERA</h2>
+
+
+        <a class="Button Button--info u-text-r-xs" href="{{fullApiEndpoint}}">
+            <i class="ion-social-linkedin"></i>LOG IN con SPID o FEDERA
+        </a>
+
+
+<h3>Istruzioni per l'accesso al servizio</h3>
+<p>Per accedere al servizio è necessario avere o un account FedERa o un account SPID</p>
+<a class="Button Button--info u-text-r-xs" href=" http://federazione.lepida.it/ ">GUIDA ACCOUNT FEDERA</a>
+<a class="Button Button--info u-text-r-xs" href="https://www.spid.gov.it/">GUIDA ACCOUNT SPID</a>
+
+
+
+        </div>
+
+
+          <div ng-if="isAuthenticated()">
+              <button class="Button Button--danger u-text-r-xs" ng-click="logout('')">
+                DISCONNETTI
+              </button>
+          </div>
+ 
+      </div>
+    </div>
+  </div>
+</div>
+</section>

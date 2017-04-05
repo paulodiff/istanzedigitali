@@ -11,6 +11,10 @@ var htmlmin = require('gulp-htmlmin');
 var rename = require("gulp-rename");
 var del = require('del');
 var runSequence = require('run-sequence');
+var templateCache = require('gulp-angular-templatecache');
+var inlineAngularTemplates = require('gulp-inline-angular-templates');
+
+
 
 
 var defineOpt = function (optName, defaultValue) {
@@ -142,6 +146,7 @@ gulp.task('userefIndex', function () {
 
 });
 
+// minimizza tutti i templates
 gulp.task('htmlminTemplates', function () {
   return gulp.src('./templates/*.html')
         .pipe(htmlmin({collapseWhitespace: true, removeComments: true}))
@@ -184,11 +189,27 @@ gulp.task('default', function () {
   console.log('########################### Use gulp build:dist ################################');
 });
 
+var optTemplateCache = {         
+        root: "templates/",
+        standalone: true,
+        // ,base: __dirname + "/public",
+        module: "myApp.templates"
+        //filename: "templates.js"
+};
+gulp.task('build:templateCache', function () {
+  return gulp.src('./dist/templates/*.html')
+    .pipe(templateCache(optTemplateCache))
+    .pipe(gulp.dest('./dist'));
+});
+
+
+
 
 gulp.task('build:dist', function(callback) {
   runSequence('clean',
               ['copyImages', 'userefIndex', 'htmlminTemplates'],
               'htmlminIndex',
+              'build:templateCache',
               'overwriteIndex',
               callback);
 });

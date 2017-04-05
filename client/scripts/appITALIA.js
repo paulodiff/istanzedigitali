@@ -85,7 +85,7 @@ angular.module('myApp', [//'ionic',
     $stateProvider.state('homeIstanze', {
         url: '/homeIstanze',
         controller: 'homeCtrl',
-        templateUrl: 'templates/homeIstanze.html',
+        templateUrl: 'templates/homeIstanzeITALIA.html',
         accessLogged: false,
         accessLevel: 'free1' 
     });
@@ -94,7 +94,7 @@ angular.module('myApp', [//'ionic',
     $stateProvider.state('elencoIstanze', {
         url: '/elencoIstanze',
         controller: 'homeCtrl',
-        templateUrl: 'templates/elencoIstanze.html',
+        templateUrl: 'templates/elencoIstanzeITALIA.html',
         accessLogged: false,
         accessLevel: 'free1' 
     });
@@ -130,7 +130,7 @@ angular.module('myApp', [//'ionic',
     
     $stateProvider.state('login', {
         url: '/login',
-        templateUrl: 'templates/loginForm.html',
+        templateUrl: 'templates/loginFormITALIA.html',
         // controller: 'SLoginCtrl',
         controller: 'LoginController',
         accessLogged: false
@@ -145,13 +145,13 @@ angular.module('myApp', [//'ionic',
 */
     $stateProvider.state('logout', {
         url: '/logout',
-        templateUrl: 'templates/loginForm.html',
+        templateUrl: 'templates/loginFormITALIA.html',
         controller: 'LoginController'
     });
       
     $stateProvider.state('profile', {
         url: '/profile',
-        templateUrl: 'templates/profileForm.html',
+        templateUrl: 'templates/profileFormITALIA.html',
         controller: 'profileMgrCtrl',
         accessLogged: true
     });
