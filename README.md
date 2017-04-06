@@ -59,4 +59,4 @@ Applicazione del framework con reingegnerizzazione del procedimento:
 
 ## Informazioni 
 
-- Comune di Rimini - Ruggero Ruggeri ruggero.ruggeri AT comune.rimini.it 0541/7014607
+- Comune di Rimini - Ruggero Ruggeri ruggero.ruggeri AT comune.rimini.it 0541/704607 335.5703086
