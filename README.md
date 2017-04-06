@@ -3,22 +3,26 @@
 
 ## Descrizione
 
-Nella pubblica amministrazione molti procedimenti interni sono gestiti attraverso piccoli gestionali, 
-fogli di calcolo o file e cartelle. Inoltre spesso vi sono procedimenti che nascono e muoiono velocemente.
-Per questo tipo di procedimenti risulta molto difficile e dispendioso poter disporre di una interfaccia web per 
-raccogliere le istanze in ingresso, essere integrati con SPID ed il gestore documentale, ed inviare le notifiche 
-sullo stato del procedimento in maniera automatica al cittadino.
+Il progetto implementa un framework agile e componibile per “abilitare” ad una serie di funzionalità previste 
+dal CAD i piccoli procedimenti digitali della PA che non ci riescono. 
+Nella pubblica amministrazione molti procedimenti interni sono gestiti attraverso gestionali obsoleti, 
+fogli di calcolo o file e cartelle. 
+Inoltre spesso vi sono procedimenti che nascono e muoiono velocemente. 
+Per questo tipo di procedimenti risulta difficile se non impossibile disporre di una interfaccia web per 
+raccogliere le istanze in ingresso, essere integrati con SPID, essere integrati con il gestore documentale interno, 
+inviare le notifiche sullo stato del procedimento in maniera automatica al cittadino e raccogliere i dati in maniera strutturata.
 
 > Questo framework vuole rispondere a questa esigenza.
 
 ### Le principali caratteristiche del framework sono:
 
--	Integrazione con FEDERA/SPID
--	Integrazione con il software di Gestione Documentale
--	Interfacce che seguono le specifiche di design.italia.it
--	Notifiche al cittadino dello stato dell'istanza
+-	Integrazione con SPID e FEDERA
+-	Integrazione con il software di gestione documentale
+-	Interfacce web che seguono le specifiche di design.italia.it
 -	Interfaccia di accoglimento istanze facilmente personalizzabile
+-	Invio notifiche al cittadino sullo stato dell'istanza presentata
 -   Interfacciamento dei flussi dati con i gestionali dell'ufficio
+-	Gestione memorizzazione e storico delle istanze presentate dal cittadino
 -	Open Source
 
 ## Il caso d'uso tipico

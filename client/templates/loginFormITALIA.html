@@ -1,38 +1,43 @@
 <section>
-<div class="container">
-  <div class="row">
-    <div class="center-form panel">
-      <div class="panel-heading">Autenticazione</div>
-      <div class="panel-body">
 
-      <div ng-if="!isAuthenticated()">
+<div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-r-top u-padding-bottom-xxl">
+          
+    <h1 class="u-text-h2">Gestione autenticazione attraverso SPID o FEDERA</h1>
+        <article class="Prose">
+
+      
+
+
+      
+        <div ng-if="!isAuthenticated()">
 
         <h2 class="text-center">Accesso tramite SPID o FEDERA</h2>
 
-
-        <a class="Button Button--info u-text-r-xs" href="{{fullApiEndpoint}}">
+        <p>Cliccando il bottone seguente è possibile accedere all'account SPID o FEDERA per poi procedere all'inoltro dell'istanza</p>
+        <a class="Button Button--default u-text-r-xs" href="{{fullApiEndpoint}}">
             <i class="ion-social-linkedin"></i>LOG IN con SPID o FEDERA
         </a>
 
+        <hr>
 
-<h3>Istruzioni per l'accesso al servizio</h3>
-<p>Per accedere al servizio è necessario avere o un account FedERa o un account SPID</p>
-<a class="Button Button--info u-text-r-xs" href=" http://federazione.lepida.it/ ">GUIDA ACCOUNT FEDERA</a>
-<a class="Button Button--info u-text-r-xs" href="https://www.spid.gov.it/">GUIDA ACCOUNT SPID</a>
+             <h2 class="text-center">Istruzioni per l'accesso al servizio</h2>
+<p>Per l'inoltro di istanze attraverso questo portale è <b>OBBLIGATORIO</b> un account FedERa o SPID. Per ottenere una account SPID o FEDERE seguire le guide elencate qui di seguito:</p>
+
+<a class="Button Button--info u-text-r-xs" href="https://www.spid.gov.it/">COME OTTENERE UN ACCOUNT ACCOUNT SPID</a> 
+ <a class="Button Button--indo u-text-r-xs" href=" http://federazione.lepida.it/ ">COME OTTENERE UN ACCOUNT FEDERA</a>
 
 
 
         </div>
 
-
-          <div ng-if="isAuthenticated()">
+        <div ng-if="isAuthenticated()">
+            <p>Cliccando il bottone seguente è possibile disconnettersi dall'account SPID o FEDERA</p>
               <button class="Button Button--danger u-text-r-xs" ng-click="logout('')">
                 DISCONNETTI
               </button>
           </div>
- 
-      </div>
-    </div>
-  </div>
-</div>
+
+
+        </article>
+</div>        
 </section>

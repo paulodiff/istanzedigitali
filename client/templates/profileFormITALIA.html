@@ -1,11 +1,13 @@
-<div class="container">
-  <div class="panel panel-default">
-    <div class="panel-heading"><h3>Benvenuto {{user.nome}} {{user.cognome}} </h3></div>
-    <div class="panel-body">
+<section>
+
+<div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-r-top u-padding-bottom-xxl">
+          
+           <h1 class="u-text-h2">Pagina di riepilogo dati di autenticazione</h1>
 
 
 
-<table class="table table-responsive">
+
+<table class="Table Table--withBorder Table--responsive u-text-r-xs">
   <tbody>
     <tr>
           <td><b>Nome<b></td>
@@ -25,20 +27,19 @@
     </tr>    
   </tbody>
 </table>
+<hr>
+<h1 class="u-text-h2">Azioni che è possibile effettuare:</h1>
 
-<h3>Azioni che è possibile effettuare:</h3>
-<p><b>Presentare una nuova istanza cliccando il bottone seguente:</b></p>
-<a class="btn btn-block btn-success btn-raised" ui-sref="elencoIstanze" ui-sref-active="active">Presenta una nuova istanza</a>
+<article class="Prose">
 
-<p><b>Visualizzare un breve elenco delle istanze già presentate cliccando il bottone seguente:</b></p>
+<h3>Presentare una nuova istanza cliccando il bottone seguente:</h3>
+<a class="Button Button--info u-text-r-xs" ui-sref="elencoIstanze" ui-sref-active="active">Presenta una nuova istanza</a>
+<hr>
+<h3>Visualizzare un breve elenco delle istanze già presentate cliccando il bottone seguente:</h3>
 
-<button class="btn btn-block btn-info btn-raised" data-toggle="collapse" data-target="#istanzepresentate">Mostra istanze presentate</button>
-  <div id="istanzepresentate" class="panel panel-info collapse">
-    <div class="panel-heading">Istanze presentate</div>
-    <div class="panel-body">
-
-    <div class="table-responsive">
-      <table class="table table-responsive">
+<button class="Button Button--info u-text-r-xs" data-toggle="collapse" data-target="#istanzepresentate">Mostra istanze presentate</button>
+  
+      <table class="Table Table--withBorder Table--responsive u-text-r-xs">
         <thead>
         <tr>
           <th>#</th>
@@ -58,22 +59,12 @@
           </tr>
         </tbody>
       </table>
-    </div>
+<hr>  
 
-    </div>
-  </div>
+<h3>Mostrare lo storico degli accessi al portale cliccando il bottone seguente</h3>
+<button class="Button Button--info u-text-r-xs" data-toggle="collapse" data-target="#demo">Mostra storico accessi</button>
 
-
-<p><b>Mostrare lo storico degli accessi al portale cliccando il bottone seguente</b></p>
-<button class="btn btn-block btn-info btn-raised" data-toggle="collapse" data-target="#demo">Mostra storico accessi</button>
-
-
-<div id="demo" class="panel panel-info collapse">
-    <div class="panel-heading">Storico autenticazioni</div>
-    <div class="panel-body">
-
-<div class="table-responsive">
-<table class="table table-responsive">
+<table class="Table Table--withBorder Table--responsive u-text-r-xs">
   <thead>
   <tr>
     <th>#</th>
@@ -93,108 +84,17 @@
     </tr>
   </tbody>
 </table>
-</div>
+
+<hr>
+
+<h3>Disconnetersi dall'account di autenticazione SPID o FEDERA cliccando il bottone seguente</h3>
+<a class="Button Button--info u-text-r-xs" ui-sref="logout" ui-sref-active="active">Disconnetti</a>
+
+</article>
+</div>    
 
 
-</div>
-</div>
 
-<p><b>Disconnetersi dall'account di autenticazione cliccando il bottone seguente</b></p>
-<a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">Disconnetti</a>
+</section>
 
 
-    </div>
-  </div>
-
-
-<!--
-
-  <div class="panel panel-default">
-    <div class="panel-heading">Accounts</div>
-    <div class="panel-body">
-      <legend><i class="ion-link"></i> Linked Accounts</legend>
-      <div class="btn-group-vertical">
-        <button class="btn btn-sm btn-danger" ng-if="user.facebook" ng-click="unlink('facebook')">
-          <i class="ion-social-facebook"></i> Unlink Facebook Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.facebook" ng-click="link('facebook')">
-          <i class="ion-social-facebook"></i> Link Facebook Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.google" ng-click="unlink('google')">
-          <i class="ion-social-googleplus"></i> Unlink Google Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.google" ng-click="link('google')">
-          <i class="ion-social-googleplus"></i> Link Google Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.linkedin" ng-click="unlink('linkedin')">
-          <i class="ion-social-linkedin"></i> Unlink LinkedIn Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.linkedin" ng-click="link('linkedin')">
-          <i class="ion-social-linkedin"></i> Link LinkedIn Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.twitter" ng-click="unlink('twitter')">
-          <i class="ion-social-twitter"></i> Unlink Twitter Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.twitter" ng-click="link('twitter')">
-          <i class="ion-social-twitter"></i> Link Twitter Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.github" ng-click="unlink('github')">
-          <i class="ion-social-github"></i> Unlink GitHub Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.github" ng-click="link('github')">
-          <i class="ion-social-github"></i> Link GitHub Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.instagram" ng-click="unlink('instagram')">
-          <i class="ion-social-instagram"></i> Unlink Instagram Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.instagram" ng-click="link('instagram')">
-          <i class="ion-social-instagram"></i> Link Instagram Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.foursquare" ng-click="unlink('foursquare')">
-          <i class="ion-social-foursquare"></i> Unlink Foursquare Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.foursquare" ng-click="link('foursquare')">
-          <i class="ion-social-foursquare"></i> Link Foursquare Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.yahoo" ng-click="unlink('yahoo')">
-          <i class="ion-social-yahoo"></i> Unlink Yahoo Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.yahoo" ng-click="link('yahoo')">
-          <i class="ion-social-yahoo"></i> Link Yahoo Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.live" ng-click="unlink('live')">
-          <i class="ion-social-windows"></i> Unlink Windows Live Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.live" ng-click="link('live')">
-          <i class="ion-social-windows"></i> Link Windows Live Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.twitch" ng-click="link('twitch')">
-          <i class="ion-social-twitch"></i> Unlink Twitch Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.twitch" ng-click="link('twitch')">
-          <i class="ion-social-twitch"></i> Link Twitch Account
-        </button>
-
-        <button class="btn btn-sm btn-danger" ng-if="user.twitch" ng-click="link('bitbucket')">
-          <i class="fa fa-bitbucket"></i> Unlink Bitbucket Account
-        </button>
-        <button class="btn btn-sm btn-primary" ng-if="!user.twitch" ng-click="link('bitbucket')">
-          <i class="fa fa-bitbucket"></i> Link Bitbucket Account
-        </button>
-      </div>
-    </div>
-  </div>
-
-  -->
-
-
-</div>
