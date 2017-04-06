@@ -27,16 +27,19 @@ inviare le notifiche sullo stato del procedimento in maniera automatica al citta
 
 ## Il caso d'uso tipico
 
-Richiesta di prenotazione e rinnovo di una tipologia di autorizzazione. 
-L'ufficio gestisce le autorizzazioni utilizzando un file di excel che non è integrato neanche con il protocollo.
+Richiesta di prenotazione e rinnovo di una di autorizzazione. 
+L'ufficio preposto gestisce le richieste su cartaceo inviato tramite email con allegata la scansione della richiesta e dei documenti di identità del richiedente. Gli operatori aprono una mail alla volta, leggono i documenti, salvano i dati su di un file di excel e i documenti allegati su di una cartella di rete. Le domande vengono protocollate una ad una. Il richiedente non ha nessun dato sullo stato del procedimento se non mediante richiesta telefonica indirizzata all’ufficio stesso.
 
-    1) Si prepara il form dati per la richiesta dati con la possibilitò di allegare dei documenti
-    2) Si comunica il link sul sito web dell'ente (il link sarà attivo per tutta la durata del rinnovo)
-    3) I cittadini richiedenti si autenticano con SPID compilano i dati ed inviano l'istanza
-    4) L'istanza viene protocollata, inoltrata all'ufficio competente
-    5) Al cittadino viene inviata una informativa di avvio procedimento con il protocollo e tutte le informazioni necessarie
-    6) I dati inviati vengono raccolti nella modalità più comoda per la gestione (excel)
-    7) Al cittadino vengono inviate le notifiche sullo stato di avanzamento del procedimento
+Applicazione del framework con reingegnerizzazione del procedimento:
+
+-	Si prepara il form web (componibile) per la richiesta dati 
+-	Si comunica il link sul sito web dell'ente per accedere la portale per l’inoltro dell’istanza
+-	I cittadini richiedenti si autenticano con SPID compilano i dati ed inviano l'istanza
+-	L'istanza viene protocollata automaticamente e inoltrata all'ufficio competente mediante il software di gestione documentale interno
+-	I dati inviati vengono raccolti automaticamente in un file di excel per la gestione del procedimento da parte dell’ufficio
+-	Al cittadino viene inviata automaticamente una notifica di avvio di procedimento con il protocollo e tutte le informazioni necessarie per eventuali chiarimenti
+-	Successivamente al cittadino vengono inviate le notifiche sullo stato di avanzamento e completamento del procedimento
+
 
 ## Tecnologie
 
