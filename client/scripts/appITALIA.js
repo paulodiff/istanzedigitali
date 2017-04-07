@@ -101,7 +101,7 @@ angular.module('myApp', [//'ionic',
 
     $stateProvider.state('protocollo', {
         url: '/protocollo',
-        templateUrl: 'templates/protocolloForm.html',
+        templateUrl: 'templates/protocolloFormITALIA.html',
         controller: 'ProtocolloCtrl',
         accessLogged: true,
         controllerAs: 'vm',
