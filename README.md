@@ -75,4 +75,5 @@ Le demo "girano" in ambiente di test e potrebbero esser non disponibili.
 
 ## Screenshot
 
-[![passport banner](http://cdn.auth0.com/img/passport-banner-github.png)](http://passportjs.org)
+[![Schermata demo 1](http://pmlab.comune.rimini.it/FORUMPA1.PNG)](Schermata demo 1)
+[![Schermata demo 2](http://pmlab.comune.rimini.it/FORUMPA1.PNG)](Schermata demo 2)
