@@ -67,7 +67,7 @@ Applicazione del framework con reingegnerizzazione del procedimento:
 
 Le demo "girano" in ambiente di test e potrebbero NON essere disponibili:
 
-- [Demo con layout Bootstrap/Material](https://pmlab.comune.rimini.it/simplesaml/cli)
+- [Demo con layout Bootstrap/Material](https://pmlab.comune.rimini.it/simplesaml/cli/index.html)
 - [Demo con layout design.italia.it](https://pmlab.comune.rimini.it/simplesaml/cli/indexITALIA.html)
 
 ## Documentazione per installazione ed utilizzo
