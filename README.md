@@ -1,4 +1,4 @@
-# Istanze Digitali
+# Istanze Digitali - Comune di Rimini
 ## Piccoli procedimenti "crescono" (in digitale)
 
 ## Descrizione
@@ -45,18 +45,34 @@ Applicazione del framework con reingegnerizzazione del procedimento:
 
 - Le Tecnologie utilizzate per il progetto sono AngularJs per il client e NodeJs per il server
 
-## Stato del progetto
+## Stato di avanzamento del progetto
 
 - Integrazione con FEDERA/SPID - (fatto)
 - Integrazione con il software di Gestione Documentale (fatto)
-- Interfacce che seguono le specifiche di design.italia.it (in sviluppo)
+- Interfacce che seguono le specifiche di design.italia.it (in sviluppo/beta pronta)
 - Interfaccia di accoglimento istanze facilmente personalizzabile (in sviluppo)
 - Interfacciamento dei flussi dati con i gestionali dell'ufficio (fatto filesystem, xls. In sviluppo Mdb)
 - Invio della prima notifica ad avvenuta ricezione dell'istanza (fatto)
 - Invio delle notifiche successive sullo stato dell'istanza (in sviluppo)
-- Invio della notifica di completamente procediemento (in sviluppo)
+- Invio della notifica di completamente procedimento (in sviluppo)
+- Gestione della memorizzazione delle istanze parziali (in sviluppo)
 - Open Source (fatto)
 
 ## Informazioni 
 
 - Comune di Rimini - Ruggero Ruggeri ruggero.ruggeri AT comune.rimini.it 0541/704607 335.5703086
+
+## Demo 
+
+Le demo "girano" in ambiente di test e potrebbero esser non disponibili.
+
+- [Demo con layout Bootstrap/Material](https://pmlab.comune.rimini.it/simplesaml/cli)
+- [Demo con layout design.italia.it](https://pmlab.comune.rimini.it/simplesaml/cli/indexITALIA.html)
+
+## Documentazione per installazione ed utilizzo
+
+- Work in progress...
+
+## Screenshot
+
+[![passport banner](http://cdn.auth0.com/img/passport-banner-github.png)](http://passportjs.org)
