@@ -79,3 +79,6 @@ Le demo "girano" in ambiente di test e potrebbero esser non disponibili.
 [![Schermata demo 2](http://pmlab.comune.rimini.it/FORUMPA2.PNG)](Schermata demo 2)
 [![Schermata demo 3](http://pmlab.comune.rimini.it/FORUMPA3.PNG)](Schermata demo 3)
 [![Schermata demo 4](http://pmlab.comune.rimini.it/FORUMPA4.PNG)](Schermata demo 4)
+(http://pmlab.comune.rimini.it/FORUMPA1.PNG)
+(http://pmlab.comune.rimini.it/FORUMPA2.PNG)
+(http://pmlab.comune.rimini.it/FORUMPA3.PNG)
