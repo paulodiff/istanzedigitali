@@ -1,6 +1,6 @@
 var mysql = require('mysql');
 var async = require('async');
-var ENV   = require('../config.js'); // load configuration data
+var ENV   = require('../tmp/config.js'); // load configuration data
 
 var PRODUCTION_DB = 'app_prod_database'
   , TEST_DB = 'app_test_database'

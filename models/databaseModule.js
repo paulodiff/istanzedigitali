@@ -2,7 +2,7 @@
 
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
-var ENV   = require('../config.js'); // load configuration data
+var ENV   = require('../tmp/config.js'); // load configuration data
 var fs = require('fs');
 var utilityModule  = require('../models/utilityModule.js'); // load configuration data
 var request = require('request');

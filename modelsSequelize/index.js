@@ -3,7 +3,7 @@
 var fs        = require("fs");
 var path      = require("path");
 var Sequelize = require("sequelize");
-var ENV   = require('../config.js'); 
+var ENV   = require('../tmp/config.js'); 
 
 // load configuration data
  

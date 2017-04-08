@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
-var ENV   = require('../config.js'); // load configuration data
+var ENV   = require('../tmp/config.js'); // load configuration data
 var fs = require('fs');
 
 function addZero(x,n) {

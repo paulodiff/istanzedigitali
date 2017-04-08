@@ -10,7 +10,7 @@ var util = require('util');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 var jwt = require('jwt-simple');
-var ENV   = require('../config.js'); // load configuration data
+var ENV   = require('../tmp/config.js'); // load configuration data
 var flow = require('../models/flow-node.js')('tmp'); // load configuration data
 var utilityModule  = require('../models/utilityModule.js'); // load configuration data
 

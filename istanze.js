@@ -86,7 +86,7 @@ app.use(function (err, req, res, next) {
 
 
 // load configuration data
-var ENV   = require('./config.js'); // load configuration data
+var ENV   = require('./tmp/config.js'); // load configuration data
 
 /*
 var myCert = fs.readFileSync('./certs/saml.pem', 'utf-8');

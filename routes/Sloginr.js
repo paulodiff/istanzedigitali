@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var jwt = require('jwt-simple');
-var ENV   = require('../config.js'); // load configuration data
+var ENV   = require('../tmp/config.js'); // load configuration data
 var User  = require('../models/user.js'); // load configuration data
 var UserLogin  = require('../models/userLogin.js'); // load configuration data
 var utilityModule  = require('../models/utilityModule.js'); // load configuration data
