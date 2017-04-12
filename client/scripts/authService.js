@@ -20,9 +20,11 @@ angular.module('myApp.services', [])
     login: function (credentials) {
       
       var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogin; 
+      var checkApiEndpoint = $rootScope.base_url + '/' + ENV.apiLoginCheck; 
 
       $log.debug( 'AuthService');
       $log.debug(fullApiEndpoint);
+      $log.debug(checkApiEndpoint);
       $log.debug(credentials);
         
       return $http({ 
@@ -64,7 +66,7 @@ angular.module('myApp.services', [])
     // imposta e ritorna il 
     getRelayStateToken: function(){
           $log.debug('AuthService: getRelayStateToken');
-          $log.debug('AuthService store set JWT to storage');
+          $log.debug('AuthService store RelayStateToken to storage');
           $localStorage.RelayStateToken = Math.random() * 100000000000000000;
           return $localStorage.RelayStateToken;
     },
@@ -118,7 +120,31 @@ angular.module('myApp.services', [])
       
     isAuthenticated: function () {
         // $log.debug('AuthService isAuthenticated .. check JWT', !!$localStorage.JWT);
+
         return !!$localStorage.JWT;
+
+        /*
+        // check
+        var checkApiEndpoint = $rootScope.base_url + '/' + ENV.apiLoginCheck; 
+        if(!!$localStorage.JWT){
+            return $http
+              .get(checkApiEndpoint)
+              .then(function (res) {
+                  $log.debug(res);
+                  $log.debug('isAuthenticated failed! remove token!');
+                  return false;
+              }).catch(function(response) {
+                  $log.debug('isAuthenticated failed! remove token!');
+                  $log.debug(response);
+                  delete $localStorage.JWT;
+                  $http.defaults.headers.common.Authorization = '';
+                  return false;
+            });
+        } else {
+          return false;
+        }
+        */
+
     },
       
     isAuthorized: function (authorizedRoles) {

@@ -72,7 +72,7 @@ Le demo "girano" in ambiente di test e potrebbero NON essere disponibili:
 
 ## Documentazione per installazione ed utilizzo
 
-- Work in progress...
+- Work in progress... [documentazione](https://github.com/paulodiff/istanzedigitali/wiki)
 
 ## Screenshot
 

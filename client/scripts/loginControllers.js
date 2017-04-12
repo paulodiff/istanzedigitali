@@ -315,7 +315,7 @@ angular.module('myApp.controllers')
         };
   
     */
-
+    /*
     $scope.user ={
         email: 'a@a.com',
         password: '12345678'
@@ -326,19 +326,20 @@ angular.module('myApp.controllers')
         password: ''
      };
     
+     
      // loading exiting credentials..
      if ($localStorage.password){
-        console.log('recupero password da cache');
+        $log.debug('recupero password da cache');
         $scope.credentials.password = $localStorage.password;
      }
-
+     */
 
   
 
   $log.debug('LoginController...fullApiEndpoint');
   var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogin + '/' + AuthService.getRelayStateToken();
 
-  console.log(fullApiEndpoint);
+  $log.debug(fullApiEndpoint);
 
   $scope.fullApiEndpoint = fullApiEndpoint;
     

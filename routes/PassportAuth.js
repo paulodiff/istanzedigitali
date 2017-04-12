@@ -140,6 +140,13 @@ router.post('/logout',  utilityModule.ensureAuthenticated, function(req, res){
     res.status(200).send({ token: '', status : 'Logged out!' });
 });
 
+// veirifica se l'autenticazione è valida
+router.get('/check',  utilityModule.ensureAuthenticated, function(req, res){
+    console.log('PASSPORT:/check ... ');
+    res.status(200).send({ status : 'checked!' });
+});
+
+
 // esegue il logout da FEDERA
 router.get('/logout',  utilityModule.ensureAuthenticated, function(req, res){
     var logoutUrl = 'https://federatest.lepida.it/logout?spid=https%3A%2F%2Fpmlab.comune.rimini.it%2Fsimplesaml&spurl=NOMOVE';
