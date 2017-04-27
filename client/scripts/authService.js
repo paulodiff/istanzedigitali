@@ -122,6 +122,7 @@ angular.module('myApp.services', [])
         // $log.debug('AuthService isAuthenticated .. check JWT', !!$localStorage.JWT);
 
         return !!$localStorage.JWT;
+        //return true;
 
         /*
         // check
@@ -146,7 +147,7 @@ angular.module('myApp.services', [])
         */
 
     },
-      
+    
     isAuthorized: function (authorizedRoles) {
         // $log.debug('AuthService isAuthorized');
       if (!angular.isArray(authorizedRoles)) {

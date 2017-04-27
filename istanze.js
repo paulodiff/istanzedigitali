@@ -177,6 +177,9 @@ app.use('/segnalazioni', Protocollo);
 var IstanzeMgr = require('./routes/IstanzeMgr')();
 app.use('/istanzemgr', IstanzeMgr);
 
+var GatewayProtocollo = require('./routes/GatewayProtocollo')();
+app.use('/gatewayprotocollo', GatewayProtocollo);
+
 
 // Define routes.
 app.get('/',
@@ -208,6 +211,7 @@ var options = {
 }
 
 app.use('/cli',  express.static(__dirname + '/client', options));
+app.use('/draw',  express.static(__dirname + '/draw.io', options));
 app.use('/dist', express.static(__dirname + '/client/dist', options));
 
 // Sequelize START Bootstrap

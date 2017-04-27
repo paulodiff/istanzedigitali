@@ -1,0 +1,6 @@
+{       
+    'numeroProtocollo':{{numeroProtocollo}},
+    'annoProtocollo'{{annoProtocollo}},
+    'dataProtocollo':{{dataProtocollo}},
+    'codice_unico_transazione':{{reqId}}
+}

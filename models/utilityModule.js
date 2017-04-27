@@ -107,12 +107,15 @@ module.exports = {
           next();
     },
     
-    createJWT: function(user) {
+    createJWT: function(user, timeout1, timeout2) {
+          // moment.js syntax 
+          timeout1 = timeout1 || 2;
+          timeout2 = timeout2 || 'h';
           var payload = {
             sub: user,
             iat: moment().unix(),
             // timeout di 2 ore
-            exp: moment().add(4, 'h').unix()
+            exp: moment().add(timeout1, timeout2).unix()
           };
           return jwt.sign(payload, ENV.secret);
     },

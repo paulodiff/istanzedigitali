@@ -20,7 +20,9 @@
     "grunt-karma": "^2.0.0",
     "grunt-nodemon": "^0.4.2",
     "gulp-angular-templatecache": "^2.0.0",
-    "gulp-inline-angular-templates": "^0.1.5"
+    "gulp-inline-angular-templates": "^0.1.5",
+    "gulp-jslint-simple": "^1.0.2",
+    "jshint-stylish": "^2.2.1"
   },
   "dependencies": {
     "angular-ui-router": "^0.4.2",

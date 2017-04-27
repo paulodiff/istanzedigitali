@@ -13,6 +13,7 @@ var del = require('del');
 var runSequence = require('run-sequence');
 var templateCache = require('gulp-angular-templatecache');
 var inlineAngularTemplates = require('gulp-inline-angular-templates');
+var jslint = require('gulp-jslint-simple');
 
 
 
@@ -196,6 +197,7 @@ var optTemplateCache = {
         module: "myApp.templates"
         //filename: "templates.js"
 };
+
 gulp.task('build:templateCache', function () {
   return gulp.src('./dist/templates/*.html')
     .pipe(templateCache(optTemplateCache))
@@ -203,7 +205,18 @@ gulp.task('build:templateCache', function () {
 });
 
 
-
+gulp.task('lint', function () {
+    gulp.src('./scripts/*.js')
+        .pipe(jslint.run({
+            // project-wide JSLint options
+            node: true,
+            vars: true
+        }))
+        .pipe(jslint.report({
+            // example of using a JSHint reporter
+            reporter: require('jshint-stylish').reporter
+        }));
+});
 
 gulp.task('build:dist', function(callback) {
   runSequence('clean',

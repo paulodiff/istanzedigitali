@@ -1,3 +1,11 @@
+/*
+
+  Modulo gestione dei profili
+
+
+*/ 
+
+
 var express = require('express');
 var router = express.Router();
 var jwt = require('jwt-simple');

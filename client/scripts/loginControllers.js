@@ -24,11 +24,7 @@ angular.module('myApp.controllers')
             $state.go(path);
         };
 
-                
-        $scope.toggleLeft = function() {
-             $log.debug("AppCtrl ... toggleLeft");
-             $ionicSideMenuDelegate.toggleLeft($scope.$$childHead);
-        };
+                       
           
         // CONFIGURAZIONI -----------------------------------------------------------------        
 
@@ -47,13 +43,13 @@ angular.module('myApp.controllers')
 
         // autenticazione
         // Controlla se un reload ricarica il JWT su http header
+        $log.debug('AppCtrl check JWT exist!');
         if ($localStorage.JWT){
             $log.debug('AppCtrl reload JWT http header');
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.JWT;
         } 
 
         
-
 
         //$rootScope.base_url = ENV.apiEndpoint;
         //$log.debug('Restangular set base Url '+ ENV.apiEndpoint);
@@ -237,8 +233,8 @@ angular.module('myApp.controllers')
                 $log.debug('AppCtrl: alertPopup : OK');
                 $state.go('home');
            });
-
         }); 
+        
 
         $rootScope.$on(ENV.AUTH_EVENTS.serverError, function (event, next) {
             $log.debug('AppCtrl : AUTH_EVENTS.serverError ... ');

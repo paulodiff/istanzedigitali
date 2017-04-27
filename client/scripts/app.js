@@ -538,6 +538,6 @@ angular.module('myApp', [//'ionic',
   */    
 
     // hide loading screen...
-    console.log('hide loading screen...');
+    console.log('run: hide loading screen...');
     //loading_screen.finish();
 });
