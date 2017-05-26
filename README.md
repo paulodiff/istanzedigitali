@@ -11,7 +11,7 @@ Nella pubblica amministrazione molti procedimenti interni sono gestiti attravers
 fogli di calcolo o file e cartelle. 
 Inoltre spesso vi sono procedimenti che nascono e muoiono velocemente. 
 Per questo tipo di procedimenti risulta difficile se non impossibile disporre di una interfaccia web per 
-raccogliere le istanze in ingresso, essere integrati con SPID, essere integrati con il gestore documentale interno, 
+raccogliere le istanze in ingresso, essere integrati con SPID e PagoPA, essere integrati con il gestore documentale interno, 
 inviare le notifiche sullo stato del procedimento in maniera automatica al cittadino e raccogliere i dati in maniera strutturata.
 
 > Questo framework vuole rispondere a questa esigenza.
@@ -50,6 +50,7 @@ Applicazione del framework con reingegnerizzazione del procedimento:
 ## Stato di avanzamento del progetto
 
 - Integrazione con FEDERA/SPID - (fatto)
+- Integrazione con PayER/PagoPA - (in sviluppo)
 - Integrazione con il software di Gestione Documentale (fatto)
 - Interfacce che seguono le specifiche di design.italia.it (in sviluppo/beta pronta)
 - Interfaccia di accoglimento istanze facilmente personalizzabile (in sviluppo)
