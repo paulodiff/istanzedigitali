@@ -35,6 +35,7 @@ var fsExtra = require('fs-extra');
 var path = require('path');
 var util = require('util');
 var soap = require('soap');
+var fse = require('fs-extra');
 
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
@@ -112,6 +113,7 @@ var log2file = log4js.getLogger('error-file-logger-protocollo');
 log2file.setLevel(ENV_PROT.log_level);
 
 var log2fileAccess = log4js.getLogger('access-file-logger-protocollo');
+var logUser = {}; // impostato nella selezione utente
 
 module.exports = function(){
 
@@ -175,10 +177,10 @@ router.get('/ping', function (req, res) {
         "userPassword": "password"
     };
     
-    res.status(200).send(utilityModule.createJWT(user,700,'d'));
-    //res.status(200).send({msg:'ok'});
+    //res.status(200).send(utilityModule.createJWT(user,700,'d'));
+    res.status(200).send({msg:'ok'});
 
-    log2Email.info('Ciao');
+    log2Email.info('Gateway Protocollo : PING Action called!');
 
 
     async.series([
@@ -222,10 +224,10 @@ router.get('/ping', function (req, res) {
 function checkJsonSchema(req){
     logConsole.info('checkJsonSchema');
     var appRoot = process.cwd();
-    console.log(appRoot);
+    logConsole.info('checkJsonSchema : appRoot :' + appRoot);
 
     var fConfigName = appRoot + '/' + ENV_PROT.schemaFolder + '/' + ENV_DEFAULT_USER.user_json_schema;
-    logConsole.info(fConfigName);
+    logConsole.info('checkJsonSchema : fConfigName :' + fConfigName);
     var ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
     var schema = JSON.parse(fs.readFileSync(fConfigName));
     // var j2validate = JSON.parse(fs.readFileSync('./pacchettoBRAV.json'));
@@ -240,9 +242,10 @@ function checkJsonSchema(req){
         console.error(msg);
         log2file.error(msg);
         log2file.error(validate.errors);
-        return false;
+        return validate.errors;
     } else {
-        return true;
+        logConsole.info('checkJsonSchema : ok');
+        return [];
     }
 
 }
@@ -254,7 +257,7 @@ function checkJsonSchema(req){
     Verifica l'esistenze del TAG company name dell'utente e recupera le informazioni di configurazione
 
 */
-function checkCompanyName(user){
+function checkCompanyName(user, reqId){
 
     logConsole.info('checkCompanyName');
     logConsole.info(user);
@@ -267,6 +270,11 @@ function checkCompanyName(user){
  
         try {
             ENV_DEFAULT_USER = require(fConfigName);
+            log4js.addAppender(log4js.appenders.file(ENV.logPath + '/' + ENV_DEFAULT_USER.log_filename), 'logUser');
+            logUser = log4js.getLogger('logUser');
+            logUser.info('Start');
+            logUser.info(user);
+            logUser.info(reqId);
         }
         catch (e) {
             log2file.error(e);
@@ -303,50 +311,49 @@ function saveDataToFS(body , userObj, protocolloObj) {
     try{
         // throw "TEST - File NOT FOUND Exception";
 
-        // crea la cartella
-        if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+        // crea la cartella se non esiste;
+        logConsole.info('saveDataToFS:make folder');
+        logConsole.info(dir);
+        fse.ensureDirSync(dir);
 
         // salva i dati dell'autenticazione
-        var jsonFile = dir + "/AUTH-" + userObj.reqId + ".txt";
+        var jsonFile = dir + "/" + userObj.reqId + "-AUTH.txt";
         logConsole.info(jsonFile);
         fs.writeFileSync(jsonFile, JSON.stringify(userObj));
         logConsole.info(userObj);
 
         // salva i dati del protocollo
-        var jsonFile = dir + "/PROTOCOLLO-" + userObj.reqId + ".txt";
+        var jsonFile = dir + "/" + userObj.reqId + "-PROTOCOLLO.txt";
         logConsole.info(jsonFile);
         fs.writeFileSync(jsonFile, JSON.stringify(protocolloObj));
         logConsole.info(protocolloObj);
 
         // salva i dati della chiamata
-        var jsonFile = dir + "/REQ-" + userObj.reqId + ".txt";
+        var jsonFile = dir + "/" + userObj.reqId + "-REQ.txt";
         logConsole.info(jsonFile);
         fs.writeFileSync(jsonFile, JSON.stringify(body));
         
-        /*esporta gli allegati */
+        // esporta allegato principale
+        
+        var fname = body.domandaPermessoFormatoPDF.nomeFile;
+        var jsonFile = dir + "/" + userObj.reqId + "-0000-" + fname;
+        logConsole.info(jsonFile);
+        utilityModule.base64_decode(body.domandaPermessoFormatoPDF.base64,jsonFile);
 
-        logConsole.info('Export allegati TODO .... :');
-        /*
-        Object.keys(fileList).forEach(function(name) {
-            logConsole.info('SAVING FILE:save: ' + name);
-
-            var originalFilename = fileList[name][0].originalFilename;
-            var destFile = dir + "/" + fileList[name][0].originalFilename;
-            var sourceFile = fileList[name][0].path;
-            logConsole.info(sourceFile);
-            logConsole.info(destFile);
-            //fs.renameSync(sourceFile, destFile);
-            // fs.createReadStream(sourceFile).pipe(fs.createWriteStream(destFile));
-            //fs.copySync(path.resolve(__dirname,'./init/xxx.json'), 'xxx.json');
-            fsExtra.copySync(sourceFile, destFile);
-            var hash2 = md5File.sync(destFile);
-            logConsole.info(destFile);
-            logConsole.info(hash2);
-
-            fieldsObj.files.push({ 'name' : originalFilename});
+        // esporta allegati successivi al primo
+      
+        var fileIndexNumber = 1;
+        body.allegati.forEach(function(obj){
+            //logConsole.info('adding:', dir + '/' + obj.name);
+            //ext = obj.name.substring(obj.name.length - 3);
+            fname = obj.nomeFile;
+            var currIndexPadded = utilityModule.pad(fileIndexNumber,4);
+            var jsonFile = dir + "/" + userObj.reqId + "-" + currIndexPadded + "-" + fname;
+            logConsole.info(jsonFile);
+            logConsole.info(obj.base64);
+            utilityModule.base64_decode(obj.base64,jsonFile);
+            fileIndexNumber++;
         });
-        */
-
 
         return true;
 
@@ -577,7 +584,7 @@ router.post('/protocollo',
     var objDatiProtocollo = {};
     var htmlResponseMsg = '';
 
-    logConsole.info('start upload: ' + reqId);
+    logConsole.info('START /protocollo: ' + reqId);
 
 
     //                 var p = {"nomeRichiedente":"MARIO","cognomeRichiedente":"ROSSI","emailRichiedente":"ruggero.ruggeri@comune.rimini.it","codiceFiscaleRichiedente":"RGGRGR70E25H294T","cellulareRichiedente":"3355703086","dataNascitaRichiedente":"11/12/1912","indirizzoRichiedente":"VIA ROMA, 1","cittaRichiedente":"RIMINI","capRichiedente":"47921","oggettoRichiedente":"Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....","files":[],"reqId":"20161209@112659@342@52188","idProtocollo":139364,"annoProtocollo":"2016","numeroProtocollo":100144};
@@ -591,20 +598,20 @@ router.post('/protocollo',
 
 
             // ##### output dati ricevuti --- DEBUG ----
+
              function(callback) {
                 logConsole.info('ASYNC output dati');
                 console.log(req.body);
-                callback(null, 'Output dati ricevuti ... ok');  
+                callback(null, 'ASYNC Callback Output dati ricevuti OK');  
              },
-
 
             // ##### verifica token e caricamento parametri
 
              function(callback) {
                 logConsole.info('ASYNC check token e caricamento parametri');
 
-                if(checkCompanyName(req.user)){
-                    callback(null, 'OK Output dati ricevuti ... ok');  
+                if(checkCompanyName(req.user, reqId)){
+                    callback(null, 'ASYNC Callback check token e caricamento parametri OK');  
                 } else {
                      ErrorMsg = {
                                 title: 'checkCompanyName : ERROR ',
@@ -616,20 +623,22 @@ router.post('/protocollo',
                 }
                 
              },
-
            
             // ##### VALIDATION / PARSING ------------------------------------------------
             
             function(callback) {
                 logConsole.info('ASYNC data parsing / validation');
-                if(checkJsonSchema(req)){
+                var ret = checkJsonSchema(req);
+                //logConsole.info(ret.length);
+                if (ret.length == 0){
                     logConsole.info('ASYNC data parsing OK');
                     callback(null, 'ASYNC data parsing OK');  
-                } else {                
+                }else{
+
                     logConsole.error('ASYNC data parsing error');
                     ErrorMsg = {
                             title: 'Errore data parse',
-                            msg: 'Errore nella decodifica dei dati ricevuti. ',
+                            msg: ret,
                             reqId: reqId,
                             code : 455
                     };
@@ -640,7 +649,7 @@ router.post('/protocollo',
             
             // ##### ------------------------------------------------------------------------
 
-            function(callback){   logConsole.info('ASYNC NOOP:');   callback(null, 'NOOP ... ok');    },
+            function(callback){   logConsole.info('ASYNC NOOP:');   callback(null, 'ASYNC NOOP ... ok');    },
 
 
             // ##### Protocollazione ------------------------------------------------------------------------
@@ -655,7 +664,7 @@ router.post('/protocollo',
                         console.log(result);
                         console.log(result.InserisciProtocolloEAnagraficheResult.Allegati);
                         objDatiProtocollo = result;
-                        callback(null, 'protocolloWS ... ok');
+                        callback(null, 'ASYNC protocolloWS ... ok');
                     })
                     .catch(function (err) {
                         // console.log(err);
@@ -670,20 +679,18 @@ router.post('/protocollo',
                         callback(ErrorMsg, null);
                     });
                 }
-
-
             },
 
             // ##### Saving files ------------------------------------------------------------------------
 
             function(callback){
-                logConsole.info('ASYNC savingFiles:');
+                logConsole.info('ASYNC saveDataToFS:');
 
                 if (saveDataToFS(req.body, req.user, objDatiProtocollo )){
 
-                    logConsole.info('savingFiles: ok');
+                    logConsole.info('ASYNC saveDataToFS: OK');
                     logConsole.info(objFieldSanitized);
-                    callback(null, 'savingFiles ... ok');
+                    callback(null, 'ASYNC saveDataToFS OK');
 
                 } else {
                     
@@ -698,11 +705,6 @@ router.post('/protocollo',
                     logConsole.error(ErrorMsg);
                     callback(ErrorMsg, null);
                 }
-            },
-
-            function(callback){
-                logConsole.info('ASYNC HASH file check:');
-                callback(null, 'Hash file check ... ok');
             },
 
 
@@ -744,12 +746,14 @@ router.post('/protocollo',
 
 
             // ###### BUILD Response Message ----------------------------------------------------------------
-
+            /*
             function(callback){
                 logConsole.info('ASYNC preparazione messaggio risposta:');
  
                 var fileContents = '';
                 var templateFileName = ENV_DEFAULT_USER.templateFileName;
+                
+                logConsole.info(templateFileName);
 
                 try {
                     fileContents = fs.readFileSync(templateFileName).toString();
@@ -764,16 +768,28 @@ router.post('/protocollo',
                     callback(ErrorMsg, null);
                 }
 
+                var tmpDate = '';
+
                 objFieldSanitized.idProtocollo =  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento;
                 objFieldSanitized.annoProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo;
                 objFieldSanitized.numeroProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
                 objFieldSanitized.dataProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo.toString();
-            
+                objFieldSanitized.reqId = reqId;
+
+                tmpDate = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo;
+                logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo);
+                logConsole.info(tmpDate);
+                logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo.toString());
+                logConsole.info(objFieldSanitized.dataProtocollo);
+                objFieldSanitized.dataProtocollo = tmpDate;
+                logConsole.info(objFieldSanitized.dataProtocollo);
+
                 var template = handlebars.compile(fileContents);
                 htmlResponseMsg = template(objFieldSanitized);
-                callback(null, 'Messaggio di risposta preparato ok');
+                callback(null, 'SYNC Messaggio di risposta preparato OK');
 
             }
+            */
 
             //   function(callback){  },
 
@@ -785,6 +801,7 @@ router.post('/protocollo',
         if(err){
             log2file.error(err);
             logConsole.error(err);
+            logUser.info(err);
             // log2Email.info(err);
             res.status(ErrorMsg.code).send(ErrorMsg);
         } else {
@@ -793,11 +810,15 @@ router.post('/protocollo',
             logConsole.info(htmlResponseMsg);
             var Msg = {
                             title: 'Istanza ricevuta con successo!',
-                            msg: htmlResponseMsg,
+                            idDocumento: objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento,
+                            numeroProtocollo: objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo,
+                            annoProtocollo: objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo,
+                            dataProtocollo: objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo,
                             reqId: reqId,
                             code : 200
                         }
-            // log2Email.info(Msg);                        
+            // log2Email.info(Msg);              
+            logUser.info(Msg);          
             res.status(200).send(Msg);
         }
     });

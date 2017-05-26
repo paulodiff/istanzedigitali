@@ -1,6 +1,8 @@
 # Istanze Digitali - Comune di Rimini
 ## Piccoli procedimenti "crescono" (in digitale)
 
+> Il presente progetto è stato premiato a Forum PA 2017 di Roma - [link alla notizia](http://www.chiamamicitta.it/piccoli-procedimenti-crescono-comune-rimini-premiato-forum-pa-roma/)
+
 ## Descrizione
 
 Il progetto implementa un framework agile e componibile per “abilitare” ad una serie di funzionalità previste 

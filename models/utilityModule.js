@@ -57,6 +57,12 @@ module.exports = {
     return new Buffer(bitmap).toString('base64');
   },
 
+  base64_decode: function (base64str, file) {
+    // create buffer object from base64 encoded string, it is important to tell the constructor that the string is base64 encoded
+    var bitmap = new Buffer(base64str, 'base64');
+    // write buffer to file
+    fs.writeFileSync(file, bitmap);
+  },
 
   ensureAuthenticated : function(req, res, next) {
 
