@@ -6,8 +6,8 @@
 angular.module('myApp.controllers')
 
 .controller('UiGridCtrl', 
-            ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', 'Session', '$log', '$timeout','ENV',
-     function($rootScope,  $scope,   $http,  $state,   $location,  uiGridConstants ,  $filter,   Session,   $log,   $timeout, ENV) {
+            ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', 'Session', '$log', '$timeout','ENV','$q', '$interval','UtilsService',
+     function($rootScope,  $scope,   $http,  $state,   $location,  uiGridConstants ,  $filter,   Session,   $log,   $timeout, ENV, $q, $interval,UtilsService) {
     
   $log.debug('UiGridCtrl>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');                                 
   
@@ -24,11 +24,13 @@ angular.module('myApp.controllers')
   $scope.id_utenti_selezione = 0;        
   $scope.items = [];
   $scope.loadMoreDataCanBeLoaded = true;
+  $scope.msg = {};
   
   var today = new Date();
   var nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);
  
+  $scope.gridOptions = {};
   $scope.gridOptions = {
     enableSorting: true,
     enableGridMenu: true,
@@ -36,16 +38,36 @@ angular.module('myApp.controllers')
     enableSelectAll: true,
     showGridFooter:true,
     columnDefs: [
-      { name: 'Data Ins.',  field:  'ts', cellFilter:'date', width:80, type:'date', enableFiltering:false },
-      { name: 'Matr. Ins.', field: 'userData.userId', width:80 , enableFiltering:true },
-      { name: 'tipoIntervento', field: 'formModel.segnalazione.tipoIntervento'},
-      { name: 'Utente', field: 'formModel.segnalazione.utenteRichiedenteAssistenza'},
-      { field: 'company', enableSorting: false }
-    ],
-    onRegisterApi: function( gridApi ) {
-      $scope.grid1Api = gridApi;
-    }
+      { name: 'id', visible: false },
+      { name: 'Tipo', 
+        field:  'tipo_spedizione',
+        displayName: 'Tipo', 
+        editableCellTemplate: 'ui-grid/dropdownEditor', 
+        width: '20%',
+        cellFilter: 'mapTipoSpedizione', 
+        editDropdownValueLabel: 'gender', 
+        editDropdownOptionsArray: [
+            { id: 1, gender: 'P01 - POSTA ORDINARIA' },
+            { id: 2, gender: 'P02 - PIEGHI DI LIBRI' },
+            { id: 3, gender: 'P03	POSTA INTERNAZIONALE' },
+            { id: 4, gender: 'P04	POSTA TARGHET (ex STAMPE)' },
+            { id: 5, gender: 'R01	RACCOMANDATA A/R' },
+            { id: 6, gender: 'R02	RACCOMANDATA ORDINARIA' },
+            { id: 7, gender: 'AG1	RACC. INTERNAZIONALI' },
+            { id: 8, gender: 'AG1	ATTI GIUDIZIARI' }
+        ] },
+      { name: 'Denominazione', field: 'destinatario_denominazione', enableFiltering:true },
+      { name: 'Città', field: 'destinatario_citta', enableFiltering:true },
+      { name: 'Via', field: 'destinatario_via', enableFiltering:true },
+      { name: 'CAP', field: 'destinatario_cap', enableFiltering:true },
+      { name: 'Prov', field: 'destinatario_provincia'},
+      { name: 'Altro', field: 'note', enableSorting: true, enableCellEdit: true }
+    ]
+    //,onRegisterApi: function( gridApi ) {
+    //  $scope.grid1Api = gridApi;
+    //}
   };
+
   $scope.gridOptions.multiSelect = true;
  
   $scope.toggleGender = function() {
@@ -70,20 +92,150 @@ angular.module('myApp.controllers')
     $scope.sortModal.hide();
     $scope.fetchResult();
   }
+   
+
+   $scope.saveRow = function( rowEntity ) {
+     console.log('saveRow....');
+    // create a fake promise - normally you'd use the promise returned by $http or $resource
+    var promise = $q.defer();
+    $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
+ 
+    // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
+    $interval( function() {
+      if (rowEntity.gender === 'male' ){
+        promise.reject();
+      } else {
+        promise.resolve();
+      }
+    }, 3000, 1);
+  };
+ 
+  $scope.gridOptions.onRegisterApi = function(gridApi){
+    //set gridApi on scope
+    $scope.gridApi = gridApi;
+    gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+    gridApi.edit.on.afterCellEdit($scope,function(rowEntity, colDef, newValue, oldValue){
+            $scope.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
+            $scope.$apply();
+    });
+    gridApi.selection.on.rowSelectionChanged($scope,function(row){
+        var msg = 'row selected ' + row.isSelected;
+        $log.log(row);
+        $log.log(msg);
+      });
+
+  };
+
+
+  $scope.addData = function() {
+    console.log('Add------------Data');
+    var n = $scope.gridOptions.data.length + 1;
+    $scope.gridOptions.data.push({
+      'id': UtilsService.getTimestampPlusRandom(),
+      'tipo_spedizione':1,
+      'destinatario_denominazione':'T##' + n,
+      'destinatario_citta':'T##' + n,
+      'destinatario_via':'T##' + n,
+      'destinatario_cap':'T##' + n,
+      'destinatario_provincia':'T##' + n,
+      'note':'T##' + n
+
+              });
+  };
+
+  $scope.removeRow = function() {
+    console.log('Remove Row....');
+    //if($scope.gridOpts.data.length > 0){
+       // $scope.gridOptions.data.splice(0,1);
+    // console.log($scope.gridApi.selection.getSelectedCount());
+    // console.log($scope.gridApi.selection.getSelectedRows());
+
+    if ( $scope.gridApi.selection.getSelectedCount() > 0 ) {
+      $log.log('.... .... '); 
+      var selectedRows = $scope.gridApi.selection.getSelectedRows()
+
+      // console.log(selectedRows);
+
+      selectedRows.forEach(function(obj){
+        console.log(obj.id);
+        $scope.gridOptions.data.forEach(function(gridItem, index){
+          console.log(gridItem.id, obj.id);
+          if (gridItem.id === obj.id) {
+            console.log(gridItem.id + 'REMOVE!' + index);
+            $scope.gridOptions.data.splice(index,1);
+          };
+
+        })
+      });
+     
+    } else {
+      $log.log('No rows selected!');
+    }
+
+    //}
+  };
+
+
+  $scope.reset = function () {
+    console.log('Reset------------Data');
+    $scope.gridOptions.data = sourceData;
+    // data1 = angular.copy(origdata1);
+    // data2 = angular.copy(origdata2);
+ 
+    // $scope.gridOpts.data = data1;
+    // $scope.gridOpts.columnDefs = columnDefs1;
+  }
+
+
+  var sourceData =  [
+    {
+      'id':UtilsService.getTimestampPlusRandom(),
+      'tipo_spedizione':1,
+      'destinatario_denominazione':'da compilare',
+      'destinatario_citta':'da compilare',
+      'destinatario_via':'da compilare',
+      'destinatario_cap':'da compilare',
+      'destinatario_provincia':'da compilare',
+      'note':'da compilare'
+    }
+  ];
+
+  console.log('loading data ....');
+
+  $scope.gridOptions.data = sourceData;
   
-  $scope.OpenFilter = function() {
-       $log.debug("ListReportController: OpenFilter .. sortModal.show()");
-       $scope.sortModal.show();
-  };                                 
-                               
+
+  /*
   $http.get(  $rootScope.base_url +  '/helpdesk/getList')
     .success(function(data) {
       console.log(data);
       $scope.gridOptions.data = data;
       //$scope.gridOptions2.data = data;
     });                  
-                                 
+  */                             
 }])
+
+
+.filter('mapTipoSpedizione', function() {
+  var genderHash = {
+    1: 'P01 - POSTA ORDINARIA',
+    2: 'P02 - PIEGHI DI LIBRI',
+    3: 'P03	POSTA INTERNAZIONALE',
+    4: 'P04	POSTA TARGHET (ex STAMPE)',
+    5: 'R01	RACCOMANDATA A/R',
+    6: 'R02	RACCOMANDATA ORDINARIA',
+    7: 'AG1	RACC. INTERNAZIONALI',
+    8: 'AG1	ATTI GIUDIZIARI',
+  };
+ 
+  return function(input) {
+    if (!input){
+      return '';
+    } else {
+      return genderHash[input];
+    }
+  };
+})
 
 .controller('GraphPhoneCtrl', 
             ['$rootScope','$scope', '$http', '$state', '$location','UtilsService', '$filter', 'Session', '$log', '$timeout','ENV', 'usSpinnerService', 'NgTableParams',

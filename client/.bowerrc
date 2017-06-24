@@ -1,4 +1,6 @@
 {
+  "proxy": "http://proxy1.comune.rimini.it:8080",
+  "https-proxy":"http://proxy1.comune.rimini.it:8080",
   "resolvers": [
     "bower-npm-resolver"
   ]

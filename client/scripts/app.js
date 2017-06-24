@@ -7,28 +7,31 @@
 angular.module('myApp', [//'ionic',
                          'ui.bootstrap',   
                          'ui.router',
-                         'ui.select',
+                         //'ui.select',
                          'dialogs.main',
                          // 'formly',
                          // 'formlyBootstrap',
                          //'satellizer',
-                         'ngResource',
-                         'ngSanitize',
-                         'ngMessages',
+                         //'ngResource',
+                         //'ngSanitize',
+                         //'ngMessages',
                          //'naif.base64',
                          //'ngCordova',
-                         'angularSpinner',
+                         //'angularSpinner',
                          //'restangular',
-                         'ngAnimate',
+                         //'ngAnimate',
                          //'ngMockE2E',
                          'ngStorage',
-                         'ngFileUpload',
+                         //'ngFileUpload',
                          // 'ngTable',
-                         // 'ui.grid',
-                         // 'ui.grid.selection',
-                         'ui.validate',
+                         'ui.grid',
+                         'ui.grid.edit',
+                         'ui.grid.selection',
+                         'ui.grid.rowEdit', 
+                         'ui.grid.cellNav',
+                         // 'ui.validate',
                          // 'chart.js',
-                         'vcRecaptcha',
+                         // 'vcRecaptcha',
                          //'uiGmapgoogle-maps',
                          'myApp.filters',
                          'myApp.services',
@@ -40,9 +43,9 @@ angular.module('myApp', [//'ionic',
                          //'myApp.mockService'])
 
 // PATCH Possibly unhandled rejection with Angular 1.5.9
-.config(['$qProvider', function ($qProvider) {
-    $qProvider.errorOnUnhandledRejections(false);
-}])
+//.config(['$qProvider', function ($qProvider) {
+//     $qProvider.errorOnUnhandledRejections(false);
+//}])
 
 
 // enable disable LOG
@@ -110,7 +113,13 @@ angular.module('myApp', [//'ionic',
         }
     });
 
-
+    $stateProvider.state('elencoAtti', {
+        url: '/elencoAtti',
+        controller: 'UiGridCtrl',
+        templateUrl: 'templates/elencoAtti.html',
+        accessLogged: false,
+        accessLevel: 'free1' 
+    });
 
     /*
     
