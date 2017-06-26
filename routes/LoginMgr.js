@@ -21,8 +21,8 @@ router.post('/NTLMlogin', ntlm(ENV.ntlm), function(req, res) {
     console.log(req.ntlm);
     console.log('login ok');
       var userLogin = { 
-          'userProvider' : 'NTLM',
-          'userId' : req.ntlm.UserName,
+          'issuer' : 'NTLM',
+          'userid' : req.ntlm.UserName,
           'userEmail' : req.ntlm.UserName,
           'userWorkstation' : req.ntlm.Workstation,
           'userDomainName' : req.ntlm.DomainName
@@ -35,7 +35,6 @@ router.post('/NTLMlogin', ntlm(ENV.ntlm), function(req, res) {
       } else {
         res.send({ token: utilityModule.createJWT(userLogin) });
       }
-
       
       
     // {"DomainName":"MYDOMAIN","UserName":"MYUSER","Workstation":"MYWORKSTATION"}

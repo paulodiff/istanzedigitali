@@ -5,16 +5,20 @@ angular.module('myApp.controllers')
            ['$scope', '$http', 'dialogs',  '$rootScope', 'AuthService', 'ProfileService', '$state','ENV', '$log','usSpinnerService',
     function($scope,   $http,  dialogs,     $rootScope,   AuthService,   ProfileService, $state,  ENV ,  $log, usSpinnerService ) {
 
+    console.log('StartUP!');
+    $log.info('DEBUG############### profileMgrCtrl: startUp!');
+    $log.info('INFO############### profileMgrCtrl: startUp!');
+
         $scope.user = {};
 
     $scope.getProfile = function() {
 
-        $log.debug('profileMgrCtrl: getProfile');
+        $log.info('profileMgrCtrl: getProfile');
         usSpinnerService.spin('spinner-1');
         
         ProfileService.getProfile().then(function (res) {
-            $log.debug('profileMgrCtrl : setting data');
-            $log.debug(res.data);
+            $log.info('profileMgrCtrl : setting data');
+            $log.info(res.data);
             $scope.user = res.data;
              usSpinnerService.stop('spinner-1');
          })
@@ -36,13 +40,13 @@ angular.module('myApp.controllers')
 
 
     $scope.updateProfile = function() {
-        $log.debug('profileMgrCtrl: updateProfile');
+        $log.info('profileMgrCtrl: updateProfile');
         var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiProfile;
-        $log.debug('profileMgrCtrl: api : ' + fullApiEndpoint );
+        $log.info('profileMgrCtrl: api : ' + fullApiEndpoint );
         $http.put(fullApiEndpoint, $scope.user)
             .then(function (res) {
                 dialogs.notify('ok','Profile has been updated');
-                $log.debug(res);
+                $log.info(res);
                 // $scope.user = res.data.user;
          }).catch(function(response) {
                     var dlg = dialogs.confirm(response.data.message, response.status);

@@ -180,6 +180,12 @@ app.use('/istanzemgr', IstanzeMgr);
 var GatewayProtocollo = require('./routes/GatewayProtocollo')();
 app.use('/gatewayprotocollo', GatewayProtocollo);
 
+var PostaMgr = require('./routes/PostaMgr')();
+app.use('/postamgr', PostaMgr);
+
+var LoginMgr = require('./routes/LoginMgr')();
+app.use('/loginmgr', LoginMgr);
+
 
 // Define routes.
 app.get('/',
@@ -225,7 +231,7 @@ log.log2file('Server started at:' + ENV.nodejs.NODEJSport);
 
 
 models.sequelize.sync().then(function() {
-  // models.Istanze.sync({force:false});
+  // models.Posta.sync({force:false});
   /**
    * Listen on provided port, on all network interfaces.
    */

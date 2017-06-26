@@ -12,6 +12,8 @@ angular.module('myApp.services')
     return {
       getTimestampPlusRandom: function() {
 
+          console.log('utilsService: getTimestampPlusRandom');
+
           // Create a date object with the current time
           var d = new Date(),
           month = '' + (d.getMonth() + 1),
@@ -24,8 +26,8 @@ angular.module('myApp.services')
           var time = [ d.getHours(), d.getMinutes(), d.getSeconds() ];
           var ms = addZero(d.getMilliseconds(), 3);
 
-          console.log('UtilsService');
-          console.log(time);
+          // console.log('UtilsService');
+          // console.log(time);
 
           var suffix = Math.floor(Math.random()*90000) + 10000;
 
@@ -42,7 +44,7 @@ angular.module('myApp.services')
 
           
 
-          console.log(time.join(""));  
+          // console.log(time.join(""));  
 
           // Return the formatted string
           return [year, month, day].join('') + "@" + time.join("") + "@" + ms + "@" + suffix;
@@ -50,10 +52,12 @@ angular.module('myApp.services')
         },
 
       updateProfile: function(profileData) {
+        console.log('utilsService: updateProfile');
         return $http.put('/api/s/me', profileData);
       },
 
       getRandomId: function(){
+        console.log('utilsService: getRandomId');
           var text = "";
           var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
           for( var i=0; i < 5; i++ )  text += possible.charAt(Math.floor(Math.random() * possible.length));

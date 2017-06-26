@@ -428,6 +428,25 @@ angular.module('myApp.controllers')
   }
 
 
+ $scope.NTLMLogin = function() {
+      $log.debug('LoginController : NTLMLogin');
+ 
+      AuthService.loginNTLM()
+        .then(function() {
+          $log.debug('LoginController : NTLMLogin success');
+          $rootScope.$broadcast(ENV.AUTH_EVENTS.loginSuccess);
+        })
+        .catch(function(error) {
+          $log.debug('LoginController : NTLMLogin ERROR');
+          $log.debug(error);
+          if (error.data) {
+            $rootScope.$broadcast(ENV.AUTH_EVENTS.loginFailed);
+          } else
+            $rootScope.$broadcast(ENV.AUTH_EVENTS.loginFailed);
+        });
+    };
+
+
 }])
 
 // AboutController ------------------------------------------------------------------------------------

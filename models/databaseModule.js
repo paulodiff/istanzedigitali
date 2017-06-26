@@ -118,8 +118,103 @@ getIstanzeList: function(userid){
             reject(error);
         });
     })
+},
+
+/* metodi per la posta */
+
+getPostaList: function(userid){
+    return new Promise(function(resolve, reject) {
+
+        console.log('databaseModule:getPostaList');
+        console.log(userid);
+
+        models.Posta.findAll({
+          where: {
+            userid : userid
+        } 
+        }).then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+// memorizza i dati di una istanza per consultazioni
+savePosta: function(data){
+
+    return new Promise(function(resolve, reject) {
+        console.log('databaseModule:savePosta');
+        console.log(data);
+        models.Posta.build({
+            ts: new Date(),
+            posta_id: data.posta_id,
+            userid: data.userid,
+            tipo_spedizione: data.tipo_spedizione,
+            destinatario_denominazione : data.destinatario_denominazione,
+            destinatario_citta : data.destinatario_citta,
+            destinatario_via: data.destinatario_via,
+            destinatario_cap: data.destinatario_cap,
+            destinatario_provincia : data.destinatario_provincia,
+            note : data.note
+        })
+        .save()
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+// aggiorna i dati di una istanza per consultazioni
+updatePosta: function(data){
+
+    return new Promise(function(resolve, reject) {
+        console.log('databaseModule:updatePosta');
+        console.log('update:' + data.posta_id);
+
+        models.Posta.findOne({ where: {posta_id: data.posta_id} }).then(item => {
+            // project will be the first entry of the Projects table with the title 'aProject' || null
+            item.update({
+                tipo_spedizione: data.tipo_spedizione,
+                destinatario_denominazione : data.destinatario_denominazione,
+                destinatario_citta : data.destinatario_citta,
+                destinatario_via: data.destinatario_via,
+                destinatario_provincia : data.destinatario_provincia,
+                destinatario_cap: data.destinatario_cap,
+                note : data.note})
+                .then(function(anotherTask) {resolve(anotherTask)})
+                .catch(function(error) {reject(error)});
+        });
+
+    });
+},
+
+// elimina la riga selezionata
+deletePosta: function(posta_id){
+
+    return new Promise(function(resolve, reject) {
+        console.log('databaseModule:deletePosta');
+        console.log('deleteId:' + posta_id);
+
+        models.Posta.findOne({ where: {posta_id: posta_id} }).then(item => {
+            // project will be the first entry of the Projects table with the title 'aProject' || null
+            item.destroy()
+                .then(function(anotherTask) {resolve(anotherTask)})
+                .catch(function(error) {reject(error)});
+        });
+
+    });
 }
 
+
+/*
+// search for attributes
+Project.findOne({ where: {title: 'aProject'} }).then(project => {
+  // project will be the first entry of the Projects table with the title 'aProject' || null
+})
+*/
 
 
     /*

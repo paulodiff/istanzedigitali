@@ -3,7 +3,26 @@
     <div class="panel-heading">          
              <div class="row">
                 <div class="col-sm-11 col-md-10 col-xs-10">
-                    <h2>Elenco Atti</h2>
+                    
+                    <h2>Elenco Atti {{user.userid}} - </h2>
+
+                   
+            <div class="form-group">
+                <input type="text"
+                    placeholder="GG/MM/AAAA" 
+                    name="dataNascitaRichiedente" class="form-control"
+                    min="01-01-1900"
+                    max="31-12-2100" 
+                    ng-model="vm.model.dataNascitaRichiedente"
+                    ng-minlength="10"
+                    ng-maxlength="10"
+                    required>
+            </div>
+        
+          <button type="submit"
+                  class="btn btn-raised btn-info btn-lg"  
+                  ng-click="ricaricaDati()">Ricarica</button>
+
                 </div>
               </div>
     </div>
@@ -18,11 +37,9 @@
 
 <div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid="gridOptions"></div>
 
-<button type="button" id="addData" class="btn btn-success btn-raised btn-sm" ng-click="addData()">Aggiungi una riga</button>
-<button type="button" id="removeFirstRow" class="btn btn-warning btn-raised btn-sm" ng-click="removeRow()">Elimina le righe selezionate</button>
-<button type="button" id="reset" class="btn btn-success" ng-click="reset()">Reset</button>
-
-<a class="btn btn-block btn-raised btn-warning btn-large" >SALVA TUTTI I DATI</a>
+<button type="button" id="addData" class="btn btn-success btn-raised btn-large" ng-click="addData()">Aggiungi una riga</button>
+<button type="button" id="removeFirstRow" class="btn btn-warning btn-raised btn-large" ng-click="removeRow()">Elimina le righe selezionate</button>
+<button type="button" id="reset" class="btn btn-success" ng-click="resetDebug()">Reset</button>
 
 
   </div>

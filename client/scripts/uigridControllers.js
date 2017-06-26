@@ -38,7 +38,7 @@ angular.module('myApp.controllers')
     enableSelectAll: true,
     showGridFooter:true,
     columnDefs: [
-      { name: 'id', visible: false },
+      { name: 'posta_id', visible: false },
       { name: 'Tipo', 
         field:  'tipo_spedizione',
         displayName: 'Tipo', 
@@ -47,14 +47,14 @@ angular.module('myApp.controllers')
         cellFilter: 'mapTipoSpedizione', 
         editDropdownValueLabel: 'gender', 
         editDropdownOptionsArray: [
-            { id: 1, gender: 'P01 - POSTA ORDINARIA' },
-            { id: 2, gender: 'P02 - PIEGHI DI LIBRI' },
-            { id: 3, gender: 'P03	POSTA INTERNAZIONALE' },
-            { id: 4, gender: 'P04	POSTA TARGHET (ex STAMPE)' },
-            { id: 5, gender: 'R01	RACCOMANDATA A/R' },
-            { id: 6, gender: 'R02	RACCOMANDATA ORDINARIA' },
-            { id: 7, gender: 'AG1	RACC. INTERNAZIONALI' },
-            { id: 8, gender: 'AG1	ATTI GIUDIZIARI' }
+            { id: 'P01 - POSTA ORDINARIA', gender: 'P01 - POSTA ORDINARIA' },
+            { id: 'P02 - PIEGHI DI LIBRI', gender: 'P02 - PIEGHI DI LIBRI' },
+            { id: 'P03	POSTA INTERNAZIONALE', gender: 'P03	POSTA INTERNAZIONALE' },
+            { id: 'P04	POSTA TARGHET (ex STAMPE)', gender: 'P04	POSTA TARGHET (ex STAMPE)' },
+            { id: 'R01	RACCOMANDATA A/R', gender: 'R01	RACCOMANDATA A/R' },
+            { id: 'R02	RACCOMANDATA ORDINARIA', gender: 'R02	RACCOMANDATA ORDINARIA' },
+            { id: 'AG1	RACC. INTERNAZIONALI', gender: 'AG1	RACC. INTERNAZIONALI' },
+            { id: 'AG1	ATTI GIUDIZIARI', gender: 'AG1	ATTI GIUDIZIARI' }
         ] },
       { name: 'Denominazione', field: 'destinatario_denominazione', enableFiltering:true },
       { name: 'Città', field: 'destinatario_citta', enableFiltering:true },
@@ -93,6 +93,7 @@ angular.module('myApp.controllers')
     $scope.fetchResult();
   }
    
+   /* SAVEROW */
 
    $scope.saveRow = function( rowEntity ) {
      console.log('saveRow....');
@@ -100,6 +101,25 @@ angular.module('myApp.controllers')
     var promise = $q.defer();
     $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
  
+    /* TODO Fare service per posta*/
+     var url2post = $rootScope.base_url +  '/postamgr/posta';
+    console.log(url2post);
+
+   $http.put(url2post, rowEntity)
+            .then(function (res) {
+                // dialogs.notify('ok','Profile has been updated');
+                $log.debug(res);
+                promise.resolve();
+                // $scope.user = res.data.user;
+         }).catch(function(response) {
+           promise.reject();
+           $log.debug(response);
+            // var dlg = dialogs.confirm(response.data.message, response.status);
+      
+        });
+
+
+   /*
     // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
     $interval( function() {
       if (rowEntity.gender === 'male' ){
@@ -108,6 +128,7 @@ angular.module('myApp.controllers')
         promise.resolve();
       }
     }, 3000, 1);
+    */
   };
  
   $scope.gridOptions.onRegisterApi = function(gridApi){
@@ -126,21 +147,63 @@ angular.module('myApp.controllers')
 
   };
 
+  /** RICARICA DATI */
+
+  $scope.ricaricaDati = function() {
+    console.log('Ricarica------------Data');
+
+
+   var url2post = $rootScope.base_url +  '/postamgr/posta';
+    $http.get(url2post)
+            .then(function (res) {
+                // dialogs.notify('ok','Profile has been updated');
+    
+                $scope.gridOptions.data = res.data;
+               
+                $log.info(res);
+                // $scope.user = res.data.user;
+         }).catch(function(response) {
+           $log.error(response);
+            // var dlg = dialogs.confirm(response.data.message, response.status);
+					
+        });
+
+  };
+
+  /* ADD DATA */
 
   $scope.addData = function() {
     console.log('Add------------Data');
     var n = $scope.gridOptions.data.length + 1;
-    $scope.gridOptions.data.push({
-      'id': UtilsService.getTimestampPlusRandom(),
-      'tipo_spedizione':1,
+
+    var newItem  = {
+      'posta_id': UtilsService.getTimestampPlusRandom(),
+      'tipo_spedizione':'P01 - POSTA ORDINARIA',
       'destinatario_denominazione':'T##' + n,
       'destinatario_citta':'T##' + n,
       'destinatario_via':'T##' + n,
       'destinatario_cap':'T##' + n,
       'destinatario_provincia':'T##' + n,
       'note':'T##' + n
+    };
 
-              });
+    $scope.gridOptions.data.push(newItem);
+
+    var url2post = $rootScope.base_url +  '/postamgr/posta';
+    console.log(url2post);
+
+
+    $http.post(url2post, newItem)
+            .then(function (res) {
+                // dialogs.notify('ok','Profile has been updated');
+                $log.debug(res);
+                // $scope.user = res.data.user;
+         }).catch(function(response) {
+           $log.debug(response);
+            // var dlg = dialogs.confirm(response.data.message, response.status);
+					
+       
+        });
   };
 
   $scope.removeRow = function() {
@@ -157,28 +220,42 @@ angular.module('myApp.controllers')
       // console.log(selectedRows);
 
       selectedRows.forEach(function(obj){
-        console.log(obj.id);
+        console.log(obj.posta_id);
         $scope.gridOptions.data.forEach(function(gridItem, index){
-          console.log(gridItem.id, obj.id);
-          if (gridItem.id === obj.id) {
-            console.log(gridItem.id + 'REMOVE!' + index);
-            $scope.gridOptions.data.splice(index,1);
-          };
+          console.log(gridItem.posta_id, obj.posta_id);
+          if (gridItem.posta_id === obj.posta_id) {
+            console.log(gridItem.posta_id + 'REMOVE!' + index);
 
+            var url2post = $rootScope.base_url +  '/postamgr/posta/' + obj.posta_id;
+            console.log(url2post);
+            $http.delete(url2post)
+            .then(function (res) {
+                // dialogs.notify('ok','Profile has been updated');
+                $log.info(res);
+                $scope.gridOptions.data.splice(index,1);
+                // $scope.user = res.data.user;
+            })
+            .catch(function(response) {
+              $log.error(response);
+              // var dlg = dialogs.confirm(response.data.message, response.status);
+					  });
+            
+          };
         })
       });
      
     } else {
-      $log.log('No rows selected!');
+      $log.error('No rows selected!');
     }
 
     //}
   };
 
 
-  $scope.reset = function () {
+  $scope.resetDebug = function () {
     console.log('Reset------------Data');
-    $scope.gridOptions.data = sourceData;
+    console.log($scope.gridOptions.data);
+    
     // data1 = angular.copy(origdata1);
     // data2 = angular.copy(origdata2);
  
@@ -189,8 +266,8 @@ angular.module('myApp.controllers')
 
   var sourceData =  [
     {
-      'id':UtilsService.getTimestampPlusRandom(),
-      'tipo_spedizione':1,
+      'posta_id':UtilsService.getTimestampPlusRandom(),
+      'tipo_spedizione': 'P01 - POSTA ORDINARIA',
       'destinatario_denominazione':'da compilare',
       'destinatario_citta':'da compilare',
       'destinatario_via':'da compilare',
@@ -200,9 +277,12 @@ angular.module('myApp.controllers')
     }
   ];
 
-  console.log('loading data ....');
+  console.log('uiGrid: loading data ....');
 
-  $scope.gridOptions.data = sourceData;
+
+  $scope.ricaricaDati();
+
+  // $scope.gridOptions.data = sourceData;
   
 
   /*
@@ -218,14 +298,14 @@ angular.module('myApp.controllers')
 
 .filter('mapTipoSpedizione', function() {
   var genderHash = {
-    1: 'P01 - POSTA ORDINARIA',
-    2: 'P02 - PIEGHI DI LIBRI',
-    3: 'P03	POSTA INTERNAZIONALE',
-    4: 'P04	POSTA TARGHET (ex STAMPE)',
-    5: 'R01	RACCOMANDATA A/R',
-    6: 'R02	RACCOMANDATA ORDINARIA',
-    7: 'AG1	RACC. INTERNAZIONALI',
-    8: 'AG1	ATTI GIUDIZIARI',
+    'P01 - POSTA ORDINARIA': 'P01 - POSTA ORDINARIA',
+    'P02 - PIEGHI DI LIBRI': 'P02 - PIEGHI DI LIBRI',
+    'P03	POSTA INTERNAZIONALE': 'P03	POSTA INTERNAZIONALE',
+    'P04	POSTA TARGHET (ex STAMPE)': 'P04	POSTA TARGHET (ex STAMPE)',
+    'R01	RACCOMANDATA A/R': 'R01	RACCOMANDATA A/R',
+    'R02	RACCOMANDATA ORDINARIA': 'R02	RACCOMANDATA ORDINARIA',
+    'AG1	RACC. INTERNAZIONALI': 'AG1	RACC. INTERNAZIONALI',
+    'AG1	ATTI GIUDIZIARI': 'AG1	ATTI GIUDIZIARI',
   };
  
   return function(input) {
@@ -236,6 +316,9 @@ angular.module('myApp.controllers')
     }
   };
 })
+
+
+/*------------------------------------------------------------------------------------------------------------*/
 
 .controller('GraphPhoneCtrl', 
             ['$rootScope','$scope', '$http', '$state', '$location','UtilsService', '$filter', 'Session', '$log', '$timeout','ENV', 'usSpinnerService', 'NgTableParams',
