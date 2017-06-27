@@ -6,8 +6,8 @@
 angular.module('myApp.controllers')
 
 .controller('UiGridCtrl', 
-            ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', 'Session', '$log', '$timeout','ENV','$q', '$interval','UtilsService',
-     function($rootScope,  $scope,   $http,  $state,   $location,  uiGridConstants ,  $filter,   Session,   $log,   $timeout, ENV, $q, $interval,UtilsService) {
+            ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', 'Session', '$log', '$timeout','ENV','$q', '$interval','UtilsService','ProfileService','PostaService','dialogs',
+     function($rootScope,  $scope,   $http,  $state,   $location,  uiGridConstants ,  $filter,   Session,   $log,   $timeout,   ENV,  $q,   $interval,  UtilsService,  ProfileService, PostaService,dialogs) {
     
   $log.debug('UiGridCtrl>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');                                 
   
@@ -38,7 +38,7 @@ angular.module('myApp.controllers')
     enableSelectAll: true,
     showGridFooter:true,
     columnDefs: [
-      { name: 'posta_id', visible: false },
+      { name: 'posta_id', visible: false, enableCellEdit: false },
       { name: 'Tipo', 
         field:  'tipo_spedizione',
         displayName: 'Tipo', 
@@ -49,19 +49,19 @@ angular.module('myApp.controllers')
         editDropdownOptionsArray: [
             { id: 'P01 - POSTA ORDINARIA', gender: 'P01 - POSTA ORDINARIA' },
             { id: 'P02 - PIEGHI DI LIBRI', gender: 'P02 - PIEGHI DI LIBRI' },
-            { id: 'P03	POSTA INTERNAZIONALE', gender: 'P03	POSTA INTERNAZIONALE' },
-            { id: 'P04	POSTA TARGHET (ex STAMPE)', gender: 'P04	POSTA TARGHET (ex STAMPE)' },
-            { id: 'R01	RACCOMANDATA A/R', gender: 'R01	RACCOMANDATA A/R' },
-            { id: 'R02	RACCOMANDATA ORDINARIA', gender: 'R02	RACCOMANDATA ORDINARIA' },
-            { id: 'AG1	RACC. INTERNAZIONALI', gender: 'AG1	RACC. INTERNAZIONALI' },
-            { id: 'AG1	ATTI GIUDIZIARI', gender: 'AG1	ATTI GIUDIZIARI' }
+            { id: 'P03 - POSTA INTERNAZIONALE', gender: 'P03 - POSTA INTERNAZIONALE' },
+            { id: 'P04 - POSTA TARGHET (ex STAMPE)', gender: 'P04 - POSTA TARGHET (ex STAMPE)' },
+            { id: 'R01 - RACCOMANDATA A/R', gender: 'R01 - RACCOMANDATA A/R' },
+            { id: 'R02 - ACCOMANDATA ORDINARIA', gender: 'R02 - RACCOMANDATA ORDINARIA' },
+            { id: 'AG1 - ACC. INTERNAZIONALI', gender: 'AG1 - RACC. INTERNAZIONALI' },
+            { id: 'AG1 - TTI GIUDIZIARI', gender: 'AG1 - ATTI GIUDIZIARI' }
         ] },
-      { name: 'Denominazione', field: 'destinatario_denominazione', enableFiltering:true },
+      { name: 'Destinatario', field: 'destinatario_denominazione', enableFiltering:true },
       { name: 'Città', field: 'destinatario_citta', enableFiltering:true },
       { name: 'Via', field: 'destinatario_via', enableFiltering:true },
       { name: 'CAP', field: 'destinatario_cap', enableFiltering:true },
       { name: 'Prov', field: 'destinatario_provincia'},
-      { name: 'Altro', field: 'note', enableSorting: true, enableCellEdit: true }
+      { name: 'Note', field: 'note', enableSorting: true, enableCellEdit: true }
     ]
     //,onRegisterApi: function( gridApi ) {
     //  $scope.grid1Api = gridApi;
@@ -70,28 +70,7 @@ angular.module('myApp.controllers')
 
   $scope.gridOptions.multiSelect = true;
  
-  $scope.toggleGender = function() {
-    if( $scope.gridOptions1.data[64].gender === 'male' ) {
-      $scope.gridOptions1.data[64].gender = 'female';
-    } else {
-      $scope.gridOptions1.data[64].gender = 'male';
-    };
-    $scope.grid1Api.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
-  };
                                  
-                                 
-  $scope.closeSortModal = function() {$scope.sortModal.hide();};
-  $scope.closeDetailModal = function() {$scope.detailModal.hide();};
-                                 
-  $scope.applySortModal = function() {
-    $log.debug("ListReportController: SORT MODAL " + this.filterTerm + " sort " + this.sortBy + ' id_selezione :' + this.id_utenti_selezione);
-    $scope.filterCriteria.id_utenti_selezione = this.id_utenti_selezione;
-    $log.debug($scope.filterCriteria);
-    $scope.filterTerm = this.filterTerm;
-    $scope.sortBy = this.sortBy;
-    $scope.sortModal.hide();
-    $scope.fetchResult();
-  }
    
    /* SAVEROW */
 
@@ -151,23 +130,17 @@ angular.module('myApp.controllers')
 
   $scope.ricaricaDati = function() {
     console.log('Ricarica------------Data');
-
-
-   var url2post = $rootScope.base_url +  '/postamgr/posta';
-    $http.get(url2post)
-            .then(function (res) {
-                // dialogs.notify('ok','Profile has been updated');
-    
-                $scope.gridOptions.data = res.data;
-               
-                $log.info(res);
-                // $scope.user = res.data.user;
-         }).catch(function(response) {
-           $log.error(response);
-            // var dlg = dialogs.confirm(response.data.message, response.status);
-					
-        });
-
+    PostaService.getPosta({})
+      .then(function (res) {
+        // dialogs.notify('ok','Profile has been updated');
+        $scope.gridOptions.data = res.data;
+        $log.info(res);
+        // $scope.user = res.data.user;
+      })
+      .catch(function(response) {
+        $log.error(response);
+        var dlg = dialogs.error(response.data.message, response.status);
+      });
   };
 
   /* ADD DATA */
@@ -282,6 +255,15 @@ angular.module('myApp.controllers')
 
   $scope.ricaricaDati();
 
+  ProfileService.getProfile().then(function (res) {
+            $log.info('uigrid profileMgrCtrl : setting data');
+            $log.info(res.data);
+            $scope.user = res.data;
+         })
+        .catch(function(response) {
+            $log.error(response);
+  				});
+
   // $scope.gridOptions.data = sourceData;
   
 
@@ -300,12 +282,12 @@ angular.module('myApp.controllers')
   var genderHash = {
     'P01 - POSTA ORDINARIA': 'P01 - POSTA ORDINARIA',
     'P02 - PIEGHI DI LIBRI': 'P02 - PIEGHI DI LIBRI',
-    'P03	POSTA INTERNAZIONALE': 'P03	POSTA INTERNAZIONALE',
-    'P04	POSTA TARGHET (ex STAMPE)': 'P04	POSTA TARGHET (ex STAMPE)',
-    'R01	RACCOMANDATA A/R': 'R01	RACCOMANDATA A/R',
-    'R02	RACCOMANDATA ORDINARIA': 'R02	RACCOMANDATA ORDINARIA',
-    'AG1	RACC. INTERNAZIONALI': 'AG1	RACC. INTERNAZIONALI',
-    'AG1	ATTI GIUDIZIARI': 'AG1	ATTI GIUDIZIARI',
+    'P03 - POSTA INTERNAZIONALE': 'P03 - POSTA INTERNAZIONALE',
+    'P04 - POSTA TARGHET (ex STAMPE)': 'P04 - POSTA TARGHET (ex STAMPE)',
+    'R01 - RACCOMANDATA A/R': 'R01 - RACCOMANDATA A/R',
+    'R02 - RACCOMANDATA ORDINARIA': 'R02 - RACCOMANDATA ORDINARIA',
+    'AG1 - RACC. INTERNAZIONALI': 'AG1 - RACC. INTERNAZIONALI',
+    'AG1 - ATTI GIUDIZIARI': 'AG1 - ATTI GIUDIZIARI',
   };
  
   return function(input) {
