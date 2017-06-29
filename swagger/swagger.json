@@ -1,0 +1,56 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Api demo RR",
+        "description": "#### Descrizione di una api di test\nPrima prova di test\n"
+    },
+    "schemes": [
+        "http"
+    ],
+    "host": "localhost:9988",
+    "basePath": "/",
+    "paths": {
+        "/test": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Echo Test1"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Autenticazione ok"
+                    },
+                    "401": {
+                        "description": "Invalid email or password"
+                    },
+                    "404": {
+                        "description": "Non autorizzato"
+                    },
+                    "500": {
+                        "description": "Errore generico"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "description": "email",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "description": "password",
+                        "type": "string"
+                    }
+                ]
+            }
+        }
+    }
+}

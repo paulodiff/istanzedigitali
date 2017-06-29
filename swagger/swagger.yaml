@@ -1,0 +1,274 @@
+---
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Api di accesso al sistema di gestione documentale protocollazione - Comune di Rimini
+  description: |
+    Sono qui descritte le API per l'accesso al servizio di gestione documentale
+    Per informazioni contattare Ruggero Ruggeri - 0541/704607 - ruggero.ruggeri@comune.rimini.it
+schemes:
+  - https
+  - http
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header  
+#host: 10.10.128.79:9988
+basePath: /simplesaml/gatewayprotocollo
+paths:
+  /login:        
+    post:
+      tags:
+        - Autenticazione
+      summary: Esegue la richiesta di autenticazione al software di gestione documentale
+      description: Per utilizzare le api di protocollazione è necessario ottenere un token di autenticazione attraverso la chiamata a questa API. (Nota usando l'utente DEMO password DEMO si ottiene un token di test per effettuare solo le chiamate /test e /logout)
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: Credenziali da inviare per l'autenticazione
+          required: false
+          schema:
+            $ref: "#/definitions/Credenziali"
+      responses:
+        "200":
+          description: OK!
+        "401":
+          description: Auth error!
+        "500":
+          description: Invalid input data
+  /test:        
+   post:
+      tags:
+        - Autenticazione
+      summary: Esegue la richiesta di TEST al software di gestione documentale
+      description: Chiamare questa api per verificare il corretto funzionamento dell'autenticazione. Impostare il token di autenticazione, ottenuto con la api /login, premento la i-rossa ed anteponendo al valore il testo 'Bearer'
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        "200":
+          description: Richiesta corretta vengono ritornati i dati utente
+        "401":
+          description: Auth error!
+        "500":
+          description: Invalid input data
+      security:
+        - Bearer: []  
+  /logout:        
+   post:
+      tags:
+        - Autenticazione
+      summary: Esegue la richiesta logout dal sistema di gestione documentale
+      description: Rende il token di autenticazione inutilizzabile
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        "200":
+          description: Richiesta corretta vengono ritornati i dati utente
+        "401":
+          description: Auth error!
+        "500":
+          description: Invalid input data
+      security:
+        - Bearer: []          
+  /protocollo:
+    post:
+      tags:
+        - Protocollazione
+      summary: Esegue la richiesta di protocollazione
+      description: La presente api permette la protocollazione "atomica" di uno più documenti. Seguendo le indicazioni del tracciato è possibile inserire i dati del richiedente, il fascicolo, tutti i metadati opportuni e gli allegati
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: I dati JSON utili alla protocollazione
+          required: false
+          schema:
+            $ref: "#/definitions/tracciatoStandard"
+      responses:
+        "200":
+          description: OK!
+        "401":
+          description: Auth error!
+        "500":
+          description: Invalid input data
+      security:
+        - Bearer: []          
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      userStatus:
+        type: integer
+        format: int32
+        description: User Status
+  Credenziali:
+    type: object
+    properties:
+      username:
+        type: string
+        description: nome utente
+      password:
+        type: string
+        description: password
+      userCompany:
+        type: string
+        description: Nome dell'applicativo esterno abilitato all'accesso
+  Category:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+  tracciatoStandard:
+    type: object
+    properties:
+      richiedente:
+        type: string
+        $ref: "#/definitions/richiedenteDef"
+      datiProtocollo:
+        type: object
+        properties:
+          oggettoDocumento:
+            type: string
+          tipoDocumento:
+            type: string            
+          classificaDocumento:
+            type: string            
+          origineDocumento:
+            type: string            
+          ufficioInternoMittenteDocumento:
+            type: string            
+          ufficioInternoDestinatarioDocumento:
+            type: string            
+          annoPratica:
+            type: string
+          numeroPratica:
+            type: string
+      metadati:
+        type: array
+        items:
+          $ref: "#/definitions/metadatoItem"
+      allegati:
+        type: array
+        items:
+          $ref: "#/definitions/Allegato"
+      note:
+        type: string
+        description: note associate
+  Tag:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+  Allegato:
+    type: object
+    properties:
+      nomeFile:
+        type: string
+      dimensione:
+        type: integer
+      mimeType:
+        type: string
+      base64:
+        type: string    
+      hashSHA256File:
+        type: string    
+      descrizione:
+        type: string    
+  Veicolo:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      targa:
+        type: integer
+      name:
+        type: string
+  metadatoItem:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  richiedenteDef:
+    type: object
+    properties:
+     nome:
+        type: string 
+     cognome:
+        type: string 
+     codiceFiscale:
+        type: string 
+     dataDiNascita:
+       type: string 
+     indirizzo:
+       type: string 
+     mail:
+       type: string 
+     telefonoCellulare:
+       type: string 
+     telefonoFisso:
+       type: string         
+  Order:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      petId:
+        type: integer
+        format: int64
+      quantity:
+        type: integer
+        format: int32
+      shipDate:
+        type: string
+        format: date-time
+      status:
+        type: string
+        description: Order Status
+      complete:
+        type: boolean
+          

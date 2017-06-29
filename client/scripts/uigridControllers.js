@@ -174,8 +174,6 @@ angular.module('myApp.controllers')
          }).catch(function(response) {
            $log.debug(response);
             // var dlg = dialogs.confirm(response.data.message, response.status);
-					
-       
         });
   };
 

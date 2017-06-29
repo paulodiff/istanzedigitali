@@ -397,7 +397,7 @@ function emailSend(mailOptions){
 
 /* PROTOCOLLO  --------------------------------------------------------------------------------------------------------- */
 
-function protocolloWS(objFilesList,  reqId) {
+function protocolloWS(objFilesList,  reqId, userObj) {
 
     logConsole.info('-- protocolloWS --');
 
@@ -449,8 +449,8 @@ function protocolloWS(objFilesList,  reqId) {
               
               AggiornaAnagrafiche : ENV_DEFAULT_USER.wsJiride.aggiornaAnagrafiche,
               InCaricoA : ENV_DEFAULT_USER.wsJiride.inCaricoA,
-              Utente : ENV_DEFAULT_USER.wsJiride.utente,
-              Ruolo : ENV_DEFAULT_USER.wsJiride.ruolo,              
+              Utente : userObj.name,
+              // Ruolo : ENV_DEFAULT_USER.wsJiride.ruolo,              
               Allegati: {  Allegato: []  }
             }
         };
@@ -566,6 +566,8 @@ function protocolloWS(objFilesList,  reqId) {
 //router.post('/upload', multipartMiddleware, function(req, res) {
 router.post('/protocollo', 
     utilityModule.ensureAuthenticated,
+    utilityModule.checkIfTokenInList,
+    utilityModule.notUserDemo,
     function(req, res) {
 
     var bRaisedError = false;
@@ -658,7 +660,7 @@ router.post('/protocollo',
 
                 logConsole.info('ASYNC protocolloWS:');
                 if(fakeConfig.protocollazione == 1) {
-                    protocolloWS(req.body, reqId)
+                    protocolloWS(req.body, reqId, req.user)
                     .then( function (result) {
                         logConsole.info(result);
                         console.log(result);
@@ -827,7 +829,7 @@ router.post('/protocollo',
 });
 
 
-
+/*
 
 router.get('/leggiProtocollo', function(req, res) {
 
@@ -891,9 +893,151 @@ router.get('/leggiProtocollo', function(req, res) {
         // res.status(201).json('ok');
 });
 
+*/
+
+/* Autenticazione */
+
+// #############################################################################
+// login ldap
+// #############################################################################
+
+router.post('/login', function(req, res) {
+
+  logConsole.info("/authenticate");
+  // logAccess('Start logger ...');  logError('Start logger ...'); logDataAnalysis('Start logger ...');
+  
+  console.log(req.body);
+
+  var username = req.body.username;
+  var password = req.body.password;
+  var userCompany = req.body.userCompany;
+
+
+  if (username === 'DEMO'){
+    console.log('Using .... DEMO!');
+    var userLogin = { 
+          'name' : 'DEMO',
+          'displayName' : 'DEMO',
+          'userCompany' : 'DEMO',
+          'email' : 'DEMO@DEMO.com'
+    };
+
+    var token = utilityModule.createJWT(userLogin, 1, 'd');
+    utilityModule.addTokenToList(token);
+    res.status(201).json({
+      success: true,
+      message: 'Enjoy your DEMO token!',
+      id_utenti : username,
+      nome_breve_utenti : username,
+      isadmin_utenti : 0,
+      data: userLogin,
+      token: token
+    });
+    return;
+
+  }
+
+  var config = { ldap: ENV.ldap };
+
+  // var matricoleAutorizzate = ENV.matricoleAutorizzate;
+  // validazione
+  //var matricole_autorizzate = /(?:[\s]|^)(M05831|M09999|M01111)(?=[\s]|$)/i;
+  // var matricole_autorizzate = new RegExp('(?:[\s]|^)(' + ENV.matricoleAutorizzate + ')(?=[\s]|$)' , 'i');
+  //
+  //if (!matricole_autorizzate.test(username)){
+  //  logConsole("authenticate : Validation : Matricola non autorizzata");
+  //  logError("Matricola non autorizzata: " + username);
+  //  logDataAnalysis({action : 'matricola_non_autorizzata', eventTime: new Date(), user: {name: username}, params: {} });
+  //  res.status(401).json({ success: false, message: 'Matricola non autorizzata' });
+  //  return;
+  // }
+  
+  //console.log(config);
+
+  var bindDn = "cn=" + username + "," + config.ldap.bindDn;
+  logConsole.info(bindDn);
+
+  var LdapAuth = require('ldapauth-fork');
+  var ldap = new LdapAuth({
+    url: config.ldap.url,
+    bindDn: bindDn,
+    bindCredentials: password,
+    searchBase: config.ldap.searchBase,
+    searchFilter: config.ldap.searchFilter,
+    //log4js: require('log4js'),
+    cache: true
+  });
 
 
 
+  ldap.authenticate(username, password, function (err, user) {
+    logConsole.info('LDAP ...', username, password);
+    if (err) {
+      logConsole.info(err);
+      log2file.info(err);
+      //logDataAnalysis({action: 'login_failed', eventTime: new Date(), user: {name : username}, params : {} });
+      res.status(401).json({
+                          success: false,
+                          message: 'authentication failed!',
+                          data:err
+                      });
+      return;
+    }
+    log2file.info("Accesso effettuato : " + username);    
+    logConsole.info('LDAP.. ')
+    logConsole.info(user);
+    //logDataAnalysis({action: 'login_success', eventTime: new Date(), user: user,  params : {} });
+
+     var userLogin = { 
+          'name' : user.name,
+          'displayName' : user.displayName,
+          'email' : user.mail,
+          'userCompany' : req.body.userCompany
+      };
+
+    logConsole.info(userLogin);
+
+    var token = utilityModule.createJWT(userLogin, 1, 'd');
+
+    utilityModule.addTokenToList(token);
+
+ 
+    //Session.create(res.data.id_utenti, res.data.nome_breve_utenti, res.data.token,  res.data.isadmin_utenti);
+    res.status(201).json({
+      success: true,
+      message: 'Enjoy your token!',
+      id_utenti : username,
+      nome_breve_utenti : username,
+      isadmin_utenti : 0,
+      data: userLogin,
+      token: token
+    });
+  });
+});
+
+
+router.post('/logout', 
+    utilityModule.ensureAuthenticated,
+    utilityModule.checkIfTokenInList,
+    function(req, res)  {
+        utilityModule.removeTokenFromList(req.token);
+        res.status(201).json({
+            success: true,
+            message: 'Logoff!'
+    });
+});
+
+router.post('/test',
+    utilityModule.ensureAuthenticated,
+    utilityModule.checkIfTokenInList,
+    function(req,res) {
+        res.status(201).json({
+            success: true,
+            message: 'Test OK!',
+            user: req.user
+    });
+    }
+);
 
 
 

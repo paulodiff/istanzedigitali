@@ -195,6 +195,8 @@ app.get('/',
 });
 
 
+app.use('/swagger', express.static(__dirname + '/swagger'));
+
 app.use('/home', express.static(__dirname + '/home'));
 
 var options = {

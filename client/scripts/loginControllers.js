@@ -446,6 +446,23 @@ angular.module('myApp.controllers')
         });
     };
 
+ $scope.DEMOLogin = function() {
+      $log.debug('LoginController : DEMOLogin');
+ 
+      AuthService.loginDEMO()
+        .then(function() {
+          $log.debug('LoginController : DEMOLogin success');
+          $rootScope.$broadcast(ENV.AUTH_EVENTS.loginSuccess);
+        })
+        .catch(function(error) {
+          $log.debug('LoginController : DEMOLogin ERROR');
+          $log.debug(error);
+          if (error.data) {
+            $rootScope.$broadcast(ENV.AUTH_EVENTS.loginFailed);
+          } else
+            $rootScope.$broadcast(ENV.AUTH_EVENTS.loginFailed);
+        });
+    };
 
 }])
 

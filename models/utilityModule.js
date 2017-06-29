@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 var moment = require('moment');
 var ENV   = require('../tmp/config.js'); // load configuration data
 var fs = require('fs');
+var crypto = require('crypto');
 
 function addZero(x,n) {
       while (x.toString().length < n) {
@@ -110,7 +111,31 @@ module.exports = {
 
           console.log('[#AUTH#] ok pass');
           req.user = payload.sub;
+          req.token = token;
           next();
+    },
+
+    notUserDemo: function(req, res, next) {
+      console.log('[#AUTH#] notUserDemo ');
+      if( req.user.name == 'DEMO'){
+        return res.status(401).send({ message: '[#AUTH#] notUserDemo : NOT ALLOWED!' });
+      }
+      console.log('[#AUTH#] notUserDemo ' + req.user.name);
+      next();
+    },
+
+    checkIfTokenInList: function(req, res, next) {
+      console.log('[#AUTH#] checkIfTokenInList ');
+      var md5Token = crypto.createHash('md5').update(req.token).digest("hex");
+      var fName = ENV.tokenPath + '/' + md5Token;
+      console.log('checkIfTokenInList...' + fName);
+      
+      if (!fs.existsSync(fName)) {
+            console.log('[#AUTH#] checkIfTokenInList : TOKEN not exists in path');
+            return res.status(401).send({ message: 'Token non presente in lista autorizzazioni' });
+      }
+      next();
+
     },
     
     createJWT: function(user, timeout1, timeout2) {
@@ -144,6 +169,22 @@ module.exports = {
 
           console.log(payload);
     },
+
+    addTokenToList: function(token) {
+      // save file
+      var md5Token = crypto.createHash('md5').update(token).digest("hex");
+      var fName = ENV.tokenPath + '/' + md5Token;
+      console.log('addTokenToList:' + fName);
+      fs.writeFileSync(fName, token);
+
+    },
+    removeTokenFromList: function(token) {
+      var md5Token = crypto.createHash('md5').update(token).digest("hex");
+      var fName = ENV.tokenPath + '/' + md5Token;
+      console.log('removeTokenFromList...' + fName);
+      fs.unlinkSync(fName);
+    },
+    
 
 
     getNowFormatted: function(strTime2Add) {

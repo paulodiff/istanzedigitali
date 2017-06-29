@@ -41,6 +41,20 @@ router.post('/NTLMlogin', ntlm(ENV.ntlm), function(req, res) {
 });
 
 
+ // Log in with Email
+router.post('/DEMOlogin', function(req, res) {
+  console.log('/DEMOlogin');
+  var userLogin = { 
+      'issuer' : 'DEMO',
+      'userid' : 'DEMO',
+      'userEmail' : 'demo@demo.com'
+  };
+  res.status(200).send({ token: utilityModule.createJWT(userLogin) });
+    
+});
+
+
+
 
  // Log in with Email
 router.post('/login', function(req, res) {

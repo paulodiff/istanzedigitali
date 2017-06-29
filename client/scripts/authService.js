@@ -147,7 +147,37 @@ angular.module('myApp.services', [])
             throw new Error('thrown in then');
        });
     },
-         
+
+   loginDEMO: function () {
+      
+      var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLoginDEMO; 
+      
+      $log.debug( 'AuthServiceNTLM loginDEMO');
+      $log.debug(fullApiEndpoint);
+        
+      return $http({ 
+                    url: fullApiEndpoint, 
+                    method: "POST"
+                  })
+        .then(function (res) {
+            $log.debug('AuthService login DEMO then');
+            $log.debug(res);
+            $log.debug(res.data.token);
+            
+            $log.debug( 'AuthService set JWT to storage');
+            $localStorage.JWT = res.data.token;
+            $log.debug( 'AuthService set http common header');
+            $http.defaults.headers.common.Authorization = 'Bearer ' + res.data.token;
+            // $localStorage.currentUser = { username: username, token: response.token };
+            // add jwt token to auth header for all requests made by the $http service
+ 
+        }).catch(function(response) {
+            $log.debug('AuthService DEMO login ERROR');
+            $log.debug(response);
+            throw new Error('thrown in then');
+       });
+    },      
+
     isAuthenticated: function () {
         // $log.debug('AuthService isAuthenticated .. check JWT', !!$localStorage.JWT);
 
