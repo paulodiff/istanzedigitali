@@ -10,6 +10,15 @@ module.exports = function(sequelize, DataTypes) {
     var Posta = sequelize.define("Posta", {
 
         ts: { type: DataTypes.DATE, defaultValue: sequelize.NOW },
+        protocollo: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },        
+        cdc: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        
         tipo_spedizione: {
             type: DataTypes.STRING,
             allowNull: false

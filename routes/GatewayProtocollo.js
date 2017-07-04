@@ -42,8 +42,8 @@ var multipartMiddleware = multipart();
 var multiparty = require('multiparty');
 
 var jwt = require('jwt-simple');
-var ENV   = require('../tmp/config.js'); // load configuration data
-var ENV_PROT   = require('../tmp/configPROTOCOLLO.js'); // load user configuration data
+var ENV   = require('../config/config.js'); // load configuration data
+var ENV_PROT   = require('../config/configPROTOCOLLO.js'); // load user configuration data
 var ENV_DEFAULT_USER = {};
 // var mongocli = require('../models/mongocli');
 var spark = require('spark-md5');
@@ -334,11 +334,12 @@ function saveDataToFS(body , userObj, protocolloObj) {
         fs.writeFileSync(jsonFile, JSON.stringify(body));
         
         // esporta allegato principale
-        
+        /*
         var fname = body.domandaPermessoFormatoPDF.nomeFile;
         var jsonFile = dir + "/" + userObj.reqId + "-0000-" + fname;
         logConsole.info(jsonFile);
         utilityModule.base64_decode(body.domandaPermessoFormatoPDF.base64,jsonFile);
+        */
 
         // esporta allegati successivi al primo
       
@@ -385,6 +386,7 @@ function emailSend(mailOptions){
                     if(error){
                             logConsole.error('emailSend ERROR!');
                             logConsole.error(error);
+                            log2file.error(error);
                             reject(error);
                     } else {
                             logConsole.info('Email sent!');
@@ -400,9 +402,10 @@ function emailSend(mailOptions){
 function protocolloWS(objFilesList,  reqId, userObj) {
 
     logConsole.info('-- protocolloWS --');
+    logConsole.info(objFilesList.datiProtocollo);
 
-    WS_IRIDE = ENV_PROT.wsJiride.url;
-    WS_IRIDE_ENDPOINT = ENV_PROT.wsJiride.endpoint;
+    WS_IRIDE = ENV_DEFAULT_USER.wsJiride.url;
+    WS_IRIDE_ENDPOINT = ENV_DEFAULT_USER.wsJiride.endpoint;
 
     logConsole.info(WS_IRIDE);
     logConsole.info(WS_IRIDE_ENDPOINT);
@@ -415,14 +418,14 @@ function protocolloWS(objFilesList,  reqId, userObj) {
     var args = { 
            ProtoIn : {
                 Data: moment().format('DD/MM/YYYY'),
-                Classifica: ENV_DEFAULT_USER.wsJiride.classifica,
-                TipoDocumento: ENV_DEFAULT_USER.wsJiride.tipoDocumento,
-                Oggetto: (objFilesList.richiedente.oggetto || 'OGGETTO NON PRESENTE') + '  -  (' + reqId + ')',
-                Origine: ENV_DEFAULT_USER.wsJiride.origine,
-                MittenteInterno: ENV_DEFAULT_USER.wsJiride.mittenteInterno,
+                Classifica: objFilesList.datiProtocollo.classificaDocumento,
+                TipoDocumento: objFilesList.datiProtocollo.tipoDocumento,
+                Oggetto: (objFilesList.datiProtocollo.oggettoDocumento || 'OGGETTO NON PRESENTE') + '  -  (' + reqId + '-' + userObj.name + ')',
+                Origine: objFilesList.datiProtocollo.origineDocumento,
+                MittenteInterno: objFilesList.datiProtocollo.ufficioInternoMittenteDocumento,
                 //MittenteInterno_Descrizione": "",
-                AnnoPratica: ENV_DEFAULT_USER.wsJiride.annoPratica,
-                NumeroPratica: ENV_DEFAULT_USER.wsJiride.numeroPratica,
+                AnnoPratica: objFilesList.datiProtocollo.annoPratica,
+                NumeroPratica: objFilesList.datiProtocollo.numeroPratica,
                  
                MittentiDestinatari: {
                 MittenteDestinatario: [
@@ -434,7 +437,7 @@ function protocolloWS(objFilesList,  reqId, userObj) {
                     Localita : objFilesList.richiedente.citta,
                     // Spese_NProt : 0,
                     // TipoSogg: 'S',
-                    TipoPersona: ENV_DEFAULT_USER.wsJiride.tipoPersona,
+                    TipoPersona: objFilesList.richiedente.tipoPersona,
                     Recapiti: {
                         Recapito: [
                             {
@@ -448,7 +451,7 @@ function protocolloWS(objFilesList,  reqId, userObj) {
               },
               
               AggiornaAnagrafiche : ENV_DEFAULT_USER.wsJiride.aggiornaAnagrafiche,
-              InCaricoA : ENV_DEFAULT_USER.wsJiride.inCaricoA,
+              InCaricoA : objFilesList.datiProtocollo.ufficioInternoDestinatarioDocumento,
               Utente : userObj.name,
               // Ruolo : ENV_DEFAULT_USER.wsJiride.ruolo,              
               Allegati: {  Allegato: []  }
@@ -460,7 +463,7 @@ function protocolloWS(objFilesList,  reqId, userObj) {
     // costruzione degli allegati con i metadati
 
     // Aggiunta allegato principale
-
+    /*
     var fname = objFilesList.domandaPermessoFormatoPDF.nomeFile;
     var ext = fname.substring(fname.length - 3);
     logConsole.info(fname);
@@ -477,7 +480,7 @@ function protocolloWS(objFilesList,  reqId, userObj) {
                 Commento : objFilesList.domandaPermessoFormatoPDF.tipoDescrizione
             }
         );
-
+    */    
     // Aggiunta allegati successivi al primo
 
     var DW_PATH = ENV_DEFAULT_USER.storageFolder;
@@ -567,7 +570,6 @@ function protocolloWS(objFilesList,  reqId, userObj) {
 router.post('/protocollo', 
     utilityModule.ensureAuthenticated,
     utilityModule.checkIfTokenInList,
-    utilityModule.notUserDemo,
     function(req, res) {
 
     var bRaisedError = false;
@@ -811,7 +813,7 @@ router.post('/protocollo',
             // results.msg = htmlResponseMsg;
             logConsole.info(htmlResponseMsg);
             var Msg = {
-                            title: 'Istanza ricevuta con successo!',
+                            message: 'Istanza ricevuta con successo!',
                             idDocumento: objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento,
                             numeroProtocollo: objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo,
                             annoProtocollo: objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo,
@@ -912,9 +914,31 @@ router.post('/login', function(req, res) {
   var password = req.body.password;
   var userCompany = req.body.userCompany;
 
+  logConsole.info('Check userCompany autorizzate', userCompany);
+
+  logConsole.info(ENV.userCompanyAutorizzateFilePath);
+  
+  var userCompanyAutorizzateTxt = fs.readFileSync(ENV.userCompanyAutorizzateFilePath).toString();
+  logConsole.info(userCompanyAutorizzateTxt);
+  // validazione
+  //var matricole_autorizzate = /(?:[\s]|^)(M05831|M09999|M01111)(?=[\s]|$)/i;
+  var userCompanyAutorizzate = new RegExp('(?:[\s]|^)(' + userCompanyAutorizzateTxt + ')(?=[\s]|$)' , 'i');
+  //
+  if (!userCompanyAutorizzate.test(userCompany)){
+    logConsole.info("Check userCompany autorizzate : " + userCompany + " NON autorizzata");
+    log2file.error("Check userCompany autorizzate : " + userCompany + " NON autorizzata");
+  //  logDataAnalysis({action : 'matricola_non_autorizzata', eventTime: new Date(), user: {name: username}, params: {} });
+    res.status(401).json({ success: false, message: userCompany + ' non autorizzata' });
+    return;
+  } else {
+    logConsole.info('Check userCompany autorizzate OK:', userCompany);
+  }
+
+
 
   if (username === 'DEMO'){
     console.log('Using .... DEMO!');
+    log2fileAccess.info('Using .... DEMO!');
     var userLogin = { 
           'name' : 'DEMO',
           'displayName' : 'DEMO',
@@ -939,18 +963,6 @@ router.post('/login', function(req, res) {
 
   var config = { ldap: ENV.ldap };
 
-  // var matricoleAutorizzate = ENV.matricoleAutorizzate;
-  // validazione
-  //var matricole_autorizzate = /(?:[\s]|^)(M05831|M09999|M01111)(?=[\s]|$)/i;
-  // var matricole_autorizzate = new RegExp('(?:[\s]|^)(' + ENV.matricoleAutorizzate + ')(?=[\s]|$)' , 'i');
-  //
-  //if (!matricole_autorizzate.test(username)){
-  //  logConsole("authenticate : Validation : Matricola non autorizzata");
-  //  logError("Matricola non autorizzata: " + username);
-  //  logDataAnalysis({action : 'matricola_non_autorizzata', eventTime: new Date(), user: {name: username}, params: {} });
-  //  res.status(401).json({ success: false, message: 'Matricola non autorizzata' });
-  //  return;
-  // }
   
   //console.log(config);
 
@@ -983,8 +995,8 @@ router.post('/login', function(req, res) {
                       });
       return;
     }
-    log2file.info("Accesso effettuato : " + username);    
-    logConsole.info('LDAP.. ')
+    log2fileAccess.info("Accesso effettuato : " + username);    
+    logConsole.info('LDAP.. ');
     logConsole.info(user);
     //logDataAnalysis({action: 'login_success', eventTime: new Date(), user: user,  params : {} });
 
@@ -1020,6 +1032,8 @@ router.post('/logout',
     utilityModule.ensureAuthenticated,
     utilityModule.checkIfTokenInList,
     function(req, res)  {
+        log2fileAccess.info("Logout effettuato da:");
+        log2fileAccess.info(req.user);
         utilityModule.removeTokenFromList(req.token);
         res.status(201).json({
             success: true,
@@ -1031,6 +1045,9 @@ router.post('/test',
     utilityModule.ensureAuthenticated,
     utilityModule.checkIfTokenInList,
     function(req,res) {
+        log2file.info('/test ...');
+        logConsole.info('/test');
+        log2fileAccess.info(req.user);
         res.status(201).json({
             success: true,
             message: 'Test OK!',

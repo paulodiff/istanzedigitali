@@ -4,7 +4,8 @@ node_modules/*
 node_modules/saml2-js/*
 !node_modules/saml2-js/lib-js/
 
-
+config
+token
 certs
 log
 tmp

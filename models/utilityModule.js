@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
-var ENV   = require('../tmp/config.js'); // load configuration data
+var ENV   = require('../config/config.js'); // load configuration data
 var fs = require('fs');
 var crypto = require('crypto');
 

@@ -4,101 +4,46 @@
              <div class="row">
                 <div class="col-sm-11 col-md-10 col-xs-10">
                     
-                    <h2>Elenco Atti {{user.userid}} - </h2>
-
+                    <h2>Posta del 00/00/0000 utente:  {{user.userid}} </h2>
                    
-            <div class="form-group">
-                <input type="text"
-                    placeholder="GG/MM/AAAA" 
-                    name="dataNascitaRichiedente" class="form-control"
-                    min="01-01-1900"
-                    max="31-12-2100" 
-                    ng-model="vm.model.dataNascitaRichiedente"
-                    ng-minlength="10"
-                    ng-maxlength="10"
-                    required>
-            </div>
+
+                </div>
+              </div>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+
+      
+         <b>Selezionare un centro di costo</b>
+         <ui-select ng-model="model.selectedCdc" theme="bootstrap">
+            <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="item in cdc">
+              <div ng-bind-html="item.name"></div>
+            </ui-select-choices>
+          </ui-select>
+
         
           <button type="submit"
                   class="btn btn-raised btn-info btn-lg"  
                   ng-click="ricaricaDati()">Ricarica</button>
 
-                </div>
-              </div>
-    </div>
-    <div class="panel-body">
-      <div class="row">
-        <div class="col-sm-12">
-
 
           <p>In questa pagina si trova l'elenco delle istanze che è possibile presentare attraverso questo portale</p>
-          <h3>Istruzioni per l'accesso al servizio</h3>
-<p>Per accedere al servizio è <b>OBBLIGATORIO</b>{{msg.lastCellEdited}}</p>
+          <h3>Elenco destinatari </h3><p>{{msg.lastCellEdited}}</p>
 
-<div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid-cellnav ui-grid="gridOptions"></div>
+<div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid-cellnav ui-grid-exporter ui-grid="gridOptions"></div>
 
 <button type="button" id="addData" class="btn btn-success btn-raised btn-large" ng-click="addData()">Aggiungi una riga</button>
 <button type="button" id="removeFirstRow" class="btn btn-warning btn-raised btn-large" ng-click="removeRow()">Elimina le righe selezionate</button>
 <button type="button" id="reset" class="btn btn-success" ng-click="resetDebug()">Reset</button>
+<button type="button" id="reset" class="btn btn-success btn-raised btn-large" ng-click="exportPdf()">Pdf</button>
 
 
   </div>
 </div>
 </div>
 </div>
-
-
-
-  <div class="panel panel-default">
-    <div class="panel-heading">          
-             <div class="row">
-                <div class="col-sm-11 col-md-10 col-xs-10">
-                    <h2>Richiesta accesso ai documenti (demo)</h2>
-                </div>
-              </div>
-    </div>
-    <div class="panel-body">
-      <div class="row">
-        <div class="col-sm-12">
-
-          <p>Il servizio permette di effettuare in modalità digitale la presentazione delle istanze e dichiarazioni. Esso è basato sul Codice dell'Amministrazione Digitale (CAD), che sancisce il diritto da parte dei cittadini ad interagire con la Pubblica Amministrazione, utilizzando gli strumenti offerti dalle tecnologie ICT in alternativa alle modalità tradizionali basate su moduli cartacei. 
-          </p>
-    
-    
-        <button  class="btn btn-raised btn-raised btn-success btn-block" ng-click="goToInviaIstanza()">Procedi</button>
-
-  </div>
-</div>
-</div>
-</div>
-
-
-
-
-  <div class="panel panel-default">
-    <div class="panel-heading">          
-             <div class="row">
-                <div class="col-sm-11 col-md-10 col-xs-10">
-                    <h2>Richiesta autorizzazione per posto ambulante (demo)</h2>
-                </div>
-              </div>
-    </div>
-    <div class="panel-body">
-      <div class="row">
-        <div class="col-sm-12">
-
-          <p>Il servizio permette di effettuare in modalità digitale la presentazione delle istanze e dichiarazioni. Esso è basato sul Codice dell'Amministrazione Digitale (CAD), che sancisce il diritto da parte dei cittadini ad interagire con la Pubblica Amministrazione, utilizzando gli strumenti offerti dalle tecnologie ICT in alternativa alle modalità tradizionali basate su moduli cartacei. 
-          </p>
-    
-    
-        <button  class="btn btn-raised btn-raised btn-success btn-block" ng-click="goToInviaIstanza()">Procedi</button>
-
-  </div>
-</div>
-</div>
-</div>
-
-
 
     
 

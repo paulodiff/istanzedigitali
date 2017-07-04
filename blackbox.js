@@ -86,7 +86,7 @@ app.use(function (err, req, res, next) {
 
 
 // load configuration data
-var ENV   = require('./tmp/config.js'); // load configuration data
+var ENV   = require('./config/config.js'); // load configuration data
 
 
 // Configure Passport authenticated session persistence.
@@ -135,7 +135,9 @@ log.log2console('Starting ...');
 // app.use('/istanzemgr', IstanzeMgr);
 
 var GatewayProtocollo = require('./routes/GatewayProtocollo')();
-app.use('/api/brav', GatewayProtocollo);
+app.use('/api', GatewayProtocollo);
+
+app.use('/swagger', express.static(__dirname + '/swagger'));
 
 /*
 // Define routes.

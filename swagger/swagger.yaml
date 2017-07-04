@@ -2,12 +2,11 @@
 swagger: '2.0'
 info:
   version: 1.0.0
-  title: Api di accesso al sistema di gestione documentale protocollazione - Comune di Rimini
+  title: Comune di Rimini - Gestione Documentale
   description: |
-    Sono qui descritte le API per l'accesso al servizio di gestione documentale
+    # API per l'accesso al servizio di gestione documentale
     Per informazioni contattare Ruggero Ruggeri - 0541/704607 - ruggero.ruggeri@comune.rimini.it
 schemes:
-  - https
   - http
 securityDefinitions:
   Bearer:
@@ -22,7 +21,7 @@ paths:
       tags:
         - Autenticazione
       summary: Esegue la richiesta di autenticazione al software di gestione documentale
-      description: Per utilizzare le api di protocollazione è necessario ottenere un token di autenticazione attraverso la chiamata a questa API. (Nota usando l'utente DEMO password DEMO si ottiene un token di test per effettuare solo le chiamate /test e /logout)
+      description: Per utilizzare le api di protocollazione è necessario ottenere un token di autenticazione attraverso la chiamata a questa API. 
       consumes:
         - application/json
         - application/xml
@@ -90,7 +89,7 @@ paths:
       tags:
         - Protocollazione
       summary: Esegue la richiesta di protocollazione
-      description: La presente api permette la protocollazione "atomica" di uno più documenti. Seguendo le indicazioni del tracciato è possibile inserire i dati del richiedente, il fascicolo, tutti i metadati opportuni e gli allegati
+      description: La presente api permette la protocollazione "atomica" di uno più documenti. Seguendo le indicazioni del tracciato è possibile inserire i dati del richiedente, il fascicolo e gli allegati
       consumes:
         - application/json
         - application/xml
@@ -167,31 +166,32 @@ definitions:
         properties:
           oggettoDocumento:
             type: string
+            default: "Oggetto di prova"
           tipoDocumento:
             type: string            
+            default: "01001"
           classificaDocumento:
-            type: string            
+            type: string
+            default: "001.001001"
           origineDocumento:
-            type: string            
+            type: string
+            default: "A"            
           ufficioInternoMittenteDocumento:
-            type: string            
+            type: string
+            default: "404"            
           ufficioInternoDestinatarioDocumento:
-            type: string            
+            type: string
+            default: "404"            
           annoPratica:
             type: string
+            default: "2017"
           numeroPratica:
             type: string
-      metadati:
-        type: array
-        items:
-          $ref: "#/definitions/metadatoItem"
+            default: "2017-404-0001"
       allegati:
         type: array
         items:
           $ref: "#/definitions/Allegato"
-      note:
-        type: string
-        description: note associate
   Tag:
     type: object
     properties:
@@ -205,52 +205,56 @@ definitions:
     properties:
       nomeFile:
         type: string
-      dimensione:
-        type: integer
+        default: "METADATI.TXT"
+      dimensioneFile:
+        type: string
+        default: "100"
       mimeType:
         type: string
+        default: "text/csv"
       base64:
-        type: string    
+        type: string
+        default: "bG9nX2ZpbGVuYW1lO2xvZy1ERU1PLmxvZw0KbG9nX2xldmVsO0RFQlVHDQpzZWN1cml0eV9jb21w
+YW55X2ZpbHRlcjtERU1PDQo="    
       hashSHA256File:
-        type: string    
+        type: string
+        default: "aaaaaa"    
       descrizione:
-        type: string    
-  Veicolo:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      targa:
-        type: integer
-      name:
         type: string
-  metadatoItem:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
+        default: "METADATI"    
   richiedenteDef:
     type: object
     properties:
      nome:
         type: string 
+        default: "MARIO"
      cognome:
-        type: string 
+        type: string
+        default: "ROSSI" 
      codiceFiscale:
         type: string 
+        default: "RSSMRA00A01H501C"
      dataDiNascita:
        type: string 
+       default: "01/01/2000"
      indirizzo:
        type: string 
+       default: "VIA ROMA 1"
+     citta:
+       type: string 
+       default: "ROMA"
      mail:
        type: string 
+       default: "rossi.mario@roma.com"
      telefonoCellulare:
        type: string 
+       default: "333333333333"
      telefonoFisso:
        type: string         
+       default: "06 32155531"
+     tipoPersona:
+       type: string
+       default: "FI"         
   Order:
     type: object
     properties:
@@ -271,4 +275,3 @@ definitions:
         description: Order Status
       complete:
         type: boolean
-          

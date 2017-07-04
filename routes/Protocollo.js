@@ -42,8 +42,8 @@ var multipartMiddleware = multipart();
 var multiparty = require('multiparty');
 
 var jwt = require('jwt-simple');
-var ENV   = require('../tmp/config.js'); // load configuration data
-var ENV_PROT   = require('../tmp/configPROTOCOLLO.js'); // load user configuration data
+var ENV   = require('../config/config.js'); // load configuration data
+var ENV_PROT   = require('../config/configPROTOCOLLO.js'); // load user configuration data
 // var mongocli = require('../models/mongocli');
 var spark = require('spark-md5');
 var md5File = require('md5-file');

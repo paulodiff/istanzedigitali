@@ -2,7 +2,7 @@
 
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
-var ENV   = require('../tmp/config.js'); // load configuration data
+var ENV   = require('../config/config.js'); // load configuration data
 var fs = require('fs');
 var utilityModule  = require('../models/utilityModule.js'); // load configuration data
 var request = require('request');
@@ -122,15 +122,19 @@ getIstanzeList: function(userid){
 
 /* metodi per la posta */
 
-getPostaList: function(userid){
+getPostaList: function(opts){
     return new Promise(function(resolve, reject) {
 
         console.log('databaseModule:getPostaList');
-        console.log(userid);
+        console.log(opts.userid);
+        console.log(opts.today);
 
         models.Posta.findAll({
           where: {
-            userid : userid
+            userid : opts.userid,
+            posta_id: {
+                $like: opts.today + '%'
+            }
         } 
         }).then(function(anotherTask) {
             resolve(anotherTask)
@@ -150,6 +154,8 @@ savePosta: function(data){
             ts: new Date(),
             posta_id: data.posta_id,
             userid: data.userid,
+            protocollo: data.protocollo,
+            cdc: data.cdc,
             tipo_spedizione: data.tipo_spedizione,
             destinatario_denominazione : data.destinatario_denominazione,
             destinatario_citta : data.destinatario_citta,
@@ -177,6 +183,7 @@ updatePosta: function(data){
         models.Posta.findOne({ where: {posta_id: data.posta_id} }).then(item => {
             // project will be the first entry of the Projects table with the title 'aProject' || null
             item.update({
+                protocollo: data.protocollo,
                 tipo_spedizione: data.tipo_spedizione,
                 destinatario_denominazione : data.destinatario_denominazione,
                 destinatario_citta : data.destinatario_citta,

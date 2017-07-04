@@ -25,7 +25,29 @@ angular.module('myApp.controllers')
   $scope.items = [];
   $scope.loadMoreDataCanBeLoaded = true;
   $scope.msg = {};
+  $scope.cdc= [
+    { id:'00001', name:'cdc - 000001' },
+    { id:'00002', name:'cdc - 000002' },
+    { id:'00003', name:'cdc - 000003' },
+    { id:'00004', name:'cdc - 000004' },
+    { id:'00005', name:'cdc - 000005' }
+  ];
+  $scope.model = {};
+  $scope.model.selectedCdc = {};
   
+  var  MyeditDropdownOptionsArray = [
+            { id: 'P01 - POSTA ORDINARIA', gender: 'P01 - POSTA ORDINARIA' },
+            { id: 'P02 - PIEGHI DI LIBRI', gender: 'P02 - PIEGHI DI LIBRI' },
+            { id: 'P03 - POSTA INTERNAZIONALE', gender: 'P03 - POSTA INTERNAZIONALE' },
+            { id: 'P04 - POSTA TARGHET (ex STAMPE)', gender: 'P04 - POSTA TARGHET (ex STAMPE)' },
+            { id: 'R01 - RACCOMANDATA A/R', gender: 'R01 - RACCOMANDATA A/R' },
+            { id: 'R02 - RACCOMANDATA ORDINARIA', gender: 'R02 - RACCOMANDATA ORDINARIA' },
+            { id: 'R03 - ACC. INTERNAZIONALI', gender: 'R03 - RACC. INTERNAZIONALI' },
+            { id: 'AG1 - ATTI GIUDIZIARI', gender: 'AG1 - ATTI GIUDIZIARI' }
+        ];
+  
+
+
   var today = new Date();
   var nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);
@@ -33,36 +55,57 @@ angular.module('myApp.controllers')
   $scope.gridOptions = {};
   $scope.gridOptions = {
     enableSorting: true,
+    enableFiltering: true,
     enableGridMenu: true,
     enableRowSelection: true,
     enableSelectAll: true,
     showGridFooter:true,
     columnDefs: [
       { name: 'posta_id', visible: false, enableCellEdit: false },
+      { name: 'cdc', visible: true, enableCellEdit: false },
       { name: 'Tipo', 
         field:  'tipo_spedizione',
         displayName: 'Tipo', 
         editableCellTemplate: 'ui-grid/dropdownEditor', 
         width: '20%',
-        cellFilter: 'mapTipoSpedizione', 
+        // cellFilter: 'mapTipoSpedizione', 
         editDropdownValueLabel: 'gender', 
-        editDropdownOptionsArray: [
-            { id: 'P01 - POSTA ORDINARIA', gender: 'P01 - POSTA ORDINARIA' },
-            { id: 'P02 - PIEGHI DI LIBRI', gender: 'P02 - PIEGHI DI LIBRI' },
-            { id: 'P03 - POSTA INTERNAZIONALE', gender: 'P03 - POSTA INTERNAZIONALE' },
-            { id: 'P04 - POSTA TARGHET (ex STAMPE)', gender: 'P04 - POSTA TARGHET (ex STAMPE)' },
-            { id: 'R01 - RACCOMANDATA A/R', gender: 'R01 - RACCOMANDATA A/R' },
-            { id: 'R02 - ACCOMANDATA ORDINARIA', gender: 'R02 - RACCOMANDATA ORDINARIA' },
-            { id: 'AG1 - ACC. INTERNAZIONALI', gender: 'AG1 - RACC. INTERNAZIONALI' },
-            { id: 'AG1 - TTI GIUDIZIARI', gender: 'AG1 - ATTI GIUDIZIARI' }
-        ] },
+        editDropdownOptionsArray: MyeditDropdownOptionsArray,
+        enableFiltering:true
+        /*
+      filters: [
+        {
+          condition: uiGridConstants.filter.GREATER_THAN,
+          placeholder: 'greater than'
+        },
+        {
+          condition: uiGridConstants.filter.LESS_THAN,
+          placeholder: 'less than'
+        }    
+      ]*/
+    },
+      { name: 'Protocollo', field: 'protocollo', enableFiltering:true },
       { name: 'Destinatario', field: 'destinatario_denominazione', enableFiltering:true },
       { name: 'Città', field: 'destinatario_citta', enableFiltering:true },
       { name: 'Via', field: 'destinatario_via', enableFiltering:true },
       { name: 'CAP', field: 'destinatario_cap', enableFiltering:true },
       { name: 'Prov', field: 'destinatario_provincia'},
       { name: 'Note', field: 'note', enableSorting: true, enableCellEdit: true }
-    ]
+    ],
+    exporterPdfDefaultStyle: {fontSize: 9},
+    exporterPdfTableStyle: {margin: [5, 5, 5, 5]},
+    exporterPdfTableHeaderStyle: {fontSize: 8, bold: true, italics: true, color: 'black'},
+    exporterPdfHeader: function ( currentPage, pageCount ) {
+      return { text: 'Stampa elenco ...' + $scope.user.userid, style: 'headerStyle' };
+    },
+    exporterPdfFooter: function ( currentPage, pageCount ) {
+      return { text: currentPage.toString() + ' of ' + pageCount.toString() + $scope.user.userid, style: 'footerStyle' };
+    },
+    exporterPdfCustomFormatter: function ( docDefinition ) {
+      docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+      docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
+      return docDefinition;
+    }
     //,onRegisterApi: function( gridApi ) {
     //  $scope.grid1Api = gridApi;
     //}
@@ -130,6 +173,9 @@ angular.module('myApp.controllers')
 
   $scope.ricaricaDati = function() {
     console.log('Ricarica------------Data');
+
+    console.log($scope.model.selectedCdc);
+
     PostaService.getPosta({})
       .then(function (res) {
         // dialogs.notify('ok','Profile has been updated');
@@ -147,17 +193,29 @@ angular.module('myApp.controllers')
 
   $scope.addData = function() {
     console.log('Add------------Data');
+    console.log($scope.model.selectedCdc);
+
+    if (angular.equals($scope.model.selectedCdc,{})){
+      var dlg = dialogs.error('SELEZIONARE UN CDC', 'CDC');
+      return;
+    }
+
+
+
     var n = $scope.gridOptions.data.length + 1;
+
 
     var newItem  = {
       'posta_id': UtilsService.getTimestampPlusRandom(),
+      'cdc': $scope.model.selectedCdc.id,
+      'protocollo':'0000/000000',
       'tipo_spedizione':'P01 - POSTA ORDINARIA',
-      'destinatario_denominazione':'T##' + n,
-      'destinatario_citta':'T##' + n,
-      'destinatario_via':'T##' + n,
-      'destinatario_cap':'T##' + n,
-      'destinatario_provincia':'T##' + n,
-      'note':'T##' + n
+      'destinatario_denominazione':'DESTINATARIO',
+      'destinatario_citta':'CITTA',
+      'destinatario_via':'VIA XX',
+      'destinatario_cap':'00000',
+      'destinatario_provincia':'XX',
+      'note':''
     };
 
     $scope.gridOptions.data.push(newItem);
@@ -222,6 +280,95 @@ angular.module('myApp.controllers')
     //}
   };
 
+  $scope.exportPdf = function(){
+
+    console.log('Export PDF');
+    console.log($scope.gridOptions.data.filter(function (el){
+      return el.tipo_spedizione == 'P01 - POSTA ORDINARIA'
+    }));
+
+    
+
+     var docDefinition = { 
+       pageSize: 'A4',
+       pageMargins: [ 10, 10, 10, 10 ],
+      footer: function(currentPage, pageCount) { 
+              return currentPage.toString() + ' of ' + pageCount; },
+        header: function(currentPage, pageCount) {
+          // you can apply any logic and return any valid pdfmake element
+
+          return { text: 'simple text', alignment: (currentPage % 2) ? 'left' : 'right' };
+        },
+       content: [
+	        { text: 'Comune di Rimini', fontSize: 15 },
+          { text: 'Posta del 00/00/0000 - M99999', fontSize: 12 },
+          { text: 'Centro di costo : CCCCCCC', fontSize: 12 },
+          {
+            table: {
+              // headers are automatically repeated if the table spans over multiple pages
+              // you can declare how many rows should be treated as headers
+              headerRows: 1,
+              widths: [ 'auto', 'auto', 100, '*' ],
+              body: [
+                [ 'N.', 'Destinatario', 'Third', 'The last one' ],
+                [ '1', 'Value 2', 'Value 3', 'Value 4' ],
+                [ '2', 'Val 2', 'Val 3', 'Val 4' ]
+              ]
+            }
+          },
+          { text: 'Totale: XX', fontSize: 14, bold: true, margin: [0, 0, 0, 8] },
+          { text: 'Pagina: 1 di NN', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] },
+          
+          /*pag 2*/
+
+
+	        { text: 'Comune di Rimini (pag 2 di NN) - M99999', fontSize: 15 },
+          { text: 'Posta del       : 00/00/0000', fontSize: 12 },
+          { text: 'Centro di costo : CCCCCCC', fontSize: 12 },
+          { text: 'Tipo            : P01-SDSSSSSS', fontSize: 12 },
+
+     
+
+          {
+            table: {
+              // headers are automatically repeated if the table spans over multiple pages
+              // you can declare how many rows should be treated as headers
+              headerRows: 1,
+              widths: [ 'auto', 'auto', 100, '*' ],
+              body: [
+                [ 'N.', 'Destinatario', 'Third', 'The last one' ],
+                [ '1', 'Value 2', 'Value 3', 'Value 4' ],
+                [ '2', 'Val 2', 'Val 3', 'Val 4' ]
+              ]
+            }
+          },
+          { text: 'Totale: XX', fontSize: 14, bold: true, margin: [0, 0, 0, 8] },
+          { text: 'Pagina: 2 di NN', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] },
+
+
+
+	]
+      };
+
+
+    pdfMake.createPdf(docDefinition).open();
+
+
+  // uiGridExporterService.pdfExport(grid, rowTypes, colTypes);
+
+
+   //$scope.gridApi.exporter.pdfExport( $scope.export_row_type, $scope.export_column_type );
+   /*
+    if ($scope.export_format == 'csv') {
+      var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
+      $scope.gridApi.exporter.csvExport( $scope.export_row_type, $scope.export_column_type, myElement );
+    } else if ($scope.export_format == 'pdf') {
+      
+    };
+    */
+  }
+
+
 
   $scope.resetDebug = function () {
     console.log('Reset------------Data');
@@ -285,7 +432,7 @@ angular.module('myApp.controllers')
     'R01 - RACCOMANDATA A/R': 'R01 - RACCOMANDATA A/R',
     'R02 - RACCOMANDATA ORDINARIA': 'R02 - RACCOMANDATA ORDINARIA',
     'AG1 - RACC. INTERNAZIONALI': 'AG1 - RACC. INTERNAZIONALI',
-    'AG1 - ATTI GIUDIZIARI': 'AG1 - ATTI GIUDIZIARI',
+    'AG2 - ATTI GIUDIZIARI': 'AG2 - ATTI GIUDIZIARI'
   };
  
   return function(input) {
@@ -318,7 +465,6 @@ angular.module('myApp.controllers')
    }
 
  
-
 
   $scope.reloadData = function(){
     console.log('reloadData .....');

@@ -1,5 +1,5 @@
-/*
-
+/*                     
+ 
 2) data e ora
 1) lettura
 2) testo con 5 parole

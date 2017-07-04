@@ -7,10 +7,11 @@
 */ 
 
 var express = require('express');
+var moment = require('moment');
 var router = express.Router();
 var jwt = require('jwt-simple');
 var fs = require('fs');
-var ENV   = require('../tmp/config.js'); // load configuration data
+var ENV   = require('../config/config.js'); // load configuration data
 // var User  = require('../models/user.js'); // load configuration data
 var utilityModule  = require('../models/utilityModule.js'); // load configuration data
 var log = require('../models/loggerModule.js');
@@ -29,9 +30,14 @@ router.get('/posta', utilityModule.ensureAuthenticated, function(req, res) {
 
     var key = req.user;  
 
-    databaseModule.getPostaList(req.user.userid)
+    var options = {
+      userid: req.user.userid,
+      today : moment().format('YYYYMMDD')
+    };
+
+    databaseModule.getPostaList(options)
          .then( function (result) {
-                  log.log2console(result);
+                  // log.log2console(result);
                   return res.status(200).send(result);
                })
          .catch(function (err) {
