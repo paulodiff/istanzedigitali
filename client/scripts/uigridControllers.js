@@ -895,7 +895,8 @@ angular.module('myApp.controllers')
             arraySelezione.push(elenco);
             arraySelezioneTipi.push(obj.id);
           }
-        });
+        })
+
 
         console.log(arraySelezioneTipi);
 
@@ -945,8 +946,7 @@ angular.module('myApp.controllers')
               contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
             }
 
-          http://intranet.comune.rimini.it/wp-content/uploads/2017/06/elenco-telefonico-PM-al-22-06-2017.pdf
-
+  
             console.log(numeroPagina,maxPagina);
          
             numeroPagina++;
@@ -975,10 +975,11 @@ angular.module('myApp.controllers')
 
         // $scope.user = res.data.user;
       })
-      .catch(function(response) {
+        .catch(function(response) {
         $log.error(response);
         var dlg = dialogs.error(response.data.message, response.status);
       });
+    
     
   
     
@@ -1104,7 +1105,8 @@ angular.module('myApp.controllers')
             arraySelezione.push(elenco);
             arraySelezioneTipi.push(obj.id);
           }
-        });
+        })
+        
 
         console.log(arraySelezioneTipi);
         console.log(arraySelezione);
@@ -1177,7 +1179,11 @@ function s2ab(s) {
 saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYYYMMDD + "-test.xls");
 
 
-    });
+    })
+    .catch(function(response) {
+          $log.error(response);
+          var dlg = dialogs.error(response.data.title, response.data.message);
+        });
   }
 
  
