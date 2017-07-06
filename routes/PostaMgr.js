@@ -32,8 +32,18 @@ router.get('/posta', utilityModule.ensureAuthenticated, function(req, res) {
 
     var options = {
       userid: req.user.userid,
-      today : moment().format('YYYYMMDD')
+      dataStampaTxt : req.query.dataStampaTxt ? req.query.dataStampaTxt : '',
+      // matricolaStampa : req.query.matricolaStampa == 'TUTTI' ? '',
+      tipo_spedizione : req.query.tipoPostaStampaTxt == 'P00 - TUTTI TIPI POSTA' ? '' : req.query.tipoPostaStampaTxt,
+      dataStampaTxt:  req.query.dataStampaTxt,
+      cdc: req.query.cdcStampaTxt == '0000' ? '' : req.query.cdcStampaTxt,
     };
+
+
+
+
+
+    console.log(req.query);
 
     databaseModule.getPostaList(options)
          .then( function (result) {

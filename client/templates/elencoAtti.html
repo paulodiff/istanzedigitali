@@ -4,7 +4,7 @@
              <div class="row">
                 <div class="col-sm-11 col-md-10 col-xs-10">
                     
-                    <h2>Posta del 00/00/0000 utente:  {{user.userid}} </h2>
+                    <h2>Posta del {{today}} utente:  {{user.userid}} </h2> <small>{{todayYYYMMDD}}</small>
                    
 
                 </div>
@@ -15,29 +15,103 @@
         <div class="col-sm-12">
 
       
-         <b>Selezionare un centro di costo</b>
+         <h3>Selezionare un centro di costo:</h3>
          <ui-select ng-model="model.selectedCdc" theme="bootstrap">
             <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.name}}</ui-select-match>
             <ui-select-choices repeat="item in cdc">
-              <div ng-bind-html="item.name"></div>
+              <p ng-bind-html="item.name"></p>
             </ui-select-choices>
           </ui-select>
 
         
-          <button type="submit"
-                  class="btn btn-raised btn-info btn-lg"  
-                  ng-click="ricaricaDati()">Ricarica</button>
-
-
-          <p>In questa pagina si trova l'elenco delle istanze che è possibile presentare attraverso questo portale</p>
-          <h3>Elenco destinatari </h3><p>{{msg.lastCellEdited}}</p>
+          
+          
+          <small>log:{{msg.lastCellEdited}}</small>
 
 <div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid-cellnav ui-grid-exporter ui-grid="gridOptions"></div>
 
 <button type="button" id="addData" class="btn btn-success btn-raised btn-large" ng-click="addData()">Aggiungi una riga</button>
 <button type="button" id="removeFirstRow" class="btn btn-warning btn-raised btn-large" ng-click="removeRow()">Elimina le righe selezionate</button>
 <button type="button" id="reset" class="btn btn-success" ng-click="resetDebug()">Reset</button>
-<button type="button" id="reset" class="btn btn-success btn-raised btn-large" ng-click="exportPdf()">Pdf</button>
+<hr>
+<h3>Gestione Stampe</h3>
+
+            <div class="form-group">
+                <label>Data Posta</label>
+                <input type="date" 
+                    name="model.dataStampa" class="form-control" 
+                    ng-model="model.dataStampa"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            </div>
+
+
+          <div class="form-group">
+            <label>Tipo posta</label>
+            <ui-select ng-model="model.tipoPostaStampa" theme="bootstrap">
+            <ui-select-match placeholder="Selezionare un Tipo Posta">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="item in elencoTipoPosta">
+              <p ng-bind-html="item.id"></p>
+            </ui-select-choices>
+          </ui-select>
+          </div>
+
+
+          <div class="form-group">
+            <label>Centro di costo</label>
+            <ui-select ng-model="model.cdcStampa" theme="bootstrap">
+            <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="item in cdcStampe">
+              <p ng-bind-html="item.name"></p>
+            </ui-select-choices>
+          </ui-select>
+          </div>
+
+          <div class="form-group">
+                <label>Matricola</label>
+                <input type="text" 
+                    name="cellulareRichiedente" class="form-control" 
+                    ng-model="model.matricolaStampa"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+                   
+            </div>
+
+<button type="button" id="reset" class="btn btn-success btn-raised btn-large btn-block" ng-click="exportPdf()">Stampa</button>
+
+
+<h3>Estrazione file</h3>
+
+            <div class="form-group">
+                <label>Data Posta</label>
+                <input type="date" 
+                    name="model.dataStampa" class="form-control" 
+                    ng-model="model.dataStampa"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            </div>
+
+
+          <div class="form-group">
+            <label>Tipo posta</label>
+            <ui-select ng-model="model.tipoPostaStampa" theme="bootstrap">
+            <ui-select-match placeholder="Selezionare un Tipo Posta">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="item in elencoTipoPosta">
+              <p ng-bind-html="item.id"></p>
+            </ui-select-choices>
+          </ui-select>
+          </div>
+
+
+<button type="button" id="reset" class="btn btn-info btn-raised btn-large btn-block" ng-click="exportExcel()">Estrazione File</button>
+
+
+        
+
+
 
 
   </div>

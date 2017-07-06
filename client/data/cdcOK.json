@@ -1,0 +1,134 @@
+id,name
+0001,	0001 - Personale Serv. Amm.Organizz.
+0002,	0002 - Rapporti esterni
+0003,	0003 - U. R. P.
+0004,	0004 - Servizio Stampa
+0006,	0006 - Organi Istituzionali
+0007,	0007 - Segreteria Generale
+0008,	0008 - Amministrazione affari generali (Archivio)
+0009,	0009 - Scuole infanzia
+0010,	0010 - Centri educativi estivi materni
+0011,	0011 - Asili nido
+0012,	0012 - Scuole elementari
+0013,	0013 - Scuole materne statali
+0014,	0014 - Amministrativo di servizio Diritto allo Studio
+0015,	0015 - Trasporto  scolastico
+0016,	0016 - Valorizzazione sistema scolastico
+0017,	0017 - Università
+0018,	0018 - Sistema scolastico paritario
+0019,	0019 - Istituto Musicale Lettimi
+0020,	0020 - Istruzione media
+0024,	0024 - Formazione professionale
+0028,	0028 - Politiche per l'immigrazione
+0029,	0029 - Servizi delegati a USL
+0031,	0031 - Emergenza abitativa
+0032,	0032 - Attività iniziative e promozioni turistiche
+0034,	0034 - Gestione Biblioteca
+0035,	0035 - Sagra Malatestiana
+0036,	0036 - Attività cinematografiche
+0037,	0037 - Attività teatrali 
+0038,	0038 - Attività culturali biblioteca
+0039,	0039 - Concessione spazi settore cultura
+0040,	0040 - Attività collaterali
+0041,	0041 - Direzione Musei e Pinacoteca
+0042,	0042 - Archeologia e Cult.Extraeuropee
+0051,	0051 - Mobilità 
+0054,	0054 - Pianificazione attuativa
+0055,	0055 - Edilizia 
+0056,	0056 - Controlli edilizi
+0057,	0057 - Programma d'Area ed Edilizia Residenziale Pubblica
+0058,	0058 - Condono
+0059,	0059 - Servizi e valutazioni ambientali
+0060,	0060 - Gestione amm.va LL.PP.
+0061,	0061 - Direzione Lavori Pubblici e Qualità Urbana
+0064,	0064 - Uffici Giudiziari
+0067,	0067 - Raccolta e smaltimento rifiuti
+0068,	0068 - Infrastrutture e reti tecnologiche per la qualità ambientale
+0069,	0069 - Verde pubblico e privato
+0070,	0070 - Gestione strade
+0071,	0071 - Gestione Economica e Previdenziale Risorse Umane
+0072,	0072 - Contabilità ed Investimenti
+0075,	0075 - Ragioneria Amm.vo e Controllo
+0076,	0076 - Bilancio - Contabilità Economica - Fiscale
+0077,	0077 - Servizio Tributi sugli immobili
+0078,	0078 - Pubblicita' e Affissioni     
+0079,	0079 - TARI
+0080,	0080 -  Uff. Amm.vo Tributi
+0081,	0081 - Sistema Informativo e manutenzione sistemi
+0082,	0082 - Avvocatura civica
+0083,	0083 - Economato e Casa Comune
+0085,	0085 - Gestione parcheggi
+0086,	0086 - Patrimonio Immobiliare
+0087,	0087 - Pari opportunita'
+0088,	0088 - Polizia Municipale
+0089,	0089 - Protezione Civile 
+0090,	0090 - Statistica
+0091,	0091 - Canile Municipale
+0093,	0093 - Mercato coperto
+0094,	0094 - Sicurezza del territorio
+0095,	0095 - Servizi gen.li attivita' econ.
+0096,	0096 - Presidio territoriale
+0098,	0098 - Decentramento  
+0099,	0099 - Politiche per l'immigrazione e l'integrazione
+0100,	0100 - Anagrafe, delegazioni, stato civile e leva
+0101,	0101 - Elettorale
+0102,	0102 - Servizi amministrativi di settore
+0103,	0103 - Servizi cimiteriali (compresa Polizia mortuaria)
+0105,	0105 - Autoparco
+0106,	0106 - Politiche Giovanili  
+0107,	0107 - Politiche del Lavoro
+0108,	0108 - Amministrativo e Partecipazioni Comunali
+0109,	0109 - Pianificazione generale, controllo di gestione e bilancio sociale
+0110,	0110 - Ufficio Contratti
+0111,	0111 - Aministrativo di Settore Pubblica Istruzione
+0113,	0113 - Ufficio Amm.vo Direzione cultura e turismo
+0114,	0114 - Sicurezza sul lavoro e pubblica incolumità
+0115,	0115 - Espropri
+0117,	0117 - Gestione Edifici
+0121,	0121 - Amm.vo Programmazione e Pianificazione Territoriale
+0122,	0122 - Affitti e concessioni
+0123,	0123 - S.I.T. - Toponomastica
+0124,	0124 - Sportello Unico
+0125,	0125 - Consiglio Comunale
+0126,	0126 - Ufficio Europeo per lo Sviluppo della Comunità Locale
+0127,	0127 - Sistema gestione qualità
+0128,	0128 - Cosap
+0129,	0129 - Direzione Pianificazione e Gestione territoriale
+0130,	0130 - Interventi di riqualificazione urbana
+0131,	0131 - Direzione Affari Generali ed Istituzionali
+0132,	0132 - Organizzazione e gestione del personale
+0133,	0133 - Notifiche generiche
+0134,	0134 - Comando e passi carrabili
+0135,	0135 - Demanio
+0136,	0136 - Famiglie e minori
+0137,	0137 - Disagio adulti
+0138,	0138 - Anziani
+0139,	0139 - Area disabili
+0142,	0142 - Sanità
+0143,	0143 - Assegnazione alloggi edilizia residenziale pubblica
+0146,	0146 - Condono ter
+0148,	0148 - Piano strategico
+0150,	0150 - Lotta alla zanzara tigre
+0151,	0151 - Gestione protocollo generale
+0152,	0152 - Ufficio per il paesaggio
+0153,	0153 - Contributi economici
+0154,	0154 - Bandi ISEE 
+0160,	0160 - Holding
+0161,	0161 - Impianti sportivi in uso a terzi
+0162,	0162 - Impianti sportivi in gestione a terzi
+0163,	0163 - Manifestazioni e progetti sportivi
+0164,	0164 - Impianti termici
+0165,	0165 - Direzione cultura e turismo
+0166,	0166 - Unità Progetti speciali
+0167,	0167 - Gestione amministrativa trasporto  scolastico
+0168,	0168 - Sportello Eventi
+0169,	0169 - Conservazione ed uso razionale dell'energia
+0170,	0170 - Gestione territoriale
+0171,	0171 - Piani attuativi privati
+0172,	0172 - Opere Strategiche
+0173,	0173 - Progettazione viabilità ed infrastrutture 
+0174,	0174 - Edilizia pubblica e valorizzazione del patrimonio 
+0777,	0777 - Personale a rimborso sevizi sociali
+0888,	0888 - Personale a rimborso I.A.T.
+0999,	0999 - Personale a rimborso referendum
+9999,	9999 - Progettazione e gestione urbanistica

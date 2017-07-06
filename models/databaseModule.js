@@ -128,7 +128,37 @@ getPostaList: function(opts){
         console.log('databaseModule:getPostaList');
         console.log(opts.userid);
         console.log(opts.today);
+        console.log(opts);
 
+
+
+        var parametriFiltro = {};
+
+        if (opts.matricolaStampa) {
+            parametriFiltro.userid = opts.matricolaStampa;
+        }
+
+        if (opts.tipo_spedizione && opts.tipo_spedizione != '') {
+            parametriFiltro.tipo_spedizione = opts.tipo_spedizione;
+        }
+
+        if (opts.cdc && opts.cdc != '') {
+            parametriFiltro.cdc = opts.cdc;
+        }
+
+        if (opts.dataStampaTxt != '') {
+            parametriFiltro.posta_id = { $like: opts.dataStampaTxt + '%' };
+        }
+
+        console.log('---PAMETRI FILTRO FINALE-------------------------------------------------');
+        console.log(parametriFiltro);
+        console.log('---PAMETRI FILTRO FINALE-------------------------------------------------');
+
+
+        
+        models.Posta.findAll({
+          where: parametriFiltro
+        /*
         models.Posta.findAll({
           where: {
             userid : opts.userid,
@@ -136,6 +166,7 @@ getPostaList: function(opts){
                 $like: opts.today + '%'
             }
         } 
+        */
         }).then(function(anotherTask) {
             resolve(anotherTask)
         }).catch(function(error) {

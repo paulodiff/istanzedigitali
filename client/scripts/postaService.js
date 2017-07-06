@@ -36,20 +36,38 @@ angular.module('myApp.services')
 
 
     getPosta: function(obj) {
-         $log.info('PostaService: getProfile');
+         $log.info('PostaService: getPosta');
+         var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPosta; 
+         $log.info('PostaService: api : ' + fullApiEndpoint );
+         return $http({ url: fullApiEndpoint,  method: "GET", params: obj });
+    },
+
+    updatePosta: function(obj) {
+             $log.info('PostaService: updatePosta');
          var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPosta; 
          $log.info('PostaService: api : ' + fullApiEndpoint );
          return $http({ url: fullApiEndpoint,  method: "GET" });
     },
 
-    updatePosta: function(obj) {
-             $log.info('PostaService: getProfile');
-         var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiProfile; 
+    addPosta: function(obj) {
+         $log.info('PostaService: addPosta');
+         var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPosta; 
          $log.info('PostaService: api : ' + fullApiEndpoint );
-         return $http({ url: fullApiEndpoint,  method: "GET" });
+         return $http.post(fullApiEndpoint, obj);
     }
-
-
+/*
+$http.post(url2post, newItem)
+            .then(function (res) {
+                // dialogs.notify('ok','Profile has been updated');
+                $scope.gridOptions.data.push(newItem);
+                $log.debug(res);
+                // $scope.user = res.data.user;
+         }).catch(function(response) {
+           $log.debug(response);
+           var dlg = dialogs.error(response.data.title, response.data.message);
+        });
+  };
+*/
  
   }
 
