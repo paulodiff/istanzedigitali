@@ -427,4 +427,14 @@ ul {
 .listGridData {
     width: 500px;
     height: 250px;
-  }
+}
+
+ .posta_header {
+    color: #fff;
+    font-size: 28px;
+}
+
+.posta_data_header {
+    color: #000;
+    border: 1px solid #3b3b3b;
+}

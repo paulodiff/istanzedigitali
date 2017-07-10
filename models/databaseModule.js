@@ -185,6 +185,8 @@ savePosta: function(data){
             ts: new Date(),
             posta_id: data.posta_id,
             userid: data.userid,
+            userEmail: data.userEmail,
+            userDisplayName: data.userDisplayName,
             protocollo: data.protocollo,
             cdc: data.cdc,
             tipo_spedizione: data.tipo_spedizione,
@@ -244,6 +246,21 @@ deletePosta: function(posta_id){
         });
 
     });
+},
+
+
+getPostaCDC: function(){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getPostaCDC');
+
+        models.PostaCDC.findAll()
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
 }
 
 

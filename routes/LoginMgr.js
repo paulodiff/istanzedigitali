@@ -14,9 +14,105 @@ var ntlm = require('express-ntlm');
 module.exports = function(){
 
 
-// Log in with NTML
+// Log in with LDAP
 
- // Log in with Email
+
+
+router.post('/LDAPlogin', function(req, res) {
+
+
+  var LdapAuth = require('ldapauth-fork');
+
+  console.log('/LDAPlogin');
+  // logAccess('Start logger ...');  logError('Start logger ...'); logDataAnalysis('Start logger ...');
+
+  console.log(req.body);
+
+  var username = req.body.username;
+  var password = req.body.password;
+
+  var config = { ldap: ENV.ldap };
+  var matricoleAutorizzate = ENV.matricoleAutorizzate;
+
+  // validazione
+
+  /*
+  //var matricole_autorizzate = /(?:[\s]|^)(M05831|M09999|M01111)(?=[\s]|$)/i;
+  var matricole_autorizzate = new RegExp('(?:[\s]|^)(' + ENV.matricoleAutorizzate + ')(?=[\s]|$)' , 'i');
+
+  if (!matricole_autorizzate.test(username)){
+    logConsole("authenticate : Validation : Matricola non autorizzata");
+    logError("Matricola non autorizzata: " + username);
+    logDataAnalysis({action : 'matricola_non_autorizzata', eventTime: new Date(), user: {name: username}, params: {} });
+    res.status(401).json({ success: false, message: 'Matricola non autorizzata' });
+    return;
+  }
+  */
+
+  //console.log(config);
+
+  var bindDn = "cn=" + username + "," + config.ldap.bindDn;
+  console.log(bindDn);
+
+  var ldap = new LdapAuth({
+    url: config.ldap.url,
+    bindDn: bindDn,
+    bindCredentials: password,
+    searchBase: config.ldap.searchBase,
+    searchFilter: config.ldap.searchFilter,
+    //log4js: require('log4js'),
+    cache: true
+  });
+
+  ldap.authenticate(username, password, function (err, user) {
+    console.log('LDAP ...', username, password);
+    if (err) {
+      console.log(err);
+      //logConsole(err);
+      //logError(err);
+      //logDataAnalysis({action: 'login_failed', eventTime: new Date(), user: {name : username}, params : {} });
+      res.status(500).json({
+                          success: false,
+                          data:err
+                      });
+      return;
+    }
+    //logAccess("Accesso effettuato : " + username);    
+    //logConsole('LDAP.. ')
+    //logConsole(user);
+    //logDataAnalysis({action: 'login_success', eventTime: new Date(), user: user,  params : {} });
+
+    
+     var userLogin = { 
+          'issuer' : 'LDAP',
+          'userid' : user.name,
+          'name' : user.name,
+          'displayName' : user.displayName,
+          'userEmail' : user.mail
+      };
+
+      console.log(userLogin);
+
+     var token = utilityModule.createJWT(userLogin);
+ 
+    //Session.create(res.data.id_utenti, res.data.nome_breve_utenti, res.data.token,  res.data.isadmin_utenti);
+    res.status(200).json({
+      success: true,
+      message: 'Enjoy your token!',
+      id_utenti : username,
+      nome_breve_utenti : username,
+      isadmin_utenti : 0,
+      data: userLogin,
+      token: token
+    });
+  });
+});
+
+
+
+
+// NTLM login
+
 router.post('/NTLMlogin', ntlm(ENV.ntlm), function(req, res) {
     console.log(req.ntlm);
     console.log('login ok');

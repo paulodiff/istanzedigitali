@@ -10,7 +10,7 @@
    
     <tr>
           <td><b>Nome<b></td>
-          <td>{{user.nome}} - {{user.cognome}}</td>
+          <td>{{user.nome}} - {{user.cognome}} - {{user.displayName}}</td>
     </tr>
     <tr>
           <td><b>Codice Fiscale<b></td>
@@ -24,15 +24,22 @@
           <td><b>Data Nascita<b></td>
           <td>{{user.dataNascita}}</td>
     </tr>    
-        <tr>
+    <tr>
+          <td><b>Email<b></td>
+          <td>{{user.userEmail}}</td>
+    </tr>    
+    <tr>
           <td><b>Altre informazioni<b></td>
-          <td>{{user.userEmail}} - Ws:{{user.userWorkstation}} - DomName:{{user.userDomainName}}- Dom:{{user.userDomainName}}</td>
+          <td> Ws:{{user.userWorkstation}} - DomName:{{user.userDomainName}}- Dom:{{user.userDomainName}}</td>
     </tr>    
 
   </tbody>
 </table>
 
 <h3>Azioni che è possibile effettuare:</h3>
+
+<!--
+
 <p><b>Presentare una nuova istanza cliccando il bottone seguente:</b></p>
 <a class="btn btn-block btn-success btn-raised" ui-sref="elencoIstanze" ui-sref-active="active">Presenta una nuova istanza</a>
 
@@ -104,6 +111,8 @@
 
 </div>
 </div>
+
+-->
 
 <p><b>Disconnetersi dall'account di autenticazione cliccando il bottone seguente</b></p>
 <a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">Disconnetti</a>

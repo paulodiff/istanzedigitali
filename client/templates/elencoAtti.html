@@ -3,12 +3,26 @@
     <div class="panel-heading">          
              <div class="row">
                 <div class="col-sm-11 col-md-10 col-xs-10">
+                    <div class="posta_header">
+                    Posta del 
                     
-                    <h2>Posta del {{today}} utente:  {{user.userid}} </h2> <small>{{todayYYYMMDD}}</small>
-                   
+                <input 
+                    type="date" 
+                    class="posta_data_header"
+                    name="model.dataStampaPrincipale" class="form-control" 
+                    ng-model="model.dataStampaPrincipale"
+                    ng-change="ricaricaDati()"
+                    ng-minlength="1"
+                    ng-maxlength="100">
+                  
+                  utente:  {{user.userid}}
+                    </div>
+            
 
-                </div>
+            <small>{{todayYYYMMDD}}</small>
+
               </div>
+             </div>
     </div>
     <div class="panel-body">
       <div class="row">
@@ -16,25 +30,32 @@
 
       
          <h3>Selezionare un centro di costo:</h3>
-         <ui-select ng-model="model.selectedCdc" theme="bootstrap">
-            <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.name}}</ui-select-match>
+         <ui-select ng-model="model.selectedCdc" theme="bootstrap" class="posta_data_header">
+            <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.cdc}}</ui-select-match>
             <ui-select-choices repeat="item in cdc">
-              <p ng-bind-html="item.name"></p>
+              <p ng-bind-html="item.cdc"></p>
             </ui-select-choices>
           </ui-select>
 
+          <hr>
         
           
           
-          <small>log:{{msg.lastCellEdited}}</small>
+          <!-- <small>log:{{msg.lastCellEdited}}</small> -->
 
 <div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid-cellnav ui-grid-exporter ui-grid="gridOptions"></div>
 
 <button type="button" id="addData" class="btn btn-success btn-raised btn-large" ng-click="addData()">Aggiungi una riga</button>
-<button type="button" id="removeFirstRow" class="btn btn-warning btn-raised btn-large" ng-click="removeRow()">Elimina le righe selezionate</button>
-<button type="button" id="reset" class="btn btn-success" ng-click="resetDebug()">Reset</button>
-<hr>
-<h3>Gestione Stampe</h3>
+<button type="button" id="removeFirstRow" class="btn btn-warning btn-raised btn-large" ng-click="removeRow()">Elimina la riga selezionata</button>
+<button type="button" id="DEBUG" class="btn btn-success" ng-click="execDebug()">Debug</button>
+
+<div class="well panel panel-warning">
+  
+  <div class="panel-heading"> 
+    <h3>Gestione Stampe</h3>
+  </div>
+
+  <div class="panel-body">
 
             <div class="form-group">
                 <label>Data Posta</label>
@@ -61,9 +82,9 @@
           <div class="form-group">
             <label>Centro di costo</label>
             <ui-select ng-model="model.cdcStampa" theme="bootstrap">
-            <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.name}}</ui-select-match>
+            <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.cdc}}</ui-select-match>
             <ui-select-choices repeat="item in cdcStampe">
-              <p ng-bind-html="item.name"></p>
+              <p ng-bind-html="item.cdc"></p>
             </ui-select-choices>
           </ui-select>
           </div>
@@ -80,10 +101,13 @@
             </div>
 
 <button type="button" id="reset" class="btn btn-success btn-raised btn-large btn-block" ng-click="exportPdf()">Stampa</button>
+  </div>
 
-<div class="panel panel-warning">
+</div>
+
+<div class="well panel panel-warning">
   <div class="panel-heading"> 
-    <h3>Estrazione file</h3>
+    <h3>Estrazione file (Economato)</h3>
   </div>
   <div class="panel-body">
 

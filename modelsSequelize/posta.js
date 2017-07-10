@@ -28,6 +28,14 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false
         },
+        userEmail : {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        userDisplayName : {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         /* uuid generato dall'applicazione*/
         posta_id : {
             type: DataTypes.STRING,

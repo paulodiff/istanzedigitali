@@ -140,7 +140,7 @@ module.exports = {
     
     createJWT: function(user, timeout1, timeout2) {
           // moment.js syntax 
-          timeout1 = timeout1 || 2;
+          timeout1 = timeout1 || 8;
           timeout2 = timeout2 || 'h';
           var payload = {
             sub: user,

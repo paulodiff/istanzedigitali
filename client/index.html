@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title>Presentazione Istanze Online - Comune di Rimini</title>
+    <title>Comune di Rimini</title>
     <link rel="shortcut icon" href="favicon.ico" />
 
     <link href="https://fonts.googleapis.com/css?family=Roboto|Montserrat:400,700|Open+Sans:400,300,600" rel="stylesheet">
@@ -154,10 +154,10 @@
     <!-- <script src="bower_components/particles.js/particles.min.js"></script> -->
 
     <!-- Google Recaptcha-->
-    <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit"  async defer></script>
+    <!-- <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit"  async defer></script> -->
 
     <!-- build:js vendor-combined2.js -->
-    <script type="text/javascript" src="bower_components/angular-recaptcha/release/angular-recaptcha.min.js"></script>
+    <!-- <script type="text/javascript" src="bower_components/angular-recaptcha/release/angular-recaptcha.min.js"></script> -->
 
     <!-- UI-Validate -->
     <script type="text/javascript" src="bower_components/angular-ui-validate/dist/validate.min.js"></script>
@@ -234,19 +234,21 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand visible-xs" href="#">Comune di Rimini</a>
+            <!-- <a class="navbar-brand visible-xs" href="#">Comune di Rimini</a> -->
+            <a class="navbar-brand visible-xs">Comune di Rimini</a>
         </div>
 
         <nav class="hidden-xs">
             <ul class="nav navbar-nav">
-                <a href="#/" role="button" class="navbar-brand">Comune di Rimini</a>
-                <li class="active"><a href="#/">Home</a></li>
+                <!-- <a href="#/" role="button" class="navbar-brand">Comune di Rimini</a> -->
+                <a role="button" class="navbar-brand">Comune di Rimini</a>
+                <!-- <li class="active"><a href="#/">Home</a></li> -->
                 <!-- <li><a href="#!/protocollo">Istanza1</a></li> -->
           </ul>
 
           <ul class="nav navbar-nav pull-right">
-                <li><a ui-sref="elencoIstanze">Elenco Istanze</a></li>
-                <li><a ui-sref="elencoAtti">Elenco Atti</a></li>
+                <!-- <li><a ui-sref="elencoIstanze">Elenco Istanze</a></li> -->
+                <li ng-if="isAuthenticated()"><a ui-sref="elencoAtti">Gestione Posta</a></li>
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="profile">Profilo</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>

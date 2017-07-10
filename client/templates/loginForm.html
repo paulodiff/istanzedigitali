@@ -8,41 +8,56 @@
 
       <div ng-if="!isAuthenticated()">
 
-        <h2 class="text-center">Accesso tramite SPID o FEDERA</h2>
-        <!--
-        <form method="post" ng-submit="login()" name="loginForm">
+        <h2 class="text-center">Gestione Posta</h2>
+        
+
+        <form ng-submit="loginLDAP()">
+        
           <div class="form-group has-feedback">
-            <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
+            <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Matricola" required autofocus>
             <span class="ion-at form-control-feedback"></span>
           </div>
+
           <div class="form-group has-feedback">
             <input class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Password" required>
             <span class="ion-key form-control-feedback"></span>
           </div>
-          <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-lg  btn-block btn-success">Log in</button>
-          <br/>
+
+          <button                
+                  ng-click="loginLDAP()"
+                  class="btn btn-lg  btn-raised btn-block btn-success">Entra</button>
+
+        </form>
+      
+          <!--
           <p class="text-center text-muted">
             <small>Don't have an account yet? <a href="/#/signup">Sign up</a></small>
           </p>
+          
           <div class="signup-or-separator">
             <h6 class="text">or</h6>
             <hr>
           </div>
-        </form>
-        -->
+          -->
+        
 
+        <!--
         <a class="btn btn-block btn-success btn-raised" href="{{fullApiEndpoint}}">
             <i class="ion-social-linkedin"></i>LOG IN con SPID o FEDERA
         </a>
+        -->
 
-
+<!--
 <h3>Istruzioni per l'accesso al servizio</h3>
 <p>Per accedere al servizio è necessario avere o un account FedERa o un account SPID</p>
 <a class="btn btn-block btn-raised btn-info btn-sm" href=" http://federazione.lepida.it/ ">GUIDA ACCOUNT FEDERA</a>
 <a class="btn btn-block btn-raised btn-info btn-sm" href="https://www.spid.gov.it/">GUIDA ACCOUNT SPID</a>
 
 <button class="btn btn-block btn-raised btn-success" ng-click="NTLMLogin()">NTLM - Windows</button>
+
 <button class="btn btn-block btn-raised btn-warning" ng-click="DEMOLogin()">DEMO</button>
+
+-->
 
 </div>
 

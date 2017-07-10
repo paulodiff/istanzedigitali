@@ -21,6 +21,24 @@ var databaseModule = require("../models/databaseModule.js");
 
 module.exports = function(){
 
+
+router.get('/cdc', utilityModule.ensureAuthenticated, function(req, res) {
+    log.log2console('PostaMgr get /cdc : ');
+
+    console.log(req.query);
+
+    databaseModule.getPostaCDC()
+    .then( function (result) {
+      // log.log2console(result);
+      return res.status(200).send(result);
+    })
+    .catch(function (err) {
+      log.log2console(err);
+      return res.status(200).send(err);
+    });
+});
+
+
 // GET recupera i dati inseriti della posta
 //  Necessita di alcuni filtri da sistemare
 // 
@@ -33,14 +51,11 @@ router.get('/posta', utilityModule.ensureAuthenticated, function(req, res) {
     var options = {
       userid: req.user.userid,
       dataStampaTxt : req.query.dataStampaTxt ? req.query.dataStampaTxt : '',
-      // matricolaStampa : req.query.matricolaStampa == 'TUTTI' ? '',
+      matricolaStampa : req.query.matricolaStampa ? req.query.matricolaStampa : '' ,
       tipo_spedizione : req.query.tipoPostaStampaTxt == 'P00 - TUTTI TIPI POSTA' ? '' : req.query.tipoPostaStampaTxt,
       dataStampaTxt:  req.query.dataStampaTxt,
       cdc: req.query.cdcStampaTxt == '0000' ? '' : req.query.cdcStampaTxt,
     };
-
-
-
 
 
     console.log(req.query);
@@ -126,6 +141,9 @@ router.post('/posta',
 
   // assegna il campo id utente da autenticazione
   req.body.userid = req.user.userid;
+  req.body.userEmail = req.user.userEmail;
+  req.body.userDisplayName = req.user.displayName;
+
 
   console.log('root post /login/callback');
 
