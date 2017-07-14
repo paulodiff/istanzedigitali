@@ -1,3 +1,6 @@
+// log test!!!
+require('longjohn');
+
 var express = require('express');
 var app = express();
 
@@ -24,11 +27,11 @@ app.use(helmet.noSniff());
 
 // CORS is a node.js package for providing a Connect/Express middleware 
 // that can be used to enable CORS with various options.
-var cors  = require('cors');
-app.use(cors({
-      origin: 'https://idp.ssocircle.com',
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
-  }));
+// var cors  = require('cors');
+//app.use(cors({
+//      origin: 'https://idp.ssocircle.com',
+//      methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
+//  }));
  
 // logger http to console.
 var morgan       = require('morgan');

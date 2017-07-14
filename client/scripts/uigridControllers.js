@@ -6,10 +6,10 @@
 angular.module('myApp.controllers')
 
 .controller('UiGridCtrl', 
-            ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', 'Session', '$log', '$timeout','ENV','$q', '$interval','UtilsService','ProfileService','PostaService','dialogs',
-     function($rootScope,  $scope,   $http,  $state,   $location,  uiGridConstants ,  $filter,   Session,   $log,   $timeout,   ENV,  $q,   $interval,  UtilsService,  ProfileService, PostaService,dialogs) {
+            ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', 'Session', '$log', '$timeout','ENV','$q', '$interval','UtilsService','ProfileService','PostaService','AlertService',
+     function($rootScope,  $scope,   $http,  $state,   $location,  uiGridConstants ,  $filter,   Session,   $log,   $timeout,   ENV,  $q,   $interval,  UtilsService,  ProfileService,  PostaService , AlertService) {
     
-  $log.info('UiGridCtrl ..... loading');                                 
+  $log.info('UiGridCtrl ... loading ... ');                                 
   
   
   $scope.totalPages = 0;
@@ -29,14 +29,12 @@ angular.module('myApp.controllers')
   $scope.cdc= [];
   $scope.cdcStampe = [];
 
-
-
   //console.log($scope.cdcStampe);
   //console.log($scope.cdc);
 
-
   $scope.model = {};
   $scope.model.selectedCdc = {};
+  $scope.model.mostraTutto = false;
   
   var  MyeditDropdownOptionsArray = [
             { id: 'P01 - POSTA ORDINARIA', name: 'P01 - POSTA ORDINARIA' },
@@ -91,17 +89,6 @@ angular.module('myApp.controllers')
         editDropdownValueLabel: 'name', 
         editDropdownOptionsArray: MyeditDropdownOptionsArray,
         enableFiltering:true
-        /*
-      filters: [
-        {
-          condition: uiGridConstants.filter.GREATER_THAN,
-          placeholder: 'greater than'
-        },
-        {
-          condition: uiGridConstants.filter.LESS_THAN,
-          placeholder: 'less than'
-        }    
-      ]*/
     },
       { name: 'Protocollo', field: 'protocollo', enableFiltering:true },
       { name: 'Destinatario',  width: '20%', field: 'destinatario_denominazione', enableFiltering:true },
@@ -132,6 +119,25 @@ angular.module('myApp.controllers')
 
   $scope.gridOptions.multiSelect = true;
  
+
+  // gridCDC
+  $scope.gridOptionsCDC = {
+    enableSorting: true,
+    enableFiltering: true,
+    enableGridMenu: true,
+    enableRowSelection: true,
+    enableSelectAll: true,
+    showGridFooter:true,
+    columnDefs: [
+      { name: 'id', visible: false, enableCellEdit: false },
+      { name: 'codice', visible: true, enableCellEdit: true, width: '20%'  },
+      { name: 'cdc', visible: true, enableCellEdit: true   },
+    ],
+    //,onRegisterApi: function( gridApi ) {
+    //  $scope.grid1Api = gridApi;
+    //}
+  };
+
 
   // inizializzazione dati controller
 
@@ -167,7 +173,6 @@ angular.module('myApp.controllers')
     })
     .then(function (res) {
         $log.info('#get Posta data');
-        // dialogs.notify('ok','Profile has been updated');
         $scope.gridOptions.data = res.data;
         $log.info(res);
 
@@ -175,9 +180,9 @@ angular.module('myApp.controllers')
     })
     .then(function (res) {
         $log.info('#get CDC data');
-        // dialogs.notify('ok','Profile has been updated');
         $log.info(res);
         $scope.cdc = res.data;
+        $scope.gridOptionsCDC.data = res.data;
         angular.copy($scope.cdc,$scope.cdcStampe);
 
         $scope.cdcStampe.unshift({
@@ -188,27 +193,10 @@ angular.module('myApp.controllers')
     })
     .catch(function(response) {
             $log.error(response);
-            // var dlg = dialogs.error(response.data.message, response.status);
-            // $state.go('login');
+            AlertService.displayError(response.data.message, response.status);
+            $state.go('login');
     });
 
-/*
-  
-  ProfileService.getProfile().then(function (res) {
-            $log.info('uigrid profileMgrCtrl : setting data');
-            $log.info(res.data);
-            $scope.user = res.data;
-
-            $scope.ricaricaDati();
-
-         })
-        .catch(function(response) {
-            $log.error(response);
-            // var dlg = dialogs.error(response.data.message, response.status);
-            $state.go('login');
-  				});
-
-*/
    
   // saveRow ------------------------------------------------------------------------------------
 
@@ -218,22 +206,19 @@ angular.module('myApp.controllers')
     var promise = $q.defer();
     $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
  
-    /* TODO Fare service per posta*/
-     var url2post = $rootScope.base_url +  '/postamgr/posta';
-    console.log(url2post);
 
-   $http.put(url2post, rowEntity)
-            .then(function (res) {
-                // dialogs.notify('ok','Profile has been updated');
-                $log.debug(res);
-                promise.resolve();
-                // $scope.user = res.data.user;
-         }).catch(function(response) {
-           promise.reject();
-           $log.debug(response);
-            // var dlg = dialogs.confirm(response.data.message, response.status);
-      
-        });
+    PostaService.updatePosta(rowEntity)
+    .then(function (res) {
+        $log.debug(res);
+        promise.resolve();
+    })
+    .catch(function(response) {
+        promise.reject();
+        $log.debug(response);
+        AlertService.displayError(response.data.message, response.status);
+    });
+
+
   };
  
   $scope.gridOptions.onRegisterApi = function(gridApi){
@@ -252,10 +237,23 @@ angular.module('myApp.controllers')
 
   };
 
-  // ricaricaDati ------------------------------------------------------------------------------------
+// changeUserType ---------------------------------------------------------------------------------
+
+$scope.changeUserView = function(){
+  console.log('changeUserView .....');
+  //$scope.model.mostraTutto = !$scope.model.mostraTutto;
+  console.log($scope.model.mostraTutto);
+  console.log($scope.user);
+
+  $scope.ricaricaDati();
+
+};
+
+
+// ricaricaDati ------------------------------------------------------------------------------------
 
   $scope.ricaricaDati = function() {
-    console.log('######################    Ricarica------------Data');
+    console.log('#ricaricaDati#');
 
     console.log($scope.model.dataStampaPrincipale);
 
@@ -264,8 +262,14 @@ angular.module('myApp.controllers')
   
     var options = {
       dataStampaTxt: $scope.todayYYYMMDD,
-      matricolaStampa: $scope.user.userid
+      //matricolaStampa: $scope.user.userid
     };
+
+    // se non è abilitato il mostraTutto filtro per matricola
+    if(!$scope.model.mostraTutto){
+      options.matricolaStampa = $scope.user.userid
+    }
+
 
     $scope.model.matricolaStampa = $scope.user.userid;
 
@@ -273,25 +277,24 @@ angular.module('myApp.controllers')
 
     PostaService.getPosta(options)
       .then(function (res) {
-        // dialogs.notify('ok','Profile has been updated');
         $scope.gridOptions.data = res.data;
         $log.info(res);
         // $scope.user = res.data.user;
       })
       .catch(function(response) {
         $log.error(response);
-        var dlg = dialogs.error(response.data.message, response.status);
+        AlertService.displayError(response.data.message, response.status);
       });
   };
 
-  // addData ------------------------------------------------------------------------------------
+// addData ------------------------------------------------------------------------------------
 
   $scope.addData = function() {
     console.log('Add------------Data');
     console.log($scope.model.selectedCdc);
 
     if (angular.equals($scope.model.selectedCdc,{})){
-      var dlg = dialogs.error('Manca il centro di costo di riferimento', 'Selezionare un Centro di Costo dalla lista');
+      AlertService.displayError('Manca il centro di costo di riferimento', 'Selezionare un Centro di Costo dalla lista');
       return;
     }
 
@@ -318,14 +321,14 @@ angular.module('myApp.controllers')
       })
       .catch(function(response) {
         $log.error(response);
-        var dlg = dialogs.error(response.data.title, response.data.message);
+        AlertService.displayError(response.data.title, response.data.message);
       });
 
 
 
   };
 
-  // removeRow ------------------------------------------------------------------------------------
+// removeRow ------------------------------------------------------------------------------------
 
   $scope.removeRow = function() {
     console.log('Remove Row....');
@@ -351,14 +354,13 @@ angular.module('myApp.controllers')
             console.log(url2post);
             $http.delete(url2post)
             .then(function (res) {
-                // dialogs.notify('ok','Profile has been updated');
                 $log.info(res);
                 $scope.gridOptions.data.splice(index,1);
                 // $scope.user = res.data.user;
             })
             .catch(function(response) {
               $log.error(response);
-              var dlg = dialogs.confirm(response.data.message, response.status);
+              AlertService.displayError(response.data.message, response.status);
 					  });
             
           };
@@ -372,12 +374,51 @@ angular.module('myApp.controllers')
     //}
   };
 
-// addData ------------------------------------------------------------------------------------
+//   addDataCDC
 
-/**
- * Esporta i dati in formato Pdf
- *
- */
+$scope.addDataCDC = function(){
+  console.log('addDataCDC');
+  console.log($scope.model);
+
+
+  if($scope.model.CodiceCDC && $scope.model.DescrizioneCDC) {
+
+    AlertService.displayConfirm('Confermi inserimento', 'Vuoi procedere?')
+    .then(function(btn){
+      console.log('YES');
+
+      var newItem = {
+        codice: $scope.model.CodiceCDC,
+        cdc: $scope.model.DescrizioneCDC
+      };
+
+      PostaService.addCDC(newItem)
+      .then(function (res) {
+        $scope.gridOptionsCDC.data.push(newItem);
+        $log.debug(res);
+        // $scope.user = res.data.user;
+      })
+      .catch(function(response) {
+        $log.error(response);
+        AlertService.displayError(response.data.title, response.data.message);
+      });
+
+
+    },function(btn){
+      console.log('NO');
+    });
+
+  } else {
+    AlertService.displayInfo('Valori non validi', 'CDC e Descrizione devono avere un valore');
+  }
+
+  // addPostaCDC
+
+  // ricarica PostaCDC (anche in alto)
+
+};
+
+// EXPORT PDF  ------------------------------------------------------------------------------------
 
   $scope.exportPdf = function(){
 
@@ -387,21 +428,16 @@ angular.module('myApp.controllers')
 
     // prendere i dati
 
-      
       $scope.model.cdcStampaTxt = $scope.model.cdcStampa.id;
       $scope.model.tipoPostaStampaTxt = $scope.model.tipoPostaStampa.id;
       $scope.model.dataStampaTxt = moment($scope.model.dataStampa).format('YYYYMMDD');
 
       //console.log(moment($scope.model.dataStampa).format('YYYYMMDD'));
 
-
-
       var contenutoStampa = [];
-
 
       PostaService.getPosta($scope.model)
       .then(function (res) {
-        // dialogs.notify('ok','Profile has been updated');
         $scope.gridOptions.data = res.data;
         $log.info(res);
 
@@ -499,11 +535,8 @@ angular.module('myApp.controllers')
       })
         .catch(function(response) {
         $log.error(response);
-        var dlg = dialogs.error(response.data.message, response.status);
+        AlertService.displayError(response.data.message, response.status);
       });
-    
-    
-  
     
 
     // dati per la stampa
@@ -530,11 +563,6 @@ angular.module('myApp.controllers')
               widths: [ 'auto', 'auto', 'auto', 'auto','auto' ],
               body: [
                 [ 'Prog.', 'Protocollo', 'Destinatario', 'Destinazione', 'Cdc' ],
-
-
-
-
-
                 [ '1', 'Value 2', 'Value 3', 'Value 4' ],
                 [ '2', 'Val 2', 'Val 3', 'Val 4' ]
               ]
@@ -572,22 +600,6 @@ angular.module('myApp.controllers')
 	]
       };
 
-
-  //pdfMake.createPdf(docDefinition).open();
-
-
-  // uiGridExporterService.pdfExport(grid, rowTypes, colTypes);
-
-
-   //$scope.gridApi.exporter.pdfExport( $scope.export_row_type, $scope.export_column_type );
-   /*
-    if ($scope.export_format == 'csv') {
-      var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
-      $scope.gridApi.exporter.csvExport( $scope.export_row_type, $scope.export_column_type, myElement );
-    } else if ($scope.export_format == 'pdf') {
-      
-    };
-    */
   }
 
   // EXPORT EXCEL --------------------------------------------------------------------------------------------------
@@ -612,7 +624,6 @@ angular.module('myApp.controllers')
 
     PostaService.getPosta(options)
     .then(function (res) {
-        // dialogs.notify('ok','Profile has been updated');
         $log.info(res);
 
         // selezione dei dati
@@ -640,16 +651,10 @@ angular.module('myApp.controllers')
 	      [  1 ,  2 ,  3 ,  4 ,  5 ]
       ];
       var ws = XLSX.utils.aoa_to_sheet(ws_data);
-
       wb.SheetNames.push(ws_name);
-
       wb.Sheets[ws_name] = ws;
-
       ws.A1 = 'SALUTI';
-
-
       var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
-
     */
 
     var workbook = { SheetNames:[], Sheets:{} };
@@ -705,7 +710,7 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
     })
     .catch(function(response) {
           $log.error(response);
-          var dlg = dialogs.error(response.data.title, response.data.message);
+          AlertService.displayError(response.data.title, response.data.message);
         });
   }
 
@@ -717,6 +722,17 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
     console.log('Exec Debug------------------------------------');
     console.log($scope.gridOptions.data);
 
+
+    // AlertService.displayError('titolo','testo');
+    AlertService.displayConfirm('titolo','testo')
+    .then(function(btn){
+      console.log('YES');
+    },function(btn){
+      console.log('NO');
+    });
+    
+
+    /*
    
     ProfileService.getProfile()
     .then(function (res) {
@@ -749,6 +765,8 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
             // var dlg = dialogs.error(response.data.message, response.status);
             // $state.go('login');
     });
+
+    */
 
 
     // data1 = angular.copy(origdata1);

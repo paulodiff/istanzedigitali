@@ -123,6 +123,14 @@ angular.module('myApp', [//'ionic',
         accessLevel: 'free1' 
     });
 
+    $stateProvider.state('gestionePosta', {
+        url: '/gestionePosta',
+        controller: 'UiGridCtrl',
+        templateUrl: 'templates/gestionePosta.html',
+        accessLogged: false,
+        accessLevel: 'free1' 
+    });
+
     /*
     
         $stateProvider.state('menu.home',{

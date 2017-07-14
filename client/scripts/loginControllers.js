@@ -436,6 +436,7 @@ angular.module('myApp.controllers')
 
  $scope.loginLDAP = function() {
       $log.info('LoginController : LoginLDAP');
+      usSpinnerService.spin('spinner-1');
 
       var credentials = {
           username: $scope.user.email,
@@ -446,10 +447,12 @@ angular.module('myApp.controllers')
  
       AuthService.loginLDAP(credentials)
         .then(function() {
+          usSpinnerService.stop('spinner-1');
           $log.debug('LoginController : NTLMLogin success');
           $rootScope.$broadcast(ENV.AUTH_EVENTS.loginSuccess);
         })
         .catch(function(error) {
+          usSpinnerService.stop('spinner-1');
           $log.debug('LoginController : NTLMLogin ERROR');
           $log.debug(error);
           if (error.data) {

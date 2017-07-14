@@ -20,7 +20,9 @@
 
     <link href="css/style.css" rel="stylesheet">
     <link href="bower_components/please-wait/build/please-wait.css" rel="stylesheet">
+
     <link href="bower_components/angular-ui-select/dist/select.css" rel="stylesheet">
+ 
 
     <!--  
     <link href="bower_components/angular-ui-grid/ui-grid.css" rel="stylesheet">
@@ -184,6 +186,7 @@
     <script src="scripts/authService.js"></script>
     <script src="scripts/profileService.js"></script>
     <script src="scripts/postaService.js"></script>
+    <script src="scripts/alertService.js"></script>
     <!-- <script src="scripts/accountService.js"></script> -->
     <!-- <script src="scripts/formlyService.js"></script> -->
     <script src="scripts/utilsService.js"></script>
@@ -249,6 +252,7 @@
           <ul class="nav navbar-nav pull-right">
                 <!-- <li><a ui-sref="elencoIstanze">Elenco Istanze</a></li> -->
                 <li ng-if="isAuthenticated()"><a ui-sref="elencoAtti">Gestione Posta</a></li>
+                <li ng-if="isAuthenticated()"><a ui-sref="gestionePosta">Admin Posta</a></li>
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="profile">Profilo</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
@@ -337,3 +341,4 @@
 
   </body>
 </html>
+<script> $.material.init(); </script>

@@ -46,7 +46,7 @@ angular.module('myApp.services')
          $log.info('PostaService: updatePosta');
          var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPosta; 
          $log.info('PostaService: api : ' + fullApiEndpoint );
-         return $http({ url: fullApiEndpoint,  method: "GET" });
+         return  $http.put(fullApiEndpoint, obj);
     },
 
     addPosta: function(obj) {
@@ -61,6 +61,13 @@ angular.module('myApp.services')
          var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPostaCDC; 
          $log.info('PostaService: api : ' + fullApiEndpoint );
          return $http({ url: fullApiEndpoint,  method: "GET" });
+    },
+
+     addCDC: function(obj) {
+         $log.info('PostaService: addCDC');
+         var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPostaCDC; 
+         $log.info('PostaService: api : ' + fullApiEndpoint );
+         return $http.post(fullApiEndpoint, obj);
     }
 
 /*

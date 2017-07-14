@@ -9,6 +9,9 @@ var request = require('request');
 var qs = require('querystring');
 var path = require('path');
 var ntlm = require('express-ntlm');
+var fs = require('fs');
+var LdapAuth = require('ldapauth-fork');
+
 
 
 module.exports = function(){
@@ -21,7 +24,7 @@ module.exports = function(){
 router.post('/LDAPlogin', function(req, res) {
 
 
-  var LdapAuth = require('ldapauth-fork');
+  
 
   console.log('/LDAPlogin');
   // logAccess('Start logger ...');  logError('Start logger ...'); logDataAnalysis('Start logger ...');
@@ -88,12 +91,29 @@ router.post('/LDAPlogin', function(req, res) {
           'userid' : user.name,
           'name' : user.name,
           'displayName' : user.displayName,
-          'userEmail' : user.mail
+          'userEmail' : user.mail,
+          'isAdmin': false
       };
+
+      // controllo matricole amministrative
+
+      console.log('Controllo matricola se amministrativa', user.name);
+      console.log(ENV.matricoleAmministrativeFilePath);
+  
+      var matricoleAmministrativeTxt = fs.readFileSync(ENV.matricoleAmministrativeFilePath).toString();
+      console.log(matricoleAmministrativeTxt);
+      // validazione
+  
+      var matricoleAmministrative = new RegExp('(?:[\s]|^)(' + matricoleAmministrativeTxt + ')(?=[\s]|$)' , 'i');
+      if (matricoleAmministrative.test(user.name)){
+        console.log("Check : " + user.name + "OK");
+        userLogin.isAdmin = true;
+      }
+
 
       console.log(userLogin);
 
-     var token = utilityModule.createJWT(userLogin);
+      var token = utilityModule.createJWT(userLogin);
  
     //Session.create(res.data.id_utenti, res.data.nome_breve_utenti, res.data.token,  res.data.isadmin_utenti);
     res.status(200).json({
