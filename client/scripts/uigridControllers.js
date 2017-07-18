@@ -336,7 +336,7 @@ $scope.changeUserView = function(){
 
 
     },function(btn){
-      console.log('NO');
+      console.log('Operazione annullata.');
     });
   
 

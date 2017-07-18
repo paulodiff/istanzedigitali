@@ -1,6 +1,5 @@
-<div class="modal-header">
-    <h4 class="modal-title">
-        <span class="glyphicon glyphicon-star"></span>Inserimento dati</h4>
+<div class="modal-header bg-primary">
+    <h4>Inserimento dati {{modal.tipoPostaStampa.id}}</h4>
 </div>
 
 <div class="modal-body">
@@ -88,7 +87,8 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" ng-if="modal.tipoPostaStampa.id=='AG1 - ATTI GIUDIZIARI'">
+                
                  <div class="col-md-4">
 
                     <div class="form-group input-group-lg">
@@ -125,6 +125,7 @@
 </div>
                     
 <div class="modal-footer">
+    <hr>
     <button type="button" class="btn btn-default btn-raised" ng-click="cancel()">Annulla</button>
-    <button type="button" class="btn btn-primary btn-raised" ng-click="save()" ng-disabled="(nameDialog.$dirty && nameDialog.$invalid) || nameDialog.$pristine">Salva</button>
+    <button type="button" class="btn btn-success btn-raised" ng-click="save()" ng-disabled="(nameDialog.$dirty && nameDialog.$invalid) || nameDialog.$pristine">Salva</button>
 </div>
