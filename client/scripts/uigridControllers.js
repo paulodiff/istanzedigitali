@@ -6,8 +6,8 @@
 angular.module('myApp.controllers')
 
 .controller('UiGridCtrl', 
-            ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', 'Session', '$log', '$timeout','ENV','$q', '$interval','UtilsService','ProfileService','PostaService','AlertService',
-     function($rootScope,  $scope,   $http,  $state,   $location,  uiGridConstants ,  $filter,   Session,   $log,   $timeout,   ENV,  $q,   $interval,  UtilsService,  ProfileService,  PostaService , AlertService) {
+            ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', 'Session', '$log', '$timeout','ENV','$q', '$interval','UtilsService','ProfileService','PostaService','AlertService','dialogs',
+     function($rootScope,  $scope,   $http,  $state,   $location,  uiGridConstants ,  $filter,   Session,   $log,   $timeout,   ENV,  $q,   $interval,  UtilsService,  ProfileService,  PostaService , AlertService, dialogs ) {
     
   $log.info('UiGridCtrl ... loading ... ');                                 
   
@@ -96,7 +96,9 @@ angular.module('myApp.controllers')
       { name: 'Via', field: 'destinatario_via', enableFiltering:true },
       { name: 'CAP',  width: '8%', field: 'destinatario_cap', enableFiltering:true },
       { name: 'Prov',  width: '5%', field: 'destinatario_provincia'},
-      { name: 'Note', field: 'note', enableSorting: true, enableCellEdit: true, visible: false }
+      { name: 'BarCode', field: 'BarCode', enableSorting: true, enableCellEdit: true, visible: true },
+      { name: 'N_Verbale', field: 'N_Verbale', enableSorting: true, enableCellEdit: true, visible: true },
+      { name: 'Note', field: 'note', enableSorting: true, enableCellEdit: true, visible: true }
     ],
     exporterPdfDefaultStyle: {fontSize: 9},
     exporterPdfTableStyle: {margin: [5, 5, 5, 5]},
@@ -131,7 +133,7 @@ angular.module('myApp.controllers')
     columnDefs: [
       { name: 'id', visible: false, enableCellEdit: false },
       { name: 'codice', visible: true, enableCellEdit: true, width: '20%'  },
-      { name: 'cdc', visible: true, enableCellEdit: true   },
+      { name: 'cdc', visible: true, enableCellEdit: true, width: '80%'   }
     ],
     //,onRegisterApi: function( gridApi ) {
     //  $scope.grid1Api = gridApi;
@@ -289,7 +291,73 @@ $scope.changeUserView = function(){
 
 // addData ------------------------------------------------------------------------------------
 
-  $scope.addData = function() {
+
+  $scope.addData = function(){
+    console.log('Add2------------Data');
+
+    if (angular.equals($scope.model.selectedCdc,{})){
+      AlertService.displayError('Manca il centro di costo di riferimento', 'Selezionare un Centro di Costo dalla lista');
+      return;
+    }
+
+    AlertService.createDialog('templates/postaDialogForm.html','customDialogCtrl',MyeditDropdownOptionsArray)
+    .then(function(dialogData){
+      console.log(dialogData);
+      console.log('Adding data ....');
+
+      var n = $scope.gridOptions.data.length + 1;
+
+      var newItem  = {
+        'posta_id': UtilsService.getTimestampPlusRandom(),
+        'cdc': $scope.model.selectedCdc.codice,
+        'protocollo':dialogData.Protocollo,
+        'tipo_spedizione':dialogData.tipoPostaStampa.id,
+        'destinatario_denominazione':dialogData.Destinatario,
+        'destinatario_citta':dialogData.Citta,
+        'destinatario_via':dialogData.Via,
+        'destinatario_cap':dialogData.Cap,
+        'destinatario_provincia':dialogData.Provincia,
+        'note':''
+      };
+
+      console.log(dialogData);
+      console.log('Saving ..... ');
+
+      PostaService.addPosta(newItem)
+      .then(function (res) {
+        $scope.gridOptions.data.push(newItem);
+        $log.debug(res);
+        // $scope.user = res.data.user;
+      })
+      .catch(function(response) {
+        $log.error(response);
+        AlertService.displayError(response.data.title, response.data.message);
+      });
+
+
+    },function(btn){
+      console.log('NO');
+    });
+  
+
+/*
+    var dlg = dialogs.create('templates/postaDialogForm.html','customDialogCtrl',MyeditDropdownOptionsArray);
+
+		dlg.result.then(function(name){
+		  console.log('2');
+		},function(){
+			if(angular.equals($scope.name,''))
+				//$scope.name = 'You did not enter in your name!';
+        console.log('1');
+      });
+
+*/
+
+	}; // end addData
+
+  
+
+  $scope.addData_OLD = function() {
     console.log('Add------------Data');
     console.log($scope.model.selectedCdc);
 
@@ -323,9 +391,6 @@ $scope.changeUserView = function(){
         $log.error(response);
         AlertService.displayError(response.data.title, response.data.message);
       });
-
-
-
   };
 
 // removeRow ------------------------------------------------------------------------------------
@@ -432,7 +497,8 @@ $scope.addDataCDC = function(){
       $scope.model.tipoPostaStampaTxt = $scope.model.tipoPostaStampa.id;
       $scope.model.dataStampaTxt = moment($scope.model.dataStampa).format('YYYYMMDD');
 
-      //console.log(moment($scope.model.dataStampa).format('YYYYMMDD'));
+      // console.log(moment($scope.model.dataStampa).format('YYYYMMDD'));
+      console.log($scope.model);
 
       var contenutoStampa = [];
 
@@ -491,8 +557,8 @@ $scope.addDataCDC = function(){
             }
           };
 
-            contenutoStampa.push( { text: 'Comune di Rimini', fontSize: 15 } );
-            contenutoStampa.push( { text: '  ', fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
+            contenutoStampa.push( { text: 'Comune di Rimini ' + $scope.model.matricolaStampa, fontSize: 15 } );
+            // contenutoStampa.push( { text: $scope.model.matricolaStampa, fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
             contenutoStampa.push( { text: 'Gestione Posta del ' + moment($scope.model.dataStampa).format('DD/MM/YYYY'), fontSize: 12 } );
             contenutoStampa.push( { text: 'Tipo Posta : ' + arraySelezioneTipi[numeroPagina-1], fontSize: 12 } );
             contenutoStampa.push(tabellaStampa);
@@ -520,7 +586,7 @@ $scope.addDataCDC = function(){
        header: function(currentPage, pageCount) {
           // you can apply any logic and return any valid pdfmake element
 
-          return { text: 'Elenco posta stampato il: ' + $scope.today, alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8] };
+          return { text: 'Elenco posta stampato il: ' + $scope.today, fontSize: 8, alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8] };
        },
        content: [contenutoStampa]
       };
@@ -776,10 +842,7 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
     // $scope.gridOpts.columnDefs = columnDefs1;
   }
 
-
-
   // $scope.gridOptions.data = sourceData;
-  
 
   /*
   $http.get(  $rootScope.base_url +  '/helpdesk/getList')
@@ -790,6 +853,41 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
     });                  
   */                             
 }])
+
+// ######################################################################## DialogCtrl
+
+.controller('customDialogCtrl',
+           // ['$scope','$modalInstance', 'data',
+    function($scope , $uibModalInstance ,  data  ){
+		  
+      console.log('customDialogCtrl ....');
+      
+      //-- Variables --//
+      $scope.elencoTipoPosta = data;
+
+      $scope.modal = {};
+      $scope.modal.tipoPostaStampa = data[0];
+      //-- Methods --//
+      
+      $scope.cancel = function(){
+        $uibModalInstance.dismiss('Canceled');
+      }; // end cancel
+      
+      $scope.save = function(){
+        console.log($scope.modal);
+        $uibModalInstance.close($scope.modal);
+      }; // end save
+      
+      /*
+      $scope.hitEnter = function(evt){
+        if(angular.equals(evt.keyCode,13) && !(angular.equals($scope.user.name,null) || angular.equals($scope.user.name,'')))
+          $scope.save();
+      };
+      */
+    
+}
+//]
+) // end controller(customDialogCtrl)
 
 
 .filter('mapTipoSpedizione', function() {

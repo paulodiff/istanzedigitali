@@ -22,8 +22,6 @@ module.exports = function(){
 
 
 router.post('/LDAPlogin', function(req, res) {
-
-
   
 
   console.log('/LDAPlogin');
@@ -37,20 +35,24 @@ router.post('/LDAPlogin', function(req, res) {
   var config = { ldap: ENV.ldap };
   var matricoleAutorizzate = ENV.matricoleAutorizzate;
 
-  // validazione
+  // DEMO Login
 
-  /*
-  //var matricole_autorizzate = /(?:[\s]|^)(M05831|M09999|M01111)(?=[\s]|$)/i;
-  var matricole_autorizzate = new RegExp('(?:[\s]|^)(' + ENV.matricoleAutorizzate + ')(?=[\s]|$)' , 'i');
-
-  if (!matricole_autorizzate.test(username)){
-    logConsole("authenticate : Validation : Matricola non autorizzata");
-    logError("Matricola non autorizzata: " + username);
-    logDataAnalysis({action : 'matricola_non_autorizzata', eventTime: new Date(), user: {name: username}, params: {} });
-    res.status(401).json({ success: false, message: 'Matricola non autorizzata' });
+  if (username == 'DEMO' && password == 'DEMO'){
+    console.log('DEMO LOGIN OK');
+    var userLogin = { 
+          'issuer' : 'LDAP',
+          'userid' : 'DEMO',
+          'name' : 'DEMO',
+          'displayName' : 'DEMO@DEMO',
+          'userEmail' : 'DEMO@DEMO',
+          'isAdmin': false
+    };
+    var token = utilityModule.createJWT(userLogin);
+    res.send({ token: utilityModule.createJWT(userLogin)});
     return;
   }
-  */
+
+
 
   //console.log(config);
 
@@ -129,6 +131,13 @@ router.post('/LDAPlogin', function(req, res) {
 });
 
 
+// LDAPlogout
+
+router.get('/LDAPlogout', function(req,res){
+	console.log('LDAPlogout');
+  res.status(200).json({});
+});
+
 
 
 // NTLM login
@@ -157,7 +166,7 @@ router.post('/NTLMlogin', ntlm(ENV.ntlm), function(req, res) {
 });
 
 
- // Log in with Email
+/* Log in with Email
 router.post('/DEMOlogin', function(req, res) {
   console.log('/DEMOlogin');
   var userLogin = { 
@@ -166,8 +175,8 @@ router.post('/DEMOlogin', function(req, res) {
       'userEmail' : 'demo@demo.com'
   };
   res.status(200).send({ token: utilityModule.createJWT(userLogin) });
-    
 });
+*/
 
 
 

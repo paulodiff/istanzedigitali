@@ -93,9 +93,9 @@ angular.module('myApp.services', [])
 
 
     logout: function (credentials) {
-        $log.debug('AuthService logout');
-        var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogout; 
-        $log.debug(fullApiEndpoint);
+        $log.info('AuthService logout');
+        var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogoutLDAP; 
+        $log.info(fullApiEndpoint);
         /*
         $log.debug('AuthService logout: delete JWT');
         delete $localStorage.JWT;

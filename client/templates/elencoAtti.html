@@ -14,10 +14,8 @@
                     ng-minlength="1"
                     ng-maxlength="100">
                     utente:  {{user.userid}}
-
                     
                     </div>
-
 
               </div>
              </div>
@@ -25,12 +23,11 @@
     <div class="panel-body">
       <div class="row">
         <div class="col-sm-12">
-          
-          <div class="togglebutton">
+          <div class="togglebutton" ng-show="user.isAdmin">
             <label>
               <input type="checkbox" 
                      ng-model="model.mostraTutto" 
-                     ng-change="changeUserView()"> Mostra tutto
+                     ng-change="changeUserView()"> Mostra tutto 
             </label>
           </div>    
          
@@ -42,8 +39,6 @@
             </ui-select-choices>
           </ui-select>
 
-          
-          
           <!-- <small>log:{{msg.lastCellEdited}}</small> -->
 
           <div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid-cellnav ui-grid-exporter ui-grid="gridOptions"></div>
@@ -154,9 +149,9 @@
 
 
 
+<div ng-if="user.isAdmin">
 
-
-<div class="panel panel-warning">
+<div class="panel panel-warning" >
   <div class="panel-heading"> 
     <h3 class="panel-title">Gestione CDC (Economato)</h3>
   </div>
@@ -194,6 +189,9 @@
 
 
   </div>
+  </div>
+
+
   </div>
 
 

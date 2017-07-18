@@ -157,7 +157,8 @@ getPostaList: function(opts){
 
         
         models.Posta.findAll({
-          where: parametriFiltro
+          where: parametriFiltro,
+          order: ['cdc','userid']
         /*
         models.Posta.findAll({
           where: {

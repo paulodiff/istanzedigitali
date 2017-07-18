@@ -252,7 +252,6 @@
           <ul class="nav navbar-nav pull-right">
                 <!-- <li><a ui-sref="elencoIstanze">Elenco Istanze</a></li> -->
                 <li ng-if="isAuthenticated()"><a ui-sref="elencoAtti">Gestione Posta</a></li>
-                <li ng-if="isAuthenticated()"><a ui-sref="gestionePosta">Admin Posta</a></li>
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="profile">Profilo</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
@@ -268,7 +267,7 @@
                 <!-- <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li> -->
                 <li class="active" ng-click="switchCollapsed()"><a href="#/">Home</a></li>
                 <!-- <li><a ui-sref="protocollo" ng-click="switchCollapsed()">Istanze1</a></li> -->
-                <li><a ui-sref="elencoIstanze" ng-click="switchCollapsed()">Elenco Istanze</a></li>
+                <!-- <li><a ui-sref="elencoIstanze" ng-click="switchCollapsed()">Elenco Istanze</a></li> -->
                 <li><a ui-sref="elencoAtti">Elenco Atti</a></li>
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ng-click="switchCollapsed()" ui-sref-active="active">Login1</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="profile" ng-click="switchCollapsed()">Profilo1</a></li>

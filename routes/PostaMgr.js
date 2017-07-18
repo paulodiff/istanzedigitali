@@ -43,7 +43,7 @@ router.get('/cdc', utilityModule.ensureAuthenticated, function(req, res) {
 //  Necessita di alcuni filtri da sistemare
 // 
 router.get('/posta', utilityModule.ensureAuthenticated, function(req, res) {
-    log.log2console('PostaMgr get /me : ');
+    log.log2console('PostaMgr get /posta : ');
     log.log2console(req.user);
 
     var key = req.user;  

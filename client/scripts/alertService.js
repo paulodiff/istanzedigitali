@@ -20,9 +20,13 @@ angular.module('myApp.services')
 
         displayConfirm: function(title, text){
             return dialogs.confirm(title, text).result;
+        },
+
+        createDialog: function(url, ctrlr, data, opts, ctrlAs){
+            return dialogs.create(url, ctrlr, data, opts, ctrlAs).result;
         }
 
-
+        
     }
 }
 ]
