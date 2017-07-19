@@ -1,16 +1,14 @@
 <div class="container">
   <div class="panel panel-default">
-    <div class="panel-heading"><h3>Dati autenticazione </h3> {{user.issuer}}</div>
+    <div class="panel-heading"><h3>Dati autenticazione </h3></div>
     <div class="panel-body">
-
-
 
 <table class="table table-responsive">
   <tbody>
    
     <tr>
           <td><b>Nome<b></td>
-          <td>{{user.nome}} - {{user.cognome}} - {{user.displayName}}</td>
+          <td>{{user.nome}}  {{user.cognome}}  {{user.displayName}}</td>
     </tr>
     <tr>
           <td><b>Codice Fiscale<b></td>
@@ -31,7 +29,11 @@
     <tr>
           <td><b>Admin<b></td>
           <td>{{user.isAdmin}}</td>
-    </tr>        
+    </tr> 
+    <tr>
+          <td><b>Issuer<b></td>
+          <td>{{user.issuer}}</td>
+    </tr> 
     <tr>
           <td><b>Altre informazioni<b></td>
           <td> Ws:{{user.userWorkstation}} - DomName:{{user.userDomainName}}- Dom:{{user.userDomainName}}</td>
@@ -40,7 +42,18 @@
   </tbody>
 </table>
 
-<h3>Azioni che è possibile effettuare:</h3>
+  </div>
+</div>
+
+
+<div class="panel panel-success">
+    <div class="panel-heading"><h3>Azioni che è possibile effettuare:</h3></div>
+    <div class="panel-body">
+      <p><b>Disconnetersi dall'account di autenticazione cliccando il bottone seguente</b></p>
+<a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">Disconnetti</a>
+
+  </div>
+</div>
 
 <!--
 
@@ -117,13 +130,6 @@
 </div>
 
 -->
-
-<p><b>Disconnetersi dall'account di autenticazione cliccando il bottone seguente</b></p>
-<a class="btn btn-block btn-warning btn-raised" ui-sref="logout" ui-sref-active="active">Disconnetti</a>
-
-
-    </div>
-  </div>
 
 
 <!--

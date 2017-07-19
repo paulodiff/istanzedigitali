@@ -61,6 +61,14 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false
         },
+        barCode: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        verbale: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         note: {
             type: DataTypes.STRING,
             allowNull: false

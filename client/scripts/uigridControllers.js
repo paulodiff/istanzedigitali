@@ -96,9 +96,9 @@ angular.module('myApp.controllers')
       { name: 'Via', field: 'destinatario_via', enableFiltering:true },
       { name: 'CAP',  width: '8%', field: 'destinatario_cap', enableFiltering:true },
       { name: 'Prov',  width: '5%', field: 'destinatario_provincia'},
-      { name: 'BarCode', field: 'BarCode', enableSorting: true, enableCellEdit: true, visible: true },
-      { name: 'N_Verbale', field: 'N_Verbale', enableSorting: true, enableCellEdit: true, visible: true },
-      { name: 'Note', field: 'note', enableSorting: true, enableCellEdit: true, visible: true }
+      { name: 'BarCode', field: 'barCode', enableSorting: true, enableCellEdit: true, visible: false },
+      { name: 'Verbale', field: 'verbale', enableSorting: true, enableCellEdit: true, visible: false },
+      { name: 'Note', field: 'note', enableSorting: true, enableCellEdit: true, visible: false }
     ],
     exporterPdfDefaultStyle: {fontSize: 9},
     exporterPdfTableStyle: {margin: [5, 5, 5, 5]},
@@ -317,7 +317,9 @@ $scope.changeUserView = function(){
         'destinatario_via':dialogData.Via,
         'destinatario_cap':dialogData.Cap,
         'destinatario_provincia':dialogData.Provincia,
-        'note':''
+        'barCode' : dialogData.BarCode ? dialogData.BarCode : '',
+        'verbale' : dialogData.Verbale ? dialogData.Verbale : '',
+        'note': dialogData.Note ? dialogData.Note : ''
       };
 
       console.log(dialogData);
@@ -488,22 +490,23 @@ $scope.addDataCDC = function(){
   $scope.exportPdf = function(){
 
     console.log('Export PDF ------------------------  ');
-    
     console.log($scope.model);
 
-    // prendere i dati
+    // get dati dal form
 
-      $scope.model.cdcStampaTxt = $scope.model.cdcStampa.id;
-      $scope.model.tipoPostaStampaTxt = $scope.model.tipoPostaStampa.id;
-      $scope.model.dataStampaTxt = moment($scope.model.dataStampa).format('YYYYMMDD');
+    $scope.model.cdcStampaTxt = $scope.model.cdcStampa.id;
+    $scope.model.tipoPostaStampaTxt = $scope.model.tipoPostaStampa.id;
+    $scope.model.dataStampaTxt = moment($scope.model.dataStampa).format('YYYYMMDD');
 
-      // console.log(moment($scope.model.dataStampa).format('YYYYMMDD'));
-      console.log($scope.model);
+    // console.log(moment($scope.model.dataStampa).format('YYYYMMDD'));
+    
+    var contenutoStampa = [];
 
-      var contenutoStampa = [];
+    console.log('getPosta ... recupero i dati');
 
-      PostaService.getPosta($scope.model)
+    PostaService.getPosta($scope.model)
       .then(function (res) {
+        console.log('dati assegnati alla griglia ....');
         $scope.gridOptions.data = res.data;
         $log.info(res);
 
@@ -512,39 +515,68 @@ $scope.addDataCDC = function(){
         var arraySelezioneTipi = [];
 
         elencoTipiSpedizione.forEach(function(obj){ 
-          console.log(obj.id);
+          console.log('controllo tipo posta : ' + obj.id);
           var elenco = $filter('filter')(res.data, {tipo_spedizione: obj.id }); 
-          console.log(elenco);
+          console.log(elenco.length);
           if(elenco.length > 0){
+            console.log('carico arraySelezione e Tipi');
             arraySelezione.push(elenco);
             arraySelezioneTipi.push(obj.id);
           }
         })
-
 
         console.log(arraySelezioneTipi);
 
         var maxPagina = arraySelezione.length;
         console.log(maxPagina);
 
-       var numeroPagina = 1;
-       arraySelezione.forEach(function(item){ 
+        // per ogni tipologia di atto preparo la tabella della stampa
+
+        var numeroPagina = 1;
+        arraySelezione.forEach(function(item){ 
          
           var elencoTabellare = [];
           var progressivo = 1;
+          var tableWidhts = [];
           
+          // se il tipo posta è AG1 - ATTI GIUDIZIARI allora la costruzione della tabella è diversa
 
-          elencoTabellare.push([ 'Prog.', 'Protocollo', 'Destinatario', 'Destinazione', 'Cdc' ]);
-          item.forEach(function(obj){
-             elencoTabellare.push([
-                  {text:progressivo++, fontSize:10}, 
-                  {text:obj.protocollo, fontSize:10},
-                  {text:obj.destinatario_denominazione, fontSize:10},
-                  {text:obj.destinatario_citta + ' ' + obj.destinatario_via + ' ' + obj.destinatario_cap + ' ' + obj.destinatario_provincia, fontSize:10},
-                  {text:obj.cdc, fontSize:10}
-            ]);
+          console.log(arraySelezioneTipi[numeroPagina-1]);
+
+          if ( arraySelezioneTipi[numeroPagina-1] == 'AG1 - ATTI GIUDIZIARI') {
+            elencoTabellare.push([ 'Prog.','Codice a Barre','Verbale','Note' , 'Protocollo', 'Destinatario', 'Destinazione', 'Cdc' ]);  
+            tableWidhts = [ 'auto', 'auto', 'auto', 'auto','auto','*','*','auto' ];
+
+            item.forEach(function(obj){
+              elencoTabellare.push([
+                    {text:progressivo++, fontSize:10}, 
+                    {text:obj.barCode, fontSize:10}, 
+                    {text:obj.verbale, fontSize:10}, 
+                    {text:obj.note, fontSize:10}, 
+                    {text:obj.protocollo, fontSize:10},
+                    {text:obj.destinatario_denominazione, fontSize:10},
+                    {text:obj.destinatario_via + ' - ' + obj.destinatario_cap + ' - ' +  obj.destinatario_citta + ' - ' + obj.destinatario_provincia, fontSize:10},
+                    {text:obj.cdc, fontSize:10}
+              ]);
+            });
+
+          } else {
+            elencoTabellare.push([ 'Prog.', 'Protocollo', 'Destinatario', 'Destinazione', 'Cdc' ]);
+            tableWidhts = [ 'auto', 'auto', '*', '*','auto' ];
+            
+            item.forEach(function(obj){
+              elencoTabellare.push([
+                    {text:progressivo++, fontSize:10}, 
+                    {text:obj.protocollo, fontSize:10},
+                    {text:obj.destinatario_denominazione, fontSize:10},
+                    {text:obj.destinatario_via + ' - ' + obj.destinatario_cap + ' - ' +  obj.destinatario_citta + ' - ' + obj.destinatario_provincia, fontSize:10},
+                    {text:obj.cdc, fontSize:10}
+              ]);
+            });
           }
-          );
+
+          
+          
 
           var tabellaStampa =
           {
@@ -552,7 +584,7 @@ $scope.addDataCDC = function(){
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: [ 'auto', 'auto', '*', '*','auto' ],
+              widths: tableWidhts,
               body: elencoTabellare
             }
           };
@@ -579,6 +611,7 @@ $scope.addDataCDC = function(){
 
        var docDefinition = { 
        pageSize: 'A4',
+       pageOrientation: 'landscape',
        pageMargins: [ 30, 30, 30, 30 ],
        footer: function(currentPage, pageCount) {  
          return    { text: 'pagina ' + currentPage.toString() + ' di ' + pageCount, alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8] }
@@ -745,7 +778,8 @@ arraySelezione.forEach(function(item){
       obj.tipo_spedizione,
       obj.userid,
       obj.userDisplayName,
-      obj.userEmail
+      obj.userEmail,
+      obj.id
       //obj.posta_id
     ]);
   });
@@ -770,7 +804,7 @@ function s2ab(s) {
 }
 
 /* the saveAs call downloads a file on the local machine */
-saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYYYMMDD + "-test.xls");
+saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYYYMMDD + "-estrazione-posta.xls");
 
 
     })
@@ -788,14 +822,29 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
     console.log('Exec Debug------------------------------------');
     console.log($scope.gridOptions.data);
 
+    var pos = $scope.gridOptions.columnDefs.map(function (e) { return e.field; }).indexOf('verbale');
+    if (pos) $scope.gridOptions.columnDefs[pos].visible = !$scope.gridOptions.columnDefs[pos].visible;
 
-    // AlertService.displayError('titolo','testo');
+    var pos = $scope.gridOptions.columnDefs.map(function (e) { return e.field; }).indexOf('barCode');
+    if (pos) $scope.gridOptions.columnDefs[pos].visible = !$scope.gridOptions.columnDefs[pos].visible;
+
+    var pos = $scope.gridOptions.columnDefs.map(function (e) { return e.field; }).indexOf('note');
+    if (pos) $scope.gridOptions.columnDefs[pos].visible = !$scope.gridOptions.columnDefs[pos].visible;
+    
+    
+    this.gridApi.grid.refresh();
+
+
+    /*
     AlertService.displayConfirm('titolo','testo')
     .then(function(btn){
       console.log('YES');
     },function(btn){
       console.log('NO');
     });
+    */
+
+
     
 
     /*

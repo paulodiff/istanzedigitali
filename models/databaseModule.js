@@ -196,6 +196,8 @@ savePosta: function(data){
             destinatario_via: data.destinatario_via,
             destinatario_cap: data.destinatario_cap,
             destinatario_provincia : data.destinatario_provincia,
+            barCode: data.barCode,
+            verbale: data.verbale,
             note : data.note
         })
         .save()
@@ -224,6 +226,8 @@ updatePosta: function(data){
                 destinatario_via: data.destinatario_via,
                 destinatario_provincia : data.destinatario_provincia,
                 destinatario_cap: data.destinatario_cap,
+                barCode: data.barCode,
+                verbale: data.verbale,
                 note : data.note})
                 .then(function(anotherTask) {resolve(anotherTask)})
                 .catch(function(error) {reject(error)});
