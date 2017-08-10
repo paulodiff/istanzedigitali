@@ -1,15 +1,17 @@
-<div class="container">
-  <div class="row">
-    <div class="center-form panel">
+<div class="bg_img_login"></div>
+<div class="container container-table">
+
+
+<div class="row">
+<div class="text-center col-md-6 col-md-offset-3" style="">
+
+    <div class="panel my_vert">
       <div class="panel-heading">Autenticazione</div>
       <div class="panel-body">
-
-
 
       <div ng-if="!isAuthenticated()">
 
         <h2 class="text-center">Gestione Posta</h2>
-        
 
         <form ng-submit="loginLDAP()">
         
@@ -23,30 +25,18 @@
             <span class="ion-key form-control-feedback"></span>
           </div>
           <p>Nota: usare matricola e password di accesso al pc</p>
-          <button                
-                  
-                  class="btn btn-lg  btn-raised btn-block btn-success">Entra</button>
-
+          <button class="btn btn-lg  btn-raised btn-block btn-success">Entra</button>
+      
         </form>
       
-          <!--
-          <p class="text-center text-muted">
-            <small>Don't have an account yet? <a href="/#/signup">Sign up</a></small>
-          </p>
-          
-          <div class="signup-or-separator">
-            <h6 class="text">or</h6>
-            <hr>
-          </div>
-          -->
         
-
-        <!--
+<!--
+      
         <a class="btn btn-block btn-success btn-raised" href="{{fullApiEndpoint}}">
             <i class="ion-social-linkedin"></i>LOG IN con SPID o FEDERA
         </a>
-        -->
-
+      
+-->
 <!--
 <h3>Istruzioni per l'accesso al servizio</h3>
 <p>Per accedere al servizio è necessario avere o un account FedERa o un account SPID</p>
@@ -59,21 +49,26 @@
 
 -->
 
-</div>
+        </div> <!-- authenticated -->
 
 
-     
-
-
-
-
-          <div ng-if="isAuthenticated()">
+        <div ng-if="isAuthenticated()">
               <button class="btn btn-block btn-warning btn-raised btn-block" ng-click="logout('')">
                 DISCONNETTI
               </button>
-          </div>
+        </div>
             
-            <hr>
+</div> <!-- table -->
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
 
 <!--
         
@@ -134,7 +129,4 @@
           <i class="ion-social-twitch"></i> Sign in with Twitch
         </button>
 -->        
-      </div>
-    </div>
-  </div>
-</div>
+

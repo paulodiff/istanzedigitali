@@ -56,6 +56,22 @@ angular.module('myApp.services')
          return $http.post(fullApiEndpoint, obj);
     },
 
+    deletePosta: function(objId) {
+         $log.info('PostaService: deletePosta');
+         // var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPosta; 
+         var fullApiEndpoint = $rootScope.base_url +  '/postamgr/posta/' + objId;
+         $log.info('PostaService: deletePosta : ' + fullApiEndpoint );
+         return $http.delete(fullApiEndpoint);
+    },
+
+    getPostaStats: function(obj) {
+         $log.info('PostaService: getPostaStats', obj);
+         // var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPosta; 
+         var fullApiEndpoint = $rootScope.base_url +  '/postamgr/stats';
+         $log.info('PostaService: getPostaStats : ' + fullApiEndpoint );
+         return $http({ url: fullApiEndpoint,  method: "GET", params: obj });
+    },
+
     getCDC: function() {
          $log.info('PostaService: getCDC');
          var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiPostaCDC; 

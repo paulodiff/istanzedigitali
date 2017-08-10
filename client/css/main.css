@@ -438,3 +438,50 @@ ul {
     color: #000;
     border: 1px solid #3b3b3b;
 }
+
+
+/* login transparent background*/
+
+
+.bg_img_login{
+  width: 100%; height: 100%; top: 0; left: 0;
+  background: url(../images/buste.jpg) no-repeat center top; position: fixed; z-index: -1;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  -webkit-filter: blur(3px);
+  -moz-filter: blur(3px);
+  -o-filter: blur(3px);
+  -ms-filter: blur(3px);
+  filter: blur(3px);
+
+}
+
+.vertical-center {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+  /* display: flex; */
+  align-items: center;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.container-table {
+    display: table;
+}
+.vertical-center-row {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.my_vert {
+  position: relative;
+  top: 30%;
+  transform: translateY(+30%);
+}

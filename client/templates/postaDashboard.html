@@ -1,0 +1,86 @@
+<div class="container">
+
+<div class="panel panel-warning">
+  
+  <div class="panel-heading"> 
+    <h3 class="panel-title">Gestione Statistiche</h3>
+  </div>
+
+  <div class="panel-body">
+
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-xs-6">
+
+
+            <div class="form-group">
+                <label >Da data Posta</label>
+                <input type="date" 
+                    name="model.daDataPosta" class="form-control" 
+                    ng-model="model.daDataPosta"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            </div>
+    </div>
+    <div class="col-sm-6 col-md-6 col-xs-6">
+
+        <div class="form-group">
+                <label >A data Posta</label>
+                <input type="date" 
+                    name="model.aDataPosta" class="form-control" 
+                    ng-model="model.aDataPosta"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            </div>
+      </div>
+    </div>
+
+  
+
+<button type="button" id="reset" class="btn btn-success btn-raised btn-large btn-block" ng-click="AggiornaDati()">Aggiorna</button>
+  </div>
+
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Conteggio posta giornaliera del periodo indicato</div>
+    <div class="panel-body">
+        <canvas id="item-chart" width='1200' height='500' class="chart chart-bar" chart-data="dataItemCount" chart-labels="labelsItemCount" chart-series="seriesItemCount" chart-click="onClickItemCount"></canvas> 
+    </div>
+</div>
+
+
+<table class="table table-striped table-hover ">
+  <thead>
+  <tr>
+    <th>Cdc</th>
+    <th>Conteggio</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="item in tableCdc">
+    <td>{{item.cdc}}</td>
+    <td>{{item.cdc_count}}</td>
+  </tr>
+  </tbody>
+</table>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">Conteggio centri di costo del periodo indicato</div>
+    <div class="panel-body">
+        <canvas id="cdc-chart" width='1200' height='500' class="chart chart-bar" chart-data="dataCdcCount" chart-labels="labelsCdcCount" chart-series="seriesCdcCount" chart-click="onClickCdcCount"></canvas> 
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+</div>

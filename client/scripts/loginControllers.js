@@ -12,18 +12,26 @@ angular.module('myApp.controllers')
             function($scope,    dialogs,   $rootScope,   AuthService,   Session,   $state, ENV,   $log,   $location,  $localStorage,   $http) {
 
                 
-        $log.debug("AppCtrl ... start");
-        $log.debug(ENV);
+        $log.info("AppCtrl ... start");
+        $log.info(ENV);
         $scope.currentUser = null;
         $scope.userRoles = ENV.USER_ROLES;
         $scope.isAuthorized = AuthService.isAuthorized;
         $scope.isCollapsed = false;
     
+        // set header AppVersione
+        $log.info("AppCtrl ... set header AppVersion");
+        $http.defaults.headers.common.AppVersion = ENV.appVersion;
+
+
         $scope.go = function ( path ) {
-            $log.debug("AppCtrl ... go");
+            $log.info("AppCtrl ... go");
             $state.go(path);
         };
 
+
+        $scope.browserName = bowser.name;
+        $scope.browserVersion = bowser.version;
                        
           
         // CONFIGURAZIONI -----------------------------------------------------------------        
@@ -43,22 +51,22 @@ angular.module('myApp.controllers')
 
         // autenticazione
         // Controlla se un reload ricarica il JWT su http header
-        $log.debug('AppCtrl check JWT exist!');
+        $log.info('AppCtrl check JWT exist!');
         if ($localStorage.JWT){
-            $log.debug('AppCtrl reload JWT http header');
+            $log.info('AppCtrl reload JWT http header');
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.JWT;
         } 
 
         
 
         //$rootScope.base_url = ENV.apiEndpoint;
-        //$log.debug('Restangular set base Url '+ ENV.apiEndpoint);
-        $log.debug('rootScope Url '+ $rootScope.base_url);
+        //$log.info('Restangular set base Url '+ ENV.apiEndpoint);
+        $log.info('rootScope Url '+ $rootScope.base_url);
 
 
 
         //$rootScope.base_url = ENV.apiEndpoint;
-        //$log.debug('Restangular set base Url:'+ ENV.apiEndpoint);
+        //$log.info('Restangular set base Url:'+ ENV.apiEndpoint);
         // Restangular.setBaseUrl($rootScope.base_url);
 
 
@@ -66,7 +74,7 @@ angular.module('myApp.controllers')
 
             if(response.status === 0) {
                     $ionicLoading.hide();
-                    $log.debug('setErrorInterceptor 0');
+                    $log.info('setErrorInterceptor 0');
                     $rootScope.$broadcast(ENV.AUTH_EVENTS.serverError);
                     return false; // error handled
             }
@@ -74,28 +82,28 @@ angular.module('myApp.controllers')
 
             if(response.status === 403) {
                     $ionicLoading.hide();
-                    $log.debug('setErrorInterceptor 403');
+                    $log.info('setErrorInterceptor 403');
                     $rootScope.$broadcast(ENV.AUTH_EVENTS.sessionTimeout);
                     return false; // error handled
             }
 
             if(response.status === 500) {
                     $ionicLoading.hide();
-                    $log.debug('setErrorInterceptor 500');
+                    $log.info('setErrorInterceptor 500');
                     $rootScope.$broadcast(ENV.AUTH_EVENTS.serverError);
                     return false; // error handled
             }
 
             if(response.status === 502) {
                     $ionicLoading.hide();
-                    $log.debug('setErrorInterceptor 502');
+                    $log.info('setErrorInterceptor 502');
                     $rootScope.$broadcast(ENV.AUTH_EVENTS.serverError);
                     return false; // error handled
             }
 
             if(response.status === 504) {
                     $ionicLoading.hide();
-                    $log.debug('setErrorInterceptor 504');
+                    $log.info('setErrorInterceptor 504');
                     $rootScope.$broadcast(ENV.AUTH_EVENTS.serverError);
                     return false; // error handled
             }
@@ -103,7 +111,7 @@ angular.module('myApp.controllers')
 
             if(response.status === 404) {
                     $ionicLoading.hide();
-                    $log.debug('setErrorInterceptor 404');
+                    $log.info('setErrorInterceptor 404');
                     $rootScope.$broadcast(ENV.AUTH_EVENTS.serverError);
                     return false; // error handled
             }
@@ -116,7 +124,7 @@ angular.module('myApp.controllers')
 
         /*
         if (ENV.name === 'development') {        
-            $log.debug("AppCtrl ... development ... ");
+            $log.info("AppCtrl ... development ... ");
             Session.create(1, 'PROVINCIA', ENV.token,  true);
             $scope.currentUser = ENV.userName;
             $scope.isAuthorized = ENV.isAuthorized;
@@ -125,24 +133,24 @@ angular.module('myApp.controllers')
         */
   
                 
-        //$log.debug('WEB SERVICE WEB URL  : ' + $rootScope.base_url);
+        //$log.info('WEB SERVICE WEB URL  : ' + $rootScope.base_url);
                 
         
         //AUTH_EVENTS.loginFailed
     
         $rootScope.$on(ENV.AUTH_EVENTS.loginSuccess , function (event, next) {
-            $log.debug('AppCtrl: AUTH_EVENTS.loginSuccess ... ');
-            $log.debug(event);
-            $log.debug(next);
+            $log.info('AppCtrl: AUTH_EVENTS.loginSuccess ... ');
+            $log.info(event);
+            $log.info(next);
 
             $scope.currentUser = Session.nome_breve_utenti;
             //Restangular.setDefaultHeaders({'rr-access-token': Session.token});
 
             //storePassword
-            // $log.debug('set storage login to:',Session.token);
+            // $log.info('set storage login to:',Session.token);
             // $localStorage.Session = Session;
             
-            $log.debug(AuthService.isAuthorized());
+            $log.info(AuthService.isAuthorized());
 
             //$state.go('menu.list');
             $state.go(ENV.routeAfterLogon);
@@ -150,15 +158,15 @@ angular.module('myApp.controllers')
                 
                 
         $rootScope.$on(ENV.AUTH_EVENTS.logoutSuccess , function (event, next) {
-            $log.debug('AppCtrl: AUTH_EVENTS.logoutSuccess ... ');
-            $log.debug(event);
-            $log.debug(next);
-            $log.debug('AppCtrl: destroy session & token ... ');
+            $log.info('AppCtrl: AUTH_EVENTS.logoutSuccess ... ');
+            $log.info(event);
+            $log.info(next);
+            $log.info('AppCtrl: destroy session & token ... ');
             $scope.currentUser = '';
             Session.token = '123';
             //Restangular.setDefaultHeaders({token: ''});
 
-            //$log.debug('Destroy local session....');
+            //$log.info('Destroy local session....');
             //delete $localStorage.Session;
 
             $state.go('login');
@@ -166,9 +174,9 @@ angular.module('myApp.controllers')
                 
    
         $rootScope.$on(ENV.AUTH_EVENTS.loginFailed, function (event, next) {
-            $log.debug('AppCtrl: AUTH_EVENTS.loginFailed ... ');
-            $log.debug(event);
-            $log.debug(next);
+            $log.info('AppCtrl: AUTH_EVENTS.loginFailed ... ');
+            $log.info(event);
+            $log.info(next);
 
             dialogs.error('Errore di autenticazione','Immettere nome utente e password');
 /*
@@ -199,7 +207,7 @@ angular.module('myApp.controllers')
                     template: 'Immettere nome utente e password corrette'
                 });
                alertPopup.then(function(res) {
-                    $log.debug('AppCtrl : Login errato OK');
+                    $log.info('AppCtrl : Login errato OK');
                     $state.go('menu.home');
                });
 */
@@ -208,9 +216,9 @@ angular.module('myApp.controllers')
         }); 
 
          $rootScope.$on(ENV.AUTH_EVENTS.notAuthenticated, function (event, next) {
-            $log.debug('AppCtrl : AUTH_EVENTS.notAuthenticated ... ');
-            $log.debug(event);
-            $log.debug(next);
+            $log.info('AppCtrl : AUTH_EVENTS.notAuthenticated ... ');
+            $log.info(event);
+            $log.info(next);
             //$scope.currentUser = Session.nome_breve_utenti;
             
             dialogs.error('Utente non autenticato','Provvedere ad autenticarsi mediante uno dei metodi previsti.');
@@ -220,9 +228,9 @@ angular.module('myApp.controllers')
     
 
         $rootScope.$on(ENV.AUTH_EVENTS.sessionTimeout, function (event, next) {
-            $log.debug('AppCtrl: AUTH_EVENTS.sessionTimeout ... ');
-            $log.debug(event);
-            $log.debug(next);
+            $log.info('AppCtrl: AUTH_EVENTS.sessionTimeout ... ');
+            $log.info(event);
+            $log.info(next);
             $scope.currentUser = Session.nome_breve_utenti;
             
              var alertPopup = $ionicPopup.alert({
@@ -230,46 +238,39 @@ angular.module('myApp.controllers')
                 template: 'Immettere nome utente e password'
                 });
             alertPopup.then(function(res) {
-                $log.debug('AppCtrl: alertPopup : OK');
+                $log.info('AppCtrl: alertPopup : OK');
                 $state.go('home');
            });
         }); 
         
 
-        $rootScope.$on(ENV.AUTH_EVENTS.serverError, function (event, next) {
-            $log.debug('AppCtrl : AUTH_EVENTS.serverError ... ');
-            $log.debug(event);
-            $log.debug(next);
-            $scope.currentUser = Session.nome_breve_utenti;
+        $rootScope.$on(ENV.AUTH_EVENTS.oldAppVersion, function (event, next) {
+            $log.info('AppCtrl : AUTH_EVENTS.oldAppVersion ... ');
+            $log.info(event);
+            $log.info(next);
             
-             var alertPopup = $ionicPopup.alert({
-                title: 'ERRORE di SISTEMA!',
-                template: 'Contattare il gestore del sistema!'
-                });
-            alertPopup.then(function(res) {
-             $log.debug('AppCtrl: alertPopup : OK');
-                $state.go('menu.home');
-           });
+            dialogs.error('Utente non oldAppVersion','oldAppVersion.');
+            $state.go('login');
 
         }); 
 
         $rootScope.$on('$stateChangeStart', function (event, next) {
 
-            $log.debug('AppCtrl on $stateChangeStart: ' + next.accessLogged);
-            // $log.debug(next);
-            // $log.debug(event);
+            $log.info('AppCtrl on $stateChangeStart: ' + next.accessLogged);
+            // $log.info(next);
+            // $log.info(event);
                         
             if(next.accessLogged){
-                $log.debug('AppCtrl on $stateChangeStart: check if isAuthenticated : ' + AuthService.isAuthenticated());
+                $log.info('AppCtrl on $stateChangeStart: check if isAuthenticated : ' + AuthService.isAuthenticated());
                 if(!AuthService.isAuthenticated()){
 
                     event.preventDefault();    
-                    $log.debug('AppCtrl on $stateChangeStart: notAuthenticated broadcast event');
+                    $log.info('AppCtrl on $stateChangeStart: notAuthenticated broadcast event');
                     $rootScope.$broadcast(ENV.AUTH_EVENTS.notAuthenticated);
 
                 }
             } else {
-                $log.debug('AppCtrl on $stateChangeStart: PATH free');
+                $log.info('AppCtrl on $stateChangeStart: PATH free');
             }
             
             /*
@@ -296,8 +297,8 @@ angular.module('myApp.controllers')
                     [ '$scope', 'usSpinnerService', '$localStorage', '$rootScope', 'ENV', 'AuthService', 'UtilsService', '$state', '$log',
             function ( $scope,   usSpinnerService,   $localStorage,   $rootScope,   ENV,   AuthService,   UtilService,    $state,   $log) {
                 
-    $log.debug('LoginController...');
-    $log.debug('LoginController...currentUser:' + $scope.currentUser );
+    $log.info('LoginController...');
+    $log.info('LoginController...currentUser:' + $scope.currentUser );
     
     /*
     document.getElementsByTagName('ion-nav-bar')[0].style.display = 'none';
@@ -331,17 +332,17 @@ angular.module('myApp.controllers')
      
      // loading exiting credentials..
      if ($localStorage.password){
-        $log.debug('recupero password da cache');
+        $log.info('recupero password da cache');
         $scope.credentials.password = $localStorage.password;
      }
      */
 
   
 
-  $log.debug('LoginController...fullApiEndpoint');
+  $log.info('LoginController...fullApiEndpoint');
   var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogin + '/' + AuthService.getRelayStateToken();
 
-  $log.debug(fullApiEndpoint);
+  $log.info(fullApiEndpoint);
 
   $scope.fullApiEndpoint = fullApiEndpoint;
     
@@ -351,25 +352,25 @@ angular.module('myApp.controllers')
   //$scope.navTitle = '<img style="height:100px; width:auto;" src="img/logo2.jpg" />';
              
     $scope.goto_help = function($id) {
-        $log.debug('HelpController : Route to login');
+        $log.info('HelpController : Route to login');
         $state.go('menu.help');
     };     
                 
     $scope.fullscreenOn = function(){
-        $log.debug('AboutController : fullscreenOn');
+        $log.info('AboutController : fullscreenOn');
         //console.log('AboutController : fullscreen enabled? : ' + screenfull.enabled);
         //screenfull.request();
     };
 
     $scope.fullscreenOff = function(){
-        $log.debug('AboutController : fullscreenOff');
+        $log.info('AboutController : fullscreenOff');
         //console.log('AboutController : fullscreen enabled? : ' + screenfull.enabled);
         //screenfull.exit();
     };            
                         
        
     $scope.clearPasswordCache = function(){
-        $log.debug('login:clearPasswordCache');
+        $log.info('login:clearPasswordCache');
         $localStorage.password = '';
         $scope.credentials.password = '';
     };
@@ -377,12 +378,12 @@ angular.module('myApp.controllers')
 
   $scope.login = function () {
 
-      $log.debug('LoginController : login');
+      $log.info('LoginController : login');
 
       usSpinnerService.spin('spinner-1');
       //$ionicLoading.show({template: 'Attendere...' });
       
-      $log.debug(credentials);
+      $log.info(credentials);
 
       var credentials = {
           username: $scope.user.email,
@@ -390,15 +391,15 @@ angular.module('myApp.controllers')
       };
 
     AuthService.login(credentials).then(function (res) {
-        $log.debug('LoginController : OK');
-        $log.debug(res);
+        $log.info('LoginController : OK');
+        $log.info(res);
 
         usSpinnerService.stop('spinner-1');
         //$ionicLoading.hide();
         $rootScope.$broadcast(ENV.AUTH_EVENTS.loginSuccess);
     }, function (error) {
-      $log.debug('LoginController : login : ERROR'); 
-      $log.debug(error); 
+      $log.info('LoginController : login : ERROR'); 
+      $log.info(error); 
       //$ionicLoading.hide();
       usSpinnerService.stop('spinner-1');
 
@@ -413,25 +414,25 @@ angular.module('myApp.controllers')
 
 
   $scope.logout = function (credentials) {
-      $log.debug('LoginController : logout ');
-      $log.debug(credentials);
+      $log.info('LoginController : logout ');
+      $log.info(credentials);
       
     AuthService.logout(credentials).then(function () {
-        $log.debug('LoginController : logout broadcast... ');
+        $log.info('LoginController : logout broadcast... ');
         $rootScope.$broadcast(ENV.AUTH_EVENTS.logoutSuccess);
        
     }, function (err) {
-        $log.debug('LoginController : logout err');
-        $log.debug(err);
+        $log.info('LoginController : logout err');
+        $log.info(err);
         $rootScope.$broadcast(ENV.AUTH_EVENTS.logoutSuccess);
     });
   };
 
-  
+
 
     
   $scope.isAuthenticated = function(){
-      $log.debug('LoginController : isAuthenticated : ' + AuthService.isAuthenticated());
+      $log.info('LoginController : isAuthenticated : ' + AuthService.isAuthenticated());
       return  AuthService.isAuthenticated();  
   }
 
@@ -450,13 +451,13 @@ angular.module('myApp.controllers')
       AuthService.loginLDAP(credentials)
         .then(function() {
           usSpinnerService.stop('spinner-1');
-          $log.debug('LoginController : NTLMLogin success');
+          $log.info('LoginController : NTLMLogin success');
           $rootScope.$broadcast(ENV.AUTH_EVENTS.loginSuccess);
         })
         .catch(function(error) {
           usSpinnerService.stop('spinner-1');
-          $log.debug('LoginController : NTLMLogin ERROR');
-          $log.debug(error);
+          $log.info('LoginController : NTLMLogin ERROR');
+          $log.info(error);
           if (error.data) {
             $rootScope.$broadcast(ENV.AUTH_EVENTS.loginFailed);
           } else
@@ -467,16 +468,16 @@ angular.module('myApp.controllers')
 
 
  $scope.NTLMLogin = function(credentials) {
-      $log.debug('LoginController : NTLMLogin');
+      $log.info('LoginController : NTLMLogin');
  
       AuthService.loginNTLM()
         .then(function() {
-          $log.debug('LoginController : NTLMLogin success');
+          $log.info('LoginController : NTLMLogin success');
           $rootScope.$broadcast(ENV.AUTH_EVENTS.loginSuccess);
         })
         .catch(function(error) {
-          $log.debug('LoginController : NTLMLogin ERROR');
-          $log.debug(error);
+          $log.info('LoginController : NTLMLogin ERROR');
+          $log.info(error);
           if (error.data) {
             $rootScope.$broadcast(ENV.AUTH_EVENTS.loginFailed);
           } else
@@ -485,16 +486,16 @@ angular.module('myApp.controllers')
     };
 
  $scope.DEMOLogin = function() {
-      $log.debug('LoginController : DEMOLogin');
+      $log.info('LoginController : DEMOLogin');
  
       AuthService.loginDEMO()
         .then(function() {
-          $log.debug('LoginController : DEMOLogin success');
+          $log.info('LoginController : DEMOLogin success');
           $rootScope.$broadcast(ENV.AUTH_EVENTS.loginSuccess);
         })
         .catch(function(error) {
-          $log.debug('LoginController : DEMOLogin ERROR');
-          $log.debug(error);
+          $log.info('LoginController : DEMOLogin ERROR');
+          $log.info(error);
           if (error.data) {
             $rootScope.$broadcast(ENV.AUTH_EVENTS.loginFailed);
           } else
@@ -508,8 +509,8 @@ angular.module('myApp.controllers')
 .controller('AboutController', 
             [ '$scope', '$rootScope', 'ENV', 'AuthService','Session','$location','$http', '$log',
             function ($scope, $rootScope, ENV, AuthService, Session, $location, $http, $log ) {
-    $log.debug('AboutController...');
-    $log.debug(Session);
+    $log.info('AboutController...');
+    $log.info(Session);
     $scope.navTitle = Session.nome_breve_utenti;
     $scope.base_url = $rootScope.base_url;
                 
@@ -525,49 +526,49 @@ angular.module('myApp.controllers')
                
                 
     $scope.fullscreenOn = function(){
-        $log.debug('AboutController : fullscreenOn');
+        $log.info('AboutController : fullscreenOn');
         //console.log('AboutController : fullscreen enabled? : ' + screenfull.enabled);
         //screenfull.request();
     };
 
     $scope.fullscreenOff = function(){
-        $log.debug('AboutController : fullscreenOff');
+        $log.info('AboutController : fullscreenOff');
         //console.log('AboutController : fullscreen enabled? : ' + screenfull.enabled);
         //screenfull.exit();
     };
                 
     $scope.test_connection = function(){
-        $log.debug('AboutController : test_connection');
+        $log.info('AboutController : test_connection');
         $ionicLoading.show({   template: 'Loading...'   }); 
       
         $http({method: 'GET', url: $rootScope.base_url + '/mv/testconnection'}).
         success(function(data, status, headers, config) {
-                $log.debug($rootScope.base_url + '/mv/testconnection');
-                $log.debug(data);
-                $log.debug(status);
-                $log.debug(headers);
-                $log.debug(config);
+                $log.info($rootScope.base_url + '/mv/testconnection');
+                $log.info(data);
+                $log.info(status);
+                $log.info(headers);
+                $log.info(config);
             
                 var alertPopup = $ionicPopup.alert({
                 title: 'OK!',
                 template: 'Test di connessione ok'
                 });
                     alertPopup.then(function(res) {
-                    $log.debug('Quit popup');
+                    $log.info('Quit popup');
                 });
         }).
         error(function(data, status, headers, config) {
-                $log.debug($rootScope.base_url + '/mv/testconnection');
-                $log.debug(data);
-                $log.debug(status);
-                $log.debug(headers);
-                $log.debug(config);
+                $log.info($rootScope.base_url + '/mv/testconnection');
+                $log.info(data);
+                $log.info(status);
+                $log.info(headers);
+                $log.info(config);
                 var alertPopup = $ionicPopup.alert({
                 title: 'Errori!',
                 template: 'Test di connessione FALLITO'
                 });
                     alertPopup.then(function(res) {
-                    $log.debug('Quit popup');
+                    $log.info('Quit popup');
                 });
         });
         
@@ -584,14 +585,14 @@ angular.module('myApp.controllers')
 .controller('HelpController', 
                    [ '$scope', '$rootScope', 'ENV', 'AuthService','Session','$location','$ionicLoading','$http', '$ionicPopup','$ionicSlideBoxDelegate','$state','$log',
             function ($scope,   $rootScope,   ENV,   AuthService,  Session,  $location,  $ionicLoading,  $http,   $ionicPopup,  $ionicSlideBoxDelegate,  $state,$log ) {
-    $log.debug('HelpController...');
+    $log.info('HelpController...');
     
     //Restangular.setBaseUrl($rootScope.base_url); 
 
     $scope.UrlApi = $rootScope.base_url
         // action new relazione
     $scope.goto_login = function($id) {
-        $log.debug('HelpController : Route to login');
+        $log.info('HelpController : Route to login');
         $state.go('menu.login');
     };            
     
@@ -623,6 +624,11 @@ angular.module('myApp.controllers')
       return AuthService.isAuthenticated();
     };
 
+    $scope.isAdmin = function() {
+      // return $auth.isAuthenticated();
+      return AuthService.isAdmin();
+    };
+
     $scope.switchCollapsed = function (){
         console.log($scope.isCollapsed);
         $scope.isCollapsed = !$scope.isCollapsed;
@@ -651,7 +657,7 @@ angular.module('myApp.controllers')
     function($scope,   $stateParams,   dialogs,   $rootScope,   AuthService,   Session,   $state,  ENV ,  $log ) {
 
 
-    $log.debug('landingSAMLCtrl...');
+    $log.info('landingSAMLCtrl...');
     
     // Verifica RelayState
     if($stateParams.RelayState) {
@@ -659,17 +665,18 @@ angular.module('myApp.controllers')
         if(AuthService.checkRelayStateToken($stateParams.RelayState)){
             if($stateParams.tokenId) {
                 //$scope.tokenId = $stateParams.tokenId;
-                //$log.debug($scope.tokenId);        
+                //$log.info($scope.tokenId);        
                 AuthService.storeToken($stateParams.tokenId);
+                $log.info('landingSAMLCtrl: go to profile. ..');
                 $state.go('profile');
             } else{
-                $log.debug('No TokenId');
+                $log.info('landingSAMLCtrl: No TokenId');
             }
         }else{
-          $log.debug('RelayState NO MATCH!');  
+          $log.info('landingSAMLCtrl: RelayState NO MATCH!');  
         }
     } else{
-        $log.debug('No RelayState');
+        $log.info('landingSAMLCtrl: No RelayState');
     }
 
 
@@ -678,6 +685,9 @@ angular.module('myApp.controllers')
       // return $auth.isAuthenticated();
       return AuthService.isAuthenticated();
     };
+
+
+
 
 
     $scope.getUserId = function() {
@@ -697,7 +707,7 @@ angular.module('myApp.controllers')
 .controller('ModalController', 
             [  '$uibModalInstance','$scope', '$rootScope', 'ENV', 'AuthService','Session','$location','$http', '$state','$log',
        function ( $uibModalInstance, $scope,  $rootScope, ENV, AuthService, Session, $location,  $http, $state,$log ) {
-    $log.debug('HelpController...');
+    $log.info('HelpController...');
     
     //Restangular.setBaseUrl($rootScope.base_url); 
 

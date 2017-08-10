@@ -3,7 +3,6 @@
   Modulo gestione della posta
   Permette di aggiungere aggiornare i dai della posta/raccomandate
 
-
 */ 
 
 var express = require('express');
@@ -117,17 +116,32 @@ router.get('/posta', utilityModule.ensureAuthenticated, function(req, res) {
 router.put('/posta', 
             utilityModule.ensureAuthenticated, 
             function(req, res) {
+
   log.log2console('PostaMgr PUT /posta UPDATE data');
   log.log2console(req.user);
   log.log2console(req.body);
 
-   databaseModule.updatePosta(req.body).then(function (response) {
+  // verifica se il dato è storico 
+  var d1 = (req.body.posta_id).split("@")[0];
+  //console.log(d1);
+  if (d1 == moment().format('YYYYMMDD') ){
+    databaseModule.updatePosta(req.body).then(function (response) {
       console.log('PostaMgr posta saved!');
       return res.status(200).send('ok');
     }).catch(function (err) {
       console.log(err)
       return res.status(500).send(err);
     });
+  } else {
+    console.log('errore autorizzazione aggiornamento dati...');
+    return res.status(420)
+      .send({
+              success: false,
+              title: 'Azione non possibile',
+              message: 'Non è possibile aggiornare i dati storici.',
+      });
+  }
+
 });
 
 // POST inserisce una nuova riga
@@ -144,10 +158,15 @@ router.post('/posta',
   req.body.userEmail = req.user.userEmail;
   req.body.userDisplayName = req.user.displayName;
 
+  log.log2console(moment().format('YYYYMMDD'));
+  var d1 = (req.body.posta_id).split("@")[0];
+  console.log(d1);
 
-  console.log('root post /login/callback');
+  if (d1 == moment().format('YYYYMMDD') ){
+    
+    console.log('root post /login/callback');
 
-  //req.user.uuidV4 = uuidV4();
+    //req.user.uuidV4 = uuidV4();
     databaseModule.savePosta(req.body).then(function (response) {
       console.log('PostaMgr posta saved!');
       return res.status(200).send('ok');
@@ -155,51 +174,112 @@ router.post('/posta',
       console.log(err)
       return res.status(500).send(err);
     });
+  } else {
+
+    console.log('errore...');
+    return res.status(420).send({
+                          success: false,
+                          title: 'Azione non possibile',
+                          message: 'Non è possibile aggiungere elementi con data diversa da quella odierna.',
+                      });
+  }
+
 });
 
 
 // DELETE elimina righe inserite
 router.delete(  '/posta/:posta_id', 
                 utilityModule.ensureAuthenticated, 
+                utilityModule.checkAppVersion,
                 function(req, res) {
   log.log2console('PostaMgr DELETE !');
   log.log2console(req.user);
   log.log2console(req.params.posta_id);
 
-  databaseModule.deletePosta(req.params.posta_id).then(function (response) {
+  // cancellazione di un record solo del giorno corrente
+  // log.log2console(moment().format('YYYYMMDD'));
+
+  var d1 = (req.params.posta_id).split("@")[0];
+  console.log(d1);
+
+  var check1 = d1 == moment().format('YYYYMMDD');
+  var check2 = req.user.isAdmin;
+
+  if (check1 || check2) {
+    console.log('procedo alla cancellazione');
+    databaseModule.deletePosta(req.params.posta_id).then(function (response) {
       console.log('PostaMgr posta saved!');
-      return res.status(200).send('ok');
+      return res.status(200).send({
+          success: true,
+          id: req.params.posta_id,
+          check1: check1,
+          check2: check2
+      });
     }).catch(function (err) {
       console.log(err)
       return res.status(500).send(err);
     });
+  } else {
+    console.log('cancellazione non consentita');
+    return res.status(420)
+      .send({
+          success: false,
+          title: 'Azione non possibile',
+          message: 'Non è possibile eliminare i dati storici.',
+      });
+  }
+
+
 });
 
+// ritorna le statistiche
+router.get('/stats', utilityModule.ensureAuthenticated, function(req, res) {
+    log.log2console('PostaMgr get /stats : ');
 
-/*
-//PUT /api/me
-router.put('/me', utilityModule.ensureAuthenticated, function(req, res) {
-  User.findById(req.user, function(err, user) {
-  	console.log('PostaMgr /me');
-  	if(err) console.log(err);
-    if (!user) {
-      return res.status(400).json({ message: 'User not found' });
-    }
-    user.displayName = req.body.displayName || user.displayName;
-    user.email = req.body.email || user.email;
-    user.description = req.body.description || user.description;
-    user.toDelete = req.body.toDelete || user.toDelete;
-    user.save(function(err) {
-      if(err) {
-      	console.log(err);
-      	return res.status(500).json({ message: 'Error updating user' });		
-      } else {
-      	return res.status(200).json({ message: 'User updated!' });
-      }
+    console.log(req.query);
+
+    
+    var key = {};
+    async.series([
+      function(callback) { 
+          databaseModule.getPostaStatsCountItem(req.query)
+         .then( function (result) {
+                  // log.log2console(result);
+                  key.StatsCountItem = result;
+                  callback(null, result);
+               })
+         .catch(function (err) {
+                  log.log2console(err);
+                  callback(err, null);
+                });
+      },
+      function(callback) { 
+          databaseModule.getPostaStatsCountCdc(req.query)
+         .then( function (result) {
+                  // log.log2console(result);
+                  key.StatsCountCdc = result;
+                  callback(null, result);
+               })
+         .catch(function (err) {
+                  log.log2console(err);
+                  callback(err, null);
+                });
+      },
+    ],function(err, results) {
+        // results is now equal to: {one: 1, two: 2}
+        log.log2console('Stats async -- FINAL!:');
+        if(err){
+            log.log2console(err);
+            res.status(500).send(err);
+        } else {
+            //log.log2console(results);
+
+            return res.status(200).send(key);
+        }
     });
-  });
+
 });
-*/
+
 
 
 	return router;

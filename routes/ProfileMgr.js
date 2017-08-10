@@ -61,6 +61,16 @@ router.get('/me', utilityModule.ensureAuthenticated, function(req, res) {
             res.status(500).send(err);
         } else {
             //log.log2console(results);
+
+            if(req.user.isAdmin){
+              key.dbInfo = {
+                 MYSQLdatabase : ENV.mysql_sequelize.MYSQLdatabase,
+                 MYSQLhost : ENV.mysql_sequelize.MYSQLhost,
+              }
+            } else {
+              key.dbInfo = 'no info for non admin user'
+            }
+
             return res.status(200).send(key);
         }
     });

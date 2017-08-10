@@ -90,11 +90,11 @@ router.post("/saml/sp/saml2-acs.php/default-sp",
         databaseModule.saveAuthTransaction(req.user).then(function (response) {
           console.log('PassportAuth:/login/callback CREATE AUTH TOKEN');
           var token = utilityModule.createJWT(req.user);
-          res.redirect('/simplesaml/cli/#!/landingSAML/' + token + '/' + req.body.RelayState);
+          res.redirect('/simplesaml/cli/#/landingSAML/' + token + '/' + req.body.RelayState);
         }).catch(function (err) {
             console.log(err)
           var token = 'ERRORSAVINGTODATABASE';
-          res.redirect('/simplesaml/cli/#!/landingSAML/' + token + '/' + req.body.RelayState);
+          res.redirect('/simplesaml/cli/#/landingSAML/' + token + '/' + req.body.RelayState);
         });
   });
 

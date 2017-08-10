@@ -1,3 +1,4 @@
+<div class="bg_img_login"></div>
 <div class="container">
   <div class="panel panel-default">
     <div class="panel-heading"><h3>Dati autenticazione </h3></div>
@@ -38,7 +39,14 @@
           <td><b>Altre informazioni<b></td>
           <td> Ws:{{user.userWorkstation}} - DomName:{{user.userDomainName}}- Dom:{{user.userDomainName}}</td>
     </tr>    
-
+    <tr>
+          <td><b>Versione app<b></td>
+          <td>{{user.appVersion}}</td>
+    </tr>   
+    <tr>
+          <td><b>DbInfo<b></td>
+          <td>{{user.dbInfo}}</td>
+    </tr>       
   </tbody>
 </table>
 

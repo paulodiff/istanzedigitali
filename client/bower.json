@@ -40,6 +40,8 @@
     "SparkMD5": "^2.0.2",
     "angular-recaptcha": "^3.0.4",
     "particles.js": "^2.0.0",
-    "socket.io": "^1.7.2"
+    "socket.io": "^1.7.2",
+    "intro.js": "^2.6.0",
+    "angular-chart.js": "^1.1.1"
   }
 }

@@ -85,6 +85,9 @@
     <script src="bower_components/satellizer/dist/satellizer.js"></script>
     -->
     
+
+    <!-- bowser -->
+    <script src="bower_components/bowser/src/bowser.js"></script>
   
 
 
@@ -146,10 +149,11 @@
 
 
     <script src="bower_components/moment/moment.js"></script>
-    <!-- chart.js 
+    
+    <!-- chart.js  -->
     <script src="bower_components/chart.js/dist/Chart.js"></script>
     <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
-    -->
+    
 
     <!-- endbuild -->
 
@@ -164,6 +168,11 @@
     <!-- UI-Validate -->
     <script type="text/javascript" src="bower_components/angular-ui-validate/dist/validate.min.js"></script>
     
+
+    <!-- Intro.js -->
+    <link href="bower_components/intro.js/minified/introjs.min.css" rel="stylesheet">
+    <script type="text/javascript" src="bower_components/intro.js/minified/intro.min.js"></script>
+
 
     <!-- ng-table 
     <link rel="stylesheet"; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
@@ -224,7 +233,7 @@
   </head>
 
   <body ng-app="myApp" ng-controller="AppCtrl">
-<a id="topPosition"></a>
+  <a id="topPosition"></a>
 
 
 <nav ng-controller="SNavbarCtrl" class="navbar navbar-inverse navbar-static-top navbar-inner">
@@ -252,6 +261,7 @@
           <ul class="nav navbar-nav pull-right">
                 <!-- <li><a ui-sref="elencoIstanze">Elenco Istanze</a></li> -->
                 <li ng-if="isAuthenticated()"><a ui-sref="elencoAtti">Gestione Posta</a></li>
+                <li ng-if="isAdmin()"><a ui-sref="postaDashboard">Stat</a></li>
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="profile">Profilo</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
@@ -284,7 +294,7 @@
 
     </div>
 </nav>
-<p>{{isAuthenticated()}}</p>
+
 <!--
 <header class="navbar navbar-default navbar-fixed-top navbar-inner">
     <div class="container">    
@@ -332,6 +342,11 @@
     loader http://pathgather.github.io/please-wait/ END -->
 
     <span class="centeredspin" us-spinner="{radius:30, width:8, length: 16, position: relative}" spinner-key="spinner-1"></span>
+
+        <div ng-if="browserName != 'Chrome'" class="alert alert-dismissible alert-warning">
+          <h4>ATTENZIONE </h4><p>Questa applicazione funziona SOLO con il browser di Google Chrome</p>
+    </div>
+
     <div role="main">
       <section ui-view></section>
     </div>

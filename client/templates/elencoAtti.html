@@ -1,12 +1,14 @@
-<div class="container">
-  <div class="panel panel-info">
+<div class="bg_img_login"></div>
+<div class="container-fluid">
+  <div class="panel panel-info" id='panel1'>
     <div class="panel-heading">          
              <div class="row">
-                <div class="col-sm-11 col-md-10 col-xs-10">
+                <div class="col-sm-12 col-md-12 col-xs-12">
                     <div class="posta_header">
                     Posta del 
                 <input 
                     type="date" 
+                    id="dataInput1"
                     class="posta_data_header"
                     name="model.dataStampaPrincipale" class="form-control" 
                     ng-model="model.dataStampaPrincipale"
@@ -29,10 +31,27 @@
                      ng-model="model.mostraTutto" 
                      ng-change="changeUserView()"> Mostra tutto 
             </label>
+            
+
+            <div class="btn-group">
+      <a  data-target="#" class="btn btn-raised dropdown-toggle" data-toggle="dropdown">
+        Guide operative
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a  ng-click="showHelp()">Nuovo inserimento</a></li>
+        <li><a href="javascript:void(0)">Ricerca dati</a></li>
+        <li><a href="javascript:void(0)">Stampa</a></li>
+      </ul>
+    </div>
+
+
           </div>    
+
+                    
          
          <h3>Selezionare un centro di costo:</h3>
-         <ui-select ng-model="model.selectedCdc" theme="bootstrap" >
+         <ui-select ng-model="model.selectedCdc" theme="bootstrap" id="select1" >
             <ui-select-match  class="posta_data_header" placeholder="Selezionare un CDC di lavoro">{{$select.selected.cdc}}</ui-select-match>
             <ui-select-choices repeat="item in cdc">
               <b ng-bind-html="item.cdc"></b>
@@ -46,7 +65,7 @@
           <button type="button" id="addData" class="btn btn-success btn-raised btn-large" ng-click="addData()">Aggiungi una riga</button>
           <button type="button" id="removeFirstRow" class="btn btn-warning btn-raised btn-large" ng-click="removeRow()">Elimina la riga selezionata</button>
           
-          <button type="button" id="DEBUG" class="btn btn-success" ng-click="execDebug()">Mostra/Nasconti dati atti giudiziari</button>
+          <button type="button" id="DEBUG" class="btn btn-raised btn-success" ng-click="showHideAtti()">Mostra/Nasconti dati atti giudiziari</button>
           
 
         </div>
@@ -63,6 +82,10 @@
 
   <div class="panel-body">
 
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-xs-6">
+
+
             <div class="form-group">
                 <label >Data Posta</label>
                 <input type="date" 
@@ -72,6 +95,25 @@
                     ng-maxlength="100"
                     >
             </div>
+    </div>
+    <div class="col-sm-6 col-md-6 col-xs-6">
+
+      <div class="form-group">
+                <label>Matricola</label>
+                <input type="text" 
+                    name="cellulareRichiedente" class="form-control" 
+                    ng-model="model.matricolaStampa"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+                   
+            </div>
+
+      </div>
+    </div>
+  
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-xs-6">
 
 
           <div class="form-group">
@@ -83,7 +125,9 @@
             </ui-select-choices>
           </ui-select>
           </div>
-
+        
+        </div>
+        <div class="col-sm-6 col-md-6 col-xs-6">
 
           <div class="form-group">
             <label>Centro di costo</label>
@@ -95,16 +139,9 @@
           </ui-select>
           </div>
 
-          <div class="form-group">
-                <label>Matricola</label>
-                <input type="text" 
-                    name="cellulareRichiedente" class="form-control" 
-                    ng-model="model.matricolaStampa"
-                    ng-minlength="1"
-                    ng-maxlength="100"
-                    >
-                   
-            </div>
+        </div>
+    </div>
+    
 
 <button type="button" id="reset" class="btn btn-success btn-raised btn-large btn-block" ng-click="exportPdf()">Stampa</button>
   </div>
@@ -197,10 +234,8 @@
 
 
 
-  </div>
 </div>
-</div>
-</div>
+
 
 <!--
 <div class="card">
@@ -233,6 +268,4 @@
 </div>
 -->
 
-    
 
-</div>

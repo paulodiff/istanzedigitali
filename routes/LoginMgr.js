@@ -48,7 +48,16 @@ router.post('/LDAPlogin', function(req, res) {
           'isAdmin': false
     };
     var token = utilityModule.createJWT(userLogin);
-    res.send({ token: utilityModule.createJWT(userLogin)});
+    //res.send({ token: utilityModule.createJWT(userLogin)});
+    res.status(200).json({
+      success: true,
+      message: 'Enjoy your token!',
+      id_utenti : username,
+      nome_breve_utenti : username,
+      isadmin_utenti : 0,
+      userData: userLogin,
+      token: token
+    });
     return;
   }
 
@@ -72,6 +81,7 @@ router.post('/LDAPlogin', function(req, res) {
   ldap.authenticate(username, password, function (err, user) {
     console.log('LDAP ...', username, password);
     if (err) {
+      console.log('LDAP authentication error:');
       console.log(err);
       //logConsole(err);
       //logError(err);
@@ -80,6 +90,10 @@ router.post('/LDAPlogin', function(req, res) {
                           success: false,
                           data:err
                       });
+      ldap.close(function(err) { 
+        console.log('LDAP ... closing connection ...:');
+        console.log(err); 
+      });
       return;
     }
     //logAccess("Accesso effettuato : " + username);    
@@ -115,19 +129,23 @@ router.post('/LDAPlogin', function(req, res) {
 
       console.log(userLogin);
 
-      var token = utilityModule.createJWT(userLogin);
+    var token = utilityModule.createJWT(userLogin);
  
     //Session.create(res.data.id_utenti, res.data.nome_breve_utenti, res.data.token,  res.data.isadmin_utenti);
+
+    ldap.close(function(err) { console.log(err); });
+
     res.status(200).json({
       success: true,
       message: 'Enjoy your token!',
       id_utenti : username,
       nome_breve_utenti : username,
       isadmin_utenti : 0,
-      data: userLogin,
+      userData: userLogin,
       token: token
     });
   });
+  
 });
 
 

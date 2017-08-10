@@ -95,7 +95,7 @@ module.exports = {
                 console.log('[#AUTH#] token expired');
                 return res.status(401).send({ 
                   title: 'Sessione scaduta',
-                  message: 'Accedere alla pagina di login, disconnettersi poi rifare la procedura di autenticazione'
+                  message: 'Sessione scaduta - Disconnettersi e poi rifare la procedura di autenticazione'
                 });
               }
             } else {
@@ -185,8 +185,6 @@ module.exports = {
       fs.unlinkSync(fName);
     },
     
-
-
     getNowFormatted: function(strTime2Add) {
 
           var d = new Date(),
@@ -256,7 +254,30 @@ module.exports = {
           // Return the formatted string
           return [year, month, day].join('') + "@" + time.join("") + "@" + ms + "@" + suffix;
           //return date.join("") + "@" + time.join("") + "@" + suffix;
+    },
+
+    checkAppVersion: function(req, res, next) {
+       //"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiY29tcGFueU5hbWUiOiJDb211bmVfZGlfUmltaW5pIiwiYXBwIjoicHJvdG9jb2xsbyJ9LCJpYXQiOjE0Nzk5OTkwMzQsImV4cCI6MTU2NjM5NTQzNH0.5Ako1xZ9If5bNrKN3ns8sZ8YaqaJD7FWDt07zcRb8c0"
+
+        console.log('[#APPVERSION#] (start)');
+        if (!req.header('AppVersion')) {
+            console.log('[#APPVERSION#] 401 NO header');
+            return res.status(401).send({ message: 'Errore generico nel controllo della versione della app' });
         }
+        var token = req.header('AppVersion');
+        console.log('header:' + token);
+        console.log('server:'+ ENV.app_version);
+        var versionInfo =  '(local:' + token + '-remote:'+ ENV.app_version + ')';
+        if (token != ENV.app_version ){
+          console.log('[#APPVERSION#] ricaricare app versione cambiata');
+          return res.status(418).send({ 
+            title: 'Stai utilizzanto una versione della applicazione obsoleta',
+            message: "La versione della applicazione è stata aggiornata. E' necessario effettuare la disconnessione, chiudere il browser e riaprirlo per ottenere l'applicazione aggiornata. " + versionInfo });
+        }
+
+        console.log('[#APPVERSION#] ok pass');
+        next();
+    }
 }
 
 

@@ -1,5 +1,5 @@
 // log test!!!
-require('longjohn');
+// require('longjohn');
 
 var express = require('express');
 var app = express();
@@ -198,9 +198,8 @@ app.get('/',
 });
 
 
-app.use('/swagger', express.static(__dirname + '/swagger'));
-
-app.use('/home', express.static(__dirname + '/home'));
+// app.use('/swagger', express.static(__dirname + '/swagger'));
+// app.use('/home', express.static(__dirname + '/home'));
 
 var options = {
   // dotfiles: 'ignore',
@@ -222,8 +221,8 @@ var options = {
 }
 
 app.use('/cli',  express.static(__dirname + '/client', options));
-app.use('/draw',  express.static(__dirname + '/draw.io', options));
-app.use('/dist', express.static(__dirname + '/client/dist', options));
+// app.use('/draw',  express.static(__dirname + '/draw.io', options));
+// app.use('/dist', express.static(__dirname + '/client/dist', options));
 
 // Sequelize START Bootstrap
 var models = require("./modelsSequelize");

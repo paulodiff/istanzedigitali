@@ -20,7 +20,8 @@ angular.module('myApp.controllers')
             $log.info('profileMgrCtrl : setting data');
             $log.info(res.data);
             $scope.user = res.data;
-             usSpinnerService.stop('spinner-1');
+            $scope.user.appVersion = ENV.appVersion;
+            usSpinnerService.stop('spinner-1');
          })
         .catch(function(response) {
             usSpinnerService.stop('spinner-1');

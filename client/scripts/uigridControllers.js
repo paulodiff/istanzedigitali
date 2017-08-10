@@ -72,14 +72,14 @@ angular.module('myApp.controllers')
   $scope.gridOptions = {};
   $scope.gridOptions = {
     enableSorting: true,
-    enableFiltering: false,
+    enableFiltering: true,
     enableGridMenu: true,
     enableRowSelection: true,
     enableSelectAll: true,
     showGridFooter:true,
     columnDefs: [
       { name: 'posta_id', visible: false, enableCellEdit: false },
-      { name: 'cdc', visible: true, enableCellEdit: false,  width: '5%', },
+      { name: 'cdc', visible: true, enableCellEdit: false,  width: '5%', enableFiltering: false },
       { name: 'Tipo', 
         field:  'tipo_spedizione',
         displayName: 'Tipo', 
@@ -88,14 +88,14 @@ angular.module('myApp.controllers')
         // cellFilter: 'mapTipoSpedizione', 
         editDropdownValueLabel: 'name', 
         editDropdownOptionsArray: MyeditDropdownOptionsArray,
-        enableFiltering:true
+        enableFiltering: false
     },
-      { name: 'Protocollo', field: 'protocollo', enableFiltering:true },
-      { name: 'Destinatario',  width: '20%', field: 'destinatario_denominazione', enableFiltering:true },
-      { name: 'Città', field: 'destinatario_citta', enableFiltering:true },
-      { name: 'Via', field: 'destinatario_via', enableFiltering:true },
-      { name: 'CAP',  width: '8%', field: 'destinatario_cap', enableFiltering:true },
-      { name: 'Prov',  width: '5%', field: 'destinatario_provincia'},
+      { name: 'Protocollo', field: 'protocollo', enableFiltering: true },
+      { name: 'Destinatario',  width: '20%', field: 'destinatario_denominazione', enableFiltering: true },
+      { name: 'Città', field: 'destinatario_citta', enableFiltering: true },
+      { name: 'Via', field: 'destinatario_via', enableFiltering: true },
+      { name: 'CAP',  width: '8%', field: 'destinatario_cap', enableFiltering: false },
+      { name: 'Prov',  width: '5%', field: 'destinatario_provincia', enableFiltering: false},
       { name: 'BarCode', field: 'barCode', enableSorting: true, enableCellEdit: true, visible: false },
       { name: 'Verbale', field: 'verbale', enableSorting: true, enableCellEdit: true, visible: false },
       { name: 'Note', field: 'note', enableSorting: true, enableCellEdit: true, visible: false }
@@ -188,6 +188,7 @@ angular.module('myApp.controllers')
         angular.copy($scope.cdc,$scope.cdcStampe);
 
         $scope.cdcStampe.unshift({
+          "id":"0000",
           "codice": "0000",
           "cdc": "0000 - TUTTI i centri di costo"
         });
@@ -195,7 +196,7 @@ angular.module('myApp.controllers')
     })
     .catch(function(response) {
             $log.error(response);
-            AlertService.displayError(response.data.message, response.status);
+            AlertService.displayError(response);
             $state.go('login');
     });
 
@@ -208,7 +209,6 @@ angular.module('myApp.controllers')
     var promise = $q.defer();
     $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
  
-
     PostaService.updatePosta(rowEntity)
     .then(function (res) {
         $log.debug(res);
@@ -217,9 +217,8 @@ angular.module('myApp.controllers')
     .catch(function(response) {
         promise.reject();
         $log.debug(response);
-        AlertService.displayError(response.data.message, response.status);
+        AlertService.displayError(response);
     });
-
 
   };
  
@@ -259,8 +258,11 @@ $scope.changeUserView = function(){
 
     console.log($scope.model.dataStampaPrincipale);
 
-
-    $scope.todayYYYMMDD = moment($scope.model.dataStampaPrincipale).format('YYYYMMDD');
+    if ($scope.model.dataStampaPrincipale) {
+      $scope.todayYYYMMDD = moment($scope.model.dataStampaPrincipale).format('YYYYMMDD');
+    } else {
+      $scope.todayYYYMMDD = '%';
+    }
   
     var options = {
       dataStampaTxt: $scope.todayYYYMMDD,
@@ -271,7 +273,6 @@ $scope.changeUserView = function(){
     if(!$scope.model.mostraTutto){
       options.matricolaStampa = $scope.user.userid
     }
-
 
     $scope.model.matricolaStampa = $scope.user.userid;
 
@@ -285,8 +286,9 @@ $scope.changeUserView = function(){
       })
       .catch(function(response) {
         $log.error(response);
-        AlertService.displayError(response.data.message, response.status);
-      });
+        AlertService.displayError(response);
+    });
+
   };
 
 // addData ------------------------------------------------------------------------------------
@@ -296,7 +298,13 @@ $scope.changeUserView = function(){
     console.log('Add2------------Data');
 
     if (angular.equals($scope.model.selectedCdc,{})){
-      AlertService.displayError('Manca il centro di costo di riferimento', 'Selezionare un Centro di Costo dalla lista');
+      AlertService.displayError({
+        data: {
+          title: 'Manca il centro di costo di riferimento',
+          message:'Selezionare un Centro di Costo dalla lista'
+        },
+        status : 498
+      });
       return;
     }
 
@@ -333,7 +341,7 @@ $scope.changeUserView = function(){
       })
       .catch(function(response) {
         $log.error(response);
-        AlertService.displayError(response.data.title, response.data.message);
+        AlertService.displayError(response);
       });
 
 
@@ -364,7 +372,13 @@ $scope.changeUserView = function(){
     console.log($scope.model.selectedCdc);
 
     if (angular.equals($scope.model.selectedCdc,{})){
-      AlertService.displayError('Manca il centro di costo di riferimento', 'Selezionare un Centro di Costo dalla lista');
+      AlertService.displayError({
+        data: {
+          title: 'Selezionare una ed una sola riga per la cancellazione!',
+          message:'Selezionare una ed una sola riga per la cancellazione!'
+        },
+        status : 499
+      });
       return;
     }
 
@@ -404,6 +418,8 @@ $scope.changeUserView = function(){
     // console.log($scope.gridApi.selection.getSelectedCount());
     // console.log($scope.gridApi.selection.getSelectedRows());
 
+    var arrayCalls = [];
+
     if ( $scope.gridApi.selection.getSelectedCount() > 0 ) {
       $log.log('.... .... '); 
       var selectedRows = $scope.gridApi.selection.getSelectedRows()
@@ -412,30 +428,58 @@ $scope.changeUserView = function(){
 
       selectedRows.forEach(function(obj){
         console.log(obj.posta_id);
+
+        
         $scope.gridOptions.data.forEach(function(gridItem, index){
           console.log(gridItem.posta_id, obj.posta_id);
           if (gridItem.posta_id === obj.posta_id) {
+        
             console.log(gridItem.posta_id + 'REMOVE!' + index);
 
             var url2post = $rootScope.base_url +  '/postamgr/posta/' + obj.posta_id;
             console.log(url2post);
-            $http.delete(url2post)
-            .then(function (res) {
-                $log.info(res);
-                $scope.gridOptions.data.splice(index,1);
-                // $scope.user = res.data.user;
-            })
-            .catch(function(response) {
-              $log.error(response);
-              AlertService.displayError(response.data.message, response.status);
-					  });
+
+            arrayCalls.push(PostaService.deletePosta(obj.posta_id));
             
           };
-        })
+        });
       });
+
+      $q.all(arrayCalls)
+        .then(function(values) {
+          console.log('Eliminati....');
+          console.log(values);
+
+          var options = {
+              dataStampaTxt: $scope.todayYYYMMDD,
+              matricolaStampa: $scope.user.userid
+          };
+
+          PostaService.getPosta(options)
+          .then(function (res) {
+            $scope.gridOptions.data = res.data;
+            $log.info(res);
+            // $scope.user = res.data.user;
+          })
+          .catch(function(response) {
+            $log.error(response);
+            AlertService.displayError(response);
+          });
+        })
+        .catch(function(response) {
+              $log.error(response);
+              AlertService.displayError(response);
+				});
      
     } else {
-      $log.error('No rows selected!');
+      AlertService.displayError({
+        data: {
+          title: 'Eliminazione dato non possibile',
+          message:'Selezionare almeno una riga per la cancellazione!'
+        },
+        status : 499
+      });
+      $log.log('No rows selected!:' + $scope.gridApi.selection.getSelectedCount());
     }
 
     //}
@@ -467,7 +511,7 @@ $scope.addDataCDC = function(){
       })
       .catch(function(response) {
         $log.error(response);
-        AlertService.displayError(response.data.title, response.data.message);
+        AlertService.displayError(response);
       });
 
 
@@ -590,6 +634,7 @@ $scope.addDataCDC = function(){
           };
 
             contenutoStampa.push( { text: 'Comune di Rimini ' + $scope.model.matricolaStampa, fontSize: 15 } );
+            contenutoStampa.push( { text: 'Matricola: ' + $scope.model.matricolaStampa, fontSize: 12 } );
             // contenutoStampa.push( { text: $scope.model.matricolaStampa, fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
             contenutoStampa.push( { text: 'Gestione Posta del ' + moment($scope.model.dataStampa).format('DD/MM/YYYY'), fontSize: 12 } );
             contenutoStampa.push( { text: 'Tipo Posta : ' + arraySelezioneTipi[numeroPagina-1], fontSize: 12 } );
@@ -634,7 +679,7 @@ $scope.addDataCDC = function(){
       })
         .catch(function(response) {
         $log.error(response);
-        AlertService.displayError(response.data.message, response.status);
+        AlertService.displayError(response);
       });
     
 
@@ -760,7 +805,7 @@ $scope.addDataCDC = function(){
 
     /* make worksheet */
     var ws_data = [
-      [ "", "CODICE CLIENTE X01125", "", "", "TEL.", "MAIL:" ],
+      [ "", "CODICE CLIENTE X01125", "", "", "DATA RITIRO:", "" ],
       [  "" ,  "" ,  "" ,  ""  ],
       [ "LASCIARE VUOTO","DESTINATARIO","INDIRIZZO","CAP","CITTA'","PROVINCIA","CDC"]
     ];
@@ -779,7 +824,8 @@ arraySelezione.forEach(function(item){
       obj.userid,
       obj.userDisplayName,
       obj.userEmail,
-      obj.id
+      obj.id,
+      $scope.todayYYYMMDD
       //obj.posta_id
     ]);
   });
@@ -810,17 +856,87 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
     })
     .catch(function(response) {
           $log.error(response);
-          AlertService.displayError(response.data.title, response.data.message);
+          AlertService.displayError(response);
         });
   }
 
  
+// ############### ShowIntro
+
+$scope.showHelp = function () {
+  console.log('ShowHelp ....');
+
+      var intro = introJs();
+        intro.setOptions({
+            nextLabel: 'Prossimo',
+            prevLabel: 'Precedente',
+            skipLabel: 'Salta',
+            doneLabel: 'Fine',
+            steps: [
+              { 
+                intro: "Guida rapida per l'inserimento di una riga"
+              },
+              {
+                element: '#select1',
+                intro: "Selezionare un centro di costo",
+                position: 'bottom'
+              },
+              {
+                element: '#addData',
+                intro: "Aggiunge una riga.",
+                position: 'bottom'
+              },              
+              {
+                intro: 'Guida terminata.'
+              }
+            ]
+          });
+
+      
+    intro.start();
+}
+
+
+$scope.showHelpRicerca = function () {
+  console.log('ShowHelp ....');
+
+      var intro = introJs();
+        intro.setOptions({
+            nextLabel: 'Prossimo',
+            prevLabel: 'Precedente',
+            skipLabel: 'Salta',
+            doneLabel: 'Fine',
+            steps: [
+              { 
+                intro: "Guida rapida per la ricerca"
+              },
+              {
+                element: '#select1',
+                intro: "Selezionare una data o cancellarla per ottenere tutti i record",
+                position: 'bottom'
+              },
+              {
+                element: '#addData',
+                intro: "Aggiunge una riga.",
+                position: 'bottom'
+              },              
+              {
+                intro: 'Guida terminata.'
+              }
+            ]
+          });
+
+      
+    intro.start();
+}
+
+
 
 // #########################################  DEBUG #############################################################
 
-  $scope.execDebug = function () {
-    console.log('Exec Debug------------------------------------');
-    console.log($scope.gridOptions.data);
+  $scope.showHideAtti = function () {
+    console.log('showHideAtti------------------------------------');
+    // console.log($scope.gridOptions.data);
 
     var pos = $scope.gridOptions.columnDefs.map(function (e) { return e.field; }).indexOf('verbale');
     if (pos) $scope.gridOptions.columnDefs[pos].visible = !$scope.gridOptions.columnDefs[pos].visible;
@@ -831,7 +947,17 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
     var pos = $scope.gridOptions.columnDefs.map(function (e) { return e.field; }).indexOf('note');
     if (pos) $scope.gridOptions.columnDefs[pos].visible = !$scope.gridOptions.columnDefs[pos].visible;
     
+    //var pos = $scope.gridOptions.columnDefs.map(function (e) { return e.field; }).indexOf('protocollo');
+    //if (pos) $scope.gridOptions.columnDefs[pos].enableFiltering = true;
     
+/*
+    for ( var i = 0, j = $scope.gridOptions[$index].columnDefs.length; i < j; i += 1 ) {
+       $scope.gridOptions[$index].columnDefs[i].enableFiltering = true;
+    }
+*/
+    //console.log($scope.gridOptions.enableFiltering);
+    //$scope.gridOptions.enableFiltering = true;
+
     this.gridApi.grid.refresh();
 
 
@@ -916,6 +1042,7 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
 
       $scope.modal = {};
       $scope.modal.tipoPostaStampa = data[0];
+      $scope.modal.dataAttuale = moment().format('DD/MM/YYYY');;
       //-- Methods --//
       
       $scope.cancel = function(){
@@ -937,6 +1064,87 @@ saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), $scope.todayYY
 }
 //]
 ) // end controller(customDialogCtrl)
+
+
+// ######################################################################## DialogCtrl
+
+.controller('postaDashboardCtrl',
+           // ['$scope','$modalInstance', 'data',
+             ['$rootScope','$scope', '$http', '$state', '$location','uiGridConstants', '$filter', '$log', '$timeout','ENV','$q', '$interval','UtilsService','ProfileService','PostaService','AlertService',
+     function($rootScope,  $scope,    $http,  $state,   $location,  uiGridConstants ,  $filter,     $log,     $timeout,   ENV,  $q,   $interval,  UtilsService,  ProfileService,  PostaService , AlertService ) {
+
+
+      console.log('postaDashboardCtrl ....');
+      
+      //-- Variables --//
+      
+
+      $scope.model = {};
+      $scope.model.daDataPosta = new Date('01/01/2017');
+      $scope.model.aDataPosta = new Date();
+      //-- Methods --//
+      
+      $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+      $scope.series = ['Series A', 'Series B'];
+      $scope.data = [
+        [65, 59, 80, 81, 56, 55, 40],
+        [28, 48, 40, 19, 86, 27, 90]
+      ];
+      $scope.onClickCdcCount = function (points, evt) {  console.log(points, evt);   };
+      $scope.onClickItemCount = function (points, evt) {  console.log(points, evt);   };
+  
+      $scope.labelsItemCount = [];
+      $scope.dataItemCount = [];
+      $scope.seriesItemCount = ['POSTA'];
+
+      $scope.labelsCdcCount = [];
+      $scope.dataCdcCount = [];
+      $scope.seriesCdcCount = ['CDC'];
+
+      $scope.tableCdc = [];
+      $scope.tableItem = [];
+
+      
+      $scope.AggiornaDati = function(){
+        console.log('AggiornaDati');
+        console.log($scope.model);
+        //AlertService.displayConfirm('adad','adad');
+        var options = $scope.model;
+        
+        PostaService.getPostaStats(options)
+        .then(function (res) {
+          //$scope.gridOptionsCDC.data.push(newItem);
+          $log.info(res);
+
+          $scope.labelsCdcCount = [];
+          $scope.dataCdcCount = [];
+          $scope.tableCdc = res.data.StatsCountCdc;
+          res.data.StatsCountCdc.forEach(function (item) {
+            // $log.info(item);
+            $scope.labelsCdcCount.push(item.cdc);
+            $scope.dataCdcCount.push(item.cdc_count);
+          });
+
+          $scope.labelsItemCount = [];
+          $scope.dataItemCount = [];
+          $scope.tableItem = res.data.StatsCountItem;
+          res.data.StatsCountItem.forEach(function (item) {
+            // $log.info(item);
+            $scope.labelsItemCount.push(item.posta_id_cut);
+            $scope.dataItemCount.push(item.posta_id_count);
+          });
+
+          // $scope.user = res.data.user;
+        })
+        .catch(function(response) {
+          $log.error(response);
+          AlertService.displayError(response);
+        });
+
+      }; // end save
+      
+      
+     }]) // end controller(customDialogCtrl)
 
 
 .filter('mapTipoSpedizione', function() {

@@ -32,7 +32,7 @@ angular.module('myApp', [//'ionic',
                          'ui.grid.exporter',
                          //'SheetJSExportService',
                          // 'ui.validate',
-                         // 'chart.js',
+                         'chart.js',
                          // 'vcRecaptcha',
                          //'uiGmapgoogle-maps',
                          'myApp.filters',
@@ -75,7 +75,7 @@ angular.module('myApp', [//'ionic',
     //.when('/c?id', '/contacts/:id')
     //.when('/user/:id', '/contacts/:id')
     // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
-    $urlRouterProvider.otherwise('elencoAtti');
+    $urlRouterProvider.otherwise('profile');
     
 /*
     $stateProvider.state('menu', {
@@ -123,13 +123,19 @@ angular.module('myApp', [//'ionic',
         accessLevel: 'free1' 
     });
 
-    $stateProvider.state('gestionePosta', {
-        url: '/gestionePosta',
-        controller: 'UiGridCtrl',
-        templateUrl: 'templates/gestionePosta.html',
-        accessLogged: false,
-        accessLevel: 'free1' 
+
+    $stateProvider.state('postaDashboard', {
+        url: '/postaDashboardPhone',
+        templateUrl: 'templates/postaDashboard.html',
+        controller: 'postaDashboardCtrl',
+        controllerAs: 'vm',
+        resolve: {
+          //loginRequired: loginRequired
+        }
     });
+
+
+
 
     /*
     

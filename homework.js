@@ -6,7 +6,7 @@
 3) coniugazione dei verbi
 4) operazioni del venti
 5) tabellina
-
+                                                                       
 */
 var simboli = ['+','-'];
 var Random = require('random-js');

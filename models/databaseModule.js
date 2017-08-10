@@ -11,6 +11,7 @@ var path = require('path');
 var models = require("../modelsSequelize");
 var log = require('../models/loggerModule.js');
 var uuidV4 = require('uuid/v4');
+var Sequelize = require("sequelize");
 
 
 module.exports = {
@@ -253,6 +254,19 @@ deletePosta: function(posta_id){
     });
 },
 
+// get posta Item
+getPostaById: function(posta_id){
+
+    return new Promise(function(resolve, reject) {
+        console.log('databaseModule:getPostaById');
+        console.log('getd:' + posta_id);
+
+        models.Posta.findOne({ where: {posta_id: posta_id} })
+            .then(function(anotherTask) {resolve(anotherTask)})
+            .catch(function(error) {reject(error)});
+    });
+},
+
 
 getPostaCDC: function(){
 
@@ -260,6 +274,77 @@ getPostaCDC: function(){
         console.log('getPostaCDC');
 
         models.PostaCDC.findAll()
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+
+
+getPostaStatsCountItem: function(obj){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getPostaStats');
+
+/*
+        models.Posta.findAll({
+            group: ['userid'],
+            attributes: ['userid', [Sequelize.fn('COUNT', 'id'), 'Conteggio']],
+        })
+*/
+       models.Posta.findAll({
+            group: ['posta_id_cut'],
+            attributes: [   'posta_id', 
+                            [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'posta_id_cut'), 'posta_id_count'],
+                        ],
+            where : { 
+                ts : {
+                        $between: [obj.daDataPosta, obj.aDataPosta]
+                    }
+            },
+            order : ['posta_id_cut']
+        })
+
+
+
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+
+getPostaStatsCountCdc: function(obj){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getPostaStats');
+
+/*
+        models.Posta.findAll({
+            group: ['userid'],
+            attributes: ['userid', [Sequelize.fn('COUNT', 'id'), 'Conteggio']],
+        })
+*/
+       models.Posta.findAll({
+            group: ['cdc'],
+            attributes: [   'cdc', 
+                            // [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'cdc'), 'cdc_count'],
+                        ],
+            where : { 
+                ts : {
+                        $between: [obj.daDataPosta, obj.aDataPosta]
+                    }
+            },                        
+            order : ['cdc']
+        })
+
         .then(function(anotherTask) {
             resolve(anotherTask)
         }).catch(function(error) {
