@@ -86,7 +86,7 @@ router.post('/LDAPlogin', function(req, res) {
       //logConsole(err);
       //logError(err);
       //logDataAnalysis({action: 'login_failed', eventTime: new Date(), user: {name : username}, params : {} });
-      res.status(500).json({
+      res.status(401).json({
                           success: false,
                           data:err
                       });

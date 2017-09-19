@@ -159,7 +159,7 @@ getPostaList: function(opts){
         
         models.Posta.findAll({
           where: parametriFiltro,
-          order: ['cdc','userid']
+          order: ['cdc','userid','id']
         /*
         models.Posta.findAll({
           where: {
@@ -296,8 +296,8 @@ getPostaStatsCountItem: function(obj){
         })
 */
        models.Posta.findAll({
-            group: ['posta_id_cut'],
-            attributes: [   'posta_id', 
+            group: ['posta_id_cut','tipo_spedizione'],
+            attributes: [   'posta_id', 'tipo_spedizione',
                             [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
                             [Sequelize.fn('COUNT', 'posta_id_cut'), 'posta_id_count'],
                         ],
@@ -306,7 +306,7 @@ getPostaStatsCountItem: function(obj){
                         $between: [obj.daDataPosta, obj.aDataPosta]
                     }
             },
-            order : ['posta_id_cut']
+            order : [ [Sequelize.col('posta_id_cut'), 'ASC'], ['tipo_spedizione'] ]
         })
 
 
@@ -324,13 +324,6 @@ getPostaStatsCountCdc: function(obj){
 
     return new Promise(function(resolve, reject) {
         console.log('getPostaStats');
-
-/*
-        models.Posta.findAll({
-            group: ['userid'],
-            attributes: ['userid', [Sequelize.fn('COUNT', 'id'), 'Conteggio']],
-        })
-*/
        models.Posta.findAll({
             group: ['cdc'],
             attributes: [   'cdc', 
@@ -351,7 +344,63 @@ getPostaStatsCountCdc: function(obj){
             reject(error);
         });
     })
+},
+
+
+getPostaStatsCountMatricole: function(obj){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getPostaStats');
+       models.Posta.findAll({
+            group: ['userid'],
+            attributes: [   'userid', 
+                            // [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'userid'), 'userid_count'],
+                        ],
+            where : { 
+                ts : {
+                        $between: [obj.daDataPosta, obj.aDataPosta]
+                    }
+            },                   
+            order : [ [Sequelize.col('userid_count'), 'DESC'] ]
+        })
+
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+getPostaStatsCountTipi: function(obj){
+
+    console.log('getPostaStatsCountTipi');
+
+    return new Promise(function(resolve, reject) {
+        
+       models.Posta.findAll({
+            group: ['tipo_spedizione'],
+            attributes: [   'tipo_spedizione', 
+                            // [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'tipo_spedizione'), 'tipo_spedizione_count'],
+                        ],
+            where : { 
+                ts : {
+                        $between: [obj.daDataPosta, obj.aDataPosta]
+                    }
+            }//, order : [ [Sequelize.col('userid_count'), 'DESC'] ]
+        })
+
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
 }
+
+
 
 
 /*

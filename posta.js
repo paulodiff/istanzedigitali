@@ -25,6 +25,8 @@ app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }));
 app.use(helmet.ieNoOpen());
 app.use(helmet.noSniff());
 
+
+
 // CORS is a node.js package for providing a Connect/Express middleware 
 // that can be used to enable CORS with various options.
 // var cors  = require('cors');
@@ -171,8 +173,6 @@ log.log2console('Starting ...');
 // app.use('/passportauth', PassportAuth);
 // app.use('/module.php', PassportAuth);
 
-var ProfileMgr = require('./routes/ProfileMgr')();
-app.use('/profilemgr', ProfileMgr);
 
 // var Protocollo = require('./routes/Protocollo')();
 // app.use('/segnalazioni', Protocollo);
@@ -183,8 +183,51 @@ app.use('/profilemgr', ProfileMgr);
 // var GatewayProtocollo = require('./routes/GatewayProtocollo')();
 // app.use('/gatewayprotocollo', GatewayProtocollo);
 
+var options = {
+  // dotfiles: 'ignore',
+  // etag: false,
+  // extensions: ['htm', 'html'],
+  // index: false,
+  // maxAge: '1d',
+  // redirect: false,
+  setHeaders: function (res, path, stat) {
+    //console.log(path);
+    //console.log(stat);
+    //console.log(res);
+    res.set('x-timestamp', Date.now());
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE');
+    res.set('Access-Control-Max-Age', '3600');
+    res.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  }
+}
+
+
+app.use(function(req, res, next) {
+  console.log('CORS management');
+
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+
+  //intercepts OPTIONS method
+  if ('OPTIONS' === req.method) {
+    //respond with 200
+    console.log('CORS management OPTIONS ok!');
+    res.sendStatus(200);
+  }
+  else {
+  //move on
+  console.log('CORS management NEXT');
+    next();
+  }
+});
+
 var PostaMgr = require('./routes/PostaMgr')();
 app.use('/postamgr', PostaMgr);
+
+var ProfileMgr = require('./routes/ProfileMgr')();
+app.use('/profilemgr', ProfileMgr);
 
 var LoginMgr = require('./routes/LoginMgr')();
 app.use('/loginmgr', LoginMgr);
@@ -201,24 +244,7 @@ app.get('/',
 // app.use('/swagger', express.static(__dirname + '/swagger'));
 // app.use('/home', express.static(__dirname + '/home'));
 
-var options = {
-  // dotfiles: 'ignore',
-  // etag: false,
-  // extensions: ['htm', 'html'],
-  // index: false,
-  // maxAge: '1d',
-  // redirect: false,
-  setHeaders: function (res, path, stat) {
-    //console.log(path);
-    //console.log(stat);
-    //console.log(res);
-    res.set('x-timestamp', Date.now());
-    res.set('Access-Control-Allow-Origin', 'https://idp.ssocircle.com');
-    res.set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE');
-    res.set('Access-Control-Max-Age', '3600');
-    res.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  }
-}
+
 
 app.use('/cli',  express.static(__dirname + '/client', options));
 // app.use('/draw',  express.static(__dirname + '/draw.io', options));

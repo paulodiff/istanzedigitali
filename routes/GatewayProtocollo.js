@@ -40,7 +40,7 @@ var fse = require('fs-extra');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 var multiparty = require('multiparty');
-
+var parseStringXML = require('xml2js').parseString;
 var jwt = require('jwt-simple');
 var ENV   = require('../config/config.js'); // load configuration data
 var ENV_PROT   = require('../config/configPROTOCOLLO.js'); // load user configuration data
@@ -214,11 +214,15 @@ router.get('/ping', function (req, res) {
 });
 
 
-/*
-
-    CHECK Json Schema
-
-
+/**
+ * 
+ *   CHECK Json Schema
+ * 
+ *   Controlla ij JSON di input 
+ * 
+ * 
+ * 
+ * 
 */
 
 function checkJsonSchema(req){
@@ -232,6 +236,20 @@ function checkJsonSchema(req){
     var schema = JSON.parse(fs.readFileSync(fConfigName));
     // var j2validate = JSON.parse(fs.readFileSync('./pacchettoBRAV.json'));
      
+    logConsole.info('checkJsonSchema : tipiDocumentoAutorizzati');
+    // logConsole.info(schema);
+   
+    // aggiunge una regola di validazione dei tipi documento a seconda della configurazione
+    logConsole.info(ENV_DEFAULT_USER.tipiDocumentoAutorizzati);
+    if (ENV_DEFAULT_USER.tipiDocumentoAutorizzati) {
+        schema.properties.datiProtocollo.properties.tipoDocumento.enum = ENV_DEFAULT_USER.tipiDocumentoAutorizzati;
+    } else {
+        schema.properties.datiProtocollo.properties.tipoDocumento.enum =  ['NESSUN_TIPO_DOCUMENTO_AUTORIZZATO_DEFINITO_IN_CONFIGURAZIONE'];
+    }
+    logConsole.info('checkJsonSchema : schema');
+    logConsole.info(schema);
+    
+
 
     var validate = ajv.compile(schema);
     var valid = validate(req.body);
@@ -250,11 +268,10 @@ function checkJsonSchema(req){
 
 }
 
-
 /* 
     
     CHECK CompanyName 
-    Verifica l'esistenze del TAG company name dell'utente e recupera le informazioni di configurazione
+    Verifica l'esistenze del campo company name dell'utente e recupera le informazioni di configurazione
 
 */
 function checkCompanyName(user, reqId){
@@ -265,14 +282,15 @@ function checkCompanyName(user, reqId){
         log2file.error('checkCompanyName:userCompany property not found');
         return false;
     } else {
-        var fConfigName = ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + user.userCompany + '.js';
+        var fConfigName = ENV_PROT.baseFolder + '/' + ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + user.userCompany + '.js';
+        // var fConfigName = ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + user.userCompany + '.js';
         logConsole.info('checkCompanyName : load default data : ' + fConfigName);
  
         try {
             ENV_DEFAULT_USER = require(fConfigName);
             log4js.addAppender(log4js.appenders.file(ENV.logPath + '/' + ENV_DEFAULT_USER.log_filename), 'logUser');
             logUser = log4js.getLogger('logUser');
-            logUser.info('Start');
+            logUser.info('Start logger info');
             logUser.info(user);
             logUser.info(reqId);
         }
@@ -285,14 +303,12 @@ function checkCompanyName(user, reqId){
     }
 }
 
-/* 
+/****************************************************************************************************** 
 
-    saveDataToFS  --------------------------------------------------------------------------------------------------------- 
+    saveDataToFS
     Salva su file system i dati di autenticazione chiamata e protocollo e allegati 
     
 */
-
-
 
 function saveDataToFS(body , userObj, protocolloObj) {
     logConsole.info('saveDataToFS');
@@ -368,7 +384,12 @@ function saveDataToFS(body , userObj, protocolloObj) {
     }
 }
 
-/* EMAIL SENDER -------------------------------------------------------------------------------------------------------- */
+/**
+ * EMAIL SENDER 
+ * 
+ * Invia email
+ *  
+ */ 
 
 function emailSend(mailOptions){
         var transporter = nodemailer.createTransport(ENV_PROT.smtpConfig);
@@ -397,7 +418,11 @@ function emailSend(mailOptions){
 }
 
 
-/* PROTOCOLLO  --------------------------------------------------------------------------------------------------------- */
+/** 
+ * PROTOCOLLO  --------------------------------------------------------------------------------------------------------- 
+ * Chiamata al WS del protocollo
+ * 
+ * */
 
 function protocolloWS(objFilesList,  reqId, userObj) {
 
@@ -563,7 +588,128 @@ function protocolloWS(objFilesList,  reqId, userObj) {
 
 }
 
-/* UPLOAD ROUTE  --------------------------------------------------------------------------------------------------------- */
+/** 
+ * FASCICOLO  --------------------------------------------------------------------------------------------------------- 
+ * Chiamata al WS della fascicolazione
+ * I dati sono già stati controllati di json validator e se esistno entrambi si può proseguire
+ * Controlla se esiste o meno il fasciolo indicato e se i parametri sono completi
+ * 
+ * */
+
+function checkEsistenzaFascicoloWS(objFilesList,  reqId, userObj) {
+    
+        logConsole.info('checkEsistenzaFascicoloWS:');
+        logConsole.info(objFilesList.datiProtocollo);
+    
+        WS_FASCICOLI = ENV_DEFAULT_USER.wsJiride.url_ws_fascicoli;
+        WS_FASCICOLI_ENDPOINT = ENV_DEFAULT_USER.wsJiride.endpoint_ws_fascicoli;
+    
+        logConsole.info(WS_FASCICOLI);
+        logConsole.info(WS_FASCICOLI_ENDPOINT);
+    
+        // preparazione dati per la chiamata
+    
+        var args = { 
+            Anno: objFilesList.datiProtocollo.annoPratica,
+            Numero: objFilesList.datiProtocollo.numeroPratica,
+            CodiceAmministrazione: ENV_DEFAULT_USER.wsJiride.CodiceAmministrazione,
+            CodiceAOO: ENV_DEFAULT_USER.wsJiride.CodiceAOO
+        };
+    
+        logConsole.info(args);
+    
+        var soapResult = { result : '....'};
+     
+        var soapOptions = {
+            endpoint: WS_FASCICOLI_ENDPOINT
+        };
+    
+        logConsole.info('checkEsistenzaFascicoloWS:create client');
+    
+        return new Promise(function (resolve, reject) {
+    
+            soap.createClient(WS_FASCICOLI, soapOptions, function(err, client){
+                
+                if (err) {
+                    var msg = 'checkEsistenzaFascicoloWS: nella creazione del client soap';
+                    log2file.error(msg); log2file.error(err); logConsole.error(err);
+                    reject(err);
+                } else {
+    
+                    client.LeggiFascicoloString(args,  function(err, result) {
+                    //client.InserisciProtocollo(args,  function(err, result) {
+                    
+                        if (err) {
+                            var msg = 'Errore nella chiamata ad LeggiFascicoloString';
+                            log2file.error(msg);  log2file.error(err);  logConsole.error(msg);
+                            console.log(args);
+                            reject(err);
+                        } else {
+                            resolve(result);
+                        }
+    
+                    });
+                }
+    
+                }); //client.LeggiFascicoloString
+         }); //soap.createClient
+    
+    }
+    
+/**
+ * logData2Elastic
+ * invia i dati ad ElasticSearch
+ * 
+ */
+
+function logData2Elastic(jsonData) {
+     
+      var elasticDate = moment().format("YYYYMMDD-HHmmss-SSSS");
+      // console.log(elasticDate);
+    
+      var elasticUrl = 'http://10.10.128.79:9200/blackbox/analysis/' + elasticDate;
+      // console.log(elasticUrl);
+      
+      var r = request.defaults({'proxy':'http://proxy1.comune.rimini.it:8080'});
+    
+      var reqOptions = {
+        method: 'PUT',
+        uri: elasticUrl,
+        json: true,
+        body: jsonData
+      }
+    
+      //console.log(reqOptions);
+    
+      console.log(reqOptions);
+       
+      
+      request(reqOptions,function (error, response, body) {
+    
+          console.log('loggerModule logDataAnalysis send2elastic RESPONSE');
+          console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+          // if (response.statusCode == 400) {
+          console.log('error:', error); // Print the error if one occurred  
+          console.log(body);
+          console.log(body && body.error && body.error.root_cause);
+          console.log(jsonData);
+          // } else {
+            // console.log(response);  
+          //}
+          // res.status(200).send({ token: '', status : 'Logged out!' });
+          return console.log(JSON.stringify(jsonData));
+        });
+     
+    }
+
+/** 
+ * protocollo ROUTE  --------------------------------------------------------------------------------------------------------- 
+ * 
+ * viene chiamata in POST per la protocollazione
+ * 
+ * vengono verificati l'utente ed il token di autenticazione
+ * 
+ * */
 
 
 //router.post('/upload', multipartMiddleware, function(req, res) {
@@ -586,14 +732,13 @@ router.post('/protocollo',
     var objFieldList = {};
     var objFieldSanitized = {};
     var objDatiProtocollo = {};
+    var objDatiFascicolo = {};
     var htmlResponseMsg = '';
 
     logConsole.info('START /protocollo: ' + reqId);
 
 
-    //                 var p = {"nomeRichiedente":"MARIO","cognomeRichiedente":"ROSSI","emailRichiedente":"ruggero.ruggeri@comune.rimini.it","codiceFiscaleRichiedente":"RGGRGR70E25H294T","cellulareRichiedente":"3355703086","dataNascitaRichiedente":"11/12/1912","indirizzoRichiedente":"VIA ROMA, 1","cittaRichiedente":"RIMINI","capRichiedente":"47921","oggettoRichiedente":"Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....","files":[],"reqId":"20161209@112659@342@52188","idProtocollo":139364,"annoProtocollo":"2016","numeroProtocollo":100144};
-    //
-
+    // var p = {"nomeRichiedente":"MARIO","cognomeRichiedente":"ROSSI","emailRichiedente":"ruggero.ruggeri@comune.rimini.it","codiceFiscaleRichiedente":"RGGRGR70E25H294T","cellulareRichiedente":"3355703086","dataNascitaRichiedente":"11/12/1912","indirizzoRichiedente":"VIA ROMA, 1","cittaRichiedente":"RIMINI","capRichiedente":"47921","oggettoRichiedente":"Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....","files":[],"reqId":"20161209@112659@342@52188","idProtocollo":139364,"annoProtocollo":"2016","numeroProtocollo":100144};
     
     // limite upload
     // https://github.com/expressjs/node-multiparty
@@ -628,7 +773,7 @@ router.post('/protocollo',
                 
              },
            
-            // ##### VALIDATION / PARSING ------------------------------------------------
+            // ##### VALIDATION / PARSING dei dati di input
             
             function(callback) {
                 logConsole.info('ASYNC data parsing / validation');
@@ -641,7 +786,7 @@ router.post('/protocollo',
 
                     logConsole.error('ASYNC data parsing error');
                     ErrorMsg = {
-                            title: 'Errore data parse',
+                            title: 'Errore nel parsing/validazione dei dati di input',
                             msg: ret,
                             reqId: reqId,
                             code : 455
@@ -649,18 +794,82 @@ router.post('/protocollo',
                     callback(ErrorMsg, null);
                 }
             },
-
             
-            // ##### ------------------------------------------------------------------------
+            // ##### Gestione Fascicolo (se sono indicati anno e numero ne verifica l'esistenza) ...
 
-            function(callback){   logConsole.info('ASYNC NOOP:');   callback(null, 'ASYNC NOOP ... ok');    },
+            function(callback){   
+                logConsole.info('ASYNC checkEsistenzaFascicoloWS:');   
+                if ( req.body.datiProtocollo.annoPratica && req.body.datiProtocollo.numeroPratica ) {
+                    checkEsistenzaFascicoloWS(req.body, reqId, req.user)
+                    .then( function (result) {
+                        logConsole.info('##result');
+                        logConsole.info(result);
+                        logConsole.info('##result.LeggiFascicoloStringResult');
+                        console.log(result.LeggiFascicoloStringResult);
+                        // console.log(result.LeggiFascicoloStringResult.FascicoloOut);
+                        var string2conv = result.LeggiFascicoloStringResult;
+                        var someText = string2conv.replace(/(\r\n|\n|\r)/gm,"");
+                        console.log(someText);
 
+                        parseStringXML(someText, 
+                                    function (err, result) {
+                                        if (err){
+                                            logConsole.error(err);
+                                        }
+                            console.dir(result);
+                            if(result.FascicoloOut && result.FascicoloOut.Id && result.FascicoloOut.Id[0] ){
+                                logConsole.info('##result.id');
+                                logConsole.info(result.FascicoloOut.Id[0]);    
+                                callback(null, 'ASYNC checkEsistenzaFascicoloWS ... ID');
+                            } else {
+                                logConsole.info('##result. NESSUN ID TROVATO!');
+                                var idFascicolo = req.body.datiProtocollo.annoPratica + '/' +  req.body.datiProtocollo.numeroPratica;
+                                ErrorMsg = {
+                                    title: 'Errore di checkEsistenzaFascicoloWS',
+                                    msg: 'Nessun fascicolo trovato con le indicazioni fornite: ' + idFascicolo,
+                                    code : 458
+                                };
+                                callback(ErrorMsg, null);
+                                
+                                
+                            }
+    
+                        });
+                    })
+                    .catch(function (err) {
+                        // console.log(err);
+                        logConsole.error('ASYNC checkEsistenzaFascicoloWS:');
+                        log2file.error(reqId);
+                        log2file.error(err);
+                        ErrorMsg = {
+                            title: 'Errore di checkEsistenzaFascicoloWS',
+                            msg: 'Errore nella checkEsistenzaFascicoloWS.' + supportMsg,
+                            code : 458
+                        };
+                        callback(ErrorMsg, null);
+                    });
+                } else {
+                    if ( req.body.datiProtocollo.annoPratica || req.body.datiProtocollo.numeroPratica ) {
+                        logConsole.error('ASYNC checkEsistenzaFascicoloWS: NESSUNO parametri per il fascicolo - next');
+                        ErrorMsg = {
+                            title: 'Errore - checkEsistenzaFascicoloWS',
+                            msg: 'Solo un parametro per la fascicolazione - necessari entrambi',
+                            code : 458
+                        };
+                        callback(ErrorMsg, null);
+                    } else {
+                        logConsole.info('ASYNC checkEsistenzaFascicoloWS: NESSUNO parametri per il fascicolo - next');
+                        callback(null, 'ASYNC checkEsistenzaFascicoloWS NESSUNO parametri per il fascicolo -next');        
+                    }
+                }
 
-            // ##### Protocollazione ------------------------------------------------------------------------
+            },
+
+            // ##### Azione di Protocollazione 
 
             function(callback){
 
-                logConsole.info('ASYNC protocolloWS:');
+                logConsole.info('ASYNC protocolloWS:', fakeConfig.protocollazione);
                 if(fakeConfig.protocollazione == 1) {
                     protocolloWS(req.body, reqId, req.user)
                     .then( function (result) {
@@ -682,10 +891,17 @@ router.post('/protocollo',
                         };
                         callback(ErrorMsg, null);
                     });
+                } else {
+                    ErrorMsg = {
+                        title: 'FAKE protocollo',
+                        msg: 'FAKE Errore nella protocollazione della richiesta.',
+                        code : 505
+                    };
+                    callback(ErrorMsg, null);
                 }
             },
 
-            // ##### Saving files ------------------------------------------------------------------------
+            // ##### Saving files 
 
             function(callback){
                 logConsole.info('ASYNC saveDataToFS:');
@@ -710,7 +926,6 @@ router.post('/protocollo',
                     callback(ErrorMsg, null);
                 }
             },
-
 
             // ###### SAVING ISTANZA TO DB ----------------------------------------------------------------------
             /*
@@ -797,19 +1012,21 @@ router.post('/protocollo',
 
             //   function(callback){  },
 
-              
+               
 
     ],function(err, results) {
         // results is now equal to: {one: 1, two: 2}
         logConsole.info('ASYNC FINAL!:');
+        var elasticMessage = {};
         if(err){
+            elasticMessage = { user: req.user, type: 'error', data: err, ts: new Date() };
+            logData2Elastic(elasticMessage);
             log2file.error(err);
             logConsole.error(err);
             logUser.info(err);
-            // log2Email.info(err);
             res.status(ErrorMsg.code).send(ErrorMsg);
         } else {
-            logConsole.info('ALL OK!!!!');
+            logConsole.info('ASYNC ALL OK!!!!');
             // results.msg = htmlResponseMsg;
             logConsole.info(htmlResponseMsg);
             var Msg = {
@@ -823,10 +1040,11 @@ router.post('/protocollo',
                         }
             // log2Email.info(Msg);              
             logUser.info(Msg);          
+            elasticMessage = { user: req.user, type: 'success', data: Msg, ts: new Date() };
+            logData2Elastic(elasticMessage);
             res.status(200).send(Msg);
         }
     });
-
 
 });
 
@@ -913,32 +1131,69 @@ router.post('/login', function(req, res) {
   var username = req.body.username;
   var password = req.body.password;
   var userCompany = req.body.userCompany;
+  var CURRENT_USER = {};
 
-  logConsole.info('Check userCompany autorizzate', userCompany);
-
-  logConsole.info(ENV.userCompanyAutorizzateFilePath);
+  logConsole.info('login:checkCompanyName');
   
-  var userCompanyAutorizzateTxt = fs.readFileSync(ENV.userCompanyAutorizzateFilePath).toString();
-  logConsole.info(userCompanyAutorizzateTxt);
-  // validazione
-  //var matricole_autorizzate = /(?:[\s]|^)(M05831|M09999|M01111)(?=[\s]|$)/i;
-  var userCompanyAutorizzate = new RegExp('(?:[\s]|^)(' + userCompanyAutorizzateTxt + ')(?=[\s]|$)' , 'i');
-  //
-  if (!userCompanyAutorizzate.test(userCompany)){
-    logConsole.info("Check userCompany autorizzate : " + userCompany + " NON autorizzata");
-    log2file.error("Check userCompany autorizzate : " + userCompany + " NON autorizzata");
-  //  logDataAnalysis({action : 'matricola_non_autorizzata', eventTime: new Date(), user: {name: username}, params: {} });
-    res.status(401).json({ success: false, message: userCompany + ' non autorizzata' });
-    return;
+  if(!userCompany){
+      log2file.error('login:userCompany property not found');
+      logConsole.info('login:userCompany property not found');
+      //  logDataAnalysis({action : 'matricola_non_autorizzata', eventTime: new Date(), user: {name: username}, params: {} });
+      res.status(401).json({ success: false, message: 'login:userCompany property not found' });
   } else {
-    logConsole.info('Check userCompany autorizzate OK:', userCompany);
+      var fConfigName = ENV_PROT.baseFolder + '/' + ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + userCompany + '.js';
+      logConsole.info('login:checkCompanyName : load default data : ' + fConfigName);
+
+      // console.log('login:Current directory:', process.cwd());
+      // var f_exist = fs.existsSync(fConfigName); 
+      // console.log(f_exist);
+
+      if (!fs.existsSync(fConfigName)) {
+        log2file.error('login:checkCompanyName NON AUTORIZZATA', userCompany);
+        res.status(500).json({ success: false, message: 'login:checkCompanyName NON AUTORIZZATA'});
+        return false;
+      }
+
+
+      try {
+          CURRENT_USER = require(fConfigName);
+          log4js.addAppender(log4js.appenders.file(ENV.logPath + '/' + CURRENT_USER.log_filename), 'logUser');
+          logUser = log4js.getLogger('logUser');
+          logUser.info('Start');
+      }
+      catch (e) {
+          log2file.error(e);
+          res.status(500).json({ success: false, message: e });
+          return false;
+      }
+      logConsole.info(CURRENT_USER);
+  }
+
+  logConsole.info('login:Check userCompany autorizzate OK');
+  logConsole.info('login:Check utenti autorizzati');
+
+    // var userCompanyAutorizzateTxt = fs.readFileSync(ENV.userCompanyAutorizzateFilePath).toString();
+  // logConsole.info(userCompanyAutorizzateTxt);
+  // validazione
+  // var matricole_autorizzate = /(?:[\s]|^)(M05831|M09999|M01111)(?=[\s]|$)/i;
+  // var userCompanyAutorizzate = new RegExp('(?:[\s]|^)(' + userCompanyAutorizzateTxt + ')(?=[\s]|$)' , 'i');
+  //
+
+
+  if (!CURRENT_USER.matricoleAutorizzate || CURRENT_USER.matricoleAutorizzate.indexOf(username) == -1){
+    logConsole.info("login:Check user NON autorizzato : " + username);
+    log2file.error("login:Check user NON autorizzato : " + username);
+    //  logDataAnalysis({action : 'matricola_non_autorizzata', eventTime: new Date(), user: {name: username}, params: {} });
+    res.status(402).json({ success: false, message: "login:Check user NON autorizzato : " + username });
+    return false;
+  } else {
+    logConsole.info("login:Check OK! utente autorizzato : " + username);
   }
 
 
-
   if (username === 'DEMO'){
-    console.log('Using .... DEMO!');
-    log2fileAccess.info('Using .... DEMO!');
+    logConsole.info('Using .... DEMO!');
+    log2fileAccess.info('DEMO! - Access!');
     var userLogin = { 
           'name' : 'DEMO',
           'displayName' : 'DEMO',
@@ -957,13 +1212,13 @@ router.post('/login', function(req, res) {
       data: userLogin,
       token: token
     });
-    return;
+    return true;
 
   }
 
   var config = { ldap: ENV.ldap };
 
-  
+ 
   //console.log(config);
 
   var bindDn = "cn=" + username + "," + config.ldap.bindDn;
@@ -981,7 +1236,6 @@ router.post('/login', function(req, res) {
   });
 
 
-
   ldap.authenticate(username, password, function (err, user) {
     logConsole.info('LDAP ...', username, password);
     if (err) {
@@ -993,6 +1247,10 @@ router.post('/login', function(req, res) {
                           message: 'authentication failed!',
                           data:err
                       });
+        ldap.close(function(err) { 
+                        console.log('LDAP ... closing connection ...:');
+                        console.log(err); 
+                 });
       return;
     }
     log2fileAccess.info("Accesso effettuato : " + username);    
@@ -1013,11 +1271,12 @@ router.post('/login', function(req, res) {
 
     utilityModule.addTokenToList(token);
 
- 
+    ldap.close(function(err) { console.log(err); });
+
     //Session.create(res.data.id_utenti, res.data.nome_breve_utenti, res.data.token,  res.data.isadmin_utenti);
     res.status(201).json({
       success: true,
-      message: 'Enjoy your token!',
+      message: 'Access granted!',
       id_utenti : username,
       nome_breve_utenti : username,
       isadmin_utenti : 0,
@@ -1027,6 +1286,10 @@ router.post('/login', function(req, res) {
   });
 });
 
+/** 
+ * Logout elimina il token dalla lista
+ * 
+*/
 
 router.post('/logout', 
     utilityModule.ensureAuthenticated,
@@ -1040,6 +1303,11 @@ router.post('/logout',
             message: 'Logoff!'
     });
 });
+
+/**
+ *  Verifica che l'autenticazione sia ok
+ * 
+ */
 
 router.post('/test',
     utilityModule.ensureAuthenticated,

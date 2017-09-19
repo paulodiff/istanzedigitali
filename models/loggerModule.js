@@ -1,4 +1,6 @@
 var log4js  = require('log4js');
+
+
 log4js.configure({
   appenders: [
     { type: 'console' },
@@ -25,3 +27,6 @@ exports.log2file = function(data) {
 exports.log2console = function(data) {
   return logCon.debug(data);
 }
+
+
+

@@ -238,11 +238,25 @@ router.get('/stats', utilityModule.ensureAuthenticated, function(req, res) {
 
     console.log(req.query);
 
+    console.log(req.query.aDataPosta);
+    console.log(moment(req.query.aDataPosta).format());
+    console.log(moment(req.query.aDataPosta).utc().format());
+
+
+    console.log(req.query.daDataPosta);
+    console.log(moment(req.query.daDataPosta).format());
+    console.log(moment(req.query.daDataPosta).utc().format());
     
+    var options = {};
+    options.aDataPosta = moment(req.query.aDataPosta).format();
+    options.daDataPosta = moment(req.query.daDataPosta).format();
+
+    console.log(options); 
+
     var key = {};
     async.series([
       function(callback) { 
-          databaseModule.getPostaStatsCountItem(req.query)
+          databaseModule.getPostaStatsCountItem(options)
          .then( function (result) {
                   // log.log2console(result);
                   key.StatsCountItem = result;
@@ -254,7 +268,7 @@ router.get('/stats', utilityModule.ensureAuthenticated, function(req, res) {
                 });
       },
       function(callback) { 
-          databaseModule.getPostaStatsCountCdc(req.query)
+          databaseModule.getPostaStatsCountCdc(options)
          .then( function (result) {
                   // log.log2console(result);
                   key.StatsCountCdc = result;
@@ -265,6 +279,30 @@ router.get('/stats', utilityModule.ensureAuthenticated, function(req, res) {
                   callback(err, null);
                 });
       },
+      function(callback) { 
+          databaseModule.getPostaStatsCountMatricole(options)
+         .then( function (result) {
+                  // log.log2console(result);
+                  key.StatsCountMatricole = result;
+                  callback(null, result);
+               })
+         .catch(function (err) {
+                  log.log2console(err);
+                  callback(err, null);
+                });
+      }, //getPostaStatsCountTipi
+      function(callback) { 
+          databaseModule.getPostaStatsCountTipi(options)
+         .then( function (result) {
+                  // log.log2console(result);
+                  key.StatsCountTipi = result;
+                  callback(null, result);
+               })
+         .catch(function (err) {
+                  log.log2console(err);
+                  callback(err, null);
+                });
+      }
     ],function(err, results) {
         // results is now equal to: {one: 1, two: 2}
         log.log2console('Stats async -- FINAL!:');

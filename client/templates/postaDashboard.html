@@ -46,11 +46,48 @@
 <div class="panel panel-default">
     <div class="panel-heading">Conteggio posta giornaliera del periodo indicato</div>
     <div class="panel-body">
-        <canvas id="item-chart" width='1200' height='500' class="chart chart-bar" chart-data="dataItemCount" chart-labels="labelsItemCount" chart-series="seriesItemCount" chart-click="onClickItemCount"></canvas> 
+        <canvas id="item-chart" 
+                width='1200' height='500' 
+                class="chart chart-bar" 
+                chart-data="dataItemCount" 
+                chart-labels="labelsItemCount" 
+                chart-series="seriesItemCount" 
+                chart-options="optionsItemCount"
+                chart-click="onClickItemCount"></canvas> 
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Volumi dei tipi di posta del periodo indicato</div>
+    <div class="panel-body">
+        <canvas id="doughnut" 
+                class="chart chart-doughnut"
+                chart-data="dataTipiCount" 
+                chart-labels="labelsTipiCount" 
+                chart-series="seriesTipiCount" 
+                chart-options="optionsTipiCount"></canvas> 
     </div>
 </div>
 
 
+<div class="panel panel-default">
+    <div class="panel-heading">Conteggio centri di costo del periodo indicato</div>
+    <div class="panel-body">
+        <canvas id="cdc-chart" width='1200' height='500' class="chart chart-bar" chart-data="dataCdcCount" chart-labels="labelsCdcCount" chart-series="seriesCdcCount" chart-click="onClickCdcCount"></canvas> 
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">Conteggio attività utenti del periodo indicato</div>
+    <div class="panel-body">
+        <canvas id="cdc-chart" width='1200' height='1500' class="chart chart-horizontal-bar" chart-data="dataMatricoleCount" chart-labels="labelsMatricoleCount" chart-series="seriesMatricoleCount" chart-click="onClickMatricoleCount"></canvas> 
+    </div>
+</div>
+
+
+
+<!--
 <table class="table table-striped table-hover ">
   <thead>
   <tr>
@@ -65,19 +102,7 @@
   </tr>
   </tbody>
 </table>
-
-
-<div class="panel panel-default">
-    <div class="panel-heading">Conteggio centri di costo del periodo indicato</div>
-    <div class="panel-body">
-        <canvas id="cdc-chart" width='1200' height='500' class="chart chart-bar" chart-data="dataCdcCount" chart-labels="labelsCdcCount" chart-series="seriesCdcCount" chart-click="onClickCdcCount"></canvas> 
-    </div>
-</div>
-
-
-
-
-
+-->
 
 
 

@@ -679,7 +679,55 @@ $scope.addDataCDC = function(){
       })
         .catch(function(response) {
         $log.error(response);
-        AlertService.displayError(response);
+
+        /*
+        AlertService.displayError({
+        data: {
+          title: 'Stampa bloccata da POPUP - operazione da eseguire una sola volta',
+          message:'Seguire le indicazioni per sbloccare i popup come indicato nella pagina di accesso della intranet http://intranet.comune.rimini.it/gestione-posta/'
+        },
+        status : 499
+      });*/
+
+
+
+
+ AlertService.createDialog('templates/popupDialogForm.html','customDialogCtrl',MyeditDropdownOptionsArray)
+    .then(function(dialogData){
+      console.log(dialogData);
+      console.log('Adding data ....');
+
+      console.log(dialogData);
+      console.log('Saving ..... ');
+
+
+    },function(btn){
+      console.log('Operazione annullata.');
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       });
     
 
@@ -1033,14 +1081,17 @@ $scope.showHelpRicerca = function () {
 
 .controller('customDialogCtrl',
            // ['$scope','$modalInstance', 'data',
-    function($scope , $uibModalInstance ,  data  ){
+    function($location, $rootScope, $scope , $uibModalInstance ,  data  ){
 		  
       console.log('customDialogCtrl ....');
+      console.log($location.absUrl());
+      console.log($location.path());
       
       //-- Variables --//
       $scope.elencoTipoPosta = data;
 
       $scope.modal = {};
+      $scope.modal.imgSource = $rootScope.base_url + 'images/popup-unlock.jpg';
       $scope.modal.tipoPostaStampa = data[0];
       $scope.modal.dataAttuale = moment().format('DD/MM/YYYY');;
       //-- Methods --//
@@ -1080,8 +1131,16 @@ $scope.showHelpRicerca = function () {
       
 
       $scope.model = {};
-      $scope.model.daDataPosta = new Date('01/01/2017');
-      $scope.model.aDataPosta = new Date();
+      $scope.model.daDataPosta = moment().set({
+           'hour' : 0,
+           'minute'  : 0, 
+           'second' : 0
+        }).subtract(1, 'month').toDate();
+      $scope.model.aDataPosta = moment().set({
+           'hour' : 23,
+           'minute'  : 59, 
+           'second' : 59
+        }).toDate();
       //-- Methods --//
       
       $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
@@ -1095,20 +1154,32 @@ $scope.showHelpRicerca = function () {
   
       $scope.labelsItemCount = [];
       $scope.dataItemCount = [];
-      $scope.seriesItemCount = ['POSTA'];
+      $scope.seriesItemCount = [];
 
       $scope.labelsCdcCount = [];
       $scope.dataCdcCount = [];
       $scope.seriesCdcCount = ['CDC'];
 
+      $scope.labelsMatricoleCount = [];
+      $scope.dataMatricoleCount = [];
+      $scope.seriesMatricoleCount = ['MATRICOLE'];
+
+
       $scope.tableCdc = [];
       $scope.tableItem = [];
+      $scope.tableMatricole = [];
+
 
       
       $scope.AggiornaDati = function(){
         console.log('AggiornaDati');
         console.log($scope.model);
         //AlertService.displayConfirm('adad','adad');
+        // $scope.model.daDataPostaTxt = new Date('01/01/2017');
+        // $scope.model.aDataPosta = new Date();
+        // $scope.model.daDataPostaT = $scope.model.daDataPosta.getTime();
+        // $scope.model.aDataPostaT = $scope.model.aDataPosta.getTime();
+        console.log($scope.model);
         var options = $scope.model;
         
         PostaService.getPostaStats(options)
@@ -1116,6 +1187,78 @@ $scope.showHelpRicerca = function () {
           //$scope.gridOptionsCDC.data.push(newItem);
           $log.info(res);
 
+          // preparazione grafico multi serie
+
+          $scope.labelsItemCount = [];
+          $scope.dataItemCount = [];
+          $scope.seriesItemCount = [];
+          $scope.optionsItemCount = {
+            legend: {
+              display: true,
+              labels: {
+                fontColor: 'rgb(0, 0, 0)'
+              }
+            },
+            scales: {
+              xAxes: [{
+                stacked: true,
+              }],
+              yAxes: [{
+                stacked: true
+              }]
+            }
+          };
+          // $log.info('recupero serie e labels');
+          res.data.StatsCountItem.forEach(function (item) {
+            // $log.info(item);
+            // nella serie metto il tipo_spedizione
+            if ($scope.seriesItemCount.indexOf(item.tipo_spedizione) === -1) $scope.seriesItemCount.push(item.tipo_spedizione);
+
+            // nella label metto la data
+            if ($scope.labelsItemCount.indexOf(item.posta_id_cut) === -1) $scope.labelsItemCount.push(item.posta_id_cut);
+
+            var posSerie = $scope.seriesItemCount.indexOf(item.tipo_spedizione);
+            var posLabel = $scope.labelsItemCount.indexOf(item.posta_id_cut);
+            $log.info(posSerie, posLabel);
+
+            // $log.info('recupero serie e labels', posSerie, posLabel);
+            if(!$scope.dataItemCount[posSerie]) $scope.dataItemCount[posSerie] = [];
+            $scope.dataItemCount[posSerie][posLabel] = item.posta_id_count;
+          });
+
+          $log.info($scope.seriesItemCount.length);
+          $log.info($scope.labelsItemCount.length);
+          $log.info($scope.seriesItemCount);
+          $log.info($scope.labelsItemCount);
+
+          // $log.info('--analisi--');
+
+          // inizializzazione a 0
+          for(var i = 0; i < $scope.seriesItemCount.length; i++) {
+            if(!$scope.dataItemCount[i]){
+              // $log.info('1 non esiste assegno--analisi--');
+              $scope.dataItemCount[i] = [];
+            } else {
+              // $log.info('2 esiste stampo');
+              // $log.info($scope.dataItemCount[i]);
+            }
+            for(var j = 0; j < $scope.labelsItemCount.length; j++) {
+              // $log.info('i,j esiste stampo',i,j);
+              if(!$scope.dataItemCount[i][j]){
+                // $log.info('3 non esiste assegno');
+                $scope.dataItemCount[i][j] = 0;                  
+              } else {
+                // $log.info('4 esiste stampo');
+                // $log.info($scope.dataItemCount[i][j]);
+              }
+            }
+          }
+
+          
+  
+          $log.info($scope.dataItemCount);
+          
+          
           $scope.labelsCdcCount = [];
           $scope.dataCdcCount = [];
           $scope.tableCdc = res.data.StatsCountCdc;
@@ -1124,14 +1267,24 @@ $scope.showHelpRicerca = function () {
             $scope.labelsCdcCount.push(item.cdc);
             $scope.dataCdcCount.push(item.cdc_count);
           });
+         
 
-          $scope.labelsItemCount = [];
-          $scope.dataItemCount = [];
-          $scope.tableItem = res.data.StatsCountItem;
-          res.data.StatsCountItem.forEach(function (item) {
+          $scope.labelsMatricoleCount = [];
+          $scope.dataMatricoleCount = [];
+          $scope.tableMatricole = res.data.StatsCountItem;
+          res.data.StatsCountMatricole.forEach(function (item) {
             // $log.info(item);
-            $scope.labelsItemCount.push(item.posta_id_cut);
-            $scope.dataItemCount.push(item.posta_id_count);
+            $scope.labelsMatricoleCount.push(item.userid);
+            $scope.dataMatricoleCount.push(item.userid_count);
+          });
+
+          $scope.labelsTipiCount = [];
+          $scope.dataTipiCount = [];
+          $scope.tableTipi = res.data.StatsCountTipi;
+          res.data.StatsCountTipi.forEach(function (item) {
+            // $log.info(item);
+            $scope.labelsTipiCount.push(item.tipo_spedizione);
+            $scope.dataTipiCount.push(item.tipo_spedizione_count);
           });
 
           // $scope.user = res.data.user;

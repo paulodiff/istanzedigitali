@@ -14,7 +14,8 @@ securityDefinitions:
     name: Authorization
     in: header  
 #host: 10.10.128.79:9988
-basePath: /simplesaml/gatewayprotocollo
+# basePath: /simplesaml/gatewayprotocollo
+basePath: /api
 paths:
   /login:        
     post:
