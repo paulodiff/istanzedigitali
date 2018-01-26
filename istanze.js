@@ -180,17 +180,21 @@ app.use('/istanzemgr', IstanzeMgr);
 var GatewayProtocollo = require('./routes/GatewayProtocollo')();
 app.use('/gatewayprotocollo', GatewayProtocollo);
 
-var PostaMgr = require('./routes/PostaMgr')();
-app.use('/postamgr', PostaMgr);
+//var PostaMgr = require('./routes/PostaMgr')();
+//app.use('/postamgr', PostaMgr);
 
 var LoginMgr = require('./routes/LoginMgr')();
 app.use('/loginmgr', LoginMgr);
 
 
+//var QueueMgr = require('./routes/QueueMgr')();
+//app.use('/queuemgr', QueueMgr);
+
+
 // Define routes.
 app.get('/',
   function(req, res) {
-    res.render('login');
+    res.render('login-istanze');
 	  //res.redirect('home/');
 });
 
@@ -218,17 +222,17 @@ var options = {
   }
 }
 
-app.use('/cli',  express.static(__dirname + '/client', options));
+app.use('/cli',  express.static(__dirname + '/client-istanze', options));
 app.use('/draw',  express.static(__dirname + '/draw.io', options));
-app.use('/dist', express.static(__dirname + '/client/dist', options));
+app.use('/dist', express.static(__dirname + '/client-istanze/dist', options));
 
 // Sequelize START Bootstrap
 var models = require("./modelsSequelize");
 
 log.log2console('Sequelize START');
 
-log.log2console('Server started at:' + ENV.nodejs.NODEJSport);
-log.log2file('Server started at:' + ENV.nodejs.NODEJSport);
+// log.log2console('Server started at:' + ENV.nodejs.NODEJSport);
+// log.log2file('Server started at:' + ENV.nodejs.NODEJSport);
 //app.listen(ENV.nodejs.NODEJSport);
 
 
@@ -238,6 +242,7 @@ models.sequelize.sync().then(function() {
    * Listen on provided port, on all network interfaces.
    */
   var port = ENV.nodejs.NODEJSport;
+  port = 9988;
   app.listen(port, function() {
     log.log2console('Express server listening on port ' + port);
   });

@@ -1,0 +1,395 @@
+<section>
+
+
+
+
+
+<div class="u-text-r-xxl u-padding-all-s">
+    <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+        <div class="u-layout-centerContent">
+            <section class="u-layout-wide">
+                <h2 class="u-text-r-l">Caricamento SID_F24_PAGAMENTI</h2>
+                <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                    Form per il caricamento dei dati mensili scaricati dal SID. Il file deve essere in formato *.csv denominato TotaleRateF24_AAAA_MM_DD.csv
+                </p>
+            </section>
+        </div>
+      </div>
+</div>
+
+<!-- - ------------------------------------------------------------------------------------------------------------- -->
+
+<form   class="Form Form--spaced u-padding-all-xl u-text-r-xs"
+        name="vm.userForm"
+        ng-show="!isSubmitting">
+    <fieldset class="Form-fieldset">
+        <legend class="Form-legend">Anagrafica</legend>
+
+        <div class="Form-field">
+                <label class="Form-label is-required" for="multistepForm.nomeRichiedente">nomeRichiedente</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="multistepForm.nomeRichiedente"
+                        name="multistepForm.nomeRichiedente"
+                        ng-model="multistepForm.nomeRichiedente" 
+                        aria-required="true" 
+                        ng-minlength="1"
+                        ng-maxlength="10"
+                        required>
+                        <div ng-messages="multistepForm.nomeRichiedente.$error" 
+                             ng-if="multistepForm.nomeRichiedente.$touched"
+                             style="color:maroon" 
+                             role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        </div>                       
+            </div>
+            
+            <div class="Form-field">
+                <label class="Form-label is-required" for="multistepForm.cognomeRichiedente">cognomeRichiedente</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="multistepForm.cognomeRichiedente" 
+                        name="multistepForm.cognomeRichiedente"
+                        aria-required="true" 
+                        ng-model="multistepForm.cognomeRichiedente"
+                        ng-minlength="1"
+                        ng-maxlength="10"
+                        >
+                <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+    
+                <div ng-messages="multistepForm.cognomeRichiedente.$error" 
+                        style="color:red" role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                </div>                    
+            </div>
+
+
+        <button type="submit"
+            
+            class="Button Button--default u-text-r-xs u-inlineBlock"  
+            ng-click="next2dati()">Prossimo passo</button>1
+
+        <legend class="Form-legend">Dati da inviare</legend>
+
+
+<!--
+
+        <div class="Form-field">
+            <label class="Form-label is-required" for="cognome">Cognome</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="cognomeRichiedente"
+                    name="cognomeRichiedente"
+                    ng-model="vm.model.cognomeRichiedente" 
+                    aria-required="true" 
+                    ng-minlength="6"
+                    ng-maxlength="10"
+                    required>
+                    <div ng-messages="vm.userForm.cognomeRichiedente.$error" style="color:maroon" role="alert" ng-if="vm.userForm.cognomeRichiedente.$touched">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                    </div>                       
+        </div>
+    -->
+        <div class="Form-field">
+            <label class="Form-label is-required">File da allegare:</label>
+            <input 
+                type="file" 
+                ngf-select 
+                ng-model="vm.model.file" 
+                class="Button Button--default u-text-r-xs u-inlineBlock" 
+                name="file"    
+                accept="text/csv" 
+                ngf-pattern="'*.csv'"
+                ngf-max-size="2MB" 
+                ngf-select 
+                ngf-min-size="1"
+                required>
+
+               <!--  <pre>{{vm.userForm.file.$error}}</pre> -->
+
+                <div ng-messages="vm.userForm.file.$error" style="color:maroon" role="alert" multiple>
+                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+                    <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido</div>
+                    <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                </div>   
+        </div>
+        
+        <div class="Form-field">
+            <label class="Form-label is-required" for="nome">Note</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="nomeRichiedente" 
+                    name="nomeRichiedente"
+                    aria-required="true" 
+                    ng-model="vm.model.nomeRichiedente"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+            <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+            </div>                    
+        </div>
+      
+    </fieldset>
+
+    <button type="submit"
+            ng-disabled="!vm.userForm.$valid || isSubmitting" 
+            class="Button Button--default u-text-r-xs u-inlineBlock"  
+            ng-click="uploadCsv()">Invia richiesta</button>
+
+<!--            
+
+    <div class="Form-field Grid-cell u-textRight">
+        <button type="button" class="Button Button--default Button--shadow u-text-m u-inlineBlock">Invia</button>
+        <button class="Button Button--info u-text-r-xs" type="button" id="removeFirstRow" ng-click="uploadCsv()">Upload</button>    
+        <button class="Button Button--info u-text-r-xs" type="button" id="addData"        ng-click="testSse()">Check Sse</button>
+        <button class="Button Button--info u-text-r-xs" type="button" id="addData"        ng-click="testSseEvent()">Check Sse Event</button>
+       
+    </div>
+-->
+
+
+    </div>
+</form>
+
+
+<div cr-progress-bar 
+p1="my_progressBarValue" 
+p2="my_progressBarValue2" 
+t1="my_progressText"
+f1="my_progressBarFunction"></div>
+
+<!--
+
+<pre>AAA:{{vm.userForm.nomeRichiedente }}</pre>
+<hr>
+<pre>{{vm.userForm | json}}</pre>
+<hr>
+<pre>{{vm.model | json}}</pre>
+
+-->
+
+<div class="u-text-r-xxl u-padding-all-s">
+    <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+        <div class="u-layout-centerContent">
+            <section class="u-layout-wide">
+                <h2 class="u-text-r-l">Log operazioni</h2>
+                <ul>
+                    <li class="u-text-r-l" ng-repeat="item in logOperazioni track by $index">{{item}}</li>
+                </ul>
+            </section>
+        </div>
+      </div>
+</div>
+
+<div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid-cellnav ui-grid-exporter ui-grid="gridOptions"></div>
+
+   
+<!--    
+    <table class="Table Table--withBorder u-text-r-xs">
+      <tbody>
+        <tr class="u-border-bottom-xs">
+              <td><b>Nome<b></td>
+              <td>Valori ? {{user.nome}} - {{user.cognome}}</td>
+        </tr>
+        <tr>
+              <td><b>Codice Fiscale<b></td>
+              <td>{{user.CodiceFiscale}}</td>
+        </tr>
+        <tr>
+              <td><b>userid<b></td>
+              <td>{{user.userid}}</td>
+        </tr>
+        <tr>
+              <td><b>Data Nascita<b></td>
+              <td>{{user.dataNascita}}</td>
+        </tr>    
+      </tbody>
+    </table>
+    
+-->    
+
+<!--
+
+    <div class="u-background-grey-20 u-text-r-xxl u-padding-r-top u-padding-r-bottom">
+        <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+            <div class="u-layout-centerContent u-background-grey-20 u-padding-r-bottom">
+                <section class="u-layout-wide">
+                    <h2 class="u-padding-r-bottom u-padding-r-top u-text-r-l">Inserimento dati</h2>
+
+                    <div class="Grid Grid--withGutter">
+
+                        <div class="Grid-cell u-nbfc u-md-size3of4 u-lg-size3of4">
+
+                            <div class="Grid u-layout-centerContent">
+                                <div class="Grid-cell u-sizeFit">
+                                    <img src="//placehold.it/330x330?text=placeholder" class="u-sizeFit" alt="..." />
+                                </div>
+                                <div class="Grid-cell u-md-sizeFill u-lg-sizeFill u-padding-r-left">
+                                    <div class="u-color-grey-30 u-border-top-xxs u-padding-right-xxl u-padding-r-all">
+                                        <p class="u-padding-r-bottom">
+                                            <span class="Dot u-background-70"></span>
+                                            <a class="u-textClean u-textWeight-700 u-text-r-xs u-color-50" href="#">categoria</a>
+                                            <span class="u-text-r-xxs u-textSecondary u-textWeight-400 u-lineHeight-xl u-cf">12 Maggio 2016</span>
+                                        </p>
+                                        <h3 class="u-padding-r-top u-padding-r-bottom"><a class="u-text-h4 u-textClean u-color-black" href="">
+    Consequatur eligendi sit similique est est voluptatem labore consequatur sit.
+    </a>
+                                        </h3>
+                                        <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                                            Delectus non est dolore omnis dolorem. Dolor non saepe in minus sit provident cupiditate blanditiis. Libero explicabo magnam sequi molestias quos. Consequatur modi et facere aut repudiandae omnis.
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="Grid-cell u-md-size1of4 u-lg-size1of4 u-padding-r-left">
+                            <div class="u-color-grey-30 u-border-top-xxs u-padding-right-xxl u-padding-r-all">
+                                <p class="u-padding-r-bottom">
+                                    <span class="Dot u-background-70"></span>
+                                    <a class="u-textClean u-textWeight-700 u-text-r-xs u-color-50" href="#">categoria</a>
+                                    <span class="u-text-r-xxs u-textSecondary u-textWeight-400 u-lineHeight-xl u-cf">12 Maggio 2016</span>
+                                </p>
+                                <h3 class="u-padding-r-top u-padding-r-bottom"><a class="u-text-h4 u-textClean u-color-black" href="">
+    Omnis adipisci omnis aliquam vel voluptatem veniam iure suscipit.
+    </a>
+                                </h3>
+                                <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                                    Quos inventore eum animi non sint dolor sed. Aut nihil delectus voluptas doloremque quibusdam ipsam est quos. Cumque cum doloremque quia aperiam cumque. Autem aut veniam.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="Grid-cell u-md-size1of4 u-lg-size1of4 u-padding-r-left">
+                            <div class="u-color-grey-30 u-border-top-xxs u-padding-right-xxl u-padding-r-all">
+                                <p class="u-padding-r-bottom">
+                                    <span class="Dot u-background-70"></span>
+                                    <a class="u-textClean u-textWeight-700 u-text-r-xs u-color-50" href="#">categoria</a>
+                                    <span class="u-text-r-xxs u-textSecondary u-textWeight-400 u-lineHeight-xl u-cf">12 Maggio 2016</span>
+                                </p>
+                                <h3 class="u-padding-r-top u-padding-r-bottom"><a class="u-text-h4 u-textClean u-color-black" href="">
+    Omnis adipisci omnis aliquam vel voluptatem veniam iure suscipit.
+    </a>
+                                </h3>
+                                <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                                    Laudantium sed repellendus odit ut perspiciatis vitae id. At nemo velit magnam rerum expedita dolorem. Ex vitae nam maiores excepturi reprehenderit molestiae accusantium ut.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="Grid-cell u-md-size1of4 u-lg-size1of4 u-padding-r-left">
+                            <div class="u-color-grey-30 u-border-top-xxs u-padding-right-xxl u-padding-r-all">
+                                <p class="u-padding-r-bottom">
+                                    <span class="Dot u-background-70"></span>
+                                    <a class="u-textClean u-textWeight-700 u-text-r-xs u-color-50" href="#">categoria</a>
+                                    <span class="u-text-r-xxs u-textSecondary u-textWeight-400 u-lineHeight-xl u-cf">12 Maggio 2016</span>
+                                </p>
+                                <h3 class="u-padding-r-top u-padding-r-bottom"><a class="u-text-h4 u-textClean u-color-black" href="">
+    Omnis adipisci omnis aliquam vel voluptatem veniam iure suscipit.
+    </a>
+                                </h3>
+                                <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                                    Dolor optio eius qui deleniti dolorum debitis. Neque sapiente dolor corrupti et dignissimos nesciunt deleniti. Et modi expedita nulla voluptatem voluptas iusto laborum. Qui assumenda illo.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="Grid-cell u-md-size1of4 u-lg-size1of4 u-padding-r-left">
+                            <div class="u-color-grey-30 u-border-top-xxs u-padding-right-xxl u-padding-r-all">
+                                <p class="u-padding-r-bottom">
+                                    <span class="Dot u-background-70"></span>
+                                    <a class="u-textClean u-textWeight-700 u-text-r-xs u-color-50" href="#">categoria</a>
+                                    <span class="u-text-r-xxs u-textSecondary u-textWeight-400 u-lineHeight-xl u-cf">12 Maggio 2016</span>
+                                </p>
+                                <h3 class="u-padding-r-top u-padding-r-bottom"><a class="u-text-h4 u-textClean u-color-black" href="">
+    Omnis adipisci omnis aliquam vel voluptatem veniam iure suscipit.
+    </a>
+                                </h3>
+                                <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                                    Sed quae voluptatem sapiente. Ipsam nemo dicta occaecati sit nemo ut. Doloribus nulla quis.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="Grid-cell u-md-size1of4 u-lg-size1of4 u-padding-r-left">
+                            <div class="u-color-grey-30 u-border-top-xxs u-padding-right-xxl u-padding-r-all">
+                                <p class="u-padding-r-bottom">
+                                    <span class="Dot u-background-70"></span>
+                                    <a class="u-textClean u-textWeight-700 u-text-r-xs u-color-50" href="#">categoria</a>
+                                    <span class="u-text-r-xxs u-textSecondary u-textWeight-400 u-lineHeight-xl u-cf">12 Maggio 2016</span>
+                                </p>
+                                <h3 class="u-padding-r-top u-padding-r-bottom"><a class="u-text-h4 u-textClean u-color-black" href="">
+    Omnis adipisci omnis aliquam vel voluptatem veniam iure suscipit.
+    </a>
+                                </h3>
+                                <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                                    Aliquid libero sapiente laborum alias itaque vitae. Quaerat nemo tempora. Culpa nesciunt aut dicta dolorem inventore ipsam sit.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <p class="u-textCenter u-text-md-right u-text-lg-right u-padding-r-top">
+                        <a href="#" class="u-color-50 u-textClean u-text-h4">
+          tutti i contenuti <span class="Icon Icon-chevron-right"></a>
+                    </p>
+
+                </section>
+            </div>
+
+        </div>
+    </div>
+-->
+
+    </section>
+    
+    
+
+
+
+<!--
+<form name="myForm">
+        <fieldset>
+          <legend>Upload on form submit</legend>
+          Username:
+          <input type="text" name="userName" ng-model="username" size="31" required>
+          <i ng-show="myForm.userName.$error.required">*required</i>
+          <br>Photo:
+          <input type="file" ngf-select ng-model="picFile" name="file"    
+                 accept="image/*" ngf-max-size="2MB" required
+                 ngf-model-invalid="errorFile">
+          <i ng-show="myForm.file.$error.required">*required</i><br>
+          <i ng-show="myForm.file.$error.maxSize">File too large 
+              {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
+          <img ng-show="myForm.file.$valid" ngf-thumbnail="picFile" class="thumb"> <button ng-click="picFile = null" ng-show="picFile">Remove</button>
+          <br>
+          <button ng-disabled="!myForm.$valid" 
+                  ng-click="uploadPic(picFile)">Submit</button>
+          <span class="progress" ng-show="picFile.progress >= 0">
+            <div style="width:{{picFile.progress}}%" 
+                ng-bind="picFile.progress + '%'"></div>
+          </span>
+          <span ng-show="picFile.result">Upload Successful</span>
+          <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
+        </fieldset>
+        <br>
+      </form>
+  -->
+
+
+
+

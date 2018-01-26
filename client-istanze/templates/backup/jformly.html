@@ -1,0 +1,20 @@
+<div class="container">
+<div>
+      <h1>{{::vm.exampleTitle}}</h1>
+      <div>
+      <form ng-submit="vm.onSubmit()" name="vm.form" novalidate>
+        <formly-form model="vm.model" fields="vm.fields" options="vm.options" form="vm.form">
+          <button type="submit" class="btn btn-lg btn-warning btn-block submit-button" ng-disabled="vm.form.$invalid">Invia i dati</button>
+          <!--
+            <button type="button" class="btn btn-default" ng-click="vm.options.resetModel()">Reset</button>
+          -->
+        </formly-form>
+      </form>
+      
+      <p>Form Data</p>
+      <pre>{{vm.model | json}}</pre>
+      <p>Form Error</p>
+      <pre>{{vm.errors | json}}</pre>
+
+    </div>
+</div>    

@@ -1,0 +1,6 @@
+<formly-transclude></formly-transclude>
+      <div class="my-messages" ng-messages="fc.$error" ng-if="fc.$touched">
+        <div class="some-message" ng-message="{{::name}}" ng-repeat="(name, message) in ::options.validation.messages">
+          {{message(fc.$viewValue, fc.$modelValue, this)}}
+        </div>
+        </div>

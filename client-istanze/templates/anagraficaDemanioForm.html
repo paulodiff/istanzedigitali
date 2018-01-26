@@ -1,0 +1,197 @@
+
+<!-- AREA ALERT -->
+
+<div ng-show="errorMessage" ng-animate="'animate'" class="check-element animate-show-hide u-padding-all-l"> 
+<div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" role="alert">
+        <h2 class="u-text-h2">Attenzione</h2>
+        <p class="u-text-p">{{errorMessage}}</p>
+        <a class="Button Button--default u-text-r-xs" ng-click="resetErrorMessage()">OK</a> 
+    </div>
+</div>
+<section>
+
+<!-- AREA BROWSE -->
+
+<!-- formStatus Browse START -->
+<div ng-show="formStatus == 'Browse'" ng-animate="'animate'" class="check-element animate-show-hide"> 
+
+<div class="u-text-r-xxl u-padding-all-s">
+    <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+        <div class="u-layout-centerContent">
+            <section class="u-layout-wide">
+                <h2 class="u-text-r-l">Anagrafica Demanio</h2>
+                <p class="u-lineHeight-l u-text-r-m u-textSecondary u-padding-r-right">
+                    Form per ricerca e la modifica dei dati anagrafici dei Concessionari del Demanio
+                </p>
+            </section>
+        </div>
+      </div>
+</div>
+
+
+<div class="u-layout-wide u-layoutCenter u-layout-r-withGutter u-padding-all-xl">
+    
+<div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid-cellnav ui-grid-exporter ui-grid="gridOptions"></div>
+
+<a class="Button Button--default u-text-r-xs" ng-click="editData()">MODIFICA</a> 
+<a class="Button Button--default u-text-r-xs" ng-click="showDialog()" >STAMPA</a>
+<a class="Button Button--default u-text-r-xs" ng-click="addData()" >AGGIUNGI</a>
+
+</div>
+
+</div>
+<!-- formStatus Browse END -->
+
+<!-- AREA EDIT -->
+
+<!-- formStatus EditUpdate START -->
+<div ng-show="formStatus == 'EditUpdate'" ng-animate="'animate'"  class="check-element animate-show-hide"> 
+
+<div class="u-text-r-xxl u-padding-all-s">
+    <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+        <div class="u-layout-centerContent">
+            <section class="u-layout-wide">
+                <h2 class="u-text-r-l">Caricamento modifica dati</h2>
+                
+                <p class="u-lineHeight-l u-text-r-m u-textSecondary u-padding-r-right">
+                    Form per il caricamento modifica  dei dati  ...
+                </p>
+            </section>
+        </div>
+      </div>
+</div>
+
+
+<form   class="Form Form--spaced u-padding-all-xl u-text-r-xs"
+        name="vm.userForm"
+        ng-show="!isSubmitting">
+    <fieldset class="Form-fieldset">
+        <legend class="Form-legend">Dati da inviare</legend>
+        
+        <div class="Form-field">
+            <label class="Form-label is-required" for="nome">ID_Q_ANAGRAFICA_VERDE</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="nomeRichiedente" 
+                    name="nomeRichiedente"
+                    aria-required="true" 
+                    ng-model="model.ID_Q_ANAGRAFICA_VERDE"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+            <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+            </div>                    
+        </div>
+      
+        <div class="Form-field">
+            <label class="Form-label is-required" for="nome">Ragione Sociale</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="nomeRichiedente" 
+                    name="nomeRichiedente"
+                    aria-required="true" 
+                    ng-model="model.RAGIONE_SOCIALE"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+            <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+            </div>                    
+        </div>
+
+        <div class="Form-field">
+                <label class="Form-label is-required" for="nome">Email</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="nomeRichiedente" 
+                        name="nomeRichiedente"
+                        aria-required="true" 
+                        ng-model="model.EMAIL"
+                        ng-minlength="1"
+                        ng-maxlength="100"
+                        >
+                <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+    
+                <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                </div>                    
+            </div>
+    
+    </fieldset>
+
+    <button type="submit"
+            ng-disabled="!vm.userForm.$valid || isSubmitting" 
+            class="Button Button--default u-text-r-xs u-inlineBlock"  
+            ng-click="saveData()">Salva</button>
+    <a class="Button Button--default u-text-r-xs" ng-click="annullaInserimentoOModifica()" >Annulla</a>    
+    <pre>{{model}}</pre>        
+</form>
+
+<!--            
+
+    <div class="Form-field Grid-cell u-textRight">
+        <button type="button" class="Button Button--default Button--shadow u-text-m u-inlineBlock">Invia</button>
+        <button class="Button Button--info u-text-r-xs" type="button" id="removeFirstRow" ng-click="uploadCsv()">Upload</button>    
+        <button class="Button Button--info u-text-r-xs" type="button" id="addData"        ng-click="testSse()">Check Sse</button>
+        <button class="Button Button--info u-text-r-xs" type="button" id="addData"        ng-click="testSseEvent()">Check Sse Event</button>
+       
+    </div>
+-->
+
+
+</div>
+<!-- formStatus EditUpdate END -->
+
+
+
+<!-- END - EDIT/UPDATE FORM -->
+
+
+<!-- - ------------------------------------------------------------------------------------------------------------- -->
+
+
+<div cr-progress-bar    p1="my_progressBarValue" 
+                        p2="my_progressBarValue2" 
+                        t1="my_progressText"
+                        f1="my_progressBarFunction"></div>
+
+<!--
+
+<pre>AAA:{{vm.userForm.nomeRichiedente }}</pre>
+<hr>
+<pre>{{vm.userForm | json}}</pre>
+<hr>
+<pre>{{vm.model | json}}</pre>
+
+-->
+
+<div class="u-text-r-xxl u-padding-all-s">
+    <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+        <div class="u-layout-centerContent">
+            <section class="u-layout-wide">
+                <h2 class="u-text-r-l">Log operazioni</h2>
+                <ul>
+                    <li class="u-text-r-l" ng-repeat="item in logOperazioni track by $index">{{item}}</li>
+                </ul>
+            </section>
+        </div>
+      </div>
+</div>
+
+
+</section>
+    
+    
+
+
+
+<pre>{{formStatus}}</pre>
+

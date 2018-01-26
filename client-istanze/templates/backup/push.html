@@ -1,0 +1,92 @@
+<div class="container">
+
+    <h4>Push Notification Manager {{sseUserId}} SW:{{swSupport}}  PUSH:{{pushSupport}}</h4>
+    
+
+    
+    <div class="form-group">
+      <div ng-repeat="ch in listOfChannels">
+          <label class="checkbox-inline">
+            <input type="checkbox" ng-model="ch.value" ng-change="vm.sseSelectChannel(ch)">{{ch.desc}}
+           </label>
+           <button type="submit" class="btn btn-raised btn-raised btn-success" ng-click="vm.sseSendData(ch)">SEND DATA</button>
+           <span class="badge">{{ch.cnt}}</span>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-raised btn-lg" ng-click="vm.pushEnable()">ENABLE</button>
+    <!--
+    <button type="submit" class="btn btn-primary btn-raised btn-info" ng-click="vm.sseSubscribe()">SUBSCRIBE</button>
+    
+    -->
+    <button type="submit" class="btn btn-raised btn-raised btn-success" ng-click="vm.pushRegisterService()">REGISTER SVC</button>
+    <button type="submit" class="btn btn-raised btn-raised btn-success" ng-click="vm.pushAskPermission()">ASK PERMISSION</button>
+    <button type="submit" class="btn btn-raised btn-raised btn-success" ng-click="vm.pushGetList()">GET LIST</button>
+    <button type="submit" class="btn btn-primary btn-raised btn-success" ng-click="vm.pushSendMessage()">SEND MSG</button>
+    <button type="submit" class="btn btn-primary btn-raised btn-danger" ng-click="vm.pushTest()">TEST</button>
+    <button type="submit" class="btn btn-primary btn-raised btn-danger" ng-click="vm.pushSendMessage2SW('must-show-notification-demo')">SEND MSG 2 SW</button>
+    <button type="submit" class="btn btn-primary btn-raised btn-danger" ng-click="vm.pushSendMessage2SW('send-message-to-page-demo')">SEND MSG 2 SW PUSH</button>
+    <button type="submit" class="btn btn-primary btn-raised btn-danger" ng-click="vm.pushSendMessage2SW('show-sw-version')">SW VERSION</button>
+   
+     <div>
+      <p>Sse Messages</p>
+      <pre>{{vm.sseMessages | json}}</pre>
+    </div>
+
+
+<p>This page is just an example that gets all the subscriptions and allows
+    triggering of pushes to demostrate a basic implementation.</p>
+
+    <h2>Send Push Message</h2>
+
+    <p>Clicking "Trigger Push Message" will make
+      an API request to "/api/trigger-push-msg" (i.e. an API call to our
+      node backend) and that will trigger a push message to all our users.
+    </p>
+
+    <p>Feel free to change the text to anything you want.</p>
+
+    <div class="push-data">
+      <textarea rows="10" class="js-push-content push-content-text" disabled>{
+  "notification": {
+    "title": "Example Title",
+    "body": "This will be the body text for the notification.",
+    "icon": "/images/icon-512x512.png"
+  }
+}</textarea>
+
+      <button class="js-trigger-push-msg" disabled>Trigger Push Message</button>
+    </div>
+
+    <h2>Subscriber List</h2>
+
+    <table>
+      <thead>
+        <th>Database ID</th>
+        <th>Endpoint</th>
+      </thead>
+      <tbody class="js-subscriber-table-body">
+
+      </tbody>
+    </table>
+
+    <h3>Please Note</h3>
+
+    <p>You'd want this page to be restricted some how, perhaps by login or
+    could be a restricted application then is only accessible locally.</p>
+  </main>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<script> $.material.init(); </script>

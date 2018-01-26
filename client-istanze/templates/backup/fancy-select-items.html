@@ -1,0 +1,32 @@
+         <ion-view class="fancy-select-items modal">
+              <ion-header-bar class="bar-positive">
+                <button ng-click="hideItems()" class="button button-positive button-icon ion-ios7-arrow-back"></button>
+                <h1 class="title">{{headerText}}</h1>
+                <button ng-click="validate()" class="button button-positive button-icon ion-checkmark"></button>
+              </ion-header-bar>
+              <ion-content>
+                <div class="list">
+                  <!-- Multi select -->
+                  <ion-toggle
+                              ng-repeat="item in items"
+                              ng-if="multiSelect"
+                              ng-checked="item.checked"
+                              ng-model="item.checked"
+                              class="item item-text-wrap">
+                              {{item.text}}
+                  </ion-toggle>
+
+                  <!-- Single select -->
+                  <label
+                         ng-repeat="item in items"
+                         ng-if="!multiSelect"
+                         class="item item-text-wrap"
+                         ng-click='validateSingle(item)'>
+                    <div class="fancy-select-icon" ng-if="item.icon != null">
+                      <i class="icon-{{item.text}}" style="background-image: url({{item.icon}})"></i>
+                    </div>
+                    {{item.text}}
+                  </label>
+                </div>
+              </ion-content>
+            </ion-view>

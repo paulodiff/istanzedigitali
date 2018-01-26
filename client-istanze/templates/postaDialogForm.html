@@ -1,0 +1,129 @@
+<div class="modal-header bg-primary">
+    <h4>Inserimento dati per il giorno {{modal.dataAttuale}}</h4>
+    <h4>Non è possibile inserire elementi in date diverse da quella odierna</h4>
+</div>
+
+<div class="modal-body">
+            <ng-form name="nameDialog" novalidate role="form">
+                
+            <div class="row">
+                 <div class="col-md-6">
+
+       <div class="form-group input-group-lg">
+            <label>Tipo posta</label>
+            <ui-select ng-model="modal.tipoPostaStampa" theme="bootstrap">
+            <ui-select-match placeholder="Selezionare un Tipo Posta">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="item in elencoTipoPosta">
+              <p ng-bind-html="item.id"></p>
+            </ui-select-choices>
+          </ui-select>
+          </div>
+                
+                </div>
+                <div class="col-md-6">
+
+                <div class="form-group input-group-lg">
+                    <label class="control-label" for="course">Protocollo:</label>
+                    <input type="text" class="form-control" name="username" id="username" ng-model="modal.Protocollo" ng-keyup="hitEnter($event)" required>
+                    
+                </div>
+
+                </div>
+
+            </div>
+
+         <div class="row">
+                 <div class="col-md-6">
+
+                <div class="form-group input-group-lg">
+                    <label class="control-label" for="course">Destinatario:</label>
+                    <input type="text" class="form-control" name="username" id="username" ng-model="modal.Destinatario"  required>
+                    
+                </div>
+
+                 </div>
+
+                 <div class="col-md-6">
+
+                <div class="form-group input-group-lg">
+                    <label class="control-label" for="course">Via:</label>
+                    <input type="text" class="form-control" name="Via" id="Via" ng-model="modal.Via" required>
+                    
+                </div>
+
+                 </div>
+         </div>
+
+            <div class="row">
+                 <div class="col-md-6">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Città:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Citta"  required>
+                        <span class="help-block">_</span>
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Cap:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Cap"  required>
+                    </div>
+
+                 </div>
+
+                <div class="col-md-3">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Provincia: (XX)</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Provincia"  required>
+                        <span class="help-block">Solo due lettere es. RN MI TO</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row" ng-if="modal.tipoPostaStampa.id=='AG1 - ATTI GIUDIZIARI'">
+                
+                 <div class="col-md-4">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">BarCode Atti:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.BarCode" >
+                        <span class="help-block">Solo per Polizia Municipale</span>
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Verbale Accertamento:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Verbale" >
+                        <span class="help-block">Solo per Polizia Municipale</span>
+                    </div>
+
+                 </div>
+
+                <div class="col-md-4">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Note Atti:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Note" >
+                        <span class="help-block">Solo per Polizia Municipale</span>
+                    </div>
+
+                </div>
+            </div>
+
+
+            </ng-form>
+</div>
+                    
+<div class="modal-footer">
+    <hr>
+    <button type="button" class="btn btn-default btn-raised" ng-click="cancel()">Annulla</button>
+    <button type="button" class="btn btn-success btn-raised" ng-click="save()" ng-disabled="(nameDialog.$dirty && nameDialog.$invalid) || nameDialog.$pristine">Salva</button>
+</div>

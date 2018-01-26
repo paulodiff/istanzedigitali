@@ -502,6 +502,8 @@ angular.module('myApp.controllers')
             $rootScope.$broadcast(ENV.AUTH_EVENTS.loginFailed);
         });
     };
+ 
+
 
 }])
 

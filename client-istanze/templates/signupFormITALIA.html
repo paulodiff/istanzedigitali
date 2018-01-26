@@ -1,0 +1,161 @@
+<section>
+
+<div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-r-top u-padding-bottom-xxl">
+          
+    <div class="u-text-r-xxl u-padding-all-s">
+        <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+            <div class="u-layout-centerContent">
+                <section class="u-layout-wide">
+                    <h1 class="u-text-r-l">Gestione registrazione al portale</h1>
+                    <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                        Form per la registrazione dei dati al portale del Demanio Marittimo
+                    </p>
+                </section>
+            </div>
+          </div>
+    </div>
+
+   
+        <article class="Prose">
+
+            <form   class="Form Form--spaced u-padding-all-xl u-text-r-xs"
+            name="vm.userForm"
+            ng-show="!isSubmitting">
+        <fieldset class="Form-fieldset">
+            <legend class="Form-legend">Inserire i dati di accesso</legend>
+    
+    
+    
+            <div class="Form-field">
+                <label class="Form-label is-required" for="cognome">Email di riferimento</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="cognomeRichiedente"
+                        name="cognomeRichiedente"
+                        ng-model="vm.model.cognomeRichiedente" 
+                        aria-required="true" 
+                        ng-minlength="6"
+                        ng-maxlength="10"
+                        required>
+                        <div ng-messages="vm.userForm.cognomeRichiedente.$error" style="color:maroon" role="alert" ng-if="vm.userForm.cognomeRichiedente.$touched">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        </div>                       
+            </div>
+
+            <div class="Form-field">
+                <label class="Form-label is-required" for="nome">CODICE SID</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="nomeRichiedente" 
+                        name="nomeRichiedente"
+                        aria-required="true" 
+                        ng-model="vm.model.nomeRichiedente"
+                        ng-minlength="1"
+                        ng-maxlength="100"
+                        >
+                <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+    
+                <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                </div>                    
+            </div>
+
+
+            <div class="Form-field">
+                <label class="Form-label is-required" for="nome">Password</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="nomeRichiedente" 
+                        name="nomeRichiedente"
+                        aria-required="true" 
+                        ng-model="vm.model.nomeRichiedente"
+                        ng-minlength="1"
+                        ng-maxlength="100"
+                        >
+                <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+    
+                <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                </div>                    
+            </div>
+          
+            <div class="Form-field">
+                <label class="Form-label is-required" for="nome">Password</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="nomeRichiedente" 
+                        name="nomeRichiedente"
+                        aria-required="true" 
+                        ng-model="vm.model.nomeRichiedente"
+                        ng-minlength="1"
+                        ng-maxlength="100"
+                        >
+                <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+    
+                <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                </div>                    
+            </div>
+
+        </fieldset>
+    
+        <button type="submit"
+                ng-disabled="!vm.userForm.$valid || isSubmitting" 
+                class="Button Button--default u-text-r-xs u-inlineBlock"  
+                ng-click="uploadCsv()">Invia richiesta</button>
+    
+    <!--            
+    
+        <div class="Form-field Grid-cell u-textRight">
+            <button type="button" class="Button Button--default Button--shadow u-text-m u-inlineBlock">Invia</button>
+            <button class="Button Button--info u-text-r-xs" type="button" id="removeFirstRow" ng-click="uploadCsv()">Upload</button>    
+            <button class="Button Button--info u-text-r-xs" type="button" id="addData"        ng-click="testSse()">Check Sse</button>
+            <button class="Button Button--info u-text-r-xs" type="button" id="addData"        ng-click="testSseEvent()">Check Sse Event</button>
+           
+        </div>
+    -->
+    
+    
+        </div>
+    </form>
+
+
+ <!--     
+        <div ng-if="!isAuthenticated()">
+
+        <h2 class="text-center">Accesso tramite SPID o FEDERA</h2>
+
+        <p>Cliccando il bottone seguente è possibile accedere all'account SPID o FEDERA per poi procedere all'inoltro dell'istanza</p>
+        <a class="Button Button--default u-text-r-xs" href="{{fullApiEndpoint}}">
+            <i class="ion-social-linkedin"></i>LOG IN con SPID o FEDERA
+        </a>
+
+        <hr>
+
+             <h2 class="text-center">Istruzioni per l'accesso al servizio</h2>
+<p>Per l'inoltro di istanze attraverso questo portale è <b>OBBLIGATORIO</b> un account FedERa o SPID. Per ottenere una account SPID o FEDERE seguire le guide elencate qui di seguito:</p>
+
+<a class="Button Button--info u-text-r-xs" href="https://www.spid.gov.it/">COME OTTENERE UN ACCOUNT ACCOUNT SPID</a> 
+ <a class="Button Button--indo u-text-r-xs" href=" http://federazione.lepida.it/ ">COME OTTENERE UN ACCOUNT FEDERA</a>
+
+
+
+        </div>
+
+    -->
+
+        <div ng-if="isAuthenticated()">
+            <p>Cliccando il bottone seguente è possibile disconnettersi dall'account SPID o FEDERA</p>
+              <button class="Button Button--danger u-text-r-xs" ng-click="logout('')">
+                DISCONNETTI
+              </button>
+          </div>
+
+
+        </article>
+</div>        
+</section>

@@ -1,0 +1,153 @@
+<div ng-if="errorMessage">
+        <div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" role="alert">
+            <h2 class="u-text-h3">
+                Si è verificato un errore
+            </h2>
+            <p class="u-text-p">Verificare i dati inseriti!</p>
+            <button   class="Button Button--default u-text-r-xs u-inlineBlock"   ng-click="errorMessage = 'sss' ">ok</button>
+
+        </div>
+</div>
+
+
+<section>
+
+<div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-r-top u-padding-bottom-xxl">
+          
+    <div class="u-text-r-xxl u-padding-all-s">
+        <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+            <div class="u-layout-centerContent">
+                <section class="u-layout-wide">
+                    <h2 class="u-text-r-l">Gestione autenticazione attraverso **** o *****</h2>
+                    <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                        Form per l'inserimento dei dati di autenticazione del portale
+                    </p>
+                </section>
+            </div>
+          </div>
+    </div>
+
+   
+   
+
+            <legend class="Form-legend">Report finale - Revisione</legend>
+    
+    
+    
+            <div class="Form-field">
+                <label class="Form-label is-required" for="cognome">Note</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="note"
+                        name="note"
+                        ng-model="vm.userForm.note" 
+                        aria-required="true" 
+                        ng-minlength="1"
+                        ng-maxlength="100"
+                        required>
+                        <div ng-messages="vm.userForm.cognomeRichiedente.$error" style="color:maroon" role="alert" ng-if="vm.userForm.cognomeRichiedente.$touched">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        </div>                       
+            </div>
+            
+            <div class="Form-field">
+                <label class="Form-label is-required" for="nome">Anni</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="anni" 
+                        name="anni"
+                        aria-required="true" 
+                        ng-model="vm.userForm.anni"
+                        ng-minlength="1"
+                        ng-maxlength="100"
+                        >
+                <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+    
+                <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                </div>                    
+            </div>
+          
+        </fieldset>
+    
+        <div ng-if="errorMessage">
+            <div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" role="alert">
+                <h2 class="u-text-h3">
+                    Si è verificato un errore
+                </h2>
+                <p class="u-text-p">Verificare i dati inseriti!</p>
+            </div>
+        </div>
+
+        <button type="submit"
+                ng-disabled="!vm.userForm.$valid || isSubmitting" 
+                class="Button Button--default u-text-r-xs u-inlineBlock"  
+                ng-click="login()">Invia richiesta</button>
+
+        <img ng-if="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                
+        
+        <a ui-sref="multistep.info" class="btn btn-block btn-info">
+            Prev Section <span class="glyphicon glyphicon-circle-arrow-right"></span>
+            </a>
+    <!--            
+    
+        <div class="Form-field Grid-cell u-textRight">
+            <button type="button" class="Button Button--default Button--shadow u-text-m u-inlineBlock">Invia</button>
+            <button class="Button Button--info u-text-r-xs" type="button" id="removeFirstRow" ng-click="uploadCsv()">Upload</button>    
+            <button class="Button Button--info u-text-r-xs" type="button" id="addData"        ng-click="testSse()">Check Sse</button>
+            <button class="Button Button--info u-text-r-xs" type="button" id="addData"        ng-click="testSseEvent()">Check Sse Event</button>
+           
+        </div>
+    -->
+    
+        </div>
+    </form>
+
+
+ <!--     
+        <div ng-if="!isAuthenticated()">
+
+        <h2 class="text-center">Accesso tramite SPID o FEDERA</h2>
+
+        <p>Cliccando il bottone seguente è possibile accedere all'account SPID o FEDERA per poi procedere all'inoltro dell'istanza</p>
+        <a class="Button Button--default u-text-r-xs" href="{{fullApiEndpoint}}">
+            <i class="ion-social-linkedin"></i>LOG IN con SPID o FEDERA
+        </a>
+
+        <hr>
+
+             <h2 class="text-center">Istruzioni per l'accesso al servizio</h2>
+<p>Per l'inoltro di istanze attraverso questo portale è <b>OBBLIGATORIO</b> un account FedERa o SPID. Per ottenere una account SPID o FEDERE seguire le guide elencate qui di seguito:</p>
+
+<a class="Button Button--info u-text-r-xs" href="https://www.spid.gov.it/">COME OTTENERE UN ACCOUNT ACCOUNT SPID</a> 
+ <a class="Button Button--indo u-text-r-xs" href=" http://federazione.lepida.it/ ">COME OTTENERE UN ACCOUNT FEDERA</a>
+
+
+
+        </div>
+
+    -->
+
+
+
+    <div class="u-text-r-xxl u-padding-all-s">
+            <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+                <div class="u-layout-centerContent">
+                    <section class="u-layout-wide">
+                            <div ng-if="isAuthenticated()">
+                                    <h2 class="u-text-r-l">Cliccando il bottone seguente è possibile disconnettersi dall'account</h2>
+                                      <button class="Button Button--danger u-text-r-xs" ng-click="logout('')">
+                                        DISCONNETTI
+                                      </button>
+                                </div>
+                                            </section>
+                </div>
+              </div>
+        </div>
+
+        
+</div>        
+</section>

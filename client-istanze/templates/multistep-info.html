@@ -1,0 +1,45 @@
+<section>
+            <legend class="Form-legend">ALLEGATI</legend>
+            <label class="Form-label is-required">File da allegare:</label>
+            <input 
+                type="file" 
+                ngf-select 
+                ng-model="multistepForm.file" 
+                class="Button Button--default u-text-r-xs u-inlineBlock" 
+                name="file"    
+                accept="text/csv" 
+                ngf-pattern="'*.csv'"
+                ngf-max-size="2MB" 
+                ngf-select 
+                ngf-min-size="1"
+                required>
+
+               <!--  <pre>{{vm.userForm.file.$error}}</pre> -->
+
+                <div ng-messages="vm.userForm.file.$error" style="color:maroon" role="alert" multiple>
+                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+                    <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido</div>
+                    <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                </div>   
+            
+            <div class="Form-field">
+                <label class="Form-label is-required" for="email">Email</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="email" 
+                        name="email"
+                        aria-required="true" 
+                        ng-model="multistepForm.email"
+                        ng-minlength="1"
+                        ng-maxlength="10"
+                        >
+                    
+            </div>
+        
+        <a ui-sref="multistep.profile" class="btn btn-block btn-info">
+            Prev Section 
+            </a>
+        <a ui-sref="multistep.final" class="btn btn-block btn-info">
+            Next Section 
+            </a>
+       
+</section>

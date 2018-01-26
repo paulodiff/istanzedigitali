@@ -188,6 +188,12 @@ angular.module('myApp', [//'ionic',
         accessLogged: false
     });
 
+    $stateProvider.state('queue', {
+      url: '/queue',
+      templateUrl: 'templates/queueForm.html',
+      controller: 'queueMgrCtrl',
+      accessLogged: false
+  });
 
 /*    $stateProvider.state('form', {
         url: '/form',

@@ -1,0 +1,30 @@
+
+<div class="container">
+
+<p>Photo</p>
+
+<!-- <img ng-repeat="image in allImages" ng-src="{{image.src}}" ng-click="showImages($index)" class="image-list-thumb"/> -->
+<i ng-hide="imageSrc">No image choosed</i>
+<img ng-src="{{imageSrc}}" class="img-responsive" /><br/>
+
+
+
+
+<div style='height: 0px;width:0px; overflow:hidden;'>
+   <!-- <input id="idImageFileInput" type="file" class="btn-file" multiple custom-on-change="addImagesOnChange" /> -->
+    <!-- <input id="idImageFileInput" type="file" class="btn-file" custom-on-change="addImagesOnChange" /> -->
+   <input id="idImageFileInput" type="file" class="btn-file" custom-on-change="addImagesOnChange" accept="image/*">
+</div>
+
+<button type="button" class="btn btn-primary btn-block  btn-lg" ng-click="selectImageFile()" >SelectImageFile</button>
+<br/>
+<button class="btn btn-success btn-block  btn-lg" ng-click="nextStep()">Next..</button>
+<button class="btn btn-danger btn-block  btn-lg" ng-click="testService()">Test Service</button>
+<button type="button" class="btn btn-primary" ng-model="singleModel" uib-btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+        Single Toggle
+</button>
+
+<pre>{{singleModel}}</pre>
+<pre>{{isCollapsed}}</pre>
+
+</div>

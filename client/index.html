@@ -199,6 +199,7 @@
     <!-- <script src="scripts/accountService.js"></script> -->
     <!-- <script src="scripts/formlyService.js"></script> -->
     <script src="scripts/utilsService.js"></script>
+    <script src="scripts/queueService.js"></script>
     <!-- <script src="scripts/sigService.js"></script>  -->
     <!-- <script src="scripts/socketService.js"></script> -->
     <!-- <script src="scripts/chatService.js"></script> --> 
@@ -207,6 +208,7 @@
     <script src="scripts/loginControllers.js"></script>
     <script src="scripts/homeControllers.js"></script>
     <script src="scripts/profileControllers.js"></script>
+    <script src="scripts/queueControllers.js"></script>
     <!-- <script src="scripts/sigControllers.js"></script> -->
     <!-- <script src="scripts/SloginControllers.js"></script> -->
     <!-- <script src="scripts/formlyControllers.js"></script> -->
@@ -263,6 +265,7 @@
                 <li ng-if="isAuthenticated()"><a ui-sref="elencoAtti">Gestione Posta</a></li>
                 <li ng-if="isAdmin()"><a ui-sref="postaDashboard">Stat</a></li>
                 <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Login</a></li>
+                <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Q</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="profile">Profilo</a></li>
                 <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
           </ul>

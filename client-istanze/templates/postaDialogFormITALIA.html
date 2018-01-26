@@ -1,0 +1,147 @@
+
+<div class="u-text-r-xxl u-padding-all-s">
+    <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+        <div class="u-layout-centerContent">
+            <section class="u-layout-wide">
+                <h2 class="u-text-r-l">Inserimento dati per il giorno {{modal.dataAttuale}}</h2>
+                <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                    Form per il caricamento.... 
+                </p>
+            </section>
+        </div>
+      </div>
+</div>
+
+<fieldset class="Form-fieldset">
+                
+    <div class="Form-field">
+        <label class="Form-label is-required" for="nome">Note</label>
+        <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                id="nomeRichiedente" 
+                name="nomeRichiedente"
+                aria-required="true" 
+                ng-model="vm.model.nomeRichiedente"
+                ng-minlength="1"
+                ng-maxlength="100"
+                >
+        <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+        <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:red" role="alert">
+                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                    <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                    <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+        </div>                    
+    </div>
+   
+                
+                
+                <div class="col-md-6">
+
+                <div class="form-group input-group-lg">
+                    <label class="control-label" for="course">Protocollo:</label>
+                    <input type="text" class="form-control" name="username" id="username" ng-model="modal.Protocollo" ng-keyup="hitEnter($event)" required>
+                    
+                </div>
+
+                </div>
+
+            </div>
+
+         <div class="row">
+                 <div class="col-md-6">
+
+                <div class="form-group input-group-lg">
+                    <label class="control-label" for="course">Destinatario:</label>
+                    <input type="text" class="form-control" name="username" id="username" ng-model="modal.Destinatario"  required>
+                    
+                </div>
+
+                 </div>
+
+                 <div class="col-md-6">
+
+                <div class="form-group input-group-lg">
+                    <label class="control-label" for="course">Via:</label>
+                    <input type="text" class="form-control" name="Via" id="Via" ng-model="modal.Via" required>
+                    
+                </div>
+
+                 </div>
+         </div>
+
+            <div class="row">
+                 <div class="col-md-6">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Città:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Citta"  required>
+                        <span class="help-block">_</span>
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Cap:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Cap"  required>
+                    </div>
+
+                 </div>
+
+                <div class="col-md-3">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Provincia: (XX)</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Provincia"  required>
+                        <span class="help-block">Solo due lettere es. RN MI TO</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row" ng-if="modal.tipoPostaStampa.id=='AG1 - ATTI GIUDIZIARI'">
+                
+                 <div class="col-md-4">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">BarCode Atti:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.BarCode" >
+                        <span class="help-block">Solo per Polizia Municipale</span>
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Verbale Accertamento:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Verbale" >
+                        <span class="help-block">Solo per Polizia Municipale</span>
+                    </div>
+
+                 </div>
+
+                <div class="col-md-4">
+
+                    <div class="form-group input-group-lg">
+                        <label class="control-label" for="course">Note Atti:</label>
+                        <input type="text" class="form-control" name="username" id="username" ng-model="modal.Note" >
+                        <span class="help-block">Solo per Polizia Municipale</span>
+                    </div>
+
+                </div>
+            </div>
+
+
+            </ng-form>
+</div>
+
+</fieldset>
+
+<div class="modal-footer">
+    <hr>
+    <button type="button" class="Button Button--default u-text-r-xs u-inlineBlock" ng-click="cancel()">Annulla</button>
+    <button type="button" class="Button Button--default u-text-r-xs u-inlineBlock" ng-click="save()" ng-disabled="(nameDialog.$dirty && nameDialog.$invalid) || nameDialog.$pristine">Salva</button>
+</div>
+

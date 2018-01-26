@@ -1,0 +1,60 @@
+ 
+            <legend class="Form-legend">PROFILE</legend>
+    
+            <div class="Form-field">
+                <label class="Form-label is-required" for="multistepForm.nomeRichiedente">nomeRichiedente</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="multistepForm.nomeRichiedente"
+                        name="multistepForm.nomeRichiedente"
+                        ng-model="multistepForm.nomeRichiedente" 
+                        aria-required="true" 
+                        ng-minlength="1"
+                        ng-maxlength="10"
+                        required>
+                        <div ng-messages="multistepForm.nomeRichiedente.$error" 
+                             ng-if="multistepForm.nomeRichiedente.$touched"
+                             style="color:maroon" 
+                             role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        </div>                       
+            </div>
+            
+            <div class="Form-field">
+                <label class="Form-label is-required" for="multistepForm.cognomeRichiedente">cognomeRichiedente</label>
+                <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                        id="multistepForm.cognomeRichiedente" 
+                        name="multistepForm.cognomeRichiedente"
+                        aria-required="true" 
+                        ng-model="multistepForm.cognomeRichiedente"
+                        ng-minlength="1"
+                        ng-maxlength="10"
+                        >
+                <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+    
+                <div ng-messages="multistepForm.cognomeRichiedente.$error" 
+                        style="color:red" role="alert">
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                            <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                            <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                </div>                    
+            </div>
+          
+    
+        <div ng-if="errorMessage">
+            <div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" role="alert">
+                <h2 class="u-text-h3">
+                    Si è verificato un errore
+                </h2>
+                <p class="u-text-p">Verificare i dati inseriti!</p>
+            </div>
+        </div>
+
+ 
+        <div ng-if="isProfileOk()">
+        <a ui-sref="multistep.info" class="Button Button--default u-text-r-xs">Prossima sezione</a>
+        </div>
+
+ 
+        

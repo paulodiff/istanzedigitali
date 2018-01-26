@@ -1,0 +1,68 @@
+<div class="container">
+ 
+<div class="row">
+		<div class="col-md-12">
+            <div class="input-group" id="adv-search">
+                <input type="text" class="form-control" ng-model="txtGlobalSearch" placeholder="Ricerca una parola" ng-keyup="$event.keyCode == 13 && DoSearch()" />
+                <div class="input-group-btn">
+                    <div class="btn-group" role="group">
+                        <div class="dropdown dropdown-lg">
+                            <button type="button" class="btn btn-primary" ng-click="DoSearch()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                        </div>
+                        <button type="button" class="btn btn-success"  ng-click="OpenFilter({},{})"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </div>
+          </div>
+</div>
+
+<br/>
+
+<div class="row">
+    <div class="col-md-12">
+  <div class="btn-group">
+        <label class="btn btn-primary" ng-model="filterModelButton.IRIDE" ng-click="DoSearch()" uib-btn-checkbox>IRIDE</label>
+        <label class="btn btn-primary" ng-model="filterModelButton.JIRIDE" ng-click="DoSearch()" uib-btn-checkbox>JIRIDE</label>
+        <label class="btn btn-primary" ng-model="filterModelButton.VELOX_PM" ng-click="DoSearch()" uib-btn-checkbox>VELOX_PM</label>
+    </div>
+
+ <div class="btn-group">
+        <label class="btn btn-success" ng-model="filterModelButton.APERTI" uib-btn-radio="'true'" ng-click="setFilter('IRIDE')" uncheckable>APERTI</label>
+        <label class="btn btn-success" ng-model="filterModelButton.CHIUSI" uib-btn-radio="'false'" ng-click="setFilter('IRIDE')" uncheckable>CHIUSI</label>
+        <label class="btn btn-success" ng-model="filterModelButton.TUTTI"  uib-btn-radio="'true'" ng-click="setFilter('IRIDE')" uncheckable>TUTTI</label>
+    </div>
+</div>
+</div>
+
+<br/>
+
+<div class="card__wrapper" ng-repeat="item in data">
+  <div class="card radius shadowDepth1">
+   <div class="card__image border-tlr-radius">
+    <div class="card__title">{{item.formModel.segnalazione.softwareLista}}<div class="card__share">{{item.userData.userId}}-{{item.userData.userProvider}}<br/>{{item.ts}}</div></div>
+  	 <div class="card__content card__padding">
+      <div class="card__meta">
+    	 <a href="#">{{item.formModel.segnalazione.utenteRichiedenteAssistenza}}</a>
+    	</div>
+			<article class="card__article">
+	    	<h4>Problema: {{item.formModel.segnalazione.descIntervento}}</h4>
+	    	<h4>Soluzione: {{item.formModel.segnalazione.descAttivitaSvolta}}</h4>
+	    	<p>Note:{{item.formModel.segnalazione.descAttivitaSvolta}} </p>
+	    </article>
+    </div>
+		<div class="card__action">
+   		<div class="card__author">
+   				<div class="card__author-content">
+    						Data soluzione: 31/12/32
+                <button class="btn btn-success">Modifica</button>
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+</div>        
+
+
+
+  
+</div>

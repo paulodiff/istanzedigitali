@@ -1,0 +1,32 @@
+<div class="container">
+
+    <h4>Node EventSource pub/sub {{sseUserId}}</h4>
+
+    
+    <div class="form-group">
+      <div ng-repeat="ch in listOfChannels">
+          <label class="checkbox-inline">
+            <input type="checkbox" ng-model="ch.value" ng-change="vm.sseSelectChannel(ch)">{{ch.desc}}
+           </label>
+           <button type="submit" class="btn btn-raised btn-raised btn-success" ng-click="vm.sseSendData(ch)">SEND DATA</button>
+           <span class="badge">{{ch.cnt}}</span>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-raised btn-lg" ng-click="vm.sseConnect()">CONNECT</button>
+    <!--
+    <button type="submit" class="btn btn-primary btn-raised btn-info" ng-click="vm.sseSubscribe()">SUBSCRIBE</button>
+    <button type="submit" class="btn btn-primary btn-raised btn-danger" ng-click="vm.sseUnsubscribe()">UNSUBSCRIBE</button>
+    -->
+    <button type="submit" class="btn btn-raised btn-raised btn-success" ng-click="vm.sseSendData()">SEND DATA ALL</button>
+    <button type="submit" class="btn btn-primary btn-raised btn-success" ng-click="vm.sseTest()">TEST</button>
+   
+     <div>
+      <p>Sse Messages</p>
+      <pre>{{vm.sseMessages | json}}</pre>
+    </div>
+
+</div>
+
+<script> $.material.init(); </script>

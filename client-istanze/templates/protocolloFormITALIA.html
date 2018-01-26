@@ -1,0 +1,509 @@
+<section>
+
+<div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-r-top u-padding-bottom-xxl">
+          
+           <h1 class="u-text-h2">Richiesta di accesso ai dati</h1>
+           <p>Compilare accuratamente i dati sottostanti per la trasmissione di una istanza generica</p>
+
+<article class="Prose">
+    
+<div  ng-show="bshowForm">
+       <!-- create our form -->
+    <form name="vm.userForm" class="Form Form--spaced u-padding-all-xl u-text-r-xs">
+
+<!-- DATI DA FORNITI DA AUTENTICAZIONE ##############################################################################  -->
+
+ <fieldset class="Form-fieldset">
+        <legend class="Form-legend">Informazioni anagrafiche fornite dall'account di autenticazione {{vm.model.issuer}}</legend>
+
+
+            <div class="Form-field">
+                  <label class="Form-label is-required">Nome</label>
+                    <input  type="text" 
+                            class="Form-input u-text-r-s u-borderRadius-m"
+                            name="nomeRichiedente" 
+                            ng-model="vm.model.nomeRichiedente"
+                            ng-minlength="1"
+                            ng-maxlength="100"
+                            readonly
+                            required>
+                        
+                    <div ng-messages="vm.userForm.nomeRichiedente.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                    </div>
+             </div>
+
+        
+        <div class="Form-field">
+            <label class="Form-label is-required">Cognome</label>
+            <input type="text" 
+                name="cognomeRichiedente" 
+                class="Form-input u-text-r-s u-borderRadius-m" 
+                ng-model="vm.model.cognomeRichiedente"
+                ng-minlength="1"
+                ng-maxlength="100"
+                readonly
+                required>
+                
+            <div ng-messages="vm.userForm.cognomeRichiedente.$error" style="color:maroon" role="alert">
+                <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+            </div>
+            <!-- ngMessages goes here -->
+
+        </div>
+
+ 
+
+ 
+                <!-- nome field -->
+        <div class="Form-field">
+                    <label class="Form-label is-required">Codice Fiscale</label>
+                    <input  type="text" 
+                            class="Form-input u-text-r-s u-borderRadius-m" 
+                            name="codiceFiscaleRichiedente" 
+                            ng-model="vm.model.codiceFiscaleRichiedente"
+                            ng-minlength="16"
+                            ng-maxlength="16"
+                            readonly
+                            required>
+                        
+                    <div ng-messages="vm.userForm.codiceFiscaleRichiedente.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                    </div>
+         </div>
+
+
+
+        <div class="Form-field">
+                <label class="Form-label is-required">Data di Nascita</label>
+                <input type="text"
+                    placeholder="GG/MM/AAAA" 
+                    name="dataNascitaRichiedente" 
+                    class="Form-input u-text-r-s u-borderRadius-m"
+                    min="01-01-1900"
+                    max="31-12-2100" 
+                    ng-model="vm.model.dataNascitaRichiedente"
+                    ng-minlength="10"
+                    ng-maxlength="10"
+                    readonly
+                    required>
+                    
+                <div ng-messages="vm.userForm.dataNascitaRichiedente.$error" style="color:maroon" role="alert">
+                    <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                    <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                    <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                </div>
+        </div>
+</fieldset>
+
+
+
+
+
+<!-- DATI DA COMPILARE  ###########################################################################################  -->
+
+ <fieldset class="Form-fieldset">
+        <legend class="Form-legend">Dati da compilare</legend>
+
+<!--
+      <div class="row">
+
+          <div class="col-md-6">
+
+                <div class="form-group">
+                    <label class="Form-label is-required">Codice Fiscale</label>
+                    <input  type="text" 
+                            class="Form-input u-text-r-s u-borderRadius-m" 
+                            name="codiceFiscaleRichiedente" 
+                            ng-model="vm.model.codiceFiscaleRichiedente"
+                            ng-minlength="16"
+                            ng-maxlength="16"
+                            required>
+                        
+                    <div ng-messages="vm.userForm.codiceFiscaleRichiedente.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                    </div>
+                </div>
+
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="Form-label is-required">Data di Nascita</label>
+                <input type="text"
+                    placeholder="GG/MM/AAAA" 
+                    name="dataNascitaRichiedente" class="Form-input u-text-r-s u-borderRadius-m"
+                    min="01-01-1900"
+                    max="31-12-2100" 
+                    ng-model="vm.model.dataNascitaRichiedente"
+                    ng-minlength="10"
+                    ng-maxlength="10"
+                    required>
+                    
+                <div ng-messages="vm.userForm.dataNascitaRichiedente.$error" style="color:maroon" role="alert">
+                    <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                    <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                    <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                </div>
+            </div>
+        </div>
+-->
+
+   
+
+ <!-- row -->
+
+
+<!--
+<div class="panel panel-success">
+  <div class="panel-heading">Dettaglio dell' istanza</div>
+  <div class="panel-body">
+        <div class="form-group">
+            <label class="Form-label is-required">Descrizione</label>
+            <input  type="text" 
+                    class="Form-input u-text-r-s u-borderRadius-m" 
+                    name="descrizione" 
+                    ng-model="vm.model.descrizione"
+                    ng-minlength="10"
+                    ng-maxlength="200"
+                    required>
+                
+            <div ng-messages="vm.userForm.descrizione.$error" style="color:maroon" role="alert">
+                <div ng-message="required" class="label label-danger">Descrizione obbligatoria</div>
+                <div ng-message="minlength" class="label label-danger">Descrizione field is too short</div>
+                <div ng-message="maxlength" class="label label-danger">Descrizione field is too long</div>
+            </div>
+        </div>
+        
+    </div>
+    </div>
+-->
+
+<!-- BLOCCO INDIRIZZO ------------------------------------------------------------------------ -->
+
+
+          <div class="Form-field">
+                    <label class="Form-label is-required">Indirizzo</label>
+                    <input  name="indirizzoRichiedente" 
+                            type="text" 
+                            class="Form-input u-text-r-s u-borderRadius-m" 
+                            required 
+                            ng-model="vm.model.indirizzoRichiedente" 
+                            placeholder="password">
+                    <div ng-messages="vm.userForm.indirizzoRichiedente.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                        <div ng-message="email" class="label label-danger">MMValore troppo lungo</div>
+                    </div>
+          </div>
+
+        <div class="Form-field">                    
+            <label class="Form-label is-required">Città</label>
+
+                    <input  name="cittaRichiedente" 
+                            type="text" 
+                            class="Form-input u-text-r-s u-borderRadius-m" 
+                            required 
+                            ng-model="vm.model.cittaRichiedente" 
+                            placeholder="conferma password">
+         
+                <div ng-messages="vm.userForm.cittaRichiedente.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="email" class="label label-danger">MMMMMNO MATCH</div>
+                        <div ng-message="validator" class="label label-danger">NO MATCH</div>
+                </div>
+            </div>
+
+
+<div class="Form-field">
+          <label class="Form-label is-required">Cellulare</label>
+                <input type="number" 
+                    name="cellulareRichiedente" class="Form-input u-text-r-s u-borderRadius-m" 
+                    ng-model="vm.model.cellulareRichiedente"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    required>
+                    
+                <div ng-messages="vm.userForm.cellulareRichiedente.$error" style="color:maroon" role="alert">
+                    <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                    <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                    <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                </div>
+            </div>
+
+
+
+<!-- vm.userForm.capRichiedente.$error != {'required':true} -->
+<!-- class="Form-field" class="Form-field is-invalid" -->
+<!-- ng-class:"[{'Form-field' : angular.equals({}, {}) }, {'is-invalid': false }]" angular.equals({}, {}); // true -->
+<!-- class="Form-field is-invalid Alert Alert--error" -->
+
+<div ng-class=" (vm.userForm.capRichiedente.$error.required ||  vm.userForm.capRichiedente.$error.minlength) ? 'Form-field is-invalid Alert Alert--error' : 'hide' " >                    
+        <label class="Form-label is-required">CAP {{ vm.userForm.capRichiedente.$error }}</label>
+                    <input  name="capRichiedente" 
+                            type="number" 
+                            class="Form-input u-text-r-s u-borderRadius-m" 
+                            required 
+                            ng-model="vm.model.capRichiedente" 
+                            ng-minlength="2"
+                            ng-maxlength="100"
+                            placeholder="CAP">
+         
+                <div ng-messages="vm.userForm.capRichiedente.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">
+                        <div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" role="alert">
+                            <h2 class="u-text-h3">Il campo CAP è richiesto</h2>
+                        </div>
+                        </div>
+                        <div ng-message="minlength" class="label label-danger">
+                         <div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" role="alert">
+                            <p class="u-text-h3">Valore troppo corto</p>
+                        </div>
+
+                        </div>
+                        <div ng-message="email" class="label label-danger">Email non uguali</div>
+                </div>
+            </div>
+
+
+<!-- BLOCCO EMAIL COMUNICAZIONI --------------------------------------------------------------------- -->
+
+
+<div class="Form-field">                    
+    <label class="Form-label is-required">Email (per le comunicazioni)</label>
+                    <input  name="password" 
+                            type="email" 
+                            class="Form-input u-text-r-s u-borderRadius-m" 
+                            required 
+                            ng-model="vm.model.emailRichiedente" 
+                            placeholder="password">
+                    <div ng-messages="vm.userForm.password.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+                        <div ng-message="email" class="label label-danger">Email non valida</div>
+                    </div>
+              </div>
+         
+
+     
+                <div class="Form-field">
+                    <label class="Form-label is-required">Email (per le comunicazioni) - RIPETERE</label>
+
+                    <input  name="confirm_password" 
+                            type="email" 
+                            class="Form-input u-text-r-s u-borderRadius-m" 
+                            required 
+                            ng-model="vm.model.emailRichiedenteConferma" 
+                            ui-validate=" '$value==vm.model.emailRichiedente' "
+                            ui-validate-watch=" 'vm.model.emailRichiedente' " 
+                            placeholder="conferma password">
+         
+                <div ng-messages="vm.userForm.confirm_password.$error" style="color:maroon" role="alert">
+                        <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                        <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                        <div ng-message="email" class="label label-danger">Email non valida</div>
+                        <div ng-message="validator" class="label label-danger">Email non identiche</div>
+                </div>
+            </div>
+
+
+
+<!-- BLOCCO TESTO DESCRIZIONE ------------------------------------------------- -->
+
+
+
+      
+        <!-- nome field -->
+        <div class="Form-field">
+            <label class="Form-label is-required">Descrizione / Oggetto istanza (Max 300 caratteri)</label>
+            <textarea  
+                    class="Form-input u-text-r-s u-borderRadius-m" 
+                    name="oggettoRichiedente" 
+                    ng-model="vm.model.oggettoRichiedente"
+                    ng-minlength="1"
+                    ng-maxlength="300"
+                    placeholder="inserire qui la descrizione dell'istanza"
+                    required></textarea>
+                
+            <div ng-messages="vm.userForm.oggettoRichiedente.$error" style="color:maroon" role="alert">
+                <div ng-message="required"  class="label label-danger">Campo richiesto</div>
+                <div ng-message="minlength" class="label label-danger">Valore troppo corto</div>
+                <div ng-message="maxlength" class="label label-danger">Valore troppo lungo</div>
+            </div>
+        </div>
+
+
+
+  
+
+
+   <div class="Form-field">
+     <label  class="Form-label is-required" for="inputFile1">Scansione Istanza - (dimensione massima 10Mb)</label>
+      <input    id="inputFile1"
+                class="btn btn-raised btn-success btn-block"
+                type="file" 
+                ng-model="vm.model.ciFile1" 
+                name="file1"    
+                accept="*/*" 
+                ngf-select 
+                ngf-min-size="1"
+                ngf-max-size="10MB" 
+                ngf-model-invalid="errorFile">
+ 
+
+      <span class="label label-danger" ng-show="vm.userForm.file1.$error.required">Allegato obbligatorio</span>
+      <span class="label label-danger" ng-show="vm.userForm.file1.$error.maxSize" class="badge">File troppo grande {{errorFile.size / 1000000|number:1}}MB: max 10Mb
+            <div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" role="alert">
+                <h2 class="u-text-h3">
+                    File troppo grande {{errorFile.size / 1000000|number:1}}Mb: dimensione massima 10Mb
+                </h2>
+            </div>
+      </span>
+      <span class="label label-danger" ng-show="vm.userForm.file1.$error.minSize" class="badge">File troppo piccolo {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
+   </div>
+
+   <div class="Form-field">
+     <label class="Form-label is-required"  for="inputFile2">Allegato 1 - (dimensione massima 10Mb) {{vm.model.picFile1_info}}</label>
+      <input    id="inputFile2"
+                class="btn btn-raised btn-success  btn-block"
+                type="file" 
+                ng-model="vm.model.ciFile2" 
+                name="file2"    
+                accept="*/*" 
+                ngf-select 
+                ngf-min-size="1"
+                ngf-max-size="10MB" 
+                ngf-model-invalid="errorFile">
+ 
+
+      <span class="label label-danger" ng-show="vm.userForm.file2.$error.required">Allegato obbligatorio</span>
+      <span class="label label-danger" ng-show="vm.userForm.file2.$error.maxSize" class="badge">File troppo grande 
+          {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
+       <span class="label label-danger" ng-show="vm.userForm.file2.$error.minSize" class="badge">File troppo piccolo {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>          
+   </div>
+
+   <div class="Form-field">
+     <label class="Form-label is-required"  for="inputFile3">Allegato 2 - (dimensione massima 10Mb)</label>
+     
+      <input    id="inputFile3"
+                class="btn btn-raised btn-success btn-block"
+                type="file" 
+                ng-model="vm.model.ciFile3" 
+                name="file3"    
+                accept="*/*" 
+                ngf-select 
+                ngf-min-size="1"
+                ngf-max-size="10MB" 
+                ngf-model-invalid="errorFile">
+ 
+      <span class="label label-danger" ng-show="vm.userForm.file3.$error.required">Allegato obbligatorio</span>
+      <span class="label label-danger" ng-show="vm.userForm.file3.$error.maxSize" class="badge">File troppo grande 
+          {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>
+      <span class="label label-danger" ng-show="vm.userForm.file3.$error.minSize" class="badge">File troppo piccolo {{errorFile.size / 1000000|number:1}}MB: max 10Mb</span>                    
+   </div>
+
+
+
+
+
+<legend class="Form-legend">Dati da compilare</legend>
+
+
+  
+    
+
+    <div    vc-recaptcha   
+            ng-model="vm.model.RecaptchaResponse"
+            key="'6Ldg6AwUAAAAAPgKoqezNrIVEsmdm7uafTop0r84'"></div> 
+
+
+   <div class="Form-field">
+         <button type="submit"
+                    ng-disabled="!vm.userForm.$valid" 
+                    class="btn btn-raised btn-info btn-block btn-lg"  
+                    ng-click="vm.onSubmit()">Invia richiesta</button>
+        </div>
+
+ </fieldset>        
+</form>
+
+
+</div> <!-- ng-show -->
+
+
+
+
+<!-- DEBUG
+{{bshowForm}}-{{apiReturnCode}}
+<div ng-show="bshowForm" >T
+    <p>TRUE</p>
+    <div ng-show="apiReturnCode == 200" >SHOW 200</div>
+    <div ng-show="apiReturnCode == 488" >SW 200</div>
+    {{vm.responseMessage.title}}  
+    {{vm.responseMessage.code}}
+    {{vm.responseMessage.msg}}
+    
+</div>
+
+<div ng-show="!bshowForm" >F
+    <p>FALSE</p>
+    <div ng-show="apiReturnCode == 200" >SHOW 200</div>
+    <div ng-show="apiReturnCode == 488" >SW 200</div>
+    {{vm.responseMessage.title}}  
+    {{vm.responseMessage.code}}
+    {{vm.responseMessage.msg}}
+    {{btnTextSendButton}}
+</div>
+-->
+
+
+<!-- ---------------------------------------- FORM RISULTATO ------------------------------------------------------ -->
+<div class="container">
+<div ng-show="!bshowForm" >
+  
+    <div  ng-switch on="apiReturnCode">
+        <div ng-switch-when="200">
+            <div class="alert alert-success">
+                <h4><i class="material-icons">done</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
+            </div>
+            <div class="well" role="alert">
+                <p ng-bind-html="vm.responseMessage.htmlMsg"></p>
+                <hr>
+                <p>Le è stata inviata una mail all'indirizzo specificato nella richiesta con i presenti dati di riepilogo.</p>
+            </div>
+        
+        </div>
+
+         <div  ng-switch-default>
+                    <div class="alert alert-danger">
+                    <h4><i class="material-icons">error</i> {{vm.responseMessage.title}}  ({{vm.responseMessage.code}})</h4>
+                    <h5>{{vm.responseMessage.msg}}</h5>
+                    <h5>Riprovare più tardi.</h5>
+                    <h5>Una segnalazione è già stata inviata all'amministratore di sistema.</h5>
+         </div>
+
+     </div>
+
+
+           <button     type="submit"
+                                class="btn btn-raised btn-info btn-block btn-lg"  
+                                ng-click="vm.show_Form()">{{btnTextSendButton}}</button>
+         
+            
+    </div>
+</div>
+</div>
+</article>
+</div>
+</section>

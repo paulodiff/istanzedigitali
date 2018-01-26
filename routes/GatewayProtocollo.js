@@ -180,7 +180,7 @@ router.get('/ping', function (req, res) {
     //res.status(200).send(utilityModule.createJWT(user,700,'d'));
     res.status(200).send({msg:'ok'});
 
-    log2Email.info('Gateway Protocollo : PING Action called!');
+    log2Email.info('BLACKBOX Gateway Protocollo : PING Action called!');
 
 
     async.series([

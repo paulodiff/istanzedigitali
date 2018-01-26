@@ -1,0 +1,151 @@
+<section>
+
+
+        <div class="u-text-r-xxl u-padding-all-s">
+            <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
+                <div class="u-layout-centerContent">
+                    <section class="u-layout-wide">
+                        <h2 class="u-text-r-l">Multistep demo</h2>
+                        <p class="u-lineHeight-l u-text-r-xs u-textSecondary u-padding-r-right">
+                            Form per il caricame
+                        </p>
+                    </section>
+                </div>
+              </div>
+        </div>
+        
+        <!-- #### PARTE 1 ANAGRAFICA #####  -->
+        
+        <form   class="Form Form--spaced u-padding-all-xl u-text-r-xs"
+                name="vm.userForm"
+                ng-show="!isSubmitting">
+
+            <fieldset class="Form-fieldset">
+                
+                <legend class="Form-legend">Anagrafica</legend>
+        
+                <div class="Form-field">
+                        <label class="Form-label is-required" for="multistepForm.nomeRichiedente">nomeRichiedente</label>
+                        <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                                id="nomeRichiedente"
+                                name="nomeRichiedente"
+                                ng-model="nomeRichiedente" 
+                                aria-required="true" 
+                                ng-minlength="1"
+                                ng-maxlength="10"
+                                required>
+                                <div ng-messages="vm.userForm.nomeRichiedente.$error" 
+                                     ng-if="vm.userForm.nomeRichiedente.$touched"
+                                     style="color:maroon" 
+                                     role="alert">
+                                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                                    <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                                    <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                                </div>                       
+                    </div>
+                    
+                    <div class="Form-field">
+                        <label class="Form-label is-required" for="multistepForm.cognomeRichiedente">cognomeRichiedente</label>
+                        <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                                id="cognomeRichiedente" 
+                                name="cognomeRichiedente"
+                                aria-required="true" 
+                                ng-model="cognomeRichiedente"
+                                ng-minlength="1"
+                                ng-maxlength="10"
+                                >
+                        <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+            
+                        <div ng-messages="vm.userForm.cognomeRichiedente.$error" 
+                                style="color:red" role="alert">
+                                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                                    <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                                    <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        </div>                    
+                    </div>
+        
+        
+                <button type="submit"
+                    
+                    class="Button Button--default u-text-r-xs u-inlineBlock"  
+                    ng-click="next2dati()">Prossimo passo</button>
+
+            </fieldset>
+        
+        <!-- #### PARTE 2 ALLEGATI #####  -->
+
+        <fieldset class="Form-fieldset">
+
+                <legend class="Form-legend">ALLEGATI</legend>
+ 
+                <div class="Form-field">
+                    <label class="Form-label is-required">File da allegare:</label>
+                    <input 
+                        type="file" 
+                        ngf-select 
+                        ng-model="file" 
+                        class="Button Button--default u-text-r-xs u-inlineBlock" 
+                        name="file"    
+                        accept="text/csv" 
+                        ngf-pattern="'application/pdf'"
+                        ngf-max-size="2MB" 
+                        ngf-select 
+                        ngf-min-size="1"
+                        required>
+        
+                       <!--  <pre>{{vm.userForm.file.$error}}</pre> -->
+        
+                        <div ng-messages="vm.userForm.file.$error" style="color:maroon" role="alert" multiple>
+                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+                            <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido - SOLO PDF</div>
+                            <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        </div>   
+                </div>
+                
+                <div class="Form-field">
+                    <label class="Form-label is-required" for="nome">Note</label>
+                    <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                            id="nome" 
+                            name="nome"
+                            aria-required="true" 
+                            ng-model="note"
+                            ng-minlength="1"
+                            ng-maxlength="5"
+                            >
+                    <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+        
+                    <div ng-messages="vm.userForm.nome.$error" style="color:red" role="alert">
+                                <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                                <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                                <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                    </div>                    
+                </div>
+        
+
+        
+          </fieldset>
+ 
+          <!-- #### PARTE 3 ALLEGATI #####  -->
+          <legend class="Form-legend">Riepilogo informazioni</legend>
+
+          <button type="submit"
+          ng-disabled="!vm.userForm.$valid || isSubmitting" 
+          class="Button Button--default u-text-r-xs u-inlineBlock"  
+          ng-click="uploadCsv()">Invia richiesta</button>
+
+        
+            </div>
+        </form>
+        
+        
+        
+        
+        <pre>AAA:{{vm.userForm.nomeRichiedente }}</pre>
+        <hr>
+        <pre>{{vm.userForm | json}}</pre>
+        <hr>
+        <pre>{{vm.model | json}}</pre>
+        
+        
+           
+        

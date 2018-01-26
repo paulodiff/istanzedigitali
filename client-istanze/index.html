@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js ie89 ie8" lang="it"><![endif]-->
+<!--[if IE 9]><html class="no-js ie89 ie9" lang="it"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html class="no-js" lang="it">
+<!--<![endif]-->
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link media="all" rel="stylesheet" href="css/custom.css">
+
+  <!-- <link rel="preload" href="{{ '/build/IWT.min.js' | path }}" as="script"> -->
+  <!--
+    In alternativa a WebFontLoader è possibile caricare il font direttamente da Google
+      <link href='//fonts.googleapis.com/css?family=Titillium+Web:400,400italic,700,' rel='stylesheet' type='text/css' />
+    o dal repository locale (src/fonts)
+  -->
+  <script type="text/javascript">
+    WebFontConfig = {
+      google: {
+        families: ['Titillium+Web:400,600,700,400italic:latin']
+      }
+    };
+    (function() {
+      var wf = document.createElement('script');
+      wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+      wf.type = 'text/javascript';
+      wf.async = 'true';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(wf, s);
+    })();
+  </script>
+
+  <!-- include html5shim per Explorer 8 -->
+  <script src="ita-web-toolkit/vendor/modernizr.js"></script>
+
+  <link media="all" rel="stylesheet" href="ita-web-toolkit/vendor.css">
+  <link media="all" rel="stylesheet" href="ita-web-toolkit/build.css">
+
+  <!-- <script src="ita-web-toolkit/vendor/jquery.min.js"></script> -->
+  <script src="lib/jquery-1.10.2.min.js"></script>
+
+  <!-- Angular -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-animate/angular-animate.js"></script>
+  <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+  <script src="bower_components/angular-messages/angular-messages.js"></script>
+
+  <script src="lib/angular-ui-router.js"></script>
+  <script src="lib/ui-bootstrap-tpls-1.3.3.js"></script>
+
+  <link href="lib/bootstrap.min.css" rel="stylesheet">
+  <script src="lib/bootstrap.min.js"></script>
+
+
+
+  <script src="bower_components/angular-resource/angular-resource.min.js"></script>
+  <script src="bower_components/lodash/dist/lodash.min.js"></script>
+
+  <!-- spinner -->
+  <script src="bower_components/spin.js/spin.js"></script>
+  <script src="bower_components/angular-spinner/angular-spinner.js"></script>
+    
+
+
+  <!-- angular-dialog-service PATCH ITALIA-->
+  <script src="bower_components/angular-dialog-service/dist/dialogsITALIA.js"></script> 
+
+    <!-- bowser -->
+  <script src="bower_components/bowser/src/bowser.js"></script>
+  <script src="bower_components/angular-ui-select/dist/select.min.js"></script>
+
+  <!-- ngStorage -->
+  <script src="bower_components/ngstorage/ngStorage.min.js"></script>
+
+  <!-- ng-file-upload -->
+  <script src="bower_components/ng-file-upload/ng-file-upload.min.js"></script> 
+
+  <!-- ui-grid  -->
+  <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
+  <script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
+  <!-- -->
+
+  <!-- pdfMake -->
+  <script src='bower_components/pdfmake/build/pdfmake.min.js'></script>
+ 	<script src='bower_components/pdfmake/build/vfs_fonts.js'></script>
+
+  <!-- xls -->
+  <script src="bower_components/js-xlsx/dist/xlsx.full.min.js"></script>
+
+  <!-- FileSaver -->
+  <script src="bower_components/file-saver/FileSaver.min.js"></script>
+
+  <script src="bower_components/moment/moment.js"></script>
+
+  <!-- chart.js  -->
+  <script src="bower_components/chart.js/dist/Chart.js"></script>
+  <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+    
+
+  <!-- endbuild -->
+
+
+  <!-- build:js vendor-combined2.js -->
+  <script type="text/javascript" src="bower_components/angular-recaptcha/release/angular-recaptcha.min.js"></script>
+
+  <!-- UI-Validate -->
+  <script type="text/javascript" src="bower_components/angular-ui-validate/dist/validate.min.js"></script>
+
+    <!-- build:js app-combined2.js -->
+
+    <!-- your app's js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/configuration.js"></script>
+    <script src="scripts/authService.js"></script>
+    <script src="scripts/profileService.js"></script>
+    <script src="scripts/databaseService.js"></script>
+    <script src="scripts/alertService.js"></script>
+    <!-- <script src="scripts/accountService.js"></script> -->
+    <!-- <script src="scripts/formlyService.js"></script> -->
+    <script src="scripts/utilsService.js"></script>
+    <!-- <script src="scripts/sseService.js"></script> -->
+    <!-- <script src="scripts/sigService.js"></script>  -->
+    <!-- <script src="scripts/socketService.js"></script> -->
+    <!-- <script src="scripts/chatService.js"></script> --> 
+
+    <script src="scripts/rootControllers.js"></script>
+    <script src="scripts/loginControllers.js"></script>
+    <script src="scripts/errorControllers.js"></script>
+    <script src="scripts/homeControllers.js"></script>
+    <script src="scripts/profileControllers.js"></script>
+    <script src="scripts/demanioControllers.js"></script>
+    <script src="scripts/anagraficaDemanioControllers.js"></script>
+    <script src="scripts/multistepControllers.js"></script>
+        <!-- <script src="scripts/sigControllers.js"></script> -->
+    <!-- <script src="scripts/SloginControllers.js"></script> -->
+    <!-- <script src="scripts/formlyControllers.js"></script> -->
+    <!-- <script src="scripts/formlyJirideControllers.js"></script> -->
+    <!-- <script src="scripts/uigridControllers.js"></script> -->
+    <!-- <script src="scripts/elezioniControllers.js"></script> -->
+    <script src="scripts/protocolloControllers.js"></script>
+    <!-- <script src="scripts/batchControllers.js"></script> -->
+    <!-- <script src="scripts/sseChatControllers.js"></script> -->
+    <!--<script src="scripts/pushControllers.js"></script> -->
+
+    <script src="scripts/filters.js"></script>
+    <script src="scripts/rootDirectives.js"></script>
+    <script src="scripts/directives/directives.js"></script>  
+    <script src="scripts/directives/passwordMatch.js"></script>  
+    <script src="scripts/directives/passwordStrength.js"></script>  
+      
+    <!-- endbuild -->
+
+    <!-- PATCH solo per build dist - templateCache -->   
+    <script src="templates.js"></script>
+
+
+  <title>Portale Istanze</title>
+</head>
+
+<body class="t-Pac" ng-app="myApp" ng-controller="AppCtrl"><a id="topPosition"></a>
+
+<header class="Header Headroom--fixed js-Headroom u-hiddenPrint">
+
+  <div class="Header-navbar Grid Grid--alignMiddle">
+    <div class="Header-toggle Grid-cell">
+      <a class="Hamburger-toggleContainer js-fr-offcanvas-open u-nojsDisplayInlineBlock
+        " href="#menu"
+        aria-controls="menu" aria-label="accedi al menu" title="accedi al menu">
+        <span class="Hamburger-toggle" role="presentation"></span>
+        <span class="Header-toggleText" role="presentation">Menu</span>
+      </a>
+    </div>
+
+    <div class="Header-logo Grid-cell" aria-hidden="true">
+      <a href="" tabindex="-1">
+        <img src="images/logo-150x100_2.jpg" alt="">
+      </a>
+    </div>
+
+    <div class="Header-title Grid-cell">
+      <h1 class="Header-titleLink">
+        <a href="/">
+           Comune di Rimini / Portale Istanze <br>
+          <small></small>
+        </a>
+      </h1>
+    </div>
+
+    <div class="Header-searchTrigger Grid-cell">
+      <button aria-controls="header-search" class="js-Header-search-trigger Icon Icon-search"
+        title="attiva il form di ricerca" aria-label="attiva il form di ricerca" aria-hidden="false">
+      </button>
+      <button aria-controls="header-search" class="js-Header-search-trigger Icon Icon-close u-hidden"
+        title="disattiva il form di ricerca" aria-label="disattiva il form di ricerca" aria-hidden="true">
+      </button>
+    </div>
+
+    <div class="Header-utils Grid-cell">
+
+<!--
+
+      <div class="Header-search" id="header-search">
+        <form class="Form">
+  <div class="Form-field Form-field--withPlaceholder Grid" role="search">
+    <input class="Form-input Grid-cell u-sizeFill u-text-r-s" required id="cerca">
+    <label class="Form-label" for="cerca">Cerca...</label>
+    <button class="Grid-cell u-sizeFit Icon-search u-background-60 u-color-white u-padding-all-s u-textWeight-700"
+      title="Avvia la ricerca" aria-label="Avvia la ricerca">
+    </button>
+  </div>
+</form>
+
+-->
+
+      </div>
+    </div>
+  </div>
+  <!-- Header-navbar -->
+
+
+  
+</header>
+
+
+
+
+
+
+<section class="Offcanvas Offcanvas--left Offcanvas--modal js-fr-offcanvas u-jsVisibilityHidden u-nojsDisplayNone u-hiddenPrint" id="menu">
+	<h2 class="u-hiddenVisually">Menu di navigazione</h2>
+  <div class="Offcanvas-content u-background-white">
+    <div class="Offcanvas-toggleContainer u-background-70 u-jsHidden">
+      <a class="Hamburger-toggleContainer u-block u-color-white u-padding-bottom-xxl u-padding-left-s u-padding-top-xxl js-fr-offcanvas-close"
+        aria-controls="menu" aria-label="esci dalla navigazione" title="esci dalla navigazione" href="#">
+        <span class="Hamburger-toggle is-active" aria-hidden="true"></span>
+      </a>
+    </div>
+
+    
+    <nav ng-controller="SNavbarCtrl">
+			<ul class="Linklist Linklist--padded Treeview Treeview--default js-Treeview u-text-r-xs">
+
+
+
+
+
+  <ul data-megamenu-class="u-columns-2">
+          
+          <li><a ui-sref="homeIstanze">Home</a></li>
+          <li><a ui-sref="elencoIstanze" >Elenco Istanze</a></li>
+          <li><a ui-sref="sid24p" >Sid F24 pagamenti</a></li>
+          <li><a ui-sref="anagraficaDemanio" >Anagrafica</a></li>
+          <li><a ui-sref="profile">Profilo-1</a></li>
+          <li><a ui-sref="login">Login</a></li>
+          <li><a ui-sref="signup">Registrazione</a></li>
+          <li><a ui-sref="multistep.profile">Multistep</a></li>
+          <li><a ui-sref="consultazione">Consultazione</a></li>
+          <li ng-if="isAuthenticated()"><a ui-sref="profile">Profilo</a></li>
+          <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Accedi</a></li>
+          <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
+        </ul>
+  </ul>
+
+    </nav>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+    <span class="centeredspin" us-spinner="{radius:30, width:8, length: 16, position: relative}" spinner-key="spinner-1"></span>
+    <div role="main" id="main">
+      <section ui-view></section>
+    </div>
+
+  <!--[if IE 8]>
+  <script src="vendor/respond.min.js"></script>
+  <script src="vendor/rem.min.js"></script>
+  <script src="vendor/selectivizr.js"></script>
+  <script src="vendor/slice.js"></script>
+  <![endif]-->
+
+  <!--[if lte IE 9]>
+  <script src="vendor/polyfill.min.js"></script>
+  <![endif]-->
+
+  <script src="ita-web-toolkit/IWT.min.js"></script>
+
+<!--
+
+<footer class="Footer">
+
+    <div class="u-cf">
+        <p class="Footer-siteName">
+            Comune di Rimini
+        </p>
+    </div>
+
+    <div class="Grid Grid--withGutter">
+
+             <div class="Footer-block Grid-cell u-md-size1of4 u-lg-size1of4">
+            <h2 class="Footer-blockTitle">Contatti</h2>
+            <div class="Footer-subBlock">
+                <h3 class="Footer-subTitle">Recapiti</h3>
+                <address>
+          Via quae qui et<br>
+          quae qui et<br>
+          Tel. (+00) 00.0000.0000
+        </address>
+            </div>
+        </div>
+
+        <div class="Footer-block Grid-cell u-md-size1of4 u-lg-size1of4">
+            <h2 class="Footer-blockTitle">Contatti</h2>
+            <div class="Footer-subBlock">
+                <h3 class="Footer-subTitle">Recapiti</h3>
+                <address>
+          Via laborum neque nemo<br>
+          laborum neque nemo<br>
+          Tel. (+00) 00.0000.0000
+        </address>
+            </div>
+        </div>
+
+        <div class="Footer-block Grid-cell u-md-size1of4 u-lg-size1of4">
+            <h2 class="Footer-blockTitle">Contatti</h2>
+            <div class="Footer-subBlock">
+                <h3 class="Footer-subTitle">Indirizzo PEC</h3>
+                <p><a href="">indirizzo.pec@gov.it</a></p>
+            </div>
+        </div>
+
+     
+    </div>
+
+    <ul class="Footer-links u-cf">
+        <li><a href="" title="Privacy policy">Privacy</a></li>
+        <li><a href="" title="Note legali">Note legali</a></li>
+        <li><a href="" title="Dati monitoraggio sito">Contatti</a></li>
+    </ul>
+
+</footer>
+-->
+
+</body>
+</html>

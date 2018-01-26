@@ -1,0 +1,113 @@
+<ion-modal-view>
+    <ion-header-bar class="bar-royal">
+        <button class="button icon-left ion-chevron-left button-clear" ng-click="closeSortModal()"></button>
+        <h1 class="title">Filtri di ricerca</h1>
+    </ion-header-bar>
+    <ion-content has-header="true">
+       <!-- <div class="padding"> -->
+            
+            <div class="controls">
+                
+   <!--
+
+            <label class="item item-input-inset">
+              <div class="input-label"><b>Da data:</b></div>
+                <input type="date" 
+                        ng-model="filterCriteria.frmDataInizio">
+                       
+                </label>
+            
+
+            <label class="item item-input-inset">
+              <div class="input-label"><b>A data:</b></div>
+                <input type="date" 
+                        ng-model="filterCriteria.frmDataFine">
+                       
+                </label>
+    
+            <fancy-select
+                              header-text="Tipo intervento"
+                              label-text="Tipo:"
+                              allow-empty='false'
+                              text="filterCriteria.desc_intervento"
+                              value="filterCriteria.id_intervento"
+                              items="elencoTipiIntervento"
+                              multi-select="true"         
+                              >
+            </fancy-select>
+ -->           
+                <label class="item item-input-inset item-select">Opacità dei dati
+                    <select ng-model="filterCriteria.opacita">
+                      <option value=0.1>0.1</option>
+                      <option value=0.2>0.2</option>
+                      <option value=0.4>0.4</option>
+                      <option value=0.5>0.5</option>
+                      <option value=0.6>0.6</option>
+                      <option value=0.8>0.8</option>
+                      <option value=1.0>1.0</option>
+                    </select>
+                </label>
+            
+<!--
+                <label class="item item-input-inset item-select">Raggio
+                    <select ng-model="filterCriteria.raggio">
+                      <option value=10>10</option>
+                      <option value=20>20</option>
+                      <option value=40>40</option>
+                      <option value=60>60</option>
+                      <option value=80>80</option>
+                      <option value=100>100</option>
+                    </select>
+                </label>            
+            
+-->
+                <label class="item item-input-inset item-select">CodiceRadio
+                    <select ng-model="filterCriteria.CodiceRadio">
+                      <option value=00506>00506</option>
+                      <option value=00510>00510</option>
+                      <option value=00512>00512</option>
+                      <option value=00513>00513</option>
+                      <option value=00514>00514</option>
+                      <option value=00516>00516</option>
+                      <option value=00518>00518</option>
+                      <option value=00520>00520</option>
+                      <option value=00524>00524</option>
+                      <option value=00526>00526</option>
+                      <option value=00527>00527</option>
+                      <option value=00530>00530</option>
+                      <option value=00531>00531</option>
+                      <option value=00535>00535</option>
+                      <option value=00538>00538</option>
+                      <option value=00540>00540</option>
+                      <option value=00542>00542</option>
+                    </select>
+                </label>  
+
+
+            <!--
+                <label class="item item-input-inset"> Solo pattuglie
+                    <input type="checkbox" ng-model="filterCriteria.soloPattuglie">
+                </label>
+            -->
+
+            <!--
+   
+                <label class="item item-input-inset item-select">Numero di posizioni per la tracciatura
+                    <select ng-model="filterCriteria.numPosTracking">
+                      <option value=5>5</option>
+                      <option value=10>10</option>
+                      <option value=20>20</option>
+                      <option value=40>40</option>
+                      <option value=80>80</option>
+                      <option value=100>100</option>
+                    </select>
+                </label>
+            
+
+            -->
+            <div class="item item-input-inset">
+                <button class="button button-positive" ng-click="applySortModal()">Applica filtro</button>
+            </div>
+        </div>
+    </ion-content>
+</ion-modal-view>

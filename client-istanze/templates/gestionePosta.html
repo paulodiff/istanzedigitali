@@ -1,0 +1,183 @@
+<div class="container">
+  <div class="panel panel-info">
+    <div class="panel-heading">          
+             <div class="row">
+                <div class="col-sm-11 col-md-10 col-xs-10">
+                    <div class="posta_header">
+                    Posta del 
+                <input 
+                    type="date" 
+                    class="posta_data_header"
+                    name="model.dataStampaPrincipale" class="form-control" 
+                    ng-model="model.dataStampaPrincipale"
+                    ng-change="ricaricaDati()"
+                    ng-minlength="1"
+                    ng-maxlength="100">
+                    utente:  {{user.userid}}
+                    </div>
+              </div>
+             </div>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+    
+         <h3>Selezionare un centro di costo:</h3>
+         <ui-select ng-model="model.selectedCdc" theme="bootstrap" class="posta_data_header">
+            <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.cdc}}</ui-select-match>
+            <ui-select-choices repeat="item in cdc">
+              <p ng-bind-html="item.cdc"></p>
+            </ui-select-choices>
+          </ui-select>
+
+          <hr>
+          
+          <!-- <small>log:{{msg.lastCellEdited}}</small> -->
+
+          <div id="grid1" ui-grid-edit ui-grid-selection ui-grid-row-edit ui-grid-cellnav ui-grid-exporter ui-grid="gridOptions"></div>
+
+          <button type="button" id="addData" class="btn btn-success btn-raised btn-large" ng-click="addData()">Aggiungi una riga</button>
+          <button type="button" id="removeFirstRow" class="btn btn-warning btn-raised btn-large" ng-click="removeRow()">Elimina la riga selezionata</button>
+          <!--
+          <button type="button" id="DEBUG" class="btn btn-success" ng-click="execDebug()">Debug</button>
+          -->
+
+        </div>
+      </div>
+  </div>
+</div>
+
+
+<div class="panel panel-warning">
+  
+  <div class="panel-heading"> 
+    <h3 class="panel-title">Gestione Stampe</h3>
+  </div>
+
+  <div class="panel-body">
+
+            <div class="form-group">
+                <label >Data Posta</label>
+                <input type="date" 
+                    name="model.dataStampa" class="form-control" 
+                    ng-model="model.dataStampa"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            </div>
+
+
+          <div class="form-group">
+            <label>Tipo posta</label>
+            <ui-select ng-model="model.tipoPostaStampa" theme="bootstrap">
+            <ui-select-match placeholder="Selezionare un Tipo Posta">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="item in elencoTipoPosta">
+              <p ng-bind-html="item.id"></p>
+            </ui-select-choices>
+          </ui-select>
+          </div>
+
+
+          <div class="form-group">
+            <label>Centro di costo</label>
+            <ui-select ng-model="model.cdcStampa" theme="bootstrap">
+            <ui-select-match placeholder="Selezionare un CDC di lavoro">{{$select.selected.cdc}}</ui-select-match>
+            <ui-select-choices repeat="item in cdcStampe">
+              <p ng-bind-html="item.cdc"></p>
+            </ui-select-choices>
+          </ui-select>
+          </div>
+
+          <div class="form-group">
+                <label>Matricola</label>
+                <input type="text" 
+                    name="cellulareRichiedente" class="form-control" 
+                    ng-model="model.matricolaStampa"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+                   
+            </div>
+
+<button type="button" id="reset" class="btn btn-success btn-raised btn-large btn-block" ng-click="exportPdf()">Stampa</button>
+  </div>
+
+</div>
+
+<div class="panel panel-warning">
+  <div class="panel-heading"> 
+    <h3 class="panel-title">Estrazione file (Economato)</h3>
+  </div>
+  <div class="panel-body">
+
+
+            <div class="form-group">
+                <label>Data Posta</label>
+                <input type="date" 
+                    name="model.dataStampa" class="form-control" 
+                    ng-model="model.dataStampa"
+                    ng-minlength="1"
+                    ng-maxlength="100"
+                    >
+            </div>
+
+
+          <div class="form-group">
+            <label>Tipo posta</label>
+            <ui-select ng-model="model.tipoPostaStampa" theme="bootstrap">
+            <ui-select-match placeholder="Selezionare un Tipo Posta">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="item in elencoTipoPosta">
+              <p ng-bind-html="item.id"></p>
+            </ui-select-choices>
+          </ui-select>
+          </div>
+
+
+<button type="button" id="reset" class="btn btn-info btn-raised btn-large btn-block" ng-click="exportExcel()">Estrazione File</button>
+
+  </div>
+  </div>
+        
+
+
+
+
+  </div>
+</div>
+</div>
+</div>
+
+<!--
+<div class="card">
+
+    <div class="card-height-indicator"></div>
+
+    <div class="card-content">
+        <header class="card-header">
+            <button class="btn btn-flat">Share</button>
+            <button class="btn btn-flat btn-warning">Learn More</button>
+        </header>
+
+
+        <div class="card-image">
+                <h3 class="card-image-headline">Lorem Ipsum Dolor</h3>
+        </div>
+
+        <div class="card-body">
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+
+        </div>
+
+        <footer class="card-footer">
+            <button class="btn btn-flat btn-raised">Share</button>
+            <button class="btn btn-flat btn-warning btn-raised">Learn More</button>
+        </footer>
+
+    </div>
+
+</div>
+-->
+
+    
+
+</div>

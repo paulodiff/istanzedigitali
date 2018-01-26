@@ -1,0 +1,41 @@
+<!-- formly-image-upload-template.html -->
+
+<div class="input-group">
+	<span class="input-group-btn">
+          <span class="btn btn-primary btn-file">Sfoglia &hellip;
+          <input type="file" 
+          		 ng-model="model[options.key]" 
+          		 name="files" 
+          		 accept="image/*" 
+          		 maxsize="{{to.maxsize}}" 
+          		 required="required" 
+          		 onerror="onErrorHandler"
+          		 onabort="onErrorHandler"
+          		 onload="onErrorHandler"
+          		 onloadstart="onErrorHandler"
+          		 onloadend="onErrorHandler"
+          		 onprogress="onErrorHandler"
+          		 on-change="onChangeHandlerFunc"
+                 on-after-validate="onAfterValidateFunc"
+               />
+      </span>
+    </span>
+    <ul>
+    	<li>{{model.image.filename}}</li>
+    	<li>{{model.image.filetype}}</li>
+    	<li>{{model.image.filesize}}</li>
+    </ui>
+</div>
+
+<button type="button" class="btn btn-primary btn-block" ng-click="selectImageFile()" >SelectImageFile</button>
+<div style='height: 0px;width:0px; overflow:hidden;'>
+   <input id="idImageFileInput" type="file" class="btn-file" multiple custom-on-change="addImageFile" />
+</div>
+<button class="btn btn-danger btn-block" ng-click="startUpload()">Upload..</button>
+
+<!--      
+    <span class="input-group-btn">
+    <input type="file" ng-model="model[options.key]" name="files" accept="image/*" maxsize="5000" required="required" base-sixty-four-input="base-sixty-four-input"/>
+    </span>
+    <input type="text" value="{{model.image.filename}}" readonly="readonly" class="form-control"/>
+-->      
