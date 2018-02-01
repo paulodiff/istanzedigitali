@@ -11,17 +11,49 @@ angular.module('myApp.controllers')
     $scope.model = { progressValue : 22, name : 'oooook' };
 
     $scope.multistepForm = {};
+    $scope.multistepFormCurrentStep = '000'; // status 000 001 002 003 121 ecc .
 
     $scope.user = {};
-    
     $scope.vm = {}; $scope.vm.model = {}; $scope.vm.userForm = {};
-
+   
     
-    $scope.vm.model.nomeRichiedente = '';
-    $scope.vm.model.cognomeRichiedente = '';
-
     $scope.maxProgressBar = 1000;
     $scope.currentProgressBar = 0;
+
+    $scope.multistepFormIsCurrentStep = function(status){
+        console.log('multistepFormIsCurrentStep');
+        return status == $scope.multistepFormCurrentStep;
+    };
+
+    $scope.multistepFormIsCurrentStepValid = function(){
+        console.log('multistepFormIsCurrentStepValid', $scope.multistepFormCurrentStep);
+        switch($scope.multistepFormCurrentStep) {
+            case '000': 
+                return ($scope.vm.userForm.nomeRichiedente.$valid &&  $scope.vm.userForm.cognomeRichiedente.$valid);
+            case '001': 
+                return ($scope.vm.userForm.file.$valid);
+                return true;
+            case '002': 
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    $scope.formNextStatus = function(){
+        switch($scope.multistepFormCurrentStep) {
+            case '000': $scope.multistepFormCurrentStep = '001'; break;
+            case '001': $scope.multistepFormCurrentStep = '002'; break;
+        }
+    };
+    $scope.formPreviousStatus= function(){
+        switch($scope.multistepFormCurrentStep) {
+            case '001': $scope.multistepFormCurrentStep = '000'; break;
+            case '002': $scope.multistepFormCurrentStep = '001'; break;
+        }
+    };
+    
+
 
     $scope.isProfileOk = function() {
         $log.info('multistepCtrl: isProfileOk');
@@ -159,3 +191,5 @@ angular.module('myApp.controllers')
  
 
 
+
+  

@@ -105,6 +105,14 @@ angular.module('myApp', [//'ionic',
         accessLevel: 'free1' 
     });
 
+    $stateProvider.state('eseguiIstanza', {
+      url: '/eseguiIstanza/{id}',
+      controller: 'eseguiIstanzaCtrl',
+      templateUrl: 'templates/eseguiIstanzaITALIA.html',
+      accessLogged: false,
+      accessLevel: 'free1' 
+  });
+
     $stateProvider.state('protocollo', {
         url: '/protocollo',
         templateUrl: 'templates/protocolloForm.html',

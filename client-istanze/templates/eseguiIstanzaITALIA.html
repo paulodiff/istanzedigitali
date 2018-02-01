@@ -1,0 +1,254 @@
+<section>
+
+
+  <div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-all-xl u-padding-r-top u-padding-bottom-xxl">
+
+    <h1 class="u-text-h2">
+      Portale Istanze Comune di Rimini -  Esegui Istanza
+    </h1>
+    <p class="u-text-r-s">Quis et id repellat harum eligendi natus. Animi voluptatem adipisci ea autem possimus laboriosam vitae deleniti voluptas. Optio veritatis in hic non illo. Dolores nam in veniam repellat aut id qui dolor.</p>
+    <h2 class="u-text-h3 u-padding-r-top">Azione che è possibile effettuare</h2>
+    <p class="u-text-r-m">Attraverso il presente portale è possibile consultare le istanze che sono elencate alla voce "Elenco Istanze"opportunamente strutturate. A tal fine consultare il seguente indirizzo: Quis et id repellat harum eligendi natus. Animi voluptatem adipisci ea autem possimus laboriosam vitae deleniti voluptas. Optio veritatis in hic non illo. Dolores nam in veniam repellat aut id qui dolor.</p>
+    
+    <p class="u-text-r-m u-padding-r-bottom">{{info.Descrizione}}</p>
+
+    <p class="u-text-r-m">Form di compilazione per l'invio dell'istanza</p>
+
+
+    <form   name="vm.userForm"
+            ng-show="!isSubmitting"
+            novalidate>
+
+    <fieldset class="Form-fieldset">
+        <div class="Form-field">
+            <label class="Form-label is-required" for="multistepForm.nomeRichiedente">Nome Richiedente</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="nomeRichiedente"
+                    name="nomeRichiedente"
+                    ng-model="nomeRichiedente" 
+                    aria-required="true" 
+                    ng-minlength="1"
+                    ng-maxlength="10"
+                    required>
+                    <div ng-messages="vm.userForm.nomeRichiedente.$error" 
+                         ng-if="vm.userForm.nomeRichiedente.$touched"
+                         style="color:maroon" 
+                         role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                    </div>                       
+        </div>
+        
+        <div class="Form-field">
+            <label class="Form-label is-required" for="multistepForm.cognomeRichiedente">Cognome Richiedente</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="cognomeRichiedente" 
+                    name="cognomeRichiedente"
+                    aria-required="true" 
+                    ng-model="cognomeRichiedente"
+                    ng-minlength="1"
+                    ng-maxlength="10"
+                    required
+                    >
+            <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+            <div    ng-messages="vm.userForm.cognomeRichiedente.$error" 
+                    ng-if="vm.userForm.cognomeRichiedente.$touched"
+                    style="color:red" role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+            </div>                    
+        </div>
+       
+        <div class="Form-field">
+            <label class="Form-label is-required" for="multistepForm.cognomeRichiedente">Email per i contatti (eventuale PEC se presente)</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="cognomeRichiedente" 
+                    name="cognomeRichiedente"
+                    aria-required="true" 
+                    ng-model="cognomeRichiedente"
+                    ng-minlength="1"
+                    ng-maxlength="10"
+                    required
+                    >
+            <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+            <div    ng-messages="vm.userForm.cognomeRichiedente.$error" 
+                    ng-if="vm.userForm.cognomeRichiedente.$touched"
+                    style="color:red" role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+            </div>                    
+        </div>
+
+        <div class="Form-field">
+            <label class="Form-label is-required" for="multistepForm.cognomeRichiedente">Email (conferma)</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="cognomeRichiedente" 
+                    name="cognomeRichiedente"
+                    aria-required="true" 
+                    ng-model="cognomeRichiedente"
+                    ng-minlength="1"
+                    ng-maxlength="10"
+                    required
+                    >
+            <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+            <div    ng-messages="vm.userForm.cognomeRichiedente.$error" 
+                    ng-if="vm.userForm.cognomeRichiedente.$touched"
+                    style="color:red" role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+            </div>                    
+        </div>
+
+
+
+        <div class="Form-field">
+            <label class="Form-label is-required" for="multistepForm.cognomeRichiedente">Recapito telefonico (preferibilmente il  cellulare)</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="cognomeRichiedente" 
+                    name="cognomeRichiedente"
+                    aria-required="true" 
+                    ng-model="cognomeRichiedente"
+                    ng-minlength="1"
+                    ng-maxlength="10"
+                    required
+                    >
+            <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+            <div    ng-messages="vm.userForm.cognomeRichiedente.$error" 
+                    ng-if="vm.userForm.cognomeRichiedente.$touched"
+                    style="color:red" role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+            </div>                    
+        </div>
+
+        <div class="Form-field">
+            <label class="Form-label is-required" for="nome">Eventuali note</label>
+            <input  class="Form-input u-text-r-s u-borderRadius-m" 
+                    id="nome" 
+                    name="nome"
+                    aria-required="true" 
+                    ng-model="note"
+                    ng-minlength="1"
+                    ng-maxlength="5"
+                    >
+            <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
+
+            <div ng-messages="vm.userForm.nome.$error" style="color:red" role="alert">
+                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
+                        <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                        <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+            </div>                    
+        </div>
+
+        <h2 class="u-text-h3 u-padding-r-top">Allegati obbligatori (N)</h2>
+        <p class="u-text-h4 u-padding-r-top">{{info.file1.description}}</p>
+        
+        <div class="Form-field">
+            <input 
+                type="file" 
+                ngf-select 
+                ng-model="file1" 
+                class="Button Button--default u-text-r-xs u-inlineBlock" 
+                name="file1"    
+                accept="text/csv" 
+                ngf-pattern="'application/pdf'"
+                ngf-max-size="2MB" 
+                ngf-select 
+                ngf-min-size="1"
+                required>
+
+               <!--  <pre>{{vm.userForm.file.$error}}</pre> -->
+
+                <div ng-messages="vm.userForm.file1.$error" style="color:maroon" role="alert" multiple>
+                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+                    <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
+                    <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
+                </div>   
+        </div>
+        
+        
+        <p class="u-text-h4 u-padding-r-top">{{info.file2.description}}</p>
+
+        <div class="Form-field">
+            <input 
+                type="file" 
+                ngf-select 
+                ng-model="file2" 
+                class="Button Button--default u-text-r-xs u-inlineBlock" 
+                name="file2"    
+                accept="text/csv" 
+                ngf-pattern="'application/pdf'"
+                ngf-max-size="2MB" 
+                ngf-select 
+                ngf-min-size="1"
+                required>
+
+               <!--  <pre>{{vm.userForm.file.$error}}</pre> -->
+
+                <div ng-messages="vm.userForm.file2.$error" style="color:maroon" role="alert" multiple>
+                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+                    <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido - SOLO PDF</div>
+                    <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                </div>   
+        </div>
+
+        
+        <p class="u-text-h4 u-padding-r-top">{{info.file3.description}}</p>
+        <div class="Form-field">
+            <input 
+                type="file" 
+                ngf-select 
+                ng-model="file3" 
+                class="Button Button--default u-text-r-xs u-inlineBlock" 
+                name="file3"    
+                accept="text/csv" 
+                ngf-pattern="'application/pdf'"
+                ngf-max-size="2MB" 
+                ngf-select 
+                ngf-min-size="1"
+                required>
+
+               <!--  <pre>{{vm.userForm.file.$error}}</pre> -->
+
+                <div ng-messages="vm.userForm.file3.$error" style="color:maroon" role="alert" multiple>
+                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+                    <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido - SOLO PDF</div>
+                    <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
+                </div>   
+        </div>
+        
+    
+
+
+        
+
+        <button type="button"
+                class="Button Button--default u-text-r-xs u-inlineBlock"  
+                ng-click="formPreviousStatus()">Passo precedente</button>
+
+  </fieldset>
+    </form>
+
+  <hr>
+  <pre>{{vm.userForm | json}}</pre>
+  <hr>
+  <pre>{{vm.model | json}}</pre>
+  <hr>
+
+ <h2 class="u-text-h3">Contatti:</h2>
+<p>Referente Comune di Rimini *****</p>
+    
+  </div>
+
+
+</section>
+

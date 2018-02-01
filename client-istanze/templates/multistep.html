@@ -15,14 +15,18 @@
         </div>
         
         <!-- #### PARTE 1 ANAGRAFICA #####  -->
-        
+        <!-- https://scotch.io/tutorials/angularjs-form-validation -->
         <form   class="Form Form--spaced u-padding-all-xl u-text-r-xs"
                 name="vm.userForm"
-                ng-show="!isSubmitting">
+                ng-show="!isSubmitting"
+                novalidate>
+            <!-- novalidate prevents HTML5 validation  ...  -->        
+
+            <div ng-show="multistepFormIsCurrentStep('000')">
 
             <fieldset class="Form-fieldset">
                 
-                <legend class="Form-legend">Anagrafica</legend>
+                <legend class="Form-legend">Anagrafica 1</legend>
         
                 <div class="Form-field">
                         <label class="Form-label is-required" for="multistepForm.nomeRichiedente">nomeRichiedente</label>
@@ -53,10 +57,12 @@
                                 ng-model="cognomeRichiedente"
                                 ng-minlength="1"
                                 ng-maxlength="10"
+                                required
                                 >
                         <!-- <pre>{{vm.userForm.nomeRichiedente.$error}}</pre> -->
             
-                        <div ng-messages="vm.userForm.cognomeRichiedente.$error" 
+                        <div    ng-messages="vm.userForm.cognomeRichiedente.$error" 
+                                ng-if="vm.userForm.cognomeRichiedente.$touched"
                                 style="color:red" role="alert">
                                     <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
                                     <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
@@ -65,18 +71,24 @@
                     </div>
         
         
-                <button type="submit"
-                    
-                    class="Button Button--default u-text-r-xs u-inlineBlock"  
-                    ng-click="next2dati()">Prossimo passo</button>
+                <button type="button"
+                        class="Button Button--default u-text-r-xs u-inlineBlock"  
+                        ng-show="multistepFormIsCurrentStepValid()"
+                        ng-click="formNextStatus()">Prossimo passo</button>
+
+                
 
             </fieldset>
+
+        </div>
         
         <!-- #### PARTE 2 ALLEGATI #####  -->
 
+        <div ng-show="multistepFormIsCurrentStep('001')">
+
         <fieldset class="Form-fieldset">
 
-                <legend class="Form-legend">ALLEGATI</legend>
+                <legend class="Form-legend">Allegati 2</legend>
  
                 <div class="Form-field">
                     <label class="Form-label is-required">File da allegare:</label>
@@ -120,31 +132,53 @@
                                 <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
                     </div>                    
                 </div>
-        
 
-        
+                <button type="button"
+                        class="Button Button--default u-text-r-xs u-inlineBlock"  
+                        ng-click="formPreviousStatus()">Passo precedente</button>
+
+
+                <button type="button"
+                        class="Button Button--default u-text-r-xs u-inlineBlock"  
+                        ng-show="multistepFormIsCurrentStepValid()"
+                        ng-click="formNextStatus()">Prossimo passo</button>
+
+
           </fieldset>
+        </div>
  
           <!-- #### PARTE 3 ALLEGATI #####  -->
-          <legend class="Form-legend">Riepilogo informazioni</legend>
 
-          <button type="submit"
-          ng-disabled="!vm.userForm.$valid || isSubmitting" 
-          class="Button Button--default u-text-r-xs u-inlineBlock"  
-          ng-click="uploadCsv()">Invia richiesta</button>
+        <div ng-show="multistepFormIsCurrentStep('002')">
+
+          <legend class="Form-legend">Riepilogo Fine</legend>
+          <p>Dati riepilogativi</p>
+          <button   type="button"
+                    class="Button Button--default u-text-r-xs u-inlineBlock"  
+                    ng-click="formPreviousStatus()">Passo precedente</button>
+
+          <button   type="submit"
+                    ng-disabled="!vm.userForm.$valid || isSubmitting" 
+                    class="Button Button--default u-text-r-xs u-inlineBlock"  
+                    ng-click="uploadCsv()">Invia richiesta</button>
+
+        </div>
 
         
-            </div>
+            
+        
         </form>
         
         
         
         
-        <pre>AAA:{{vm.userForm.nomeRichiedente }}</pre>
         <hr>
         <pre>{{vm.userForm | json}}</pre>
         <hr>
         <pre>{{vm.model | json}}</pre>
+        <hr>
+        <pre>nomeRichiedente: {{vm.userForm.nomeRichiedente | json }}</pre>
+
         
         
            
