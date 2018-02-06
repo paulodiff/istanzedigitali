@@ -33,7 +33,9 @@ var validator = require('validator');
 
 var utilityModule  = require('../models/utilityModule.js'); 
 var databaseModule = require("../models/databaseModule.js");
-var log = require("../models/loggerModuleWinston.js");
+
+var log = require('log4js').getLogger("app");
+
 var ReCaptcha = require("../models/recaptchaModule.js");
 var pM = require("../models/protocolloModule.js");
 
@@ -92,9 +94,15 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         }
         var objRet = {};
         objRet.numeroAllegati = ENV_FORM_CONFIG.numeroAllegati;
+        objRet.maxFileSize = ENV_FORM_CONFIG.maxFileSize;
         objRet.titles = ENV_FORM_CONFIG.titles;
-        objRet.files = ENV_FORM_CONFIG.files;
+        objRet.file1 = ENV_FORM_CONFIG.file1;
+        objRet.file2 = ENV_FORM_CONFIG.file2;
+        objRet.file3 = ENV_FORM_CONFIG.file3;
+        objRet.file4 = ENV_FORM_CONFIG.file4;
+        objRet.file5 = ENV_FORM_CONFIG.file5;
         objRet.defaultUserData = ENV_FORM_CONFIG.defaultUserData;
+        objRet.descrizionePrincipale = ENV_FORM_CONFIG.descrizionePrincipale;
 
         res.status(200).send(objRet);
         return;
@@ -254,6 +262,8 @@ function protocolloWS(objFilesList,  reqId) {
 
 
     return new Promise(function (resolve, reject) {
+
+
 
         soap.createClient(WS_IRIDE, soapOptions, function(err, client){
             
@@ -429,14 +439,34 @@ router.post('/upload/:formId',
             }
         },
 
+        // ##### Input sanitizer & validator------------------------------------------------------------------------
+
+        function(callback){
+            log.info('UPLOAD: ASYNC sanitizefile:');
+
+            if (pM.sanitizeFile(objFilesList, ENV_FORM_CONFIG)){
+                log.info('UPLOAD: ASYNC sanitizeFile: ok');
+                callback(null, 'UPLOAD: ASYNC sanitizefile: success!');
+            } else {
+                ErrorMsg = {
+                    title: 'Check input error',
+                    msg:   'Errore nei dati di input. ' + supportMsg,
+                    code : 456
+                }
+                log.error(reqId);
+                log.error(ErrorMsg);
+                callback(ErrorMsg, null);
+            }
+        },
+
+
         // ##### Saving files ------------------------------------------------------------------------
 
         function(callback){
             log.info('UPLOAD: ASYNC savingFiles:');
 
             if (pM.savingFiles(objFilesList, objFieldSanitized, req.user )){
-                log.info('savingFiles: ok');
-                log.info(objFieldSanitized);
+                log.info('UPLOAD: ASYNC savingFiles: ok');
                 callback(null, 'UPLOAD: ASYNC:savingFiles ... ok');
             } else {
                 ErrorMsg = {
@@ -459,32 +489,30 @@ router.post('/upload/:formId',
 
             function(callback){
 
-                log.info('ASYNC protocolloWS: ---- locked!');
+                log.info('ASYNC protocolloWS:GO!');
                     objDatiProtocollo = {};
+                  
+                    /*
                     objDatiProtocollo.InserisciProtocolloEAnagraficheResult = {};
                     objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento = 12345678;
                     objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo = 2099;
                     objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo = 2100;
                     objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo = 'GG/MM/AAAA';
                     objDatiProtocollo.InserisciProtocolloEAnagraficheResult.Messaggio = 'Inserimento Protocollo eseguito con successo, senza Avvio Iter';
-                callback(null, 'ASYNC protocolloWS: ---- locked!');
+                    */
 
 
-/*
-                if(fakeConfig.protocollazione == 1) {
-                    protocolloWS(objFieldSanitized, reqId)
+                pM.protocolloWS(objFieldSanitized, reqId, ENV_FORM_CONFIG, ENV_PROT)
                     .then( function (result) {
                         log.info(result);
-                        console.log(result);
-                        console.log(result.InserisciProtocolloEAnagraficheResult.Allegati);
                         objDatiProtocollo = result;
                         callback(null, 'protocolloWS ... ok');
                     })
                     .catch(function (err) {
                         // console.log(err);
                         log.error('ASYNC protocolloWS:');
-                        log2file.error(reqId);
-                        log2file.error(err);
+                        log.error(reqId);
+                        log.error(err);
                         ErrorMsg = {
                             title: 'Errore di protocollo',
                             msg: 'Errore nella protocollazione della richiesta.' + supportMsg,
@@ -492,33 +520,7 @@ router.post('/upload/:formId',
                         };
                         callback(ErrorMsg, null);
                     });
-                }
-
-                if(fakeConfig.protocollazione == 0) {
-                    log.info('ASYNC protocolloWS: DISABLED!');
-                    objDatiProtocollo = {};
-                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult = {};
-                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento = 12345678;
-                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo = 2099;
-                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo = 2100;
-                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo = 'GG/MM/AAAA';
-                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.Messaggio = 'Inserimento Protocollo eseguito con successo, senza Avvio Iter';
-                    callback(null, 'protocolloWS ... FAKE!!!! ok');
-                }
-
-                if(fakeConfig.protocollazione == 2) {
-                    log.info('ASYNC protocolloWS: FAKE ERRORE!');
-                    ErrorMsg = {
-                        title: 'Errore di protocollo',
-                        msg: 'Errore nella protocollazione della richiesta.' + supportMsg,
-                        code : 458
-                    };
-                    callback(ErrorMsg, null);
-                }
-
-*/                
-
-
+                
             },
 
             // ##### SAVING TO DISK ------------------------------------------------------------------------
@@ -652,7 +654,6 @@ router.post('/upload/:formId',
         log.info('UPLOAD: ASYNC FINAL!:');
         if(err){
             log.error(err);
-            log.log2email(err);
             res.status(ErrorMsg.code).send(ErrorMsg);
         } else {
             log.info('UPLOAD: ALL OK!!!!');
@@ -665,7 +666,6 @@ router.post('/upload/:formId',
                             reqId: reqId,
                             code : 200
                         }
-            log.log2email(Msg);                        
             res.status(200).send(Msg);
         }
     });

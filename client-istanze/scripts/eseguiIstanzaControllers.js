@@ -84,7 +84,16 @@ $scope.caricaImpostazioni = function(){
                 $log.info(response.data.titles);
                 $log.info($scope.iC.titles);
 
+                $scope.iC.numeroAllegati = response.data.numeroAllegati;
+                $scope.iC.maxFileSize = response.data.maxFileSize;
+
+                $scope.iC.descrizionePrincipale = response.data.descrizionePrincipale;
                 $scope.iC.titles = response.data.titles;
+                $scope.iC.file1 = response.data.file1;
+                $scope.iC.file2 = response.data.file2;
+                $scope.iC.file3 = response.data.file3;
+                $scope.iC.file4 = response.data.file4;
+                $scope.iC.file5 = response.data.file5;
 
                 if(response.data.defaultUserData){
                     $scope.modelForm.nomeRichiedente = response.data.defaultUserData.nomeRichiedente;

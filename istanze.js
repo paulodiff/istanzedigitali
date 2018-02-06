@@ -161,8 +161,9 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: false, save
 app.use(passport.initialize());
 app.use(passport.session());
 
-var log = require('./models/loggerModuleWinston.js');
-log.info('Starting ...');
+var log4js = require('log4js');
+var log = log4js.getLogger("app");
+log4js.configure(ENV.log4jsConfig);
 
 // var PassportAuth = require('./routes/PassportAuth')();
 // app.use('/passportauth', PassportAuth);

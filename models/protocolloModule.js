@@ -1,26 +1,71 @@
 /* protocollo module*/
 /* contiene tutte le funzioni di utilitù per il route protocollo.js*/
 var ENV = require('../config/configPROTOCOLLO.js'); // load configuration data
-var log = require('../models/loggerModuleWinston.js');
 var validator = require('validator');
 var fs = require('fs');
 var fsExtra = require('fs-extra');
 var spark = require('spark-md5');
 var md5File = require('md5-file');
 var moment = require('moment');
+var mime = require('mime');
+var utilityModule  = require('../models/utilityModule.js'); 
+var soap = require('soap');
 
 
+var log = require('log4js').getLogger("app");
 log.info('START protocolloModule.js');
 
+/*
+    Esegue un controllo sugli allegati numero e dimensione
+*/
+
+
+exports.sanitizeFile = function (fileList, envData) {
+    log.info('protocolloModule:sanitizeFile');
+    var bValid = true;
+    var msgValidator = '';
+
+
+    log.info('---------- fileList -----------------------------------------------------------');
+    log.info(fileList);
+    log.info(Object.keys(fileList).length);
+    log.info(envData.numeroAllegati);
+
+
+    if ( Object.keys(fileList).length != envData.numeroAllegati ){
+        log.error('protocolloModule:sanitizeFile:numero allegati non corretto!');
+        bValid = false;  msgValidator = 'numero allegati non previsto';
+    }
+
+    Object.keys(fileList).forEach(function(name) {
+        log.info('protocolloModule:sanitizeFile:');
+        // log.info(name);
+        log.info(fileList[name][0].size,envData.maxFileSize) ;
+        if (parseInt(fileList[name][0].size) > parseInt(envData.maxFileSize)) {
+            log.error('protocolloModule:sanitizeFile:numero allegati non corretto!');
+            bValid = false;  msgValidator = 'dimensione degli allegati supera il limite';
+        }
+    });
+
+    if ( bValid ) {
+        return true;
+    } else {
+        log.error(msgValidator);
+        return false;
+    }
+}
 
 
 /*
     Esegue un controllo sulla esistenza e sul valore dei parametri passati
+    e crea fieldsObj
 */
 
 exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
     
     log.info('protocolloModule:sanitizeInput');
+    log.info('---------- fieldList -----------------------------------------------------------');
+    log.info(fieldList);
 
     fieldsObj.reqId = reqId;
 
@@ -67,6 +112,7 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
     // validate object
     // https://www.npmjs.com/package/validator
 
+    log.info('---------- fieldsObj -----------------------------------------------------------');
     log.info(fieldsObj);
     log.info('protocolloModule:validate data ...');
     var bValid = true;
@@ -77,11 +123,14 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
     if( !fieldsObj.nomeRichiedente){    bValid = false;  msgValidator = 'nomeRichiedente richiesto'; }
     if( !fieldsObj.cognomeRichiedente){ bValid = false;  msgValidator = 'cognomeRichiedente richiesto'; }
     if( !fieldsObj.codiceFiscaleRichiedente){ bValid = false;  msgValidator = 'codiceFiscaleRichiedente richiesto'; }
+    if( !fieldsObj.dataNascitaRichiedente) { bValid = false;  msgValidator = 'dataNascitaRichiedente richiesto'; }
+    if( !fieldsObj.indirizzoRichiedente){ bValid = false;  msgValidator = 'indirizzoRichiedente richiesto'; }
+    if( !fieldsObj.cittaRichiedente){ bValid = false;  msgValidator = 'cittaRichiedente richiesto'; }
+    if( !fieldsObj.capRichiedente) { bValid = false;  msgValidator = 'capRichiedente richiesto'; }
     if( !fieldsObj.emailRichiedente){ bValid = false;  msgValidator = 'emailRichiedente richiesto'; }
     if( !fieldsObj.recapitoTelefonicoRichiedente){ bValid = false;  msgValidator = 'recapitoTelefonicoRichiedente richiesto'; }
-    if( !fieldsObj.indirizzoRichiedente){ bValid = false;  msgValidator = 'indirizzoRichiedente richiesto'; }
-    if( !fieldsObj.capRichiedente) { bValid = false;  msgValidator = 'capRichiedente richiesto'; }
-    if( !fieldsObj.dataNascitaRichiedente) { bValid = false;  msgValidator = 'dataNascitaRichiedente richiesto'; }
+    
+
 
     /* validazione */
 
@@ -152,6 +201,10 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
      
 }
 
+
+
+
+
 /* SAVING FILES  
 
     salva i file dell'upload nella cartella temporanea
@@ -166,6 +219,10 @@ exports.savingFiles = function (fileList, fieldsObj, userObj) {
 
     log.info('protocolloModule:storageFolder:' + dir);
     fieldsObj.files = [];
+
+    log.info('---------- fileList -----------------------------------------------------------');
+    log.info(fileList);
+
 
     try{
         // throw "TEST - File NOT FOUND Exception";
@@ -286,6 +343,183 @@ exports.error = function(data) {
 
 exports.log2email = function(data){
     console.log('########## LOG 2 EMAIL TO TO TO TO ');
+}
+
+exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
+
+    log.info('protocolloModule:protocolloWS:START');
+    log.info(objFilesList);
+    log.info(reqId);
+    
+    
+    log.info(ENV_DATA.wsJiride);
+
+    WS_IRIDE = ENV_DATA.wsJiride.url;
+    WS_IRIDE_ENDPOINT = ENV_DATA.wsJiride.endpoint;
+
+    log.info(WS_IRIDE);
+    log.info(WS_IRIDE_ENDPOINT);
+
+    // formattazione data per il WS
+    // log.info(body);
+
+    // preparazione dati
+
+    var args = { 
+           ProtoIn : {
+                Data: moment().format('DD/MM/YYYY'),
+                Classifica: ENV_DATA.wsJiride.classificaDocumento,
+                TipoDocumento: ENV_DATA.wsJiride.tipoDocumento,
+                Oggetto: (ENV_DATA.wsJiride.oggettoDocumento || 'OGGETTO NON PRESENTE') + '  -  (' + reqId + ')',
+                Origine: ENV_DATA.wsJiride.origineDocumento,
+                MittenteInterno: ENV_DATA.wsJiride.ufficioInternoMittenteDocumento,
+                //MittenteInterno_Descrizione": "",
+                AnnoPratica: ENV_DATA.wsJiride.annoPratica,
+                NumeroPratica: ENV_DATA.wsJiride.numeroPratica,
+                 
+               MittentiDestinatari: {
+                MittenteDestinatario: [
+                  {
+                    CodiceFiscale : objFilesList.codiceFiscaleRichiedente,
+                    CognomeNome: objFilesList.cognomeRichiedente + ' ' + objFilesList.nomeRichiedente,
+                    DataNascita : objFilesList.dataNascitaRichiedente,
+                    Indirizzo : objFilesList.indirizzoRichiedente,
+                    Localita : objFilesList.cittaRichiedente,
+                    // Spese_NProt : 0,
+                    // TipoSogg: 'S',
+                    TipoPersona: ENV_DATA.wsJiride.tipoPersona,
+                    Recapiti: {
+                        Recapito: [
+                            {
+                                TipoRecapito: 'EMAIL',
+                                ValoreRecapito: objFilesList.emailRichiedente
+                            }
+                        ]
+                    }
+                  }
+                ]
+              },
+              
+              AggiornaAnagrafiche : ENV_DATA.wsJiride.aggiornaAnagrafiche,
+              InCaricoA : ENV_DATA.wsJiride.ufficioInternoDestinatarioDocumento,
+              Utente : ENV_DATA.wsJiride.Utente,
+              // Ruolo : ENV_DEFAULT_USER.wsJiride.ruolo,              
+              Allegati: {  Allegato: []  }
+            }
+        };
+
+    log.info('---------WS ARGS ----------------------------');    
+    log.info(args);
+
+    // costruzione degli allegati con i metadati
+
+    // Aggiunta allegato principale
+    /*
+    var fname = objFilesList.domandaPermessoFormatoPDF.nomeFile;
+    var ext = fname.substring(fname.length - 3);
+    log.info(fname);
+    log.info(ext);
+    var mtype =  mime.lookup(ext);
+    log.info(mtype);
+
+    args.ProtoIn.Allegati.Allegato.push(
+            {
+                TipoFile : ext,
+                ContentType : mtype,
+                Image: objFilesList.domandaPermessoFormatoPDF.base64,
+                NomeAllegato: objFilesList.domandaPermessoFormatoPDF.nomeFile,
+                Commento : objFilesList.domandaPermessoFormatoPDF.tipoDescrizione
+            }
+        );
+    */    
+    // Aggiunta allegati successivi al primo
+
+    var DW_PATH = ENV_PROT.storageFolder;
+    var dir = DW_PATH + "/" + reqId;
+    
+    objFilesList.files.forEach(function(obj){
+        log.info('adding:', dir + '/' + obj.name);
+        ext = obj.name.substring(obj.name.length - 3);
+        log.info(ext);
+
+        // allegato principale
+        args.ProtoIn.Allegati.Allegato.push(
+            {
+                TipoFile : ext,
+                ContentType : mime.lookup(dir + '/' + obj.name),
+                Image: utilityModule.base64_encode(dir + '/' + obj.name),
+                NomeAllegato: obj.name,
+                Commento : ''
+            }
+        );
+    });
+
+    // AGGIUNGE I metadati
+    var fMetadati = reqId + '.txt';
+    log.info('aggiunta metadati', fMetadati);
+    args.ProtoIn.Allegati.Allegato.push(
+        {
+            TipoFile : 'txt',
+            ContentType : mime.lookup(dir + '/' + fMetadati),
+            Image: utilityModule.base64_encode(dir + '/' + fMetadati),
+            NomeAllegato: fMetadati,
+            Commento : ''
+        }
+    );
+
+    // AGGIUNGE I metadati
+    /*
+    var fMetadati = reqId + '.txt';
+    log.info('aggiunta metadati', fMetadati);
+    args.ProtoIn.Allegati.Allegato.push(
+        {
+            TipoFile : 'txt',
+            ContentType : mime.lookup(dir + '/' + fMetadati),
+            Image: utilityModule.base64_encode(dir + '/' + fMetadati),
+            NomeAllegato: fMetadati,
+            Commento : ''
+        }
+    );
+    */
+
+
+    var soapResult = { result : '....'};
+ 
+    var soapOptions = {
+        endpoint: WS_IRIDE_ENDPOINT
+    };
+
+    log.info('create client');
+
+    return new Promise(function (resolve, reject) {
+
+
+        soap.createClient(WS_IRIDE, soapOptions, function(err, client){
+            
+            if (err) {
+                var msg = 'Errore nella creazione del client soap';
+                log.error(msg); log.error(err); 
+                reject(err);
+            } else {
+
+                client.InserisciProtocolloEAnagrafiche(args,  function(err, result) {
+                //client.InserisciProtocollo(args,  function(err, result) {
+                
+                    if (err) {
+                        var msg = 'Errore nella chiamata ad InserisciProtocollo';
+                        log.error(msg);  log.error(err);  
+                        log.info(args);
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+
+                }); //client.InserisciProtocollo
+            }
+
+            });  //soap.createClient
+
+     }); 
 }
 
 
