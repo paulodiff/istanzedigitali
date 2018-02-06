@@ -14,6 +14,8 @@
 			apiLoginCheck:'passportauth/check',
 			apiProfile: 'profilemgr/me',
 			apiUpload:'segnalazioni/upload',
+			apiIstanzeUpload:'protocollo/upload',
+			apiIstanzeRecuperaImpostazioni:'protocollo/getInfoIstanza',
 			apiLoginNTLM:'loginmgr/NTLMlogin',
 			apiLoginDEMO:'loginmgr/DEMOlogin',
 			apiLoginLDAP:'loginmgr/LDAPlogin',

@@ -236,8 +236,8 @@ module.exports = {
           var time = [ d.getHours(), d.getMinutes(), d.getSeconds() ];
           var ms = addZero(d.getMilliseconds(), 3);
 
-          console.log('UtilsService');
-          console.log(time);
+          // console.log('UtilsService');
+          // console.log(time);
 
           var suffix = Math.floor(Math.random()*90000) + 10000;
 
@@ -246,11 +246,7 @@ module.exports = {
                 time[i] = "0" + time[i];
               }
             }
-
-          
-
-          console.log(time.join(""));  
-
+          // console.log(time.join(""));  
           // Return the formatted string
           return [year, month, day].join('') + "@" + time.join("") + "@" + ms + "@" + suffix;
           //return date.join("") + "@" + time.join("") + "@" + suffix;
@@ -277,72 +273,118 @@ module.exports = {
 
         console.log('[#APPVERSION#] ok pass');
         next();
-    }
+    },
+
+    emailSend: function(mailOptions){
+      var transporter = nodemailer.createTransport(ENV.smtpConfig);
+      /*
+      var mailOptions = {
+                      from: '"Comune di Rimini - Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
+                      to: objFieldSanitized.emailRichiedente, // list of receivers
+                      subject: 'Promemoria presentazione istanza digitale', 
+                      // text: msg, // plaintext body
+                      html: htmlResponseMsg // html body
+                  };
+      */
+      return new Promise(function (resolve, reject) {
+          transporter.sendMail(mailOptions, function(error, info){
+                  if(error){
+                          logConsole.error('emailSend ERROR!');
+                          logConsole.error(error);
+                          reject(error);
+                  } else {
+                          logConsole.info('Email sent!');
+                          resolve('Email Sent!');
+                      }
+                  });
+              });   
 }
 
-
-
+}
 
 /*
-// utility Middleware Module
-module.exports = function () {
-    var module = {};
 
-    module.ensureAuthenticated = function(req, res, next) {
-        console.log('ensureAuthenticated');
-        if (!req.header('Authorization')) {
-            console.log('ensureAuthenticated : 401');
-            return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });
-        }
-        var token = req.header('Authorization').split(' ')[1];
+      var transporter = nodemailer.createTransport(ENV_PROT.smtpConfig);
+                    var mailOptions = {
+                        from: '"Comune di Rimini - Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
+                        to: objFieldSanitized.emailRichiedente, // list of receivers
+                        subject: 'Promemoria presentazione istanza digitale', 
+                        // text: msg, // plaintext body
+                        html: htmlResponseMsg // html body
+                    };
+                    transporter.sendMail(mailOptions, function(error, info){
+                        if(error){
+                            log.error(reqId);
+                            log.error(err);
+                            ErrorMsg = {
+                            title: 'Errore di protocollo',
+                                msg: 'Errore durante invio mail. ' + supportMsg,
+                                code : 459
+                            }
+                            callback(ErrorMsg, null);
+                        } else {
+                            log.info('Email sent!');
+                            callback(null, 'Invio mail ... ok');
+                        }
+                    });
+              
 
-          var payload = null;
-          try {
-            payload = jwt.decode(token, config.TOKEN_SECRET);
-          }
-          catch (err) {
-            console.log(err);
-            return res.status(401).send({ message: err.message });
-          }
-
-          if (payload.exp <= moment().unix()) {
-            console.log('token expired');
-            return res.status(401).send({ message: 'Token has expired' });
-          }
-          console.log('ok next');
-          req.user = payload.sub;
-          next();
-    };
-
-
-
-    module.createJWT = function(user) {
-          var payload = {
-            sub: user._id,
-            iat: moment().unix(),
-            exp: moment().add(14, 'days').unix()
-          };
-          return jwt.encode(payload, config.TOKEN_SECRET);
-    };
-
-    module.test = function(){
-        console.log('module test function');
-    };
-
-
-    // Other stuff...
-    module.pickle = function(cucumber, herbs, vinegar) {
-        // This will be available 'outside'.
-        // Pickling stuff...
-    };
-
-    function jarThemPickles(pickle, jar) {
-        // This will be NOT available 'outside'.
-        // Pickling stuff...
-
-        return pickleJar;
-    };
-
-    return module;
-};
 */
+
+/*
+
+   function(callback){
+                log.info('ASYNC Gmail Recaptcha ...:');
+                var RecaptchaResponse = 'NULL';
+
+                if(objFieldList['fields[RecaptchaResponse]'] && objFieldList['fields[RecaptchaResponse]'][0] ){
+                    console.log(objFieldList['fields[RecaptchaResponse]'][0]);
+                    var RecaptchaResponse = objFieldList['fields[RecaptchaResponse]'][0];
+                }
+                
+
+                console.log('ASYNC:TEST:',RecaptchaResponse);
+                ErrorMsg = {
+                                            title: 'Errore controllo ReCaptcha',
+                                            msg: 'Si è verificato un errore nel controllo del codice antifrode ReCaptcha. ' + supportMsg,
+                                            reqId: reqId,
+                                            code : 480
+                            };
+                console.log(req.body);
+
+                if(fakeConfig.captCha == 1) {
+
+                    verifyReCaptcha(RecaptchaResponse).then(function (result) {
+                            if (result.statusCode == 200) {
+                                log.info('Gmail Recaptcha OK!');
+                                // console.log(result.response);
+                                callback(null, 'Gmail Recaptcha OK!');
+                            } else {
+                                //console.log(result);
+                            log.error('Gmail Recaptcha ERROR! code:' + result.statusCode);
+                            callback(ErrorMsg, null);
+                            }
+                        }).catch(function (err) {
+                            // console.log(err);
+                            log.error('Gmail Recaptcha ERRORE GENERICO!');
+                            log.error(err);
+                            callback(ErrorMsg, null);
+                        });
+
+                }
+
+            
+                if(fakeConfig.captCha == 0) {
+                    log.info('ASYNC Gmail Recaptcha DISABLED!!! - OK:');
+                    callback(null, 'Gmail Recaptcha ... DISABLED ok');
+                }
+
+                if(fakeConfig.captCha == 2) {
+                    log.info('ASYNC Gmail Recaptcha TEST ERROR !!! - OK:');
+                    callback(ErrorMsg, null);
+                }
+
+        },
+*/
+
+

@@ -161,30 +161,30 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: false, save
 app.use(passport.initialize());
 app.use(passport.session());
 
-var log = require('./models/loggerModule.js');
-log.log2console('Starting ...');
+var log = require('./models/loggerModuleWinston.js');
+log.info('Starting ...');
 
-var PassportAuth = require('./routes/PassportAuth')();
-app.use('/passportauth', PassportAuth);
-app.use('/module.php', PassportAuth);
+// var PassportAuth = require('./routes/PassportAuth')();
+// app.use('/passportauth', PassportAuth);
+// app.use('/module.php', PassportAuth);
 
-var ProfileMgr = require('./routes/ProfileMgr')();
-app.use('/profilemgr', ProfileMgr);
+// var ProfileMgr = require('./routes/ProfileMgr')();
+// app.use('/profilemgr', ProfileMgr);
 
 var Protocollo = require('./routes/Protocollo')();
-app.use('/segnalazioni', Protocollo);
+app.use('/protocollo', Protocollo);
 
-var IstanzeMgr = require('./routes/IstanzeMgr')();
-app.use('/istanzemgr', IstanzeMgr);
+//var IstanzeMgr = require('./routes/IstanzeMgr')();
+//app.use('/istanzemgr', IstanzeMgr);
 
-var GatewayProtocollo = require('./routes/GatewayProtocollo')();
-app.use('/gatewayprotocollo', GatewayProtocollo);
+// var GatewayProtocollo = require('./routes/GatewayProtocollo')();
+// app.use('/gatewayprotocollo', GatewayProtocollo);
 
 //var PostaMgr = require('./routes/PostaMgr')();
 //app.use('/postamgr', PostaMgr);
 
-var LoginMgr = require('./routes/LoginMgr')();
-app.use('/loginmgr', LoginMgr);
+//var LoginMgr = require('./routes/LoginMgr')();
+//app.use('/loginmgr', LoginMgr);
 
 
 //var QueueMgr = require('./routes/QueueMgr')();
@@ -199,9 +199,9 @@ app.get('/',
 });
 
 
-app.use('/swagger', express.static(__dirname + '/swagger'));
+// app.use('/swagger', express.static(__dirname + '/swagger'));
 
-app.use('/home', express.static(__dirname + '/home'));
+// app.use('/home', express.static(__dirname + '/home'));
 
 var options = {
   // dotfiles: 'ignore',
@@ -223,13 +223,13 @@ var options = {
 }
 
 app.use('/cli',  express.static(__dirname + '/client-istanze', options));
-app.use('/draw',  express.static(__dirname + '/draw.io', options));
+// app.use('/draw',  express.static(__dirname + '/draw.io', options));
 app.use('/dist', express.static(__dirname + '/client-istanze/dist', options));
 
 // Sequelize START Bootstrap
 var models = require("./modelsSequelize");
 
-log.log2console('Sequelize START');
+log.info('Sequelize START ...');
 
 // log.log2console('Server started at:' + ENV.nodejs.NODEJSport);
 // log.log2file('Server started at:' + ENV.nodejs.NODEJSport);
@@ -244,8 +244,8 @@ models.sequelize.sync().then(function() {
   var port = ENV.nodejs.NODEJSport;
   port = 9988;
   app.listen(port, function() {
-    log.log2console('Express server listening on port ' + port);
+    log.info('Express server listening on port ' + port);
   });
-  app.on('error', function(error) { log.log2console(error); });
-  app.on('listening', function() { log.log2console('listening'); });
+  app.on('error', function(error) { log.error(error); });
+  app.on('listening', function() { log.info('listening'); });
 });

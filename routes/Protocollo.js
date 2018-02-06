@@ -1,32 +1,3 @@
-// Route for Protocollo
-
-var fakeConfig = {
-        parsingValues: 1, // 1 sempre decodifica  i parametri dei form
-        captCha : 1, // 1 abilitata 0 disabilitata/fake 2 errore
-        savingToDisk: 1,
-        protocollazione: 1,
-        emailsend: 1
-};
-
-
-// Note sicurezza:
-// - controllo CaptCha
-// - limite UPLOAD
-// - limite ORARIO uffici con NOTIFICA
-// - controllo parametri SANITIZE 
-// - controllo hash file
-// - generazione PDF
-// - invio mail di risposta
-
-  // protocollazione
-  
-  // risposta
-
-  // invio mail di conferma con pdf
-
-  // res.status(200).send('Operazioni terminate ....'); 
-
-
 var express = require('express');
 var router = express.Router();
 // var request = require('request');
@@ -59,80 +30,92 @@ var handlebars = require('handlebars');
 var validator = require('validator');
 // var Segnalazione  = require('../models/segnalazione.js'); // load configuration data
 // var flow = require('../models/flow-node.js')('tmp'); // load configuration data
+
 var utilityModule  = require('../models/utilityModule.js'); 
 var databaseModule = require("../models/databaseModule.js");
+var log = require("../models/loggerModuleWinston.js");
+var ReCaptcha = require("../models/recaptchaModule.js");
+var pM = require("../models/protocolloModule.js");
 
 
 var ACCESS_CONTROLL_ALLOW_ORIGIN = false;
-// var DW_PATH = (path.join(__dirname, './storage'));
-// var DW_PATH = './storage';
-// var DW_PATH = ENV.storagePath;
 
-var log4js  = require('log4js');
-log4js.configure({
-  appenders: [
-    { type: 'console' },
-    { type: 'file', 
-      filename: 'log/error-' + ENV_PROT.log_filename, 
-      category: 'error-file-logger-protocollo',
-      maxLogSize: 120480,
-      backups: 10 
-    },
-    { type: 'file', 
-      filename: 'log/access-' + ENV_PROT.log_filename, 
-      category: 'access-file-logger-protocollo',
-      maxLogSize: 120480,
-      backups: 10 
-    },
-    {
-     type: 'smtp',
-     recipients: 'ruggero.ruggeri@comune.rimini.it',
-     sender: 'ruggero.ruggeri@comune.rimini.it',
-     category: 'email-log',
-     subject : '[ISTANZE DIGITALI]',
-     sendInterval: 60,
-     'SMTP': {
-            "host": "srv-mail.comune.rimini.it",
-            "secure": false,
-            "port": 25
-            // , "auth": { "user": "foo@bar.com", "pass": "bar_foo"  }
-        }
-    }
-  ]
-});
 
-var logger = log4js.getLogger();
-// init logging
-var logConsole  = log4js.getLogger();
-// var loggerDB = log4js.getLogger('mongodb');
-var log2Email = log4js.getLogger('email-log');
+// Note sicurezza:
+// - controllo CaptCha
+// - controllo csrf
+// - limite UPLOAD
+// - limite ORARIO uffici con NOTIFICA
+// - controllo parametri SANITIZE 
+// - controllo hash file
+// - controllo dati
+// - generazione PDF ???
+// - protocollazione
+// - invio mail di risposta
 
-var log2file = log4js.getLogger('error-file-logger-protocollo');
-log2file.setLevel(ENV_PROT.log_level);
 
-var log2fileAccess = log4js.getLogger('access-file-logger-protocollo');
+
+log.info('Starting ... Protocollo.js');
+
 
 module.exports = function(){
 
 var WS_IRIDE =  "";
 var MODO_OPERATIVO = "TEST";
 
+
+router.get('/getInfoIstanza/:formId', function (req, res) {
+
+    log.info('/getInfoIstanza/');
+
+    if(!req.params.formId){
+        log.error('getInfoIstanza:NOT FOUND');
+        log.error(reqId);
+        res.status(500).send('getInfoIstanza:NOT FOUND');
+        return;
+    } else {
+        var fConfigName = ENV_PROT.baseFolder + '/' + ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + req.params.formId + '.js';
+        // var fConfigName = ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + user.userCompany + '.js';
+        log.info('loadingDefault : load default data : ' + fConfigName);
+ 
+        try {
+            ENV_FORM_CONFIG = require(fConfigName);
+            log.info(ENV_FORM_CONFIG);
+        }
+        catch (e) {
+            log.error(e);
+            ErrorMsg = {
+                title: 'Errore loadingDefault messaggio',
+                msg: 'Errore loadingDefault messaggio di risposta. '  + supportMsg,
+                code : 459
+            }
+        }
+        var objRet = {};
+        objRet.numeroAllegati = ENV_FORM_CONFIG.numeroAllegati;
+        objRet.titles = ENV_FORM_CONFIG.titles;
+        objRet.files = ENV_FORM_CONFIG.files;
+        objRet.defaultUserData = ENV_FORM_CONFIG.defaultUserData;
+
+        res.status(200).send(objRet);
+        return;
+    }
+
+});
+
+
+
 /* Chiamata di TEST /ping */
+
+
 
 router.get('/ping', function (req, res) {
     var p = {};
 
-    logConsole.info('ASYNC preparazione messaggio risposta:');
+    log.info('ASYNC preparazione messaggio risposta:');
     var fileContents = '';
     var templateFileName = ENV_PROT.templateFileName;
 
-    try {
-        fileContents = fs.readFileSync(templateFileName).toString();
-    } catch (err) {
-        logConsole.error('WSCALL:templateFileName: ' + templateFileName + ' NON TROVATA in configurazione');
-        res.status(500).send('WSCALL:templateFileName: ' + templateFileName + ' NON TROVATA in configurazione');
-        return;
-    }
+
 
     // var data = dataSAMPLE; // dati di esempio
     var model = {};
@@ -153,426 +136,27 @@ router.get('/ping', function (req, res) {
     model.capRichiedente = '47921';
     model.emailRichiedenteConferma = 'ruggero.ruggeri@comune.rimini.it';
     model.oggettoRichiedente = 'Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....';
-
-
     var template = handlebars.compile(fileContents);
     var xmlBuilded = template(model);
 
     res.send(xmlBuilded);
-
-    log2Email.info('Ciao');
-
-
-    async.series([
-    function(callback) {
-        console.log('one:');
-        p.one = 1;
-        callback(null, 'one');
-    },
-    function(callback){
-        console.log('two:');
-        p.two = 'ok - two';
-        callback(null, 'two');
-        //setTimeout(function() {         callback(null, 'two');      }, 1);
-    },
-    function(callback){
-        console.log('tre:');
-        p.three = 'three';
-        callback(null, 'tre');
-        // setTimeout(function() {   callback(null, 3);    }, 1);
-    }
-   ], function(err, results) {
-    // results is now equal to: {one: 1, two: 2}
-    if(err){
-        console.log(p);
-        // res.send('ERRORE:' + err);
-    } else {
-        console.log('completed!');
-        // res.send(p);
-    }
 });
-});
-
-
-
-/* Funzione di verifica per Captch di Google */
-    function verifyReCaptcha(ReCaptcha) {
-        console.log('verifyReCaptcha');
-        return new Promise(function (resolve, reject) {
-       
-            var data = {
-                secret: ENV_PROT.recaptcha_secret, 
-                response: ReCaptcha
-            };
-            
-            var url = 'https://www.google.com/recaptcha/api/siteverify';
-            console.log('verifyReCaptcha:url',url);
-
-            // console.log(data);
-
-            var options = {
-                uri: url,
-                method: 'POST',
-                proxy: ENV_PROT.proxy_url,
-                json: true,
-                qs: data
-            };
-
-            request(options, function (error, response, body) {
-                if (error) {
-                    console.log('verifyReCaptcha:Errore invio richiesta ...');
-                    // console.log(error);
-                    reject(error);
-                }
-                if (!error && response.statusCode == 200) {
-                    console.log('verifyReCaptcha:Errore risposta:');
-                    console.log(response.body);
-                    if(response.body.success){
-                        resolve(response);
-                    } else {
-                        reject(response);
-                    }
-                } else {
-                    // console.log('Errore invio richiesta ...', response);
-                    reject(response);
-                }
-            });
-        });
-    }
-
-
-
-router.get('/mail',  function (req, res) {
-
-
-
-    var transporter = nodemailer.createTransport(ENV_PROT.smtpConfig);
-
-
-    // setup e-mail data with unicode symbols
-    var mailOptions = {
-        from: '"Comune di Rimini - Portale Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
-        to: 'ruggero.ruggeri@comune.rimini.it, paulo.difficiliora@gmail.com', // list of receivers
-        subject: 'Ricevuta ricevimento istanza', // Subject line
-        text: 'Hello world ?' // plaintext body
-        // attachments: [ {  path: './storage/pdf/Report.pdf' }]
-    };
-
-    // send mail with defined transport object
-    transporter.sendMail(mailOptions, function(error, info){
-        if(error){
-            return console.log(error);
-        }
-        console.log('Message sent: ' + info.response);
-    });
-    res.status(200).send('Mail ok');
-});
-
-router.get('/testCaptcha',  function (req, res) {
-    req.body = {};
-    req.body.fields = {};
-    req.body.fields.RecaptchaResponse = 'fsdfsdfsdfsdf';
-     console.log(ENV_PROT.recaptcha_secret);
-      console.log(req.body.fields.RecaptchaResponse);
-
-      var data = {
-            secret: ENV_PROT.recaptcha_secret, 
-            response: req.body.fields.RecaptchaResponse
-      }
-
-      var url = 'https://www.google.com/recaptcha/api/siteverify';
-
-        var options = {
-                // url : url,
-                uri: url,
-                method: 'POST',
-                proxy: ENV_PROT.proxy_url,
-                json: true,
-                qs: data
-            };
-
-
-            request(options, function (error, response, body) {
-                if (error) {
-                    console.log('Errore invio richiesta ...');
-                    console.log(error);
-                     res.send(error);
-                    //reject(error);
-                }
-                if (!error && response.statusCode == 201) {
-                    console.log('OK...', response);
-                    res.send(response);
-                    //resolve(response);
-                } else {
-                    console.log('Errore invio richiesta ...', response);
-                    res.send(response);
-                    // reject(response);
-                }
-            });
-       
-});
-
-/*
-router.get('/pdf',  function (req, res) {
-
-    var rptFileName = "./storage/pdf/Report.pdf";
-
-    var data = [
-          {item: 'NOME', count: 5, unit: 'loaf'},
-          {item: 'COGNOME', count: 3, unit: 'dozen'},
-          {item: 'Sugar', count: 32, unit: 'gram'},
-          {item: 'Carrot', count: 2, unit: 'kilo'},
-          {item: 'Apple', count: 3, unit: 'kilo'},
-          {item: 'Peanut Butter', count: 1, unit: 'jar'}
-      ];
-
-    var headerFunction = function(Report) {
-        Report.print("Rapporto - Promemoria", {fontSize: 22, bold: true, underline:true, align: "center"});
-        Report.newLine(2);
-    };
-
-    var footerFunction = function(Report) {
-        Report.line(Report.currentX(), Report.maxY()-18, Report.maxX(), Report.maxY()-18);
-        Report.pageNumber({text: "Page {0} of {1}", footer: true, align: "right"});
-        Report.print("Stampato il: "+(new Date().toLocaleDateString()) + ' ' + new Date(), {y: Report.maxY()-14, align: "left"});
-    };
-
-    var rpt = new Report(rptFileName)
-        .margins(20)                                 // Change the Margins to 20 pixels
-        .data(data)                                  // Add our Data
-        .pageHeader(headerFunction)                  // Add a header
-        .pageFooter(footerFunction)                  // Add a footer
-        .detail("{{count}} {{unit}} of {{item}}")    // Put how we want to print out the data line.
-        .render(); 
-
-    // rpt.printStructure(true);
-    
-    
-    res.download(rptFileName); // Set disposition and send it.
-});
-*/
-
-router.get('/getTestToken', function (req, res) {
-    var demoData = {
-        companyName: "Comune_di_Rimini",
-        app: "protocollo"
-    };
-    res.send(utilityModule.createJWT(demoData));
-});
-
-
-
-/* SAVING FILES  --------------------------------------------------------------------------------------------------------- */
-function savingFiles(fileList, fieldsObj, userObj) {
-    logConsole.info('savingFiles');
-    logConsole.info(ENV_PROT.storageFolder);
-    // var transactionId = req.body.fields.transactionId;
-    var DW_PATH = ENV_PROT.storageFolder;
-    var dir = DW_PATH + "/" + userObj.reqId;
-
-    fieldsObj.files = [];
-
-    try{
-        // throw "TEST - File NOT FOUND Exception";
-
-        if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
-        logConsole.info(dir);
-        Object.keys(fileList).forEach(function(name) {
-            logConsole.info('SAVING FILE:save: ' + name);
-
-            var originalFilename = fileList[name][0].originalFilename;
-            var destFile = dir + "/" + fileList[name][0].originalFilename;
-            var sourceFile = fileList[name][0].path;
-            logConsole.info(sourceFile);
-            logConsole.info(destFile);
-            //fs.renameSync(sourceFile, destFile);
-            // fs.createReadStream(sourceFile).pipe(fs.createWriteStream(destFile));
-            //fs.copySync(path.resolve(__dirname,'./init/xxx.json'), 'xxx.json');
-            fsExtra.copySync(sourceFile, destFile);
-            var hash2 = md5File.sync(destFile);
-            logConsole.info(destFile);
-            logConsole.info(hash2);
-
-            fieldsObj.files.push({ 'name' : originalFilename});
-        });
-
-        // save metadata metadati
-        fieldsObj.userObj = userObj;
-        var jsonFile = dir + "/" + userObj.reqId + ".txt";
-        logConsole.info(jsonFile);
-        fs.writeFileSync(jsonFile, JSON.stringify(fieldsObj));
-        
-        logConsole.info(fieldsObj);
-
-        return true;
-
-    } catch (e){
-        logConsole.info('savingFiles: ', e);
-        logConsole.info('savingFiles:' + userObj.reqId);
-        log2file.error('savingFiles:');
-        log2file.error(userObj.reqId);
-        log2file.error(e);
-        return false;
-    }
-}
-
-/* SANITIZE --------------------------------------------------------------------------------------------------------- */
-
-function sanitizeInput(fieldList, fieldsObj,  reqId) {
-    logConsole.info('sanitizeInput');
-    // var transactionId = req.body.fields.transactionId;
-    var DW_PATH = ENV_PROT.storageFolder;
-    // var dir = DW_PATH + "/" +  transactionId;
-    var dir = DW_PATH + "/" + reqId;
-    // var fieldsObj = {};
-
-    fieldsObj.reqId = reqId;
-
-    Object.keys(fieldList).forEach(function(name) {
-        logConsole.info('got field named ' + name);
-
-        switch(name) {
-            case 'fields[nomeRichiedente]':
-                fieldsObj.nomeRichiedente = fieldList[name][0];
-                break;
-            case 'fields[cognomeRichiedente]':
-                fieldsObj.cognomeRichiedente = fieldList[name][0];
-                break;
-            case 'fields[emailRichiedente]':
-                fieldsObj.emailRichiedente = fieldList[name][0];
-                break;
-            case 'fields[codiceFiscaleRichiedente]':
-                fieldsObj.codiceFiscaleRichiedente = fieldList[name][0];
-                break;
-            case 'fields[cellulareRichiedente]':
-                fieldsObj.cellulareRichiedente = fieldList[name][0];
-                break;
-            case 'fields[dataNascitaRichiedente]':
-                fieldsObj.dataNascitaRichiedente = fieldList[name][0];
-                break;                
-            case 'fields[indirizzoRichiedente]':
-                fieldsObj.indirizzoRichiedente = fieldList[name][0];
-                break;
-            case 'fields[cittaRichiedente]':
-                fieldsObj.cittaRichiedente = fieldList[name][0];
-                break;
-            case 'fields[capRichiedente]':
-                fieldsObj.capRichiedente = fieldList[name][0];
-                break;
-            case 'fields[oggettoRichiedente]':
-                fieldsObj.oggettoRichiedente = fieldList[name][0];
-                break;
-            default:
-                break;
-        }
-
-    });
-
-    // validate object
-    // https://www.npmjs.com/package/validator
-
-    logConsole.info(fieldsObj);
-    logConsole.info('validate obj');
-    var bValid = true;
-    var msgValidator = '';
-    
- 
-    // test lunghezze
-
-    if( fieldsObj.codiceFiscaleRichiedente.length != 16 ){
-        console.log(fieldsObj.codiceFiscaleRichiedente.length);
-        bValid = false;
-        msgValidator = 'Codice fiscale non valido';
-    }
-
-
-    if( fieldsObj.oggettoRichiedente.length > 300 ){
-        bValid = false;
-        msgValidator = 'Oggetto troppo lungo';
-    }
-
-
-    // test 
-
-    if( !validator.isEmail(fieldsObj.emailRichiedente) ){
-        bValid = false;
-        msgValidator = 'Email non valida';
-    }
-
-    if( !validator.isDecimal(fieldsObj.cellulareRichiedente) ){
-        bValid = false;
-        msgValidator = 'Cellulare non valido';
-    }
-
-    if( !validator.isDecimal(fieldsObj.capRichiedente) ){
-        bValid = false;
-        msgValidator = 'Cap non valido';
-    }
-
-    console.log(fieldsObj.dataNascitaRichiedente);
-    if( !moment( fieldsObj.dataNascitaRichiedente, 'DD/MM/YYYY', true).isValid() ){
-        bValid = false;
-        msgValidator = 'Data di Nascita non valida';
-    } 
-
-
-    // sanitize oggettoRichiedente
-    fieldsObj.oggettoRichiedente = validator.escape(fieldsObj.oggettoRichiedente);
-    logConsole.info(fieldsObj.oggettoRichiedente);
-
-
-    if ( bValid ) {
-        return true;
-    } else {
-        log2file.error(msgValidator);
-        logConsole.error(msgValidator);
-        return false;
-    }
-     
-}
-
-/* EMAIL SENDER -------------------------------------------------------------------------------------------------------- */
-
-function emailSend(mailOptions){
-        var transporter = nodemailer.createTransport(ENV_PROT.smtpConfig);
-        /*
-        var mailOptions = {
-                        from: '"Comune di Rimini - Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
-                        to: objFieldSanitized.emailRichiedente, // list of receivers
-                        subject: 'Promemoria presentazione istanza digitale', 
-                        // text: msg, // plaintext body
-                        html: htmlResponseMsg // html body
-                    };
-        */
-        return new Promise(function (resolve, reject) {
-            transporter.sendMail(mailOptions, function(error, info){
-                    if(error){
-                            logConsole.error('emailSend ERROR!');
-                            logConsole.error(error);
-                            reject(error);
-                    } else {
-                            logConsole.info('Email sent!');
-                            resolve('Email Sent!');
-                        }
-                    });
-                });   
-}
 
 
 /* PROTOCOLLO  --------------------------------------------------------------------------------------------------------- */
 
 function protocolloWS(objFilesList,  reqId) {
 
-    logConsole.info('protocolloWS');
+    log.info('protocolloWS');
 
     WS_IRIDE = ENV_PROT.wsJiride.url;
     WS_IRIDE_ENDPOINT = ENV_PROT.wsJiride.endpoint;
 
-    logConsole.info(WS_IRIDE);
-    logConsole.info(WS_IRIDE_ENDPOINT);
+    log.info(WS_IRIDE);
+    log.info(WS_IRIDE_ENDPOINT);
 
     // formattazione data per il WS
-    logConsole.info(objFilesList.dataNascitaRichiedente);
+    log.info(objFilesList.dataNascitaRichiedente);
 
 
     // preparazione dati
@@ -622,15 +206,15 @@ function protocolloWS(objFilesList,  reqId) {
         };
 
     // build attachements array
-    logConsole.info(args);
+    log.info(args);
 
     var DW_PATH = ENV_PROT.storageFolder;
     var dir = DW_PATH + "/" + reqId;
     
     objFilesList.files.forEach(function(obj){
-        logConsole.info('adding:', dir + '/' + obj.name);
+        log.info('adding:', dir + '/' + obj.name);
         ext = obj.name.substring(obj.name.length - 3);
-        logConsole.info(ext);
+        log.info(ext);
 
         // allegato principale
         args.ProtoIn.Allegati.Allegato.push(
@@ -646,7 +230,7 @@ function protocolloWS(objFilesList,  reqId) {
 
     // AGGIUNGE I metadati
     var fMetadati = reqId + '.txt';
-    logConsole.info('aggiunta metadati', fMetadati);
+    log.info('aggiunta metadati', fMetadati);
     args.ProtoIn.Allegati.Allegato.push(
         {
             TipoFile : 'txt',
@@ -666,7 +250,7 @@ function protocolloWS(objFilesList,  reqId) {
         endpoint: WS_IRIDE_ENDPOINT
     };
 
-    logConsole.info('create client');
+    log.info('create client');
 
 
     return new Promise(function (resolve, reject) {
@@ -675,7 +259,7 @@ function protocolloWS(objFilesList,  reqId) {
             
             if (err) {
                 var msg = 'Errore nella creazione del client soap';
-                log2file.error(msg); log2file.error(err); logConsole.error(err);
+                log2file.error(msg); log2file.error(err); log.error(err);
                 reject(err);
             } else {
 
@@ -684,7 +268,7 @@ function protocolloWS(objFilesList,  reqId) {
                 
                     if (err) {
                         var msg = 'Errore nella chiamata ad InserisciProtocollo';
-                        log2file.error(msg);  log2file.error(err);  logConsole.error(msg);
+                        log2file.error(msg);  log2file.error(err);  log.error(msg);
                         console.log(args);
                         reject(err);
                     } else {
@@ -705,204 +289,192 @@ function protocolloWS(objFilesList,  reqId) {
 /* UPLOAD ROUTE  --------------------------------------------------------------------------------------------------------- */
 
 //router.post('/upload', multipartMiddleware, function(req, res) {
-router.post('/upload', 
-    utilityModule.ensureAuthenticated,
+router.post('/upload/:formId', 
+    // utilityModule.ensureAuthenticated,
+    // utilityModule.recaptchaVerifier,
     function(req, res) {
 
+
+    log.info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ UPLOAD: after authorization ...');
+    log.info(req.params.formId);
     var bRaisedError = false;
     var ErrorMsg = {};
+    var ENV_FORM_CONFIG = {};
 
     // richiesta di identificatore unico di transazione
     var reqId = utilityModule.getTimestampPlusRandom();
 
+    log.info('UPLOAD: reqId ...' + reqId);
+
     ErrorMsg.reqId = reqId;
-    req.user.reqId = reqId;
-    var supportMsg = 'Riprovare più tardi o inviare una mail di segnalazione a ruggero.ruggeri@comune.rimini.it o telefonare allo 0541/704607 o 0541/704612 utilizzando il seguente codice unico di transazione: ' + reqId + '. Grazie.';
+
+    // aggiunge reqId all'utente identificato
+    if(req.user) {
+        req.user.reqId = reqId;
+    } else {
+        req.user = {};
+        req.user.reqId = reqId;
+    }
+
 
     var objFilesList = {};
     var objFieldList = {};
     var objFieldSanitized = {};
     var objDatiProtocollo = {};
     var htmlResponseMsg = '';
-
-    logConsole.info('start upload: ' + reqId);
-
-
-    //                 var p = {"nomeRichiedente":"MARIO","cognomeRichiedente":"ROSSI","emailRichiedente":"ruggero.ruggeri@comune.rimini.it","codiceFiscaleRichiedente":"RGGRGR70E25H294T","cellulareRichiedente":"3355703086","dataNascitaRichiedente":"11/12/1912","indirizzoRichiedente":"VIA ROMA, 1","cittaRichiedente":"RIMINI","capRichiedente":"47921","oggettoRichiedente":"Invio richiesta generica Sig. MARIO ROSSI, cortesemente ....","files":[],"reqId":"20161209@112659@342@52188","idProtocollo":139364,"annoProtocollo":"2016","numeroProtocollo":100144};
-    //
-
-    
+    var supportMsg = ENV_PROT.supportMsg;
+   
+   
     // limite upload
     // https://github.com/expressjs/node-multiparty
 
     async.series([
 
-           
-            // ##### PARSING ------------------------------------------------
-            
-            function(callback) {
-                logConsole.info('ASYNC form parsing');
-    
-                if(fakeConfig.parsingValues == 1) {
+        // ##### LOADING default ---------------------------------------
+        function(callback){
+            log.info('UPLOAD: ASYNC loadingDefault:');
 
-                    var options = {  
-                        maxFilesSize: ENV_PROT.upload_size,
-                        autoFiles: true,
-                        uploadDir: ENV_PROT.upload_dir
-                      };
-                    logConsole.info(options);  
-                    var form = new multiparty.Form(options);
-                    form.parse(req, 
-                        function(err, fields, files) {
-                            if(err){
-                                logConsole.error(err);
-                                log2file.error(err);                                        
-                                ErrorMsg = {
-                                            title: 'Errore nella validazione dei parametri di input',
-                                            msg: 'Errore nella decodifica dei dati ricevuti. ' + supportMsg,
-                                            reqId: reqId,
-                                            code : 455
-                                };
-                                callback(ErrorMsg, null);
-                            } else {
-                                objFieldList = fields;
-                                objFilesList = files;
-                                logConsole.info(objFieldList);
-                                logConsole.info(objFilesList);
-                                callback(null, 'Form ... ok');
-                            }
-                    });
-                } else {
-                    logConsole.error('ASYNC - PARSING - FAKE ERROR');
-                    ErrorMsg = {
-                                title: 'Parsing values input error',
-                                msg: 'Errore nella decodifica dei dati ricevuti. ' + supportMsg,
-                                reqId: reqId,
-                                code : 455
-                    };
-                    callback(ErrorMsg, null);
+            if(!req.params.formId){
+                log.error('loadingDefault:userCompany property not found');
+                log.error(reqId);
+                ErrorMsg = {
+                    title: 'Errore loadingDefault messaggio',
+                    msg: 'Errore loadingDefault messaggio di risposta. '  + supportMsg,
+                    code : 459
                 }
-            },
-
-            // #####  CAPTCHA ------------------------------------------------
-
-
-            function(callback){
-                logConsole.info('ASYNC Gmail Recaptcha ...:');
-                var RecaptchaResponse = 'NULL';
-
-                if(objFieldList['fields[RecaptchaResponse]'] && objFieldList['fields[RecaptchaResponse]'][0] ){
-                    console.log(objFieldList['fields[RecaptchaResponse]'][0]);
-                    var RecaptchaResponse = objFieldList['fields[RecaptchaResponse]'][0];
+                callback(ErrorMsg, null);
+            } else {
+                var fConfigName = ENV_PROT.baseFolder + '/' + ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + req.params.formId + '.js';
+                // var fConfigName = ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + user.userCompany + '.js';
+                log.info('loadingDefault : load default data : ' + fConfigName);
+         
+                try {
+                    ENV_FORM_CONFIG = require(fConfigName);
+                    // log.info(ENV_FORM_CONFIG);
+                    callback(null, 'UPLOAD: ASYNC loadingDefault success!');
+                }
+                catch (e) {
+                    log.error(e);
+                    ErrorMsg = {
+                        title: 'Errore loadingDefault messaggio',
+                        msg: 'Errore loadingDefault messaggio di risposta. '  + supportMsg,
+                        code : 459
+                    }
+                    callback(ErrorMsg, null);
                 }
                 
+            }
 
-                console.log('ASYNC:TEST:',RecaptchaResponse);
+           
+        },
+
+
+        // ##### PARSING ------------------------------------------------
+        function(callback) {
+            log.info('UPLOAD: ASYNC form parsing');
+        
+            var options = {  
+                maxFilesSize: ENV_PROT.upload_size,
+                autoFiles: true,
+                uploadDir: ENV_PROT.upload_dir
+            };
+        
+            log.info(options);  
+            var form = new multiparty.Form(options);
+
+            log.info('---------------------------------------------------------');  
+            log.info(req.body);  
+            log.info('---------------------------------------------------------');  
+
+            form.parse(req, 
+                function(err, fields, files) {
+                    if(err){
+                        log.error(err);
+                        ErrorMsg = {
+                            title: 'Errore nella validazione dei parametri di input',
+                            msg: 'Errore nella decodifica dei dati ricevuti. ' + supportMsg,
+                            reqId: reqId,
+                            code: 455
+                        };
+                        callback(ErrorMsg, null);
+                    } else {
+                        objFieldList = fields;
+                        objFilesList = files;
+                        log.info('---- FieldList ----------------------------');
+                        log.info(objFieldList);
+                        log.info('---- FilesList ----------------------------');
+                        log.info(objFilesList);
+                        callback(null, 'UPLOAD: ASYNC form parsing success!');
+                    }
+                });
+        },
+        // ##### Input sanitizer & validator------------------------------------------------------------------------
+
+        function(callback){
+            log.info('UPLOAD: ASYNC sanitizeInput:');
+
+            if (pM.sanitizeInput(objFieldList, objFieldSanitized, reqId)){
+                log.info('UPLOAD: ASYNC sanitizeInput: ok');
+                log.info(objFieldSanitized);
+                callback(null, 'UPLOAD: ASYNC sanitizeInput: success!');
+            } else {
                 ErrorMsg = {
-                                            title: 'Errore controllo ReCaptcha',
-                                            msg: 'Si è verificato un errore nel controllo del codice antifrode ReCaptcha. ' + supportMsg,
-                                            reqId: reqId,
-                                            code : 480
-                            };
-                console.log(req.body);
-
-                if(fakeConfig.captCha == 1) {
-
-                    verifyReCaptcha(RecaptchaResponse).then(function (result) {
-                            if (result.statusCode == 200) {
-                                logConsole.info('Gmail Recaptcha OK!');
-                                // console.log(result.response);
-                                callback(null, 'Gmail Recaptcha OK!');
-                            } else {
-                                //console.log(result);
-                            logConsole.error('Gmail Recaptcha ERROR! code:' + result.statusCode);
-                            callback(ErrorMsg, null);
-                            }
-                        }).catch(function (err) {
-                            // console.log(err);
-                            logConsole.error('Gmail Recaptcha ERRORE GENERICO!');
-                            logConsole.error(err);
-                            log2file.error('Gmail Recaptcha ERRORE GENERICO!');
-                            log2file.error(err);
-                            callback(ErrorMsg, null);
-                        });
-
+                    title: 'Check input error',
+                    msg:   'Errore nei dati di input. ' + supportMsg,
+                    code : 456
                 }
+                log.error(reqId);
+                log.error(ErrorMsg);
+                 callback(ErrorMsg, null);
+            }
+        },
 
-            
-                if(fakeConfig.captCha == 0) {
-                    logConsole.info('ASYNC Gmail Recaptcha DISABLED!!! - OK:');
-                    callback(null, 'Gmail Recaptcha ... DISABLED ok');
+        // ##### Saving files ------------------------------------------------------------------------
+
+        function(callback){
+            log.info('UPLOAD: ASYNC savingFiles:');
+
+            if (pM.savingFiles(objFilesList, objFieldSanitized, req.user )){
+                log.info('savingFiles: ok');
+                log.info(objFieldSanitized);
+                callback(null, 'UPLOAD: ASYNC:savingFiles ... ok');
+            } else {
+                ErrorMsg = {
+                    title: 'saving file error',
+                    msg: 'Errore nella memorizzazione remota dei files.' + supportMsg,
+                    code : 457
                 }
+                log.error(reqId);
+                log.error(ErrorMsg);
+                callback(ErrorMsg, null);
+            }
+        },
 
-                if(fakeConfig.captCha == 2) {
-                    logConsole.info('ASYNC Gmail Recaptcha TEST ERROR !!! - OK:');
-                    callback(ErrorMsg, null);
-                }
+        function(callback){
+            log.info('ASYNC HASH file check:');
+            callback(null, 'Hash file check ... ok');
+        },
 
-            },
-
-
-
-
-            // ##### Input sanitizer & validator------------------------------------------------------------------------
-
-            function(callback){
-                logConsole.info('ASYNC sanitizeInput:');
-
-                if (sanitizeInput(objFieldList, objFieldSanitized, reqId)){
-                    logConsole.info('sanitizeInput: ok');
-                    logConsole.info(objFieldSanitized);
-                    callback(null, 'sanitizeInput ... ok');
-                } else {
-                    ErrorMsg = {
-                        title: 'Check input error',
-                        msg: 'Errore nei dati di input. ' + supportMsg,
-                        code : 456
-                    }
-                    log2file.error(reqId);
-                    log2file.error(ErrorMsg);
-                    logConsole.error(ErrorMsg);
-                    callback(ErrorMsg, null);
-                }
-            },
-
-            // ##### Saving files ------------------------------------------------------------------------
-
-            function(callback){
-                logConsole.info('ASYNC savingFiles:');
-
-                if (savingFiles(objFilesList, objFieldSanitized, req.user )){
-                    logConsole.info('savingFiles: ok');
-                    logConsole.info(objFieldSanitized);
-                    callback(null, 'savingFiles ... ok');
-                } else {
-                    ErrorMsg = {
-                        title: 'saving file error',
-                        msg: 'Errore nella memorizzazione remota dei files.' + supportMsg,
-                        code : 457
-                    }
-                    log2file.error(reqId);
-                    log2file.error(ErrorMsg);
-                    logConsole.error(ErrorMsg);
-                    callback(ErrorMsg, null);
-                }
-            },
-
-            function(callback){
-                logConsole.info('ASYNC HASH file check:');
-                callback(null, 'Hash file check ... ok');
-            },
-
-            // ##### Protocollazione ------------------------------------------------------------------------
+        // ##### Protocollazione ------------------------------------------------------------------------
 
             function(callback){
 
-                logConsole.info('ASYNC protocolloWS:');
+                log.info('ASYNC protocolloWS: ---- locked!');
+                    objDatiProtocollo = {};
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult = {};
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento = 12345678;
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo = 2099;
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo = 2100;
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo = 'GG/MM/AAAA';
+                    objDatiProtocollo.InserisciProtocolloEAnagraficheResult.Messaggio = 'Inserimento Protocollo eseguito con successo, senza Avvio Iter';
+                callback(null, 'ASYNC protocolloWS: ---- locked!');
+
+
+/*
                 if(fakeConfig.protocollazione == 1) {
                     protocolloWS(objFieldSanitized, reqId)
                     .then( function (result) {
-                        logConsole.info(result);
+                        log.info(result);
                         console.log(result);
                         console.log(result.InserisciProtocolloEAnagraficheResult.Allegati);
                         objDatiProtocollo = result;
@@ -910,7 +482,7 @@ router.post('/upload',
                     })
                     .catch(function (err) {
                         // console.log(err);
-                        logConsole.error('ASYNC protocolloWS:');
+                        log.error('ASYNC protocolloWS:');
                         log2file.error(reqId);
                         log2file.error(err);
                         ErrorMsg = {
@@ -923,7 +495,7 @@ router.post('/upload',
                 }
 
                 if(fakeConfig.protocollazione == 0) {
-                    logConsole.info('ASYNC protocolloWS: DISABLED!');
+                    log.info('ASYNC protocolloWS: DISABLED!');
                     objDatiProtocollo = {};
                     objDatiProtocollo.InserisciProtocolloEAnagraficheResult = {};
                     objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento = 12345678;
@@ -935,7 +507,7 @@ router.post('/upload',
                 }
 
                 if(fakeConfig.protocollazione == 2) {
-                    logConsole.info('ASYNC protocolloWS: FAKE ERRORE!');
+                    log.info('ASYNC protocolloWS: FAKE ERRORE!');
                     ErrorMsg = {
                         title: 'Errore di protocollo',
                         msg: 'Errore nella protocollazione della richiesta.' + supportMsg,
@@ -944,33 +516,36 @@ router.post('/upload',
                     callback(ErrorMsg, null);
                 }
 
+*/                
+
 
             },
 
             // ##### SAVING TO DISK ------------------------------------------------------------------------
 
+            /*
             function(callback){
 
                 if (fakeConfig.savingToDisk == 1){
 
-                    logConsole.info('ASYNC salvataggio dati protocollo nella cartella:');
+                    log.info('ASYNC salvataggio dati protocollo nella cartella:');
                     // save protocollo
                     var DW_PATH = ENV_PROT.storageFolder;
                     var dir = DW_PATH + "/" + reqId;
                     var jsonFile = dir + "/PROTOCOLLO.txt";
-                    logConsole.info(jsonFile);
-                    logConsole.info(objDatiProtocollo);
+                    log.info(jsonFile);
+                    log.info(objDatiProtocollo);
                     fs.writeFileSync(jsonFile, JSON.stringify(objDatiProtocollo));
                     callback(null, 'salvataggio dati protocollo nella cartella ... ok');
                 }
 
                 if (fakeConfig.savingToDisk == 0){
-                    logConsole.info('ASYNC salvataggio dati FAKE FAKE protocollo nella cartella:');
+                    log.info('ASYNC salvataggio dati FAKE FAKE protocollo nella cartella:');
                     callback(null, 'salvataggio dati protocollo nella cartella ... FAKE ok');
                 }
 
                 if (fakeConfig.savingToDisk == 2){
-                    logConsole.info('ASYNC salvataggio dati FAKE FAKE protocollo nella cartella:');
+                    log.info('ASYNC salvataggio dati FAKE FAKE protocollo nella cartella:');
                     ErrorMsg = {
                         title: 'saving file error',
                         msg: 'Errore nella memorizzazione remota dei files.' + supportMsg,
@@ -981,10 +556,13 @@ router.post('/upload',
                 
 
             },
+            */
+
+            /*
 
             // ###### SAVING ISTANZA TO DB ----------------------------------------------------------------------
             function(callback){
-                logConsole.info('ASYNC salvataggio istanza to DB:');
+                log.info('ASYNC salvataggio istanza to DB:');
 
                 var istanzaData = { 
                     ts : new Date(),
@@ -1001,12 +579,12 @@ router.post('/upload',
 
 
                 databaseModule.saveIstanza(istanzaData).then(function (response) {
-                        logConsole.info('ASYNC dati istanza salvati OK!');
+                        log.info('ASYNC dati istanza salvati OK!');
                         callback(null, 'Dati istanza salvati su database');
                     }
                 ).catch(function (err) {
-                    log2file.error(reqId);
-                    log2file.error(err);
+                    log.error(reqId);
+                    log.error(err);
                     ErrorMsg = {
                         title: 'Errore salvataggio istanza su DB',
                         msg: 'Errore salvataggio istanza su DB '  + supportMsg,
@@ -1017,12 +595,12 @@ router.post('/upload',
 
             },
 
-
+            */
 
             // ###### BUILD Response Message ----------------------------------------------------------------
 
             function(callback){
-                logConsole.info('ASYNC preparazione messaggio risposta:');
+                log.info('ASYNC preparazione messaggio risposta:');
  
                 var fileContents = '';
                 var templateFileName = ENV_PROT.templateFileName;
@@ -1030,8 +608,8 @@ router.post('/upload',
                 try {
                     fileContents = fs.readFileSync(templateFileName).toString();
                 } catch (err) {
-                    log2file.error(reqId);
-                    log2file.error(err);
+                    log.error(reqId);
+                    log.error(err);
                     ErrorMsg = {
                         title: 'Errore preparazione messaggio',
                         msg: 'Errore preparazione messaggio di risposta. '  + supportMsg,
@@ -1055,63 +633,31 @@ router.post('/upload',
 
             function(callback){
 
-                if(fakeConfig.emailsend == 1){
+              
+                    log.info('ASYNC invio mail:');
 
-                    logConsole.info('ASYNC invio mail:');
-
-                    logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento);
-                    logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo);
-                    logConsole.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo);
+                    log.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento);
+                    log.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo);
+                    log.info(objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo);
+                    callback(null, 'Invio mail preparato ok');
 
                 // var msg = "Comune di Rimini - Protocollo " +  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo + "/" + objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
                 // create reusable transporter object using the default SMTP transport
 
-                    var transporter = nodemailer.createTransport(ENV_PROT.smtpConfig);
-                    var mailOptions = {
-                        from: '"Comune di Rimini - Istanze Digitali" <ruggero.ruggeri@comune.rimini.it>', // sender address
-                        to: objFieldSanitized.emailRichiedente, // list of receivers
-                        subject: 'Promemoria presentazione istanza digitale', 
-                        // text: msg, // plaintext body
-                        html: htmlResponseMsg // html body
-                    };
-                    transporter.sendMail(mailOptions, function(error, info){
-                        if(error){
-                            log2file.error(reqId);
-                            log2file.error(err);
-                            ErrorMsg = {
-                            title: 'Errore di protocollo',
-                                msg: 'Errore durante invio mail. ' + supportMsg,
-                                code : 459
-                            }
-                            callback(ErrorMsg, null);
-                        } else {
-                            logConsole.info('Email sent!');
-                            callback(null, 'Invio mail ... ok');
-                        }
-                    });
-                }
-
-                 if(fakeConfig.emailsend == 0){
-                      logConsole.info('ASYNC invio mail: DISABILITATO!');
-                      callback(null, 'Invio mail .FAKE FAKE .. ok');
-                 }
-
-            },
-
-              
+            }
+             
 
     ],function(err, results) {
         // results is now equal to: {one: 1, two: 2}
-        logConsole.info('ASYNC FINAL!:');
+        log.info('UPLOAD: ASYNC FINAL!:');
         if(err){
-            log2file.error(err);
-            logConsole.error(err);
-            log2Email.info(err);
+            log.error(err);
+            log.log2email(err);
             res.status(ErrorMsg.code).send(ErrorMsg);
         } else {
-            logConsole.info('ALL OK!!!!');
+            log.info('UPLOAD: ALL OK!!!!');
             // results.msg = htmlResponseMsg;
-            logConsole.info(htmlResponseMsg);
+            log.info(htmlResponseMsg);
             var Msg = {
                             title: 'Istanza ricevuta con successo!',
                             msg: objFieldSanitized,
@@ -1119,7 +665,7 @@ router.post('/upload',
                             reqId: reqId,
                             code : 200
                         }
-            log2Email.info(Msg);                        
+            log.log2email(Msg);                        
             res.status(200).send(Msg);
         }
     });

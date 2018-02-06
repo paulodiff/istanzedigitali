@@ -43,7 +43,7 @@ angular.module('myApp.controllers')
         //console.log(host); 
 
         if( host  == 'localhost') {
-            $rootScope.base_url = 'http://localhost:8009';
+            $rootScope.base_url = 'http://localhost:9988';
         } else {
             //$rootScope.base_url = 'https://istanze-dichiarazioni.comune.rimini.it/federa';
             $rootScope.base_url = ENV.apiEndpoint;
