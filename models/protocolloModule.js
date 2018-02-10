@@ -10,18 +10,96 @@ var moment = require('moment');
 var mime = require('mime');
 var utilityModule  = require('../models/utilityModule.js'); 
 var soap = require('soap');
+var handlebars = require('handlebars');
 
 
 var log = require('log4js').getLogger("app");
 log.info('START protocolloModule.js');
 
-/*
-    Esegue un controllo sugli allegati numero e dimensione
-*/
+exports.verificaReCaptcha = function(fieldsObj, envData){
+    log.info('[' + envData.idIstanza + '] protocolloModule.js:buildOggetto');
+    var fileContents = '';
+    var templateFileName = envData.templateOggetto;
 
+    try {
+        fileContents = fs.readFileSync(templateFileName).toString();
+    } 
+    catch (err) 
+    {
+        log.error('[' + envData.idIstanza + '] protocolloModule.js:buildOggetto');
+        log.error(err);
+        return false;
+    }
+    var template = handlebars.compile(fileContents);
+    htmlResponseMsg = template(fieldsObj);
+    log.info(htmlResponseMsg);
+    return htmlResponseMsg;
+}
+
+
+
+exports.buildTemplate = function(fieldsObj, templateFileName){
+    log.info('protocolloModule.js:buildTemplate');
+    var fileContents = '';
+    
+    try {
+        fileContents = fs.readFileSync(templateFileName).toString();
+    } 
+    catch (err) 
+    {
+        log.error('protocolloModule.js:buildTemplate');
+        log.error(err);
+        return false;
+    }
+    var template = handlebars.compile(fileContents);
+    htmlResponseMsg = template(fieldsObj);
+    log.info(htmlResponseMsg);
+    return htmlResponseMsg;
+}
+
+
+exports.buildOggetto = function(fieldsObj, envData){
+    log.info('[' + envData.idIstanza + '] protocolloModule.js:buildOggetto');
+    var fileContents = '';
+    var templateFileName = envData.templateOggetto;
+
+    try {
+        fileContents = fs.readFileSync(templateFileName).toString();
+    } 
+    catch (err) 
+    {
+        log.error('[' + envData.idIstanza + '] protocolloModule.js:buildOggetto');
+        log.error(err);
+        return false;
+    }
+    var template = handlebars.compile(fileContents);
+    htmlResponseMsg = template(fieldsObj);
+    log.info(htmlResponseMsg);
+    return htmlResponseMsg;
+}
+
+exports.buildMessaggioRisposta = function(fieldsObj, envData){
+    log.info('[' + envData.idIstanza + '] protocolloModule.js:buildMessaggioRisposta');
+    var fileContents = '';
+    var templateFileName = envData.templateRisposta;
+
+    try {
+        fileContents = fs.readFileSync(templateFileName).toString();
+    } 
+    catch (err) 
+    {
+        log.error('[' + envData.idIstanza + '] protocolloModule.js:buildOggetto');
+        log.error(err);
+        return false;
+    }
+    var template = handlebars.compile(fileContents);
+    htmlResponseMsg = template(fieldsObj);
+    log.info(htmlResponseMsg);
+    return htmlResponseMsg;
+}
 
 exports.sanitizeFile = function (fileList, envData) {
-    log.info('protocolloModule:sanitizeFile');
+    log.info('[' + envData.idIstanza + '] protocolloModule:sanitizeFile');
     var bValid = true;
     var msgValidator = '';
 
@@ -33,7 +111,7 @@ exports.sanitizeFile = function (fileList, envData) {
 
 
     if ( Object.keys(fileList).length != envData.numeroAllegati ){
-        log.error('protocolloModule:sanitizeFile:numero allegati non corretto!');
+        log.error('[' + envData.idIstanza + '] protocolloModule:sanitizeFile:numero allegati non corretto!');
         bValid = false;  msgValidator = 'numero allegati non previsto';
     }
 
@@ -42,7 +120,7 @@ exports.sanitizeFile = function (fileList, envData) {
         // log.info(name);
         log.info(fileList[name][0].size,envData.maxFileSize) ;
         if (parseInt(fileList[name][0].size) > parseInt(envData.maxFileSize)) {
-            log.error('protocolloModule:sanitizeFile:numero allegati non corretto!');
+            log.error('[' + envData.idIstanza + '] protocolloModule:sanitizeFile:numero allegati non corretto!');
             bValid = false;  msgValidator = 'dimensione degli allegati supera il limite';
         }
     });
@@ -50,6 +128,7 @@ exports.sanitizeFile = function (fileList, envData) {
     if ( bValid ) {
         return true;
     } else {
+        log.error('[' + envData.idIstanza + '] protocolloModule:sanitizeFile');
         log.error(msgValidator);
         return false;
     }
@@ -61,13 +140,13 @@ exports.sanitizeFile = function (fileList, envData) {
     e crea fieldsObj
 */
 
-exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
+exports.sanitizeInput = function (fieldList, fieldsObj,  envData) {
     
-    log.info('protocolloModule:sanitizeInput');
+    log.info('[' + envData.idIstanza + '] protocolloModule:sanitizeInput');
     log.info('---------- fieldList -----------------------------------------------------------');
     log.info(fieldList);
 
-    fieldsObj.reqId = reqId;
+    fieldsObj.reqId = envData.reqId;
 
     Object.keys(fieldList).forEach(function(name) {
         log.info('protocolloModule:sanitizeInput:got field named ' + name);
@@ -118,7 +197,7 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
     var bValid = true;
     var msgValidator = '';
 
-    /* controllo esistenza */
+    /* validazione esistenza */
 
     if( !fieldsObj.nomeRichiedente){    bValid = false;  msgValidator = 'nomeRichiedente richiesto'; }
     if( !fieldsObj.cognomeRichiedente){ bValid = false;  msgValidator = 'cognomeRichiedente richiesto'; }
@@ -130,14 +209,62 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
     if( !fieldsObj.emailRichiedente){ bValid = false;  msgValidator = 'emailRichiedente richiesto'; }
     if( !fieldsObj.recapitoTelefonicoRichiedente){ bValid = false;  msgValidator = 'recapitoTelefonicoRichiedente richiesto'; }
     
+    /* validazione dimensioni */
 
+    if( fieldsObj.nomeRichiedente.length > 80 ){
+        log.info(fieldsObj.nomeRichiedente.length);
+        bValid = false;
+        msgValidator = 'nomeRichiedente troppo lungo';
+    }
 
-    /* validazione */
+    if( fieldsObj.cognomeRichiedente.length > 80 ){
+        log.info(fieldsObj.cognomeRichiedente.length);
+        bValid = false;
+        msgValidator = 'cognomeRichiedente troppo lungo';
+    }
 
-    if( fieldsObj.codiceFiscaleRichiedente && (fieldsObj.codiceFiscaleRichiedente.length != 16) ){
+    if( fieldsObj.codiceFiscaleRichiedente.length != 16){
         log.info(fieldsObj.codiceFiscaleRichiedente.length);
         bValid = false;
         msgValidator = 'Codice fiscale non valido';
+    }
+
+    if( fieldsObj.indirizzoRichiedente.length > 80 ){
+        log.info(fieldsObj.indirizzoRichiedente.length);
+        bValid = false;
+        msgValidator = 'indirizzoRichiedente troppo lungo';
+    }
+
+    if( fieldsObj.cittaRichiedente.length > 80 ){
+        log.info(fieldsObj.cittaRichiedente.length);
+        bValid = false;
+        msgValidator = 'cittaRichiedente troppo lungo';
+    }
+
+    if( fieldsObj.capRichiedente.length > 80 ){
+        log.info(fieldsObj.capRichiedente.length);
+        bValid = false;
+        msgValidator = 'capRichiedente troppo lungo';
+    }
+
+    if( fieldsObj.emailRichiedente.length > 80 ){
+        log.info(fieldsObj.emailRichiedente.length);
+        bValid = false;
+        msgValidator = 'emailRichiedente troppo lungo';
+    }
+
+    if( fieldsObj.recapitoTelefonicoRichiedente.length > 80 ){
+        log.info(fieldsObj.recapitoTelefonicoRichiedente.length);
+        bValid = false;
+        msgValidator = 'recapitoTelefonicoRichiedente troppo lungo';
+    }
+
+    if(fieldsObj.noteRichiedente){
+        if( fieldsObj.noteRichiedente.length > 80 ){
+            log.info(fieldsObj.noteRichiedente.length);
+            bValid = false;
+            msgValidator = 'noteRichiedente troppo lungo';
+        }
     }
 
     /*
@@ -149,61 +276,39 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
 
     */
 
+    /* validazione di tipo */
     
-    if( fieldsObj.emailRichiedente && (!validator.isEmail(fieldsObj.emailRichiedente)) ){
+    if( !validator.isEmail(fieldsObj.emailRichiedente) ){
         bValid = false;
         msgValidator = 'Email non valida';
     }
    
-
-    if( fieldsObj.recapitoTelefonicoRichiedente && (!validator.isDecimal(fieldsObj.recapitoTelefonicoRichiedente)) ){
+    if( !validator.isDecimal(fieldsObj.recapitoTelefonicoRichiedente)){
         bValid = false;
         msgValidator = 'recapitoTelefonicoRichiedente non valido';
     }
 
-    /*
-    if( fieldsObj.indirizzoRichiedente && (fieldsObj.indirizzoRichiedente.length > 1) ){
+    if( !validator.isDecimal(fieldsObj.capRichiedente) ){
         bValid = false;
-        msgValidator = 'indirizzoRichiedente non valido';
-    }
-    */
-
-
-    if( fieldsObj.capRichiedente && (!validator.isDecimal(fieldsObj.capRichiedente)) ){
-        bValid = false;
-        msgValidator = 'Cap non valido';
+        msgValidator = 'capRichiedente non valido';
     }
 
     log.info(fieldsObj.dataNascitaRichiedente);
-    if( fieldsObj.dataNascitaRichiedente && (!moment( fieldsObj.dataNascitaRichiedente, 'DD/MM/YYYY', true).isValid()) ){
+    if( !moment( fieldsObj.dataNascitaRichiedente, 'DD/MM/YYYY', true).isValid()){
         bValid = false;
         msgValidator = 'Data di Nascita non valida';
     } 
 
-/*
-    // sanitize oggettoRichiedente
-    if(fieldsObj.oggettoRichiedente){
-        fieldsObj.oggettoRichiedente = validator.escape(fieldsObj.oggettoRichiedente);
-        log.info(fieldsObj.oggettoRichiedente);
-    } else{
-        bValid = false;
-        msgValidator = 'Oggetto non valido';
-    }
-*/
-    
-
     if ( bValid ) {
         return true;
     } else {
+        msgValidator = '[' + envData.idIstanza + '] '+ msgValidator;
+        log.error('[' + envData.idIstanza + '] protocolloModule:sanitizeInput');
         log.error(msgValidator);
         return false;
     }
      
 }
-
-
-
-
 
 /* SAVING FILES  
 
@@ -211,11 +316,11 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  reqId) {
 
 --------------------------------------------------------------------------------------------------------- */
 
-exports.savingFiles = function (fileList, fieldsObj, userObj) {
-    log.info('protocolloModule:savingFiles');
-    log.info('protocolloModule:storageFolder:' +ENV.storageFolder);
+exports.savingFiles = function (fileList, fieldsObj, envData) {
+    log.info('[' + envData.idIstanza + '] protocolloModule:savingFiles');
+    log.info('[' + envData.idIstanza + '] protocolloModule:storageFolder:' + envData.storageFolder);
     // var transactionId = req.body.fields.transactionId;
-    var dir = ENV.storageFolder + "/" + userObj.reqId;;
+    var dir = envData.storageFolder + "/" + envData.reqId;;
 
     log.info('protocolloModule:storageFolder:' + dir);
     fieldsObj.files = [];
@@ -233,7 +338,7 @@ exports.savingFiles = function (fileList, fieldsObj, userObj) {
                 log.info('protocolloModule:Folder OK' + dir);
             }
             catch(e) {
-                log.error('protocolloModule:storageFolder: create folder ERROR');
+                log.error('[' + envData.idIstanza + '] protocolloModule:storageFolder: create folder ERROR');
                 log.error(e);
             }
         }
@@ -260,8 +365,7 @@ exports.savingFiles = function (fileList, fieldsObj, userObj) {
         });
 
         // save metadata metadati
-        fieldsObj.userObj = userObj;
-        var jsonFile = dir + "/" + userObj.reqId + ".txt";
+        var jsonFile = dir + "/" + envData.reqId + ".txt";
         log.info(jsonFile);
         fs.writeFileSync(jsonFile, JSON.stringify(fieldsObj));
         log.info(fieldsObj);
@@ -269,7 +373,7 @@ exports.savingFiles = function (fileList, fieldsObj, userObj) {
         return true;
 
     } catch (e){
-        log.error('savingFiles: ERROR');
+        log.error('[' + envData.idIstanza + '] savingFiles: ERROR');
         log.error(e);
         log.error(userObj);
         return false;
@@ -347,7 +451,7 @@ exports.log2email = function(data){
 
 exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
 
-    log.info('protocolloModule:protocolloWS:START');
+    log.info('[' + ENV_DATA.idIstanza + '] protocolloModule:protocolloWS:START');
     log.info(objFilesList);
     log.info(reqId);
     
@@ -368,6 +472,9 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
     var args = { 
            ProtoIn : {
                 Data: moment().format('DD/MM/YYYY'),
+                DataDocumento: moment().format('DD/MM/YYYY'),
+
+                NumeroDocumento: 1,
                 Classifica: ENV_DATA.wsJiride.classificaDocumento,
                 TipoDocumento: ENV_DATA.wsJiride.tipoDocumento,
                 Oggetto: (ENV_DATA.wsJiride.oggettoDocumento || 'OGGETTO NON PRESENTE') + '  -  (' + reqId + ')',
@@ -385,6 +492,7 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
                     DataNascita : objFilesList.dataNascitaRichiedente,
                     Indirizzo : objFilesList.indirizzoRichiedente,
                     Localita : objFilesList.cittaRichiedente,
+                    DataRicevimento: moment().format('DD/MM/YYYY'),
                     // Spese_NProt : 0,
                     // TipoSogg: 'S',
                     TipoPersona: ENV_DATA.wsJiride.tipoPersona,
@@ -432,9 +540,10 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
             }
         );
     */    
+
     // Aggiunta allegati successivi al primo
 
-    var DW_PATH = ENV_PROT.storageFolder;
+    var DW_PATH = ENV_DATA.storageFolder;
     var dir = DW_PATH + "/" + reqId;
     
     objFilesList.files.forEach(function(obj){
@@ -498,7 +607,9 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
             
             if (err) {
                 var msg = 'Errore nella creazione del client soap';
-                log.error(msg); log.error(err); 
+                log.error('[' + ENV_DATA.idIstanza + ']' + msg);
+                log.error(msg); 
+                log.error(err); 
                 reject(err);
             } else {
 
@@ -507,7 +618,9 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
                 
                     if (err) {
                         var msg = 'Errore nella chiamata ad InserisciProtocollo';
-                        log.error(msg);  log.error(err);  
+                        log.error('[' + ENV_DATA.idIstanza + ']' + msg);
+                        log.error(msg);  
+                        log.error(err);  
                         log.info(args);
                         reject(err);
                     } else {

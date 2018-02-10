@@ -25,6 +25,7 @@ describe('List of calls ...', function() {
       it('should exec upload  testn /protocollo/upload', function(done) {
         chai.request(server)
             .post('/protocollo/upload/f24')
+            .set('ISTANZE-API-KEY', 'mario')
             .field("fields[nomeRichiedente]", 'MARIO')
             .field('fields[cognomeRichiedente]', 'ROSSI')
             .field('fields[codiceFiscaleRichiedente]', 'RGGRGR40E25H999A')

@@ -10,7 +10,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link media="all" rel="stylesheet" href="css/custom.css">
+
 
   <!-- <link rel="preload" href="{{ '/build/IWT.min.js' | path }}" as="script"> -->
   <!--
@@ -34,11 +34,19 @@
     })();
   </script>
 
-  <!-- include html5shim per Explorer 8 -->
-  <script src="ita-web-toolkit/vendor/modernizr.js"></script>
+  <!-- build:css css/combined.css -->
 
+  <link media="all" rel="stylesheet" href="css/custom.css">
+  <link href="lib/bootstrap.min.css" rel="stylesheet">
   <link media="all" rel="stylesheet" href="ita-web-toolkit/vendor.css">
   <link media="all" rel="stylesheet" href="ita-web-toolkit/build.css">
+  
+  <!-- endbuild -->
+
+  <!-- build:js vendor-combined1.js -->
+
+  <!-- include html5shim per Explorer 8 -->
+  <script src="ita-web-toolkit/vendor/modernizr.js"></script>
 
   <!-- <script src="ita-web-toolkit/vendor/jquery.min.js"></script> -->
   <script src="lib/jquery-1.10.2.min.js"></script>
@@ -52,74 +60,67 @@
   <script src="lib/angular-ui-router.js"></script>
   <script src="lib/ui-bootstrap-tpls-1.3.3.js"></script>
 
-  <link href="lib/bootstrap.min.css" rel="stylesheet">
   <script src="lib/bootstrap.min.js"></script>
-
-
 
   <script src="bower_components/angular-resource/angular-resource.min.js"></script>
   <script src="bower_components/lodash/dist/lodash.min.js"></script>
 
   <!-- spinner -->
-  <script src="bower_components/spin.js/spin.js"></script>
+  <script src="bower_components/spin.js/spin.js"></script> 
   <script src="bower_components/angular-spinner/angular-spinner.js"></script>
-    
-
-
+ 
   <!-- angular-dialog-service PATCH ITALIA-->
-  <script src="bower_components/angular-dialog-service/dist/dialogsITALIA.js"></script> 
+  <!-- <script src="bower_components/angular-dialog-service/dist/dialogsITALIA.js"></script>  -->
 
-    <!-- bowser -->
+  <!-- bowser -->
   <script src="bower_components/bowser/src/bowser.js"></script>
   <script src="bower_components/angular-ui-select/dist/select.min.js"></script>
 
   <!-- ngStorage -->
-  <script src="bower_components/ngstorage/ngStorage.min.js"></script>
+  <script src="bower_components/ngstorage/ngStorage.min.js"></script> 
 
   <!-- ng-file-upload -->
   <script src="bower_components/ng-file-upload/ng-file-upload.min.js"></script> 
 
   <!-- ui-grid  -->
-  <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
-  <script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
+  <!-- <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css"> -->
+  <!-- <script src="bower_components/angular-ui-grid/ui-grid.min.js"></script> -->
   <!-- -->
 
   <!-- pdfMake -->
-  <script src='bower_components/pdfmake/build/pdfmake.min.js'></script>
- 	<script src='bower_components/pdfmake/build/vfs_fonts.js'></script>
+  <!-- <script src='bower_components/pdfmake/build/pdfmake.min.js'></script> -->
+ 	<!-- <script src='bower_components/pdfmake/build/vfs_fonts.js'></script> -->
 
   <!-- xls -->
-  <script src="bower_components/js-xlsx/dist/xlsx.full.min.js"></script>
+  <!-- <script src="bower_components/js-xlsx/dist/xlsx.full.min.js"></script> -->
 
   <!-- FileSaver -->
-  <script src="bower_components/file-saver/FileSaver.min.js"></script>
-
+  <!-- <script src="bower_components/file-saver/FileSaver.min.js"></script> -->
   <script src="bower_components/moment/moment.js"></script>
 
   <!-- chart.js  -->
-  <script src="bower_components/chart.js/dist/Chart.js"></script>
-  <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+  <!-- <script src="bower_components/chart.js/dist/Chart.js"></script> -->
+  <!-- <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script> -->
     
-
-  <!-- endbuild -->
-
-
-  <!-- build:js vendor-combined2.js -->
   <script type="text/javascript" src="bower_components/angular-recaptcha/release/angular-recaptcha.min.js"></script>
 
   <!-- UI-Validate -->
   <script type="text/javascript" src="bower_components/angular-ui-validate/dist/validate.min.js"></script>
 
-    <!-- build:js app-combined2.js -->
+  <!-- endbuild -->
+
+
+  <!-- build:js app-combined2.js -->
 
     <!-- your app's js -->
     <script src="scripts/app.js"></script>
     <script src="scripts/configuration.js"></script>
+    <script src="scripts/rootServices.js"></script>
     <script src="scripts/authService.js"></script>
-    <script src="scripts/profileService.js"></script>
-    <script src="scripts/databaseService.js"></script>
-    <script src="scripts/alertService.js"></script>
-    <!-- <script src="scripts/accountService.js"></script> -->
+    <!-- <script src="scripts/profileService.js"></script>  -->
+    <!-- <script src="scripts/databaseService.js"></script>  -->
+    <script src="scripts/alertService.js"></script> 
+    <!-- <script src="scripts/accountService.js"></script>  -->
     <!-- <script src="scripts/formlyService.js"></script> -->
     <script src="scripts/utilsService.js"></script>
     <!-- <script src="scripts/sseService.js"></script> -->
@@ -128,21 +129,21 @@
     <!-- <script src="scripts/chatService.js"></script> --> 
 
     <script src="scripts/rootControllers.js"></script>
-    <script src="scripts/loginControllers.js"></script>
-    <script src="scripts/errorControllers.js"></script>
-    <script src="scripts/homeControllers.js"></script>
-    <script src="scripts/profileControllers.js"></script>
-    <script src="scripts/demanioControllers.js"></script>
-    <script src="scripts/anagraficaDemanioControllers.js"></script>
-    <script src="scripts/multistepControllers.js"></script>
+    <script src="scripts/loginControllers.js"></script> 
+    <!-- <script src="scripts/errorControllers.js"></script> -->
+    <!-- <script src="scripts/homeControllers.js"></script> -->
+    <!-- <script src="scripts/profileControllers.js"></script> -->
+    <!-- <script src="scripts/demanioControllers.js"></script> -->
+    <!-- <script src="scripts/anagraficaDemanioControllers.js"></script> -->
+    <!-- <script src="scripts/multistepControllers.js"></script> -->
     <script src="scripts/eseguiIstanzaControllers.js"></script>
-        <!-- <script src="scripts/sigControllers.js"></script> -->
+    <!-- <script src="scripts/sigControllers.js"></script> -->
     <!-- <script src="scripts/SloginControllers.js"></script> -->
     <!-- <script src="scripts/formlyControllers.js"></script> -->
     <!-- <script src="scripts/formlyJirideControllers.js"></script> -->
     <!-- <script src="scripts/uigridControllers.js"></script> -->
     <!-- <script src="scripts/elezioniControllers.js"></script> -->
-    <script src="scripts/protocolloControllers.js"></script>
+    <!-- <script src="scripts/protocolloControllers.js"></script> -->
     <!-- <script src="scripts/batchControllers.js"></script> -->
     <!-- <script src="scripts/sseChatControllers.js"></script> -->
     <!--<script src="scripts/pushControllers.js"></script> -->
@@ -150,9 +151,12 @@
     <script src="scripts/filters.js"></script>
     <script src="scripts/rootDirectives.js"></script>
     <script src="scripts/directives/directives.js"></script>  
-    <script src="scripts/directives/passwordMatch.js"></script>  
-    <script src="scripts/directives/passwordStrength.js"></script>  
-      
+    <script src="scripts/directives/customValidation.js"></script>  
+    <!-- <script src="scripts/directives/passwordMatch.js"></script>   -->
+    <!-- <script src="scripts/directives/passwordStrength.js"></script>   -->
+     
+    
+
     <!-- endbuild -->
 
     <!-- PATCH solo per build dist - templateCache -->   
@@ -162,7 +166,11 @@
   <title>Portale Istanze</title>
 </head>
 
-<body class="t-Pac" ng-app="myApp" ng-controller="AppCtrl"><a id="topPosition"></a>
+<body 
+      class="t-Pac" 
+      ng-app="myApp"
+      ng-controller="AppCtrl" 
+      ><a id="topPosition"></a>
 
 <header class="Header Headroom--fixed js-Headroom u-hiddenPrint">
 
@@ -235,9 +243,11 @@
     </div>
 
     
-    <nav ng-controller="SNavbarCtrl">
+    <!-- <nav ng-controller="SNavbarCtrl"> -->
+    <nav>
 			<ul class="Linklist Linklist--padded Treeview Treeview--default js-Treeview u-text-r-xs">
         <ul data-megamenu-class="u-columns-2">
+          <!--
           <li><a ui-sref="homeIstanze">Home</a></li>
           <li><a ui-sref="eseguiIstanza({id: '100'})" >Esegui Istanza 100</a></li>
           <li><a ui-sref="elencoIstanze" >Elenco Istanze</a></li>
@@ -251,21 +261,13 @@
           <li ng-if="isAuthenticated()"><a ui-sref="profile">Profilo</a></li>
           <li ng-if="!isAuthenticated()"><a ui-sref="login" ui-sref-active="active">Accedi</a></li>
           <li ng-if="isAuthenticated()"><a ui-sref="logout" ui-sref-active="active">Esci</a></li>
+          -->
         </ul>
       </ul>
     </nav>
 
   </div>
 </section>
-
-
-
-
-
-
-
-
-
 
 
     <span class="centeredspin" us-spinner="{radius:30, width:8, length: 16, position: relative}" spinner-key="spinner-1"></span>
@@ -284,7 +286,7 @@
   <script src="vendor/polyfill.min.js"></script>
   <![endif]-->
 
-  <script src="ita-web-toolkit/IWT.min.js"></script>
+
 
 <!--
 
@@ -341,6 +343,10 @@
 
 </footer>
 -->
+
+<!-- build:js iwt.js -->
+<script src="ita-web-toolkit/IWT.min.js"></script>
+<!-- endbuild -->
 
 </body>
 </html>

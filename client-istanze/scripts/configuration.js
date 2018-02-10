@@ -8,7 +8,7 @@
 			name:'DEV',
 			// apiEndpoint:'https://istanze-dichiarazioni.comune.rimini.it/federa',
 
-			apiEndpoint:'https://pmlab.comune.rimini.it/simplesaml',
+			apiEndpoint:'https://istanze-dichiarazioni.comune.rimini.it/istanze',
 			apiLogin:'passportauth/login',
 			apiLogout:'passportauth/logout',
 			apiLoginCheck:'passportauth/check',

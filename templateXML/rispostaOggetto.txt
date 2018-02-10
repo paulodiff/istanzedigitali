@@ -1,0 +1,1 @@
+ISTANZA PRESENTATA DEMO da : {{nomeRichiedente}} {{cognomeRichiedente}} cf {{codiceFiscaleRichiedente}} recapito telefonico {{recapitoTelefonicoRichiedente}}

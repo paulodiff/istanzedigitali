@@ -4,26 +4,26 @@
   <div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-all-xl u-padding-r-top u-padding-bottom-xxl">
 
     <h1 class="u-text-h2">Portale Istanze Comune di Rimini</h1>
-
-    
     <p class="u-text-r-m u-padding-r-bottom">{{iC.descrizionePrincipale}}</p>
 
+    <div ng-if="iC.statoIstanza === 0">
+
     <div ng-repeat="item in iC.titles ">
-        <h2 class="u-text-h3 u-padding-r-top">{{item.head}}</h2>
+        <h2 class="u-text-h3">{{item.head}}</h2>
         <p class="u-text-r-m">{{item.description}}</p>
     </div>
     
-    <h2 class="u-text-h3 u-padding-r-top">Form di compilazione per l'invio dell'istanza</h2>
-    <p class="u-text-r-m">Compilare i dati sottostanti ...</p>
+    <h2 class="u-text-h3 u-color-90 u-padding-r-top">Form di compilazione per invio della istanza</h2>
+    <p class="u-text-r-m">Compilare attentamente i dati sottostanti.</p>
 
 
     <form   name="dataForm"
             ng-show="!isSubmitting"
             novalidate>
-
+    <h2 class="u-text-h3 u-padding-r-top">(Parte 1) Compilazione dati anagrafici</h2>
     <fieldset class="Form-fieldset">
         <div class="Form-field">
-            <label class="Form-label is-required" for="multistepForm.nomeRichiedente">Nome Richiedente</label>
+            <label class="u-text-r-m Form-label is-required" for="multistepForm.nomeRichiedente">Nome Richiedente</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="nomeRichiedente"
                     name="nomeRichiedente"
@@ -43,7 +43,7 @@
         </div>
         
         <div class="Form-field">
-            <label class="Form-label is-required" for="multistepForm.cognomeRichiedente">Cognome Richiedente</label>
+            <label class="u-text-r-m Form-label is-required" for="multistepForm.cognomeRichiedente">Cognome Richiedente</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="cognomeRichiedente" 
                     name="cognomeRichiedente"
@@ -65,14 +65,14 @@
         </div>
        
         <div class="Form-field">
-            <label class="Form-label is-required" >Codice Fiscale</label>
+            <label class="u-text-r-m Form-label is-required" >Codice Fiscale</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="codiceFiscaleRichiedente" 
                     name="codiceFiscaleRichiedente"
                     aria-required="true" 
                     ng-model="modelForm.codiceFiscaleRichiedente"
-                    ng-minlength="1"
-                    ng-maxlength="80"
+                    ng-minlength="16"
+                    ng-maxlength="16"
                     required
                     >
             <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
@@ -87,7 +87,7 @@
         </div>
 
         <div class="Form-field">
-            <label class="Form-label is-required" for="multistepForm.dataNascitaRichiedente">Data di Nascita</label>
+            <label class="u-text-r-m Form-label is-required" for="multistepForm.dataNascitaRichiedente">Data di Nascita</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="dataNascitaRichiedente" 
                     name="dataNascitaRichiedente"
@@ -96,6 +96,7 @@
                     ng-minlength="1"
                     ng-maxlength="80"
                     required
+                    datanascita-valida
                     >
             <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
 
@@ -105,11 +106,13 @@
                         <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
                         <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
                         <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        <div ng-message="dateValidator" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Data non valida</div>
+
             </div>                    
         </div>
 
         <div class="Form-field">
-            <label class="Form-label is-required" for="multistepForm.indirizzoRichiedente">Indirizzo</label>
+            <label class="u-text-r-m Form-label is-required" for="multistepForm.indirizzoRichiedente">Indirizzo</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="indirizzoRichiedente" 
                     name="indirizzoRichiedente"
@@ -131,7 +134,7 @@
         </div>
 
         <div class="Form-field">
-            <label class="Form-label is-required" for="multistepForm.cittaRichiedente">Città</label>
+            <label class="u-text-r-m Form-label is-required" for="multistepForm.cittaRichiedente">Città</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="cittaRichiedente" 
                     name="cittaRichiedente"
@@ -153,7 +156,7 @@
         </div>
 
         <div class="Form-field">
-            <label class="Form-label is-required" for="multistepForm.capRichiedente">CAP</label>
+            <label class="u-text-r-m Form-label is-required" for="multistepForm.capRichiedente">CAP</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="capRichiedente" 
                     name="capRichiedente"
@@ -162,6 +165,7 @@
                     ng-minlength="1"
                     ng-maxlength="80"
                     required
+                    only-number
                     >
             <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
 
@@ -171,11 +175,12 @@
                         <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
                         <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
                         <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        <div ng-message="numberValidator" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Solo numeri</div>
             </div>                    
         </div>
 
         <div class="Form-field">
-            <label class="Form-label is-required">Email per i contatti (eventuale PEC se presente)</label>
+            <label class="u-text-r-m Form-label is-required">Email</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="emailRichiedente" 
                     name="emailRichiedente"
@@ -184,6 +189,7 @@
                     ng-minlength="1"
                     ng-maxlength="60"
                     required
+                    email-valida
                     >
             <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
 
@@ -193,11 +199,12 @@
                         <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
                         <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
                         <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        <div ng-message="emailValidator" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Email non valida</div>
             </div>                    
         </div>
 
         <div class="Form-field">
-            <label class="Form-label is-required" for="multistepForm.recapitoTelefonicoRichiedente">Recapito telefonico (preferibilmente il  cellulare)</label>
+            <label class="u-text-r-m Form-label is-required" for="multistepForm.recapitoTelefonicoRichiedente">Recapito telefonico (preferibilmente il  cellulare)</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="recapitoTelefonicoRichiedente" 
                     name="recapitoTelefonicoRichiedente"
@@ -206,6 +213,7 @@
                     ng-minlength="1"
                     ng-maxlength="20"
                     required
+                    only-number
                     >
             <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
 
@@ -215,11 +223,12 @@
                         <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
                         <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
                         <div ng-message="maxlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo lungo</div>
+                        <div ng-message="numberValidator" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Solo numeri</div>
             </div>                    
         </div>
 
         <div class="Form-field">
-            <label class="Form-label is-required" for="nome">Eventuali note</label>
+            <label class="u-text-r-m Form-label is-required" for="nome">Eventuali note</label>
             <input  class="Form-input u-text-r-s u-borderRadius-m" 
                     id="noteRichiedente" 
                     name="noteRichiedente"
@@ -237,7 +246,7 @@
             </div>                    
         </div>
 
-        <h2 class="u-text-h3 u-padding-r-top">Allegati obbligatori n.{{iC.numeroAllegati}}</h2>
+        <h2 class="u-text-h3 u-padding-r-top">(Parte 2) Allegati obbligatori n.{{iC.numeroAllegati}}</h2>
         <p class="u-color-red-50 u-text-h4 u-padding-r-top ">N.B. gli allegati devono obbligatoriamente essere in formato PDF e la dimensione di ogni allegato NON deve superare i 2MB.</p>
         <p class="u-text-h4 u-padding-r-top">{{iC.file1.description}}</p>
         
@@ -256,17 +265,16 @@
                 required>
 
                <!--  <pre>{{dataForm.file.$error}}</pre> -->
-
-                <div ng-messages="dataForm.file1.$error" 
-                     ng-if="dataForm.file1.$touched"
-                     style="color:maroon" role="alert" multiple>
-                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
-                    <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
-                    <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
-                </div>   
+               <div ng-if="dataForm.file1.$touched && dataForm.file1.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+               <div ng-if="dataForm.file1.$touched && dataForm.file1.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
+               <div ng-if="dataForm.file1.$touched && dataForm.file1.$error.maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
+       
         </div>
+
+        <!-- <pre>{{dataForm.file1.$error}}</pre> -->
+
         
-        
+        <div ng-if="iC.file2">
         <p class="u-text-h4 u-padding-r-top">{{iC.file2.description}}</p>
 
         <div class="Form-field">
@@ -292,6 +300,7 @@
                     <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido - SOLO PDF</div>
                     <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
                 </div>   
+        </div>
         </div>
 
         <div ng-if="iC.file3">
@@ -384,30 +393,59 @@
         
                 </div> <!-- ng-if -->
 
-        <pre>{{dataForm.$valid | json}}</pre>
-        
+
+        <!-- <pre>{{dataForm.$valid | json}}</pre> -->
+        <p class="u-padding-r-top"></p>
+
+        <h2 class="u-text-h3 u-padding-r-top">(Parte 3) Verifica codice di sicurezza</h2>        
+        <div class="Form-field">
+
+            <div vc-recaptcha
+                key="'6Ldg6AwUAAAAAPgKoqezNrIVEsmdm7uafTop0r84'"
+                theme="'light'"
+                ng-model="modelForm.RecaptchaResponse"></div>
+          
+        </div>
+       
+
         <button type="button"
                 ng-show="dataForm.$valid"
                 class="Button Button--default u-text-r-xs u-inlineBlock btn-block"  
-                ng-click="inviaDati()">INVIA DATI</button>
+                ng-disabled="iC.btnDisabled"
+                ng-click="inviaDati()">{{iC.btnInviaDati}}</button>
+       
 
   </fieldset>
 
-  <pre>google captcha</pre>
-
+  
     </form>
 
-  <hr>
-  <pre>{{modelForm | json}}</pre>
-  <hr>
+    <h3 class="u-text-h3 u-padding-r-top">Contatti:</h3>
+    <p>{{iC.contattiFooter}}</p>
+  
+ 
+  </div> <!-- ng-if -->
 
-  <hr>
+  <div ng-if="iC.statoIstanza === 200" class="Alert Alert--success">
+        <h1 class="u-text-h2">{{iC.successTitle}} - {{iC.statoIstanza}}</h1>
+        <p class="u-text-r-m u-padding-r-bottom">Riferimenti protocollo</p>
+        <p class="u-text-r-m u-padding-r-bottom">Anno:{{iC.successMsg.annoProtocollo}}</p>
+        <p class="u-text-r-m u-padding-r-bottom">Numero:{{iC.successMsg.numeroProtocollo}}</p>
+        <p class="u-text-r-m u-padding-r-bottom">Data:{{iC.successMsg.dataProtocollo}}</p>
+        <p class="u-text-r-m u-padding-r-bottom">{{iC.successTxtMsg}}</p>
+   </div>
 
- <h2 class="u-text-h3">Contatti:</h2>
-  <p>Referente Comune di Rimini *****</p>
-    
+  <div ng-if="iC.statoIstanza > 200" class="Alert Alert--error">
+        <h1 class="u-text-h2">{{iC.errorTitle}} - {{iC.statoIstanza}}</h1>
+        <p class="u-text-r-m u-padding-r-bottom">{{iC.errorMsg}}</p>
+        <p>Errore di sistema già segnalato ai gestori del sistema informativo</p>
   </div>
 
-
+  <div ng-if="iC.statoIstanza === 199" class="Alert Alert--warning">
+    <h1 class="u-text-h2">Inoltro istanza in corso...</h1>
+    <img src="images/spinner.gif">
+    <p class="u-text-r-m u-padding-r-bottom">Attendere ... </p>
+ </div>
+    
+  </div>
 </section>
-

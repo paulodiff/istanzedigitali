@@ -16,7 +16,7 @@ angular.module('myApp.services')
             var status = (obj.status ? obj.status : '');
             var statusText = (obj.statusText ? obj.statusText : '');
             var title = ((obj.data && obj.data.title) ? obj.data.title : '');
-            var message = ((obj.data && obj.data.message) ? obj.data.message : '');
+            var message = ((obj.data && obj.data.msg) ? obj.data.msg : '');
             var success =  ((obj.data && obj.data.success) ? obj.data.success : '');
             if (message == '') { message = obj.message };
             if (!title) { title = obj.title };

@@ -8,8 +8,8 @@ angular.module('myApp.controllers')
 
 
 .controller("AppCtrl", 
-                    ['$scope', 'AlertService', '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log', '$location','$localStorage', '$http',
-            function($scope,    AlertService,   $rootScope,   AuthService,   Session,   $state, ENV,   $log,   $location,  $localStorage,   $http) {
+                    ['$scope', '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log', '$location','$localStorage', '$http',
+            function($scope,    $rootScope,   AuthService,   Session,   $state, ENV,   $log,   $location,  $localStorage,   $http) {
 
                 
         $log.info("AppCtrl ... start");
@@ -43,7 +43,7 @@ angular.module('myApp.controllers')
         //console.log(host); 
 
         if( host  == 'localhost') {
-            $rootScope.base_url = 'http://localhost:9988';
+            $rootScope.base_url = 'http://localhost:8009';
         } else {
             //$rootScope.base_url = 'https://istanze-dichiarazioni.comune.rimini.it/federa';
             $rootScope.base_url = ENV.apiEndpoint;

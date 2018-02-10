@@ -1,6 +1,6 @@
 {
   "name": "angular-recaptcha",
-  "version": "3.2.1",
+  "version": "4.1.2",
   "description": "An AngularJS module to ease usage of reCaptcha inside a form",
   "author": "VividCortex",
   "license": "MIT",
@@ -12,7 +12,7 @@
       "url" : "https://github.com/reduardo7/angular-recaptcha"
     }
   ],
-  "main": "release/angular-recaptcha.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/vividcortex/angular-recaptcha.git"

@@ -3,6 +3,12 @@ var moment = require('moment');
 var ENV   = require('../config/config.js'); // load configuration data
 var fs = require('fs');
 var crypto = require('crypto');
+var request = require('request');
+
+var log4js = require('log4js');
+log4js.configure(ENV.log4jsConfig);
+var log = log4js.getLogger("app")
+
 
 function addZero(x,n) {
       while (x.toString().length < n) {
@@ -124,17 +130,34 @@ module.exports = {
       next();
     },
 
+
+    // controllo se esiste e se è corretto il token passato
     checkIfTokenInList: function(req, res, next) {
-      console.log('[#AUTH#] checkIfTokenInList ');
-      var md5Token = crypto.createHash('md5').update(req.token).digest("hex");
-      var fName = ENV.tokenPath + '/' + md5Token;
-      console.log('checkIfTokenInList...' + fName);
-      
-      if (!fs.existsSync(fName)) {
-            console.log('[#AUTH#] checkIfTokenInList : TOKEN not exists in path');
-            return res.status(401).send({ message: 'Token non presente in lista autorizzazioni' });
+
+      log.info('[#AUTH#] checkIfTokenInList ');
+      if (!req.header('ISTANZE-API-KEY')) {
+        log.error('[#AUTH#] checkIfTokenInList : 401 NO TOKEN');
+        return res.status(401).send({ msg: 'Effettuare login prima di procedere (401 NO TOKEN)' });
       }
-      next();
+
+      var token = req.header('ISTANZE-API-KEY');
+       // .set('ISTANZE-API-KEY', 'foobar')
+     
+      if(token){
+        log.info(token);
+        var md5Token = crypto.createHash('md5').update(token).digest("hex");
+        var fName = ENV.tokenPath + '/' + md5Token;
+        log.info('[#AUTH#]checkIfTokenInList...' + fName);
+      
+        if (!fs.existsSync(fName)) {
+              log.error('[#AUTH#] checkIfTokenInList : TOKEN not exists in path');
+              return res.status(401).send({ msg: 'Token non presente in lista autorizzazioni' });
+        }
+        next();
+      } else {
+          log.error('[#AUTH#] checkIfTokenInList : TOKEN not exists');
+          return res.status(402).send({ msg: 'Token non presente' });
+      }
 
     },
     
@@ -298,7 +321,59 @@ module.exports = {
                       }
                   });
               });   
-}
+    },
+
+    /* Funzione di verifica per Captch di Google */
+    verifyReCaptcha: function(ReCaptcha) {
+
+      console.log('verifyReCaptcha');
+      return new Promise(function (resolve, reject) {
+
+        if (!ReCaptcha) {
+          console.log('[#AUTH#] verifyReCaptcha : 401 NO TOKEN');
+          reject({ msg: 'Effettuare login prima di procedere (401 NO TOKEN)' });
+        }
+
+        var data = {
+            secret: ENV.recaptchaSecret, 
+            response: ReCaptcha
+        };
+       
+      
+        var url = 'https://www.google.com/recaptcha/api/siteverify';
+        console.log('verifyReCaptcha:url', url);
+
+        var options = {
+            uri: url,
+            method: 'POST',
+            proxy: ENV.proxy_url,
+            json: true,
+            qs: data
+        };
+
+        request(options, function (error, response, body) {
+            if (error) {
+                console.log('verifyReCaptcha:Errore invio richiesta ...');
+                console.log(error);
+                reject(error);
+            }
+            if (!error && response.statusCode == 200) {
+                console.log('verifyReCaptcha:Errore risposta:');
+                console.log(response.body);
+                if(response.body.success){
+                    resolve(response);
+                } else {
+                    reject(response);
+                }
+            } else {
+                console.log('verifyReCaptcha GENERICO invio richiesta ...', response);
+                reject(response);
+            }
+        });
+    });
+  }
+
+
 
 }
 

@@ -8,7 +8,7 @@ angular.module('myApp', [//'ionic',
                          'ui.bootstrap',   
                          'ui.router',
                          'ui.select',
-                         'dialogs.main',
+                         // 'dialogs.main',
                          // 'formly',
                          // 'formlyBootstrap',
                          //'satellizer',
@@ -25,16 +25,16 @@ angular.module('myApp', [//'ionic',
                          'ngStorage',
                          'ngFileUpload',
                          // 'ngTable',
-                         'ui.grid',
-                         'ui.grid.edit',
-                         'ui.grid.selection',
-                         'ui.grid.rowEdit', 
-                         'ui.grid.cellNav',
-                         'ui.grid.exporter',
+                         // 'ui.grid',
+                         // 'ui.grid.edit',
+                         // 'ui.grid.selection',
+                         // 'ui.grid.rowEdit', 
+                         // 'ui.grid.cellNav',
+                         // 'ui.grid.exporter',
                          //'SheetJSExportService',
                          // 'ui.validate',
-                         'chart.js',
-                         // 'vcRecaptcha',
+                         // 'chart.js',
+                         'vcRecaptcha',
                          //'uiGmapgoogle-maps',
                          'myApp.filters',
                          'myApp.services',
@@ -76,7 +76,7 @@ angular.module('myApp', [//'ionic',
     //.when('/c?id', '/contacts/:id')
     //.when('/user/:id', '/contacts/:id')
     // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
-    $urlRouterProvider.otherwise('homeIstanze');
+    $urlRouterProvider.otherwise('eseguiIstanza');
     
 /*
     $stateProvider.state('menu', {
@@ -86,7 +86,7 @@ angular.module('myApp', [//'ionic',
     });
     */
     
-    
+    /*
 
     $stateProvider.state('homeIstanze', {
         url: '/homeIstanze',
@@ -95,8 +95,9 @@ angular.module('myApp', [//'ionic',
         accessLogged: false,
         accessLevel: 'free1' 
     });
+    */
 
-
+/*
     $stateProvider.state('elencoIstanze', {
         url: '/elencoIstanze',
         controller: 'homeCtrl',
@@ -104,14 +105,24 @@ angular.module('myApp', [//'ionic',
         accessLogged: false,
         accessLevel: 'free1' 
     });
-
+*/
     $stateProvider.state('eseguiIstanza', {
       url: '/eseguiIstanza/{id}',
       controller: 'eseguiIstanzaCtrl',
       templateUrl: 'templates/eseguiIstanzaITALIA.html',
       accessLogged: false,
       accessLevel: 'free1' 
-  });
+    });
+
+    /*
+    $stateProvider.state('visualizzaEsitoIstanza', {
+      url: '/visualizzaEsitoIstanza/{id}',
+      controller: 'eseguiIstanzaCtrl',
+      templateUrl: 'templates/visualizzaEsitoIstanzaITALIA.html',
+      accessLogged: false,
+      accessLevel: 'free1' 
+    });
+
 
     $stateProvider.state('protocollo', {
         url: '/protocollo',
@@ -168,7 +179,7 @@ angular.module('myApp', [//'ionic',
       url: '/multistepFinal',
       templateUrl: 'templates/multistep-final.html'
     });
-
+*/
 
     /*
     
@@ -185,7 +196,7 @@ angular.module('myApp', [//'ionic',
     
     
     /* Login/Logout/Auth/Profile */
-    
+  /*  
     $stateProvider.state('login', {
         url: '/login',
         templateUrl: 'templates/loginFormITALIA.html',
@@ -258,7 +269,7 @@ angular.module('myApp', [//'ionic',
     controller: 'errorMgrCtrl',
     accessLogged: false
   });
-
+*/
 
 /*    $stateProvider.state('form', {
         url: '/form',

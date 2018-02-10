@@ -38,7 +38,7 @@
     "moment": "^2.14.1",
     "chart.js": "npm:chart.js#^2.2.1",
     "SparkMD5": "^2.0.2",
-    "angular-recaptcha": "^3.0.4",
+    "angular-recaptcha": "^4.1.2",
     "particles.js": "^2.0.0",
     "socket.io": "^1.7.2",
     "intro.js": "^2.6.0",

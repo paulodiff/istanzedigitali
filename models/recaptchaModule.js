@@ -1,9 +1,11 @@
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
 var ENV = require('../config/config.js'); // load configuration data
-var log = require('./loggerModuleWinston.js');
 var fs = require('fs');
 var crypto = require('crypto');
+
+var log = require('log4js').getLogger("app");
+log.info('START recaptchaModule.js');
 
 /* recapchaModule per la verifica della security */
 

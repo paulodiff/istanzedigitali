@@ -3,6 +3,8 @@ AngularJS reCaptcha
 
 [![Build Status](https://travis-ci.org/VividCortex/angular-recaptcha.svg?branch=master)](https://travis-ci.org/VividCortex/angular-recaptcha)
 [![Coverage Status](https://coveralls.io/repos/VividCortex/angular-recaptcha/badge.svg?branch=master)](https://coveralls.io/r/VividCortex/angular-recaptcha?branch=master)
+[![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/angular-recaptcha/badge?style=rounded)](https://www.jsdelivr.com/package/npm/angular-recaptcha)
+![image](https://img.shields.io/npm/dm/angular-recaptcha.svg)
 
 Add a [reCaptcha](https://www.google.com/recaptcha/intro/index.html) to your [AngularJS](angularjs.org) project.
 
@@ -41,20 +43,7 @@ See [the demo file](demo/usage.html) for a quick usage example.
 
 - First, you need to get a valid recaptcha key for your domain. Go to http://www.google.com/recaptcha.
 
-- Include the reCaptcha [API](https://developers.google.com/recaptcha/docs/display#AJAX) using this script in your HTML:
-
-```html
-<script
-  src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit"
-  async defer
-></script>
-```
-
-As you can see, we are specifying a `onload` callback, which will notify the angular service once the api is ready for usage.
-
-The `onload` callback name defaults to `vcRecaptchaApiLoaded`, but can be overridden by the service provider via `vcRecaptchaServiceProvider.setOnLoadFunctionName('myOtherFunctionName');`.
-
-- Also include the vc-recaptcha script and make your angular app depend on the `vcRecaptcha` module.
+- Include the vc-recaptcha script and make your angular app depend on the `vcRecaptcha` module.
 
 ```html
 <script type="text/javascript" src="angular-recaptcha.js"></script>
@@ -77,17 +66,26 @@ Here, the `key` attribute is passed to the directive's scope, so you can use eit
 
 Form Validation
 ---------------
+
 **By default**, if placed in a [form](https://docs.angularjs.org/api/ng/directive/form) using [formControl](https://docs.angularjs.org/api/ng/type/form.FormController) the captcha will need to be checked for the form to be valid.
 If the captcha is not checked (if the user has not checked the box or the check has expired) the form will be marked as invalid. The validation key is `recaptcha`.
 You can **opt out** of this feature by setting the `required` attribute to `false` or a scoped variable
 that will evaluate to `false`. Any other value, or omitting the attribute will opt in to this feature.
+
+You can also trigger the validation programatically if the captcha is not required, for example:
+
+```js
+vcRecaptchaService.execute(widgetId);
+```
+
+If no widget ID is provided, the first created widget will be executed.
 
 Response Validation
 -------------------
 
 To validate this object from your server, you need to use the API described in the [verify section](https://developers.google.com/recaptcha/docs/verify). Validation is outside of the scope of this tool, since is mandatory to do that at the server side.
 
-You can simple supply a value for `ng-model` which will be dynamically populated and cleared as the _response_ becomes available and expires, respectfully. When you want the value of the response, you can grab it from the scoped variable that was passed to `ng-model`. It works just like adding `ng-model` to any other input in your form.
+You can simple supply a value for `ng-model` which will be dynamically populated and cleared as the _response_ becomes available and expires, respectively. When you want the value of the response, you can grab it from the scoped variable that was passed to `ng-model`. It works just like adding `ng-model` to any other input in your form.
 
 ```html
 ...
@@ -110,7 +108,7 @@ You can simple supply a value for `ng-model` which will be dynamically populated
   ...
 ```
 
-Or you can programmatically get the _response_ that you need to send to your server, use the method `getResponse()` from the `vcRecaptchaService` angular service. This method receives an optional argument _widgetId_, useful for getting the response of a specific reCaptcha widget (in case you render more than one widget). If no widget ID is provided, the response for the first created widget will be returned.
+Or you can programmatically get the _response_ that you need to send to your server, use the method `getResponse()` from the `vcRecaptchaService` angular service. This method receives an optional argument `widgetId`, useful for getting the response of a specific reCaptcha widget (in case you render more than one widget). If no widget ID is provided, the response for the first created widget will be returned.
 
 ```js
 var response = vcRecaptchaService.getResponse(widgetId); // returns the string response
@@ -121,14 +119,14 @@ Using `ng-model` is recommended for normal use as the value is tied directly to 
 Other Parameters
 ----------------
 
-You can optionally pass a __theme__ the captcha should use, as an html attribute:
+You can optionally pass a `theme` the captcha should use, as an HTML attribute:
 
 ```html
     <div
         vc-recaptcha
         ng-model="gRecaptchaResponse"
         theme="---- light or dark ----"
-        size="---- compact or normal ----"
+        size="---- compact, normal or invisible ----"
         type="'---- audio or image ----'"
         key="'---- YOUR PUBLIC KEY GOES HERE ----'"
         lang="---- language code ----"
@@ -183,7 +181,7 @@ app.controller('myController', ['$scope', 'vcRecaptchaService', function ($scope
 Secure Token
 ------------
 
-If you want to use a secure token pass it along with the site key as an html attribute.
+If you want to use a secure token pass it along with the site key as an HTML attribute.
 
 ```html
 <div
@@ -198,8 +196,8 @@ To learn more about secure tokens and how to generate & encrypt them please refe
 
 Service Provider
 ----------------
-You can use the vcRecaptchaServiceProvider to configure the recaptcha service once in your application's config function.
-This is a convenient way to set your reCaptcha site key, theme, stoken, size, and type in one place instead of each vc-recaptcha directive element instance.
+You can use the `vcRecaptchaServiceProvider` to configure the recaptcha service once in your application's config function.
+This is a convenient way to set your reCaptcha site key, theme, stoken, size, and type in one place instead of each `vc-recaptcha` directive element instance.
 The defaults defined in the service provider will be overrode by any values passed to the vc-recaptcha directive element for that instance.
 
 ```javascript
@@ -207,7 +205,7 @@ myApp.config(function(vcRecaptchaServiceProvider){
   vcRecaptchaServiceProvider.setSiteKey('---- YOUR PUBLIC KEY GOES HERE ----')
   vcRecaptchaServiceProvider.setTheme('---- light or dark ----')
   vcRecaptchaServiceProvider.setStoken('--- YOUR GENERATED SECURE TOKEN ---')
-  vcRecaptchaServiceProvider.setSize('---- compact or normal ----')
+  vcRecaptchaServiceProvider.setSize('---- compact, normal or invisible ----')
   vcRecaptchaServiceProvider.setType('---- audio or image ----')
   vcRecaptchaServiceProvider.setLang('---- language code ----')
 });
@@ -223,7 +221,7 @@ myApp.config(function(vcRecaptchaServiceProvider){
     key: '---- YOUR PUBLIC KEY GOES HERE ----',
     theme: '---- light or dark ----',
     stoken: '--- YOUR GENERATED SECURE TOKEN ---',
-    size: '---- compact or normal ----',
+    size: '---- compact, normal or invisible ----',
     type: '---- audio or image ----',
     lang: '---- language code ----'
   });
@@ -245,6 +243,7 @@ Differences with the old reCaptcha
 Recent Changelog
 ----------------
 
+- 3.0.0 - Removed the need to include the Google recaptcha api.
 - 2.2.3 - Removed _cleanup_ after creating the captcha element.
 - 2.0.1 - Fixed onload when using ng-route and recaptcha is placed in a secondary view.
 - 2.0.0 - Rewritten service to support new reCaptcha

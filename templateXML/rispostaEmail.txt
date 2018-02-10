@@ -1,0 +1,8 @@
+ISTANZA PRESENTATA DEMO da : {{nomeRichiedente}} {{cognomeRichiedente}} cf {{codiceFiscaleRichiedente}} recapito telefonico {{recapitoTelefonicoRichiedente}}
+Riferimenti {{numeroProtocollo}} - {{annoProtocollo}}
+
+Con la presente si conferma la ricezione della istanza presentata.
+Prendere nota degli estremi di protocollo per riferimenti futuri.
+Per ogni informazione sul procedimento rivolgersi a: MARIO ROSSI 0541/70XXXXX
+
+

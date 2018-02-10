@@ -1,12 +1,12 @@
 var express = require('express');
 var app = express();
 
-var passport = require('passport');
+// var passport = require('passport');
 var fs = require('fs');
 //var Strategy = require('passport-local').Strategy;
 //var SamlStrategy = require('passport-saml').Strategy;
 // var db = require('./db');
-var saml2 = require('saml2-js');
+// var saml2 = require('saml2-js');
 
 
 var uuid = require('node-uuid');
@@ -158,12 +158,13 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: false, save
 // Initialize Passport and restore authentication state, if any, from the
 // session.
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 var log4js = require('log4js');
-var log = log4js.getLogger("app");
 log4js.configure(ENV.log4jsConfig);
+var log = log4js.getLogger("app");
+
 
 // var PassportAuth = require('./routes/PassportAuth')();
 // app.use('/passportauth', PassportAuth);
@@ -228,7 +229,7 @@ app.use('/cli',  express.static(__dirname + '/client-istanze', options));
 app.use('/dist', express.static(__dirname + '/client-istanze/dist', options));
 
 // Sequelize START Bootstrap
-var models = require("./modelsSequelize");
+// var models = require("./modelsSequelize");
 
 log.info('Sequelize START ...');
 
@@ -236,17 +237,25 @@ log.info('Sequelize START ...');
 // log.log2file('Server started at:' + ENV.nodejs.NODEJSport);
 //app.listen(ENV.nodejs.NODEJSport);
 
-
+var port = ENV.nodejs.NODEJSport;
+  // port = 9988;
+  app.listen(port, function() {
+    log.info('INFO Express server listening on port ' + port);
+    log.error('ERROR Express server listening on port ' + port);
+  });
+  app.on('error', function(error) { log.error(error); });
+  app.on('listening', function() { log.info('listening'); });
+/*
 models.sequelize.sync().then(function() {
   // models.Posta.sync({force:false});
-  /**
-   * Listen on provided port, on all network interfaces.
-   */
+  // Listen on provided port, on all network interfaces.
   var port = ENV.nodejs.NODEJSport;
   port = 9988;
   app.listen(port, function() {
-    log.info('Express server listening on port ' + port);
+    log.info('INFO Express server listening on port ' + port);
+    log.error('ERROR Express server listening on port ' + port);
   });
   app.on('error', function(error) { log.error(error); });
   app.on('listening', function() { log.info('listening'); });
 });
+*/

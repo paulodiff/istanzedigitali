@@ -66,12 +66,6 @@ Applicazione del framework con reingegnerizzazione del procedimento:
 - Comune di Rimini - Ruggero Ruggeri ruggero.ruggeri AT comune.rimini.it 
 - 0541/704607 335.5703086
 
-## Demo 
-
-Le demo "girano" in ambiente di test e potrebbero NON essere disponibili:
-
-- [Demo con layout Bootstrap/Material](https://pmlab.comune.rimini.it/simplesaml/cli/index.html)
-- [Demo con layout design.italia.it](https://pmlab.comune.rimini.it/simplesaml/cli/indexITALIA.html)
 
 ## Documentazione per installazione ed utilizzo
 
@@ -83,3 +77,28 @@ Le demo "girano" in ambiente di test e potrebbero NON essere disponibili:
 [![Schermata demo 2](http://pmlab.comune.rimini.it/FORUMPA2.PNG)]
 [![Schermata demo 3](http://pmlab.comune.rimini.it/FORUMPA3.PNG)]
 [![Schermata demo 4](http://pmlab.comune.rimini.it/FORUMPA4.PNG)]
+
+
+# Caratteristiche
+
+Conforme linee guida agid
+
+- no db
+- solo file system
+
+Parametrizzabile sulle descrizioni del form
+Parametrizzabile sul Documentale (tipoDoc, Oggetto,Fascicolo ecc., scrivania)
+Parametrizzabile n. file allegati
+Parametrizzabile email di cortesia (messaggio)
+
+Sicurezza controllo client di tutti i parametri esistenza/formato/dimensione
+Sicurezza controllo server di tutti i parametri esistenza/formato/dimensione
+Sicurezza jwt-token
+Sicurezza recptchaGoogle
+
+* maxIstanze giornaliere
+
+* Statistiche 
+* logstash su elastichSearch via Log4js
+
+
