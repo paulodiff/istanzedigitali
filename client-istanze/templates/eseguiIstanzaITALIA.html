@@ -293,13 +293,10 @@
 
                <!--  <pre>{{dataForm.file.$error}}</pre> -->
 
-                <div ng-messages="dataForm.file2.$error" 
-                    ng-if="dataForm.file2.$touched"
-                    style="color:maroon" role="alert" multiple>
-                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
-                    <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido - SOLO PDF</div>
-                    <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
-                </div>   
+               <div ng-if="dataForm.file2.$touched && dataForm.file1.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+               <div ng-if="dataForm.file2.$touched && dataForm.file1.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
+               <div ng-if="dataForm.file2.$touched && dataForm.file1.$error.maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
+
         </div>
         </div>
 
@@ -322,13 +319,9 @@
 
                <!--  <pre>{{dataForm.file.$error}}</pre> -->
 
-                <div ng-messages="dataForm.file3.$error" 
-                     ng-if="dataForm.file3.$touched"
-                     style="color:maroon" role="alert" multiple>
-                    <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
-                    <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido - SOLO PDF</div>
-                    <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
-                </div>   
+               <div ng-if="dataForm.file3.$touched && dataForm.file1.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+               <div ng-if="dataForm.file3.$touched && dataForm.file1.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
+               <div ng-if="dataForm.file3.$touched && dataForm.file1.$error.maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
         </div>
 
         </div> <!-- ng-if -->
@@ -352,14 +345,11 @@
     
                    <!--  <pre>{{dataForm.file.$error}}</pre> -->
     
-                    <div ng-messages="dataForm.file4.$error" 
-                         ng-if="dataForm.file4.$touched"
-                         style="color:maroon" role="alert" multiple>
-                        <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
-                        <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido - SOLO PDF</div>
-                        <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
-                    </div>   
-            </div>
+                   <div ng-if="dataForm.file4.$touched && dataForm.file1.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+                   <div ng-if="dataForm.file4.$touched && dataForm.file1.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
+                   <div ng-if="dataForm.file4.$touched && dataForm.file1.$error.maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
+
+                </div>
     
             </div> <!-- ng-if -->
 
@@ -382,14 +372,11 @@
         
                        <!--  <pre>{{dataForm.file.$error}}</pre> -->
         
-                        <div ng-messages="dataForm.file5.$error" 
-                             ng-if="dataForm.file5.$touched"
-                             style="color:maroon" role="alert" multiple>
-                            <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
-                            <div ng-message="pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido - SOLO PDF</div>
-                            <div ng-message="maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
-                        </div>   
-                </div>
+                       <div ng-if="dataForm.file5.$touched && dataForm.file1.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
+                       <div ng-if="dataForm.file5.$touched && dataForm.file1.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
+                       <div ng-if="dataForm.file5.$touched && dataForm.file1.$error.maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
+
+                    </div>
         
                 </div> <!-- ng-if -->
 

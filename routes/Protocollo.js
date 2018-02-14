@@ -44,6 +44,7 @@ var log4js = require('log4js');
 log4js.configure(ENV.log4jsConfig);
 var log = log4js.getLogger("app");
 var logEmail = log4js.getLogger("email-log");
+var logElastic = log4js.getLogger("elastic");
 
 // var ReCaptcha = require("../models/recaptchaModule.js");
 var pM = require("../models/protocolloModule.js");
@@ -138,6 +139,16 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         uM.addTokenToList(token);
 
         objRet.token = token;
+
+        var Msg = {
+            "documentId" : ENV_FORM_CONFIG.idIstanza,
+            "actionId": "ISTANZA_RICHIESTA_ISTANZA",
+            "idIstanza": ENV_FORM_CONFIG.idIstanza,
+            "code": 998
+        }
+        
+        logElastic.info(Msg);
+
 
         res.status(200).send(objRet);
         return;
@@ -510,16 +521,22 @@ router.post('/upload/:formId',
             log.info(ID_ISTANZA+'UPLOAD: ALL OK!!!!');
             // results.msg = htmlResponseMsg;
             log.info(htmlResponseMsg);
+        
             var Msg = {
-                            title: 'Istanza ricevuta con successo!',
-                            idIstanza: ENV_FORM_CONFIG.idIstanza,
-                            msg: objFieldSanitized,
-                            txtMsg: ENV_FORM_CONFIG.messaggioRisposta,
-                            htmlMsg: htmlResponseMsg,
-                            reqId: reqId,
-                            code : 200
-                        }
+                    "documentId" : ENV_FORM_CONFIG.idIstanza,
+                    "actionId": "ISTANZA_INVIATA",
+                    "title": "Istanza ricevuta con successo!",
+                    "idIstanza": ENV_FORM_CONFIG.idIstanza,
+                    "msg": objFieldSanitized,
+                    "txtMsg": ENV_FORM_CONFIG.messaggioRisposta,
+                    "htmlMsg": htmlResponseMsg,
+                    "reqId": reqId,
+                    code : 200
+            }
+            
             logEmail.info(Msg);
+            logElastic.info(Msg);
+            
             res.status(200).send(Msg);
         }
     });

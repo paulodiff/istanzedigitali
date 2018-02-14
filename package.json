@@ -29,6 +29,7 @@
   "dependencies": {
     "angular-ui-router": "^0.4.2",
     "fs-extra": "^2.0.0",
+    "log4js": "^2.5.3",
     "mysql": "^2.13.0",
     "nodemailer": "^3.1.4",
     "sequelize": "^3.30.4",

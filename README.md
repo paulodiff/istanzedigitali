@@ -81,7 +81,7 @@ Applicazione del framework con reingegnerizzazione del procedimento:
 
 # Caratteristiche
 
-Conforme linee guida agid
+Conforme linee guida agid / Sito e sicurezza
 
 - no db
 - solo file system

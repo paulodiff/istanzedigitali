@@ -76,7 +76,7 @@ angular.module('myApp', [//'ionic',
     //.when('/c?id', '/contacts/:id')
     //.when('/user/:id', '/contacts/:id')
     // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
-    $urlRouterProvider.otherwise('eseguiIstanza');
+    $urlRouterProvider.otherwise('homeIstanze');
     
 /*
     $stateProvider.state('menu', {
@@ -86,16 +86,16 @@ angular.module('myApp', [//'ionic',
     });
     */
     
-    /*
+    
 
     $stateProvider.state('homeIstanze', {
         url: '/homeIstanze',
-        controller: 'homeCtrl',
+        // controller: 'homeCtrl',
         templateUrl: 'templates/homeIstanzeITALIA.html',
         accessLogged: false,
         accessLevel: 'free1' 
     });
-    */
+    
 
 /*
     $stateProvider.state('elencoIstanze', {
