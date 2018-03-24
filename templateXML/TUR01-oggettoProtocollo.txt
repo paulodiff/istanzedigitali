@@ -1,0 +1,1 @@
+Domanda di Autorizzazione/Licenza Pubblico Spettacolo presentata da : {{nomeRichiedente}} {{cognomeRichiedente}} cf {{codiceFiscaleRichiedente}} recapito telefonico {{recapitoTelefonicoRichiedente}}

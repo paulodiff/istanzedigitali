@@ -196,7 +196,17 @@ angular.module('myApp', [//'ionic',
     
     
     /* Login/Logout/Auth/Profile */
-  /*  
+    
+    $stateProvider.state('login', {
+      url: '/login/{id}',
+      templateUrl: 'templates/loginFormITALIA.html',
+      // controller: 'SLoginCtrl',
+      controller: 'LoginController',
+      accessLogged: false
+  });
+
+
+    /*
     $stateProvider.state('login', {
         url: '/login',
         templateUrl: 'templates/loginFormITALIA.html',
@@ -205,6 +215,7 @@ angular.module('myApp', [//'ionic',
         accessLogged: false
     });
 
+    
 
     $stateProvider.state('signup', {
         url: '/signup',

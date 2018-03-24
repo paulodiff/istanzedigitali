@@ -285,8 +285,8 @@ angular.module('myApp.controllers')
 // LoginController ------------------------------------------------------------------------------------
 // LoginController ------------------------------------------------------------------------------------
 .controller('LoginController', 
-                    [ '$scope', 'usSpinnerService', '$localStorage', '$rootScope', 'ENV', 'AuthService', 'UtilsService', '$state', '$log',
-            function ( $scope,   usSpinnerService,   $localStorage,   $rootScope,   ENV,   AuthService,   UtilService,    $state,   $log) {
+                    [ '$scope', 'usSpinnerService', '$localStorage', '$rootScope', 'ENV', 'AuthService', 'UtilsService', '$state', '$stateParams', '$log',
+            function ( $scope,   usSpinnerService,   $localStorage,   $rootScope,   ENV,   AuthService,   UtilService,    $state, $stateParams,   $log) {
                 
     $log.info('LoginController...');
     $log.info('LoginController...currentUser:' + $scope.currentUser );
@@ -331,7 +331,25 @@ angular.module('myApp.controllers')
 
   $log.info(fullApiEndpoint);
 
-  $scope.fullApiEndpoint = fullApiEndpoint;
+  $scope.fullApiEndpoint = '';
+
+  AuthService.getGatewayFederaUrl($stateParams.id)
+  .then(function (res) {
+    $log.info('LoginController: getGatewayFederaUrl : OK');
+    $log.info(res);
+    $scope.fullApiEndpoint = res.data.url;
+  }, function (error) {
+    $log.info('LoginController : getGatewayFederaUrl : ERROR'); 
+    $log.info('error:', error); 
+    //$ionicLoading.hide();
+    $scope.loading = false;
+    $scope.errorMessage = error;
+    if(error.status == 0){
+        $scope.errorMessage = '0';
+    } else {
+        $scope.errorMessage = 'Login getGatewayFederaUrl! Riprova!';
+    }
+ });
   
     
   // title ion-view

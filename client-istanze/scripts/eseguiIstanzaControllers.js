@@ -125,6 +125,12 @@ $scope.caricaImpostazioni = function(){
             $scope.iC.statoIstanza = response.status;
             $scope.iC.errorMsg= response.data.msg;
             $scope.iC.errorTitle= response.data.title;
+
+            if (response.status = 999) {
+                $log.info('redirect to login page');
+                $state.go('login', {id: $stateParams.id});
+            }
+
         });      
 };
 

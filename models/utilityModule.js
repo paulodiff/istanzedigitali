@@ -8,6 +8,7 @@ var request = require('request');
 var log4js = require('log4js');
 log4js.configure(ENV.log4jsConfig);
 var log = log4js.getLogger("app")
+var base64url = require('base64url');
 
 
 function addZero(x,n) {
@@ -71,6 +72,74 @@ module.exports = {
     fs.writeFileSync(file, bitmap);
   },
 
+  encryptStringWithRsaPrivateKey64: function(toEncrypt) {
+    var privateKey = fs.readFileSync(ENV.privateKey, "utf8");
+    var buffer = new Buffer(toEncrypt);
+    var encrypted = crypto.privateEncrypt(privateKey, buffer);
+    var encrypted64 = base64url(encrypted);
+    console.log('[#ENC64#]', toEncrypt);
+    console.log('[#ENC64#]', encrypted);
+    console.log('[#ENC64#]', encrypted64);
+    return encrypted64;
+  },
+
+  decryptStringWithRsaPrivateKey64: function(toDecrypt) {
+    var privateKey = fs.readFileSync(ENV.privateKey, "utf8");
+    var decrypted64 = base64url.decode(toDecrypt);
+    var buffer = new Buffer(decrypted64, "base64");
+    var decrypted = crypto.privateDecrypt(privateKey, buffer);
+    return decrypted.toString("utf8");
+  },
+
+
+  /* controlla se esiste il token ed è consistente 
+  
+    return false se non è autenticato o l'user autenticato
+  */
+
+  ensureAuthenticatedFun : function(req) {
+    console.log('[#AUTHF#] ensureAuthenticated (start)');
+    if (!req.header('Authorization')) {
+        console.log('[#AUTHF#] ensureAuthenticated : 401 NO TOKEN');
+        return false;
+    }
+      var token = req.header('Authorization').split(' ')[1];
+      // console.log(req.header('Authorization'));
+      var payload = null;
+      try {
+        payload = jwt.decode(token, ENV.secret);
+      }
+      catch (err) {
+        console.log('[#AUTHF#] ensureAuthenticated decoded error');
+        console.log(err);
+        return false;
+      }
+
+      if(payload){
+        if (payload.exp) {
+          if (payload.exp <= moment().unix()) {
+            console.log('[#AUTHF#] token expired');
+            return false;
+          }
+        } else {
+          var msg = '[#AUTHF#] ensureAuthenticated decoded error - exp NOT FOUND';
+          console.log(msg);
+          return false;
+        }
+      } else {
+        var msg = '[#AUTHF#] ensureAuthenticated decoded error - payload NOT FOUND';
+        console.log(msg);
+        return false;
+      }
+
+      console.log('[#AUTHF#] ok pass');
+      var user = {};
+      user = payload.sub;
+      user.token = token;
+      return user;
+  },
+
+  /* come sopra ma protegge la route */
   ensureAuthenticated : function(req, res, next) {
 
         //"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiY29tcGFueU5hbWUiOiJDb211bmVfZGlfUmltaW5pIiwiYXBwIjoicHJvdG9jb2xsbyJ9LCJpYXQiOjE0Nzk5OTkwMzQsImV4cCI6MTU2NjM5NTQzNH0.5Ako1xZ9If5bNrKN3ns8sZ8YaqaJD7FWDt07zcRb8c0"

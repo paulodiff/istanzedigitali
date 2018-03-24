@@ -18,6 +18,34 @@ angular.module('myApp.services')
                          function ( ENV,   $http,   Session,   $rootScope,   $log,   $localStorage) {
   return {
 
+    getGatewayFederaUrl: function (id) {
+      
+
+      var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiGatewayUrl + '/' + id; 
+      var checkApiEndpoint = $rootScope.base_url + '/' + ENV.apiLoginCheck; 
+
+      $log.info('AuthService:getGatewayFederaToken');
+      $log.info(fullApiEndpoint);
+      $log.info(checkApiEndpoint);
+        
+      return $http({ 
+                    url: fullApiEndpoint, 
+                    method: "GET"
+                  })
+        .then(function (res) {
+            $log.info('AuthService getGatewayFederaUrl');
+            $log.info(res);
+            $log.info(res.data.token);
+            return res;
+            
+        }).catch(function(response) {
+            $log.info('AuthService getGatewayFederaUrl');
+            $log.info(response);
+            throw new Error('AuthService getGatewayFederaUrl');
+       });
+    },
+
+
     login: function (credentials) {
       
       var fullApiEndpoint = $rootScope.base_url + '/' + ENV.apiLogin; 

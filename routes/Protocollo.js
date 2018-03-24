@@ -75,6 +75,52 @@ module.exports = function(){
 var WS_IRIDE =  "";
 var MODO_OPERATIVO = "TEST";
 
+/* prepara la ulr per accesso al gateway di autenticazione*/
+router.get('/getGatewayAuthUrl/:formId', function(req, res) {
+
+    if(!req.params.formId){
+      console.log('federaToken:NOT FOUND');
+      console.log(reqId);
+      res.status(500).send('federaToken:NOT FOUND');
+      return;
+    } else {
+      var msg = {}
+  
+      // Verifico che la configurazione per il formId esiste
+  
+      // prepara la url per l'accesso al gateway
+      // nel token devo passare una serie di parametri che devono tornare indietro ad autenticazione 
+      // avvenuta a seconda della istanza
+  
+      // cifrare il token con il certificato
+      // fare base64
+      // passarlo al client
+  
+      // ENV.appLandingUrl
+      // ENV.gatewayAuthUrl
+  
+      var sToReturn = req.params.formId + ";" + ENV.apiLandingUrl;
+  
+      console.log(sToReturn);
+      var dataEncrypted = uM.encryptStringWithRsaPrivateKey64(sToReturn);
+      console.log(sToReturn);
+  
+      msg.token = uM.createJWT('federaToken');
+      msg.id = req.params.formId;
+      msg.url = ENV.gatewayAuthUrl + '?' + ENV.gatewayAppNameIntegration + '=' + dataEncrypted;
+    }
+  
+  
+    console.log('/federaToken');
+    //utilityModule.test();
+    
+    //User.findOne({ email: req.body.email }, '+password', function(err, user) {
+    
+    res.send(msg);
+  
+});
+  
+
 
 router.get('/getInfoIstanza/:formId', function (req, res) {
 
@@ -91,6 +137,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         log.info('getInfoIstanza:len:' + fId.length);
 
         if(fId.length > 6) {
+            log.info('getInfoIstanza:len: TROPPO LUNGA');
             ErrorMsg = {
                 title: 'Errore loadingDefault messaggio',
                 msg: 'Errore loadingDefault messaggio di risposta. ',
@@ -119,6 +166,28 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             return;
         }
 
+        // verifica se richiesta autenticazione
+        log.info('auth enable ?');
+        var loggedUser = {};
+        if(ENV_FORM_CONFIG.authEnable){
+            log.info('Protocollo.js: auth enable ! check!');
+            if (!uM.ensureAuthenticatedFun(req)){
+                log.info('Protocollo.js: NOT AUTH'); // cli/#!/login/D
+                log.error('Protocollo.js: NOT AUTH');
+                ErrorMsg = {
+                        title: 'Eseguire autenticazione',
+                        msg: 'Eseguire autenticazione',
+                        code : 999
+                }
+                res.status(999).send(ErrorMsg);
+                return;
+            } else {
+                log.info('Protocollo.js: logged!');
+                loggedUser = uM.ensureAuthenticatedFun(req);
+                log.info(loggedUser);
+            }
+        }
+
         var objRet = {};
         objRet.idIstanza = ENV_FORM_CONFIG.idIstanza;
         objRet.numeroAllegati = ENV_FORM_CONFIG.numeroAllegati;
@@ -134,6 +203,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         objRet.contattiFooter = ENV_FORM_CONFIG.contattiFooter;
         objRet.statoIstanza = 0;
 
+
         var token = uM.createJWT(uM.getTimestampPlusRandom(), 1, 'd');
         log.info(token);
         uM.addTokenToList(token);
@@ -142,13 +212,12 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
 
         var Msg = {
             "documentId" : ENV_FORM_CONFIG.idIstanza,
-            "actionId": "ISTANZA_RICHIESTA_ISTANZA",
+            "actionId": "ISTANZA_RICHIESTA",
             "idIstanza": ENV_FORM_CONFIG.idIstanza,
             "code": 998
         }
         
         logElastic.info(Msg);
-
 
         res.status(200).send(objRet);
         return;

@@ -12,8 +12,6 @@ var ntlm = require('express-ntlm');
 var fs = require('fs');
 var LdapAuth = require('ldapauth-fork');
 
-
-
 module.exports = function(){
 
 
@@ -196,8 +194,51 @@ router.post('/DEMOlogin', function(req, res) {
 });
 */
 
+/* prepara la ulr per accesso al gateway di autenticazione
+router.get('/federaToken/:formId', function(req, res) {
+
+  if(!req.params.formId){
+    console.log('federaToken:NOT FOUND');
+    console.log(reqId);
+    res.status(500).send('federaToken:NOT FOUND');
+    return;
+  } else {
+    var msg = {}
+
+    // Verifico che la configurazione per il formId esiste
+
+    // prepara la url per l'accesso al gateway
+    // nel token devo passare una serie di parametri che devono tornare indietro ad autenticazione 
+    // avvenuta a seconda della istanza
+
+    // cifrare il token con il certificato
+    // fare base64
+    // passarlo al client
+
+    // ENV.appLandingUrl
+    // ENV.gatewayAuthUrl
+
+    var sToReturn = req.params.formId + ";" + ENV.apiLandingUrl;
+
+    console.log(sToReturn);
+    var dataEncrypted = utilityModule.encryptStringWithRsaPrivateKey64(sToReturn);
+    console.log(sToReturn);
+
+    msg.token = utilityModule.createJWT('federaToken');
+    msg.id = req.params.formId;
+    msg.url = ENV.gatewayAuthUrl + '?' + ENV.gatewayAppNameIntegration + '=' + dataEncrypted;
+  }
 
 
+  console.log('/federaToken');
+  //utilityModule.test();
+  
+  //User.findOne({ email: req.body.email }, '+password', function(err, user) {
+  
+  res.send(msg);
+
+});
+*/
 
  // Log in with Email
 router.post('/login', function(req, res) {
@@ -827,7 +868,7 @@ router.post('/facebook', function(req, res) {
 
 router.all('/test', function(req,res){
 	console.log('test');
-	res.status(500).json({'mgs':'pong'});
+	res.status(500).json({'mgs':'lmgr'});
 });
 
 

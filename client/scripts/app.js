@@ -135,8 +135,6 @@ angular.module('myApp', [//'ionic',
     });
 
 
-
-
     /*
     
         $stateProvider.state('menu.home',{
@@ -147,8 +145,7 @@ angular.module('myApp', [//'ionic',
             accessLevel: 'free1' 
     });
 
-    
-    
+
     
     
     /* Login/Logout/Auth/Profile */

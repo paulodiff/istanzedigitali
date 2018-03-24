@@ -185,8 +185,8 @@ app.use('/protocollo', Protocollo);
 //var PostaMgr = require('./routes/PostaMgr')();
 //app.use('/postamgr', PostaMgr);
 
-//var LoginMgr = require('./routes/LoginMgr')();
-//app.use('/loginmgr', LoginMgr);
+// var LoginMgr = require('./routes/LoginMgr')();
+// app.use('/loginmgr', LoginMgr);
 
 
 //var QueueMgr = require('./routes/QueueMgr')();
@@ -231,7 +231,7 @@ app.use('/dist', express.static(__dirname + '/client-istanze/dist', options));
 // Sequelize START Bootstrap
 // var models = require("./modelsSequelize");
 
-log.info('Sequelize START ...');
+// log.info('Sequelize START ...');
 
 // log.log2console('Server started at:' + ENV.nodejs.NODEJSport);
 // log.log2file('Server started at:' + ENV.nodejs.NODEJSport);
@@ -240,8 +240,8 @@ log.info('Sequelize START ...');
 var port = ENV.nodejs.NODEJSport;
   // port = 9988;
   app.listen(port, function() {
-    log.info('INFO Express server listening on port ' + port);
-    log.error('ERROR Express server listening on port ' + port);
+    log.info('TEST-INFO on log Express server listening on port ' + port);
+    log.error('TEST-ERROR on log Express server listening on port ' + port);
   });
   app.on('error', function(error) { log.error(error); });
   app.on('listening', function() { log.info('listening'); });
