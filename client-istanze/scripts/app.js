@@ -541,6 +541,47 @@ angular.module('myApp', [//'ionic',
         `
       });
 
+      formlyConfigProvider.setType({
+        name: 'radio',
+        template: `
+
+    <fieldset class="Form-field Form-field--choose Grid-cell">
+            <legend class="Form-legend is-required">{{options.templateOptions.label}}</legend>
+            
+
+          <div ng-repeat="(key, option) in to.options" ng-class="{ 'radio': !to.inline, 'radio-inline': to.inline }">
+            <label class="Form-label Form-label--block">
+              <input type="radio"
+                     id="{{id + '_'+ $index}}"
+                     class="Form-input"
+                     tabindex="0"
+                     ng-value="option[to.valueProp || 'value']"
+                     ng-model="model[options.key]">
+              <span class="Form-fieldIcon" role="presentation"></span>       
+              {{option[to.labelProp || 'name']}}
+            </label>
+          </div>
+        </fieldset>
+        `
+      });
+
+      formlyConfigProvider.setType({
+        name: 'checkbox',
+        template: `
+
+      <fieldset class="Form-field Form-field--choose Grid-cell">
+      <legend class="Form-legend is-required">{{options.templateOptions.label}}</legend>
+        <label class="Form-label Form-label--block" >
+        <input type="checkbox"
+              class="Form-input"
+              ng-model="model[options.key]">
+              <span class="Form-fieldIcon" role="presentation"></span>
+              {{to.label}}
+              {{to.required ? '*' : ''}}
+      </label>
+   </fieldset>
+  `
+});
 
 
     formlyConfigProvider.setType({

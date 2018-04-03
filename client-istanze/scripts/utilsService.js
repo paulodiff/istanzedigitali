@@ -56,6 +56,57 @@ angular.module('myApp.services')
         return $http.put('/api/s/me', profileData);
       },
 
+     // https://gist.github.com/anvaka/3815296
+     // restoredPerson = JSON.parse(jsonString, functionReviver);
+     functionReviver: function(key, value) {
+        if (key === "") return value;
+        
+        // console.log('--value--');
+        // console.log(value);
+
+        if (typeof value === 'string') {
+
+            var n = value.indexOf("function");
+            // console.log(value);   console.log(n);
+
+            if (n >= 0) {
+              var lastBrace = value.lastIndexOf("}");
+              var firstBrace = value.indexOf("{");
+              var lastBrace = value.lastIndexOf("}");
+              var firstParentheses = value.indexOf("(");
+              var lastParentheses = value.indexOf(")");
+
+              var funcCode = value.substring(firstBrace + 1, lastBrace);
+              var funcPars = value.substring(firstParentheses + 1, lastParentheses);
+
+              console.log('--value-func-');
+              console.log(value);
+              console.log(funcPars);
+              console.log(funcCode);
+
+              var args = funcPars.split(',').map(function(arg) { return arg.replace(/\s+/, ''); });
+              return new Function(args, funcCode);
+
+            }
+
+            // var rfunc = /function[^\(]*\(([^\)]*)\)[^\{]*{([^\}]*)\}$/;
+            // var match = value.match(rfunc);
+
+            // console.log('--match--');        console.log(match);
+
+            /*
+            if (match) {
+                var args = match[1].split(',').map(function(arg) { return arg.replace(/\s+/, ''); });
+                // console.log('--args--');   console.log(args);
+                // console.log('--m1--'); console.log(match[1]);
+                // console.log('--m2--');  console.log(match[2]);
+                return new Function(args, match[2]);
+            }
+            */
+        }
+        return value;
+    },
+
       getRandomId: function(){
         console.log('utilsService: getRandomId');
           var text = "";

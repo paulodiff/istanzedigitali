@@ -107,12 +107,13 @@
   <!-- UI-Validate -->
   <script type="text/javascript" src="bower_components/angular-ui-validate/dist/validate.min.js"></script>
 
-  <!-- endbuild -->
-
-
   <!-- Angular Formly -->
   <script src="bower_components/api-check/dist/api-check.min.js"></script>
   <script src="bower_components/angular-formly/dist/formly.min.js"></script>
+
+
+  <!-- endbuild -->
+
 
 
   <!-- build:js app-combined2.js -->
@@ -353,6 +354,11 @@
 <!-- build:js iwt.js -->
 <script src="ita-web-toolkit/IWT.min.js"></script>
 <!-- endbuild -->
+
+<div ng-if="browserName != 'Chrome'" class="alert alert-dismissible alert-warning">
+  <h4>ATTENZIONE</h4>
+  <p>Questa applicazione al momento funziona SOLO con il browser Chrome di Google</p>
+</div>
 
 </body>
 </html>

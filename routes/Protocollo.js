@@ -139,6 +139,8 @@ router.get('/getGatewayAuthUrl/:formId', function(req, res) {
   
 });
   
+/* Route di ritorno da autenticazione gateway */
+
 router.get('/gwLanding', function (req, res) {
         console.log('Protocollo.js');
         console.log(req.query.authenticatedUser);
@@ -156,6 +158,8 @@ router.get('/gwLanding', function (req, res) {
         // res.redirect('/protocollo/cli/#/landingGateway/' + token + '/' + req.body.RelayState);
         res.status(200).send({msg: 'ok'});
 });
+
+/* Restituisce la configurazione del form */
 
 router.get('/getInfoIstanza/:formId', function (req, res) {
 
@@ -223,6 +227,26 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             }
         }
 
+        // verifica se ci sono date di validità e controlla
+        log.info(ENV_FORM_CONFIG.startDate);
+        if(ENV_FORM_CONFIG.startDate)   {
+            log.info('Protocollo.js: CHECK PERIODO DI VALIDITA'); // cli/#!/login/D
+            // moment('2010-10-20').isBetween('2010-10-19', '2010-10-25');
+            var date = moment("15/02/2013", "DD/MM/YYYY");
+            var startDate = moment(ENV_FORM_CONFIG.startDate, "DD/MM/YYYY");
+            var endDate = moment(ENV_FORM_CONFIG.endDate, "DD/MM/YYYY");
+            console.log(moment().isBetween(startDate, endDate))
+            if(!moment().isBetween(startDate, endDate)){
+                ErrorMsg = {
+                    title: 'Form al momento non abilitato',
+                    msg: 'Periodo di lavoro dal:' + ENV_FORM_CONFIG.startDate + ' al:' + ENV_FORM_CONFIG.endDate,
+                    code : 998
+            }
+            res.status(998).send(ErrorMsg);
+            return;
+            }
+        }
+
         var objRet = {};
         objRet.idIstanza = ENV_FORM_CONFIG.idIstanza;
         objRet.numeroAllegati = ENV_FORM_CONFIG.numeroAllegati;
@@ -237,7 +261,10 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         objRet.descrizionePrincipale = ENV_FORM_CONFIG.descrizionePrincipale;
         objRet.contattiFooter = ENV_FORM_CONFIG.contattiFooter;
         objRet.statoIstanza = 0;
-
+        // jsonString = JSON.stringify(person, functionReplacer);
+        objRet.vm_fields = JSON.stringify(ENV_FORM_CONFIG.vm_fields,uM.functionReplacer);
+        //objRet.vm_fields = btoa(String.fromCharCode.apply(null, new Uint8Array(ENV_FORM_CONFIG.vm_fields)));
+        objRet.vm_model = ENV_FORM_CONFIG.vm_model;
 
         var token = uM.createJWT(uM.getTimestampPlusRandom(), 1, 'd');
         log.info(token);
@@ -397,9 +424,9 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             log.info(options);  
             var form = new multiparty.Form(options);
 
-            log.info(ID_ISTANZA +'---------------------------------------------------------');  
-            log.info(req.body);  
-            log.info(ID_ISTANZA +'---------------------------------------------------------');  
+            //log.info(ID_ISTANZA +'---------------------------------------------------------');  
+            //log.info(req.body);  
+            //log.info(ID_ISTANZA +'---------------------------------------------------------');  
 
             form.parse(req, 
                 function(err, fields, files) {
@@ -428,20 +455,26 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         function(callback){
             log.info(ID_ISTANZA+' UPLOAD: ASYNC sanitizeInput:');
 
-            if (pM.sanitizeInput(objFieldList, objFieldSanitized, ENV_FORM_CONFIG)){
-                log.info(ID_ISTANZA+' UPLOAD: ASYNC sanitizeInput: ok');
-                log.info(objFieldSanitized);
-                callback(null, 'UPLOAD: ASYNC sanitizeInput: success!');
+            if(ENV_FORM_CONFIG.NO_INPUT_DATA_SANITIZE) { 
+                log.info(ID_ISTANZA+' @SANITIZE_INPUT_DATA_DISABLED@');
+                callback(null, '@SANITIZE_INPUT_DATA_DISABLED@');
             } else {
-                ErrorMsg = {
-                    title: 'Check input error',
-                    msg:   'Errore nei dati di input. ' + supportMsg,
-                    code : 456
+
+                if (pM.sanitizeInputDinamic(objFieldList, objFieldSanitized, ENV_FORM_CONFIG)){
+                    log.info(ID_ISTANZA+' UPLOAD: ASYNC sanitizeInput: ok');
+                    log.info(objFieldSanitized);
+                    callback(null, 'UPLOAD: ASYNC sanitizeInput: success!');
+                } else {
+                    ErrorMsg = {
+                        title: 'Check input error',
+                        msg:   'Errore nei dati di input. ' + supportMsg,
+                        code : 456
+                    }
+                    log.error(reqId);
+                    log.error(ErrorMsg);
+                    callback(ErrorMsg, null);
                 }
-                log.error(reqId);
-                log.error(ErrorMsg);
-                 callback(ErrorMsg, null);
-            }
+            } 
         },
 
         // ##### FILE Input sanitizer & validator------------------------------------------------------------------------
@@ -449,18 +482,24 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         function(callback){
             log.info(ID_ISTANZA+' UPLOAD: ASYNC sanitizefile:');
 
-            if (pM.sanitizeFile(objFilesList, ENV_FORM_CONFIG)){
-                log.info(ID_ISTANZA+' UPLOAD: ASYNC sanitizeFile: ok');
-                callback(null, 'UPLOAD: ASYNC sanitizefile: success!');
+            if(ENV_FORM_CONFIG.NO_FILE_DATA_SANITIZE) { 
+                log.info(ID_ISTANZA+' @SANITIZE_FILE_DATA_DISABLED@');
+                callback(null, '@SANITIZE_FILE_DATA_DISABLED@');
             } else {
-                ErrorMsg = {
-                    title: 'Check input error',
-                    msg:   'Errore nei dati di input. ' + supportMsg,
-                    code : 456
+
+                if (pM.sanitizeFile(objFilesList, ENV_FORM_CONFIG)){
+                    log.info(ID_ISTANZA+' UPLOAD: ASYNC sanitizeFile: ok');
+                    callback(null, 'UPLOAD: ASYNC sanitizefile: success!');
+                } else {
+                    ErrorMsg = {
+                        title: 'Check input error',
+                        msg:   'Errore nei dati di input. ' + supportMsg,
+                        code : 456
+                    }
+                    log.error(reqId);
+                    log.error(ErrorMsg);
+                    callback(ErrorMsg, null);
                 }
-                log.error(reqId);
-                log.error(ErrorMsg);
-                callback(ErrorMsg, null);
             }
         },
 
@@ -506,120 +545,161 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
 
         // ##### Protocollazione ------------------------------------------------------------------------
 
-            function(callback){
+        function(callback){
 
-                log.info(ID_ISTANZA+'ASYNC protocolloWS:GO!');
-                    objDatiProtocollo = {};
-     
-                    if(ENV_FORM_CONFIG.NOPROTOCOLLO){ // test
+            log.info(ID_ISTANZA+'ASYNC protocolloWS:GO!');
+                objDatiProtocollo = {};
+    
+                if(ENV_FORM_CONFIG.NOPROTOCOLLO){ // test
 
-                        objDatiProtocollo = { InserisciProtocolloEAnagraficheResult:
-                        { 
-                            IdDocumento: 6658846,
-                            AnnoProtocollo: '2018',
-                            NumeroProtocollo: 3,
-                            DataProtocollo: '2018-02-07T11:35:54.333Z',
-                            Messaggio: 'Inserimento Protocollo eseguito con successo, senza Avvio Iter',
-                            Allegati: { Allegato: {} } 
-                        } 
-                        };
+                    objDatiProtocollo = { InserisciProtocolloEAnagraficheResult:
+                    { 
+                        IdDocumento: 6658846,
+                        AnnoProtocollo: '2018',
+                        NumeroProtocollo: 3,
+                        DataProtocollo: '2018-02-07T11:35:54.333Z',
+                        Messaggio: 'Inserimento Protocollo eseguito con successo, senza Avvio Iter',
+                        Allegati: { Allegato: {} } 
+                    } 
+                    };
 
-                        objFieldSanitized.idProtocollo =  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento;
-                        objFieldSanitized.annoProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo;
-                        objFieldSanitized.numeroProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
-                        objFieldSanitized.dataProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo;
+                    objFieldSanitized.idProtocollo =  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento;
+                    objFieldSanitized.annoProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo;
+                    objFieldSanitized.numeroProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
+                    objFieldSanitized.dataProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo;
 
-                        callback(null, 'protocolloWS ... FAKE!!!!');
-                    } else {
-                        
-                            pM.protocolloWS(objFieldSanitized, reqId, ENV_FORM_CONFIG, ENV_PROT)
-                            .then( function (result) {
-                                log.info(result);
-                                objDatiProtocollo = result;
-                                objFieldSanitized.idProtocollo =  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento;
-                                objFieldSanitized.annoProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo;
-                                objFieldSanitized.numeroProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
-                                objFieldSanitized.dataProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo;
-                                callback(null, 'protocolloWS ... ok');
-                            })
-                            .catch(function (err) {
-                                // console.log(err);
-                                log.error('ASYNC protocolloWS:');
-                                log.error(reqId);
-                                log.error(err);
-                                ErrorMsg = {
-                                    title: 'Errore di protocollo',
-                                    msg: 'Errore nella protocollazione della richiesta.' + supportMsg,
-                                    code : 458
-                                };
-                                callback(ErrorMsg, null);
-                            });
+                    callback(null, 'protocolloWS ... FAKE!!!!');
+                } else {
+                    
+                        pM.protocolloWS(objFieldSanitized, reqId, ENV_FORM_CONFIG, ENV_PROT)
+                        .then( function (result) {
+                            log.info(result);
+                            objDatiProtocollo = result;
+                            objFieldSanitized.idProtocollo =  objDatiProtocollo.InserisciProtocolloEAnagraficheResult.IdDocumento;
+                            objFieldSanitized.annoProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.AnnoProtocollo;
+                            objFieldSanitized.numeroProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.NumeroProtocollo;
+                            objFieldSanitized.dataProtocollo = objDatiProtocollo.InserisciProtocolloEAnagraficheResult.DataProtocollo;
+                            callback(null, 'protocolloWS ... ok');
+                        })
+                        .catch(function (err) {
+                            // console.log(err);
+                            log.error('ASYNC protocolloWS:');
+                            log.error(reqId);
+                            log.error(err);
+                            ErrorMsg = {
+                                title: 'Errore di protocollo',
+                                msg: 'Errore nella protocollazione della richiesta.' + supportMsg,
+                                code : 458
+                            };
+                            callback(ErrorMsg, null);
+                        });
 
+                }
+                    
+        },
+
+          // ###### SALVA DATI CON PROTOCOLLO ----------------------------------------------------------------
+
+        function(callback){
+            log.info(ID_ISTANZA+'UPLOAD:salvaDatiConProtocollo build response message:');
+            var oggetto = pM.salvaDatiConProtocollo(objFieldSanitized, ENV_FORM_CONFIG);
+            if (oggetto){
+                callback(null, 'UPLOAD: salvaDatiConProtocollo:messaggio risposta genererato correttamente ... ok');
+            } else {
+                ErrorMsg = {
+                    title: 'saving file error',
+                    msg: 'Errore nel salvataggio dati con protocollo',
+                    code : 457
+                }
+                log.error(reqId);
+                log.error(ErrorMsg);
+                callback(ErrorMsg, null);
+            }
+        },
+
+
+        // ###### BUILD Response Message ----------------------------------------------------------------
+
+        function(callback){
+            log.info(ID_ISTANZA+'UPLOAD:ASYNC build response message:');
+            var oggetto = pM.buildMessaggioRisposta(objFieldSanitized, ENV_FORM_CONFIG);
+            if (oggetto){
+                ENV_FORM_CONFIG.messaggioRisposta = oggetto;
+                callback(null, 'UPLOAD: ASYNC:messaggio risposta genererato correttamente ... ok');
+            }else {
+                ErrorMsg = {
+                    title: 'saving file error',
+                    msg: 'Errore nella creazione del messagggio risposta',
+                    code : 457
+                }
+                log.error(reqId);
+                log.error(ErrorMsg);
+                callback(ErrorMsg, null);
+            }
+        },
+
+        // ###### BUILD invio mail di conferma ----------------------------------------------------------------
+    
+        function(callback){
+            
+            log.info(ID_ISTANZA+'UPLOAD:ASYNC invio mail cortesia');
+            if(ENV_FORM_CONFIG.sendEmail) {
+
+                log.info(ID_ISTANZA+'UPLOAD:ASYNC invio mail a ' + objFieldSanitized.emailRichiedente);
+
+                var subjectEmail = pM.buildTemplate(objFieldSanitized,ENV_FORM_CONFIG.templateEmail);
+
+                var options = {
+                    text:    subjectEmail,
+                    from:    ENV_FORM_CONFIG.noreply, 
+                    to:      objFieldSanitized.emailRichiedente,
+                    //cc:      "else <else@your-email.com>",
+                    subject: ENV_FORM_CONFIG.messaggioMailTesto
+                }
+
+                if (ENV_FORM_CONFIG.bccDebug) {
+                    options.bcc = ENV_FORM_CONFIG.bccDebug;
+                }
+
+                serverEmail.send(options, function(err, message) 
+                {
+                    if(err) {
+                        log.error(ID_ISTANZA+'UPLOAD:ASYNC ERRORE invio mail ');
+                        log.error(err);  
                     }
-                     
-            },
+                    log.info(ID_ISTANZA+'UPLOAD:ASYNC invio mail OK');
+                    callback(null, 'Invio mail preparato ok');
+                });
+                
+            } else {
+                log.info(ID_ISTANZA+'UPLOAD:ASYNC invio mail NON ABILITATO');
+                callback(null, 'Invio mail canceled!');
+            }
+        },
 
-            // ###### BUILD Response Message ----------------------------------------------------------------
+        // ###### OUTPUT dati verso CSV EXCEL-----------------------------------------    
 
-            function(callback){
-                log.info(ID_ISTANZA+'UPLOAD:ASYNC build response message:');
-                var oggetto = pM.buildMessaggioRisposta(objFieldSanitized, ENV_FORM_CONFIG);
-                if (oggetto){
-                    ENV_FORM_CONFIG.messaggioRisposta = oggetto;
-                    callback(null, 'UPLOAD: ASYNC:messaggio risposta genererato correttamente ... ok');
+        function(callback){
+            log.info(ID_ISTANZA+'UPLOAD:OUTPUT verso file o db');
+            if(ENV_FORM_CONFIG.NO_OUTPUT_FILE_DB) {
+                log.info(ID_ISTANZA+' @NO_OUTPUT_FILE_DB@');
+                callback(null, '@NO_OUTPUT_FILE_DB@');
+            } else {
+                var ritorno = pM.output2FileDatabase(objFieldSanitized, ENV_FORM_CONFIG);
+                if (ritorno){
+                    callback(null, 'UPLOAD: OUTPUT  dati corretti ... ok');
                 }else {
                     ErrorMsg = {
                         title: 'saving file error',
-                        msg: 'Errore nella creazione del messagggio risposta',
+                        msg: 'Errore nell output dei dati',
                         code : 457
                     }
                     log.error(reqId);
                     log.error(ErrorMsg);
                     callback(ErrorMsg, null);
                 }
-            },
-
-            // ###### BUILD invio mail di conferma ----------------------------------------------------------------
-      
-            function(callback){
-                
-                log.info(ID_ISTANZA+'UPLOAD:ASYNC invio mail cortesia');
-                if(ENV_FORM_CONFIG.sendEmail) {
-
-                    log.info(ID_ISTANZA+'UPLOAD:ASYNC invio mail a ' + objFieldSanitized.emailRichiedente);
-
-                    var subjectEmail = pM.buildTemplate(objFieldSanitized,ENV_FORM_CONFIG.templateEmail);
-
-                    var options = {
-                        text:    subjectEmail,
-                        from:    ENV_FORM_CONFIG.noreply, 
-                        to:      objFieldSanitized.emailRichiedente,
-                        //cc:      "else <else@your-email.com>",
-                        subject: ENV_FORM_CONFIG.messaggioMailTesto
-                    }
-
-                    if (ENV_FORM_CONFIG.bccDebug) {
-                        options.bcc = ENV_FORM_CONFIG.bccDebug;
-                    }
-
-                    serverEmail.send(options, function(err, message) 
-                    {
-                        if(err) {
-                            log.error(ID_ISTANZA+'UPLOAD:ASYNC ERRORE invio mail ');
-                            log.error(err);  
-                        }
-                        log.info(ID_ISTANZA+'UPLOAD:ASYNC invio mail OK');
-                        callback(null, 'Invio mail preparato ok');
-                    });
-                    
-                } else {
-                    log.info(ID_ISTANZA+'UPLOAD:ASYNC invio mail NON ABILITATO');
-                    callback(null, 'Invio mail canceled!');
-                }
-
-                
- 
             }
+        }
 
     ],function(err, results) {
         // results is now equal to: {one: 1, two: 2}

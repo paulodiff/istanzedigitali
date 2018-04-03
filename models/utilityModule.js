@@ -25,6 +25,18 @@ module.exports = {
     console.log('test');
   },
 
+ // https://gist.github.com/anvaka/3815296 
+ // JavaScript Function Serialization
+ // jsonString = JSON.stringify(person, functionReplacer);
+ functionReplacer: function(key, value) {
+    if (typeof(value) === 'function') {
+        console.log(key);
+        console.log(value.toString());
+        return value.toString();
+    }
+    return value;
+ },
+
  pad: function(n, width, z) {
     z = z || '0';
     n = n + '';

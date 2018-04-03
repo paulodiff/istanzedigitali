@@ -310,6 +310,130 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  envData) {
      
 }
 
+/*
+
+    Controllo dei dati di input per il form dinamico
+
+*/
+
+
+exports.sanitizeInputDinamic = function (fieldList, fieldsObj,  envData) {
+    
+    log.info('[' + envData.idIstanza + '] protocolloModule:sanitizeInputDinamico');
+    log.info('---------- fieldList -----------------------------------------------------------');
+    log.info(fieldList);
+
+    fieldsObj.reqId = envData.reqId;
+
+    Object.keys(fieldList).forEach(function(name) {
+        log.info('protocolloModule:sanitizeInput:got field named ' + name);
+
+        var r = /\[(.*?)\]/;
+        var rs = name.match(r);
+        key = rs[1];
+  
+        log.info('protocolloModule:sanitizeInput:key ' + key);
+      
+        fieldsObj[key] = fieldList[name][0];
+
+    });
+
+    // validate object
+    // https://www.npmjs.com/package/validator
+
+    log.info('---------- fieldsObj -----------------------------------------------------------');
+    log.info(fieldsObj);
+    log.info('protocolloModule:validate data ...');
+    var bValid = true;
+    var msgValidator = '';
+
+    /* validazione esistenza */
+
+    // if( !fieldsObj.nomeRichiedente){    bValid = false;  msgValidator = 'nomeRichiedente richiesto'; }
+    
+    /* validazione dimensioni */
+
+    if ( bValid ) {
+        return true;
+    } else {
+        msgValidator = '[' + envData.idIstanza + '] '+ msgValidator;
+        log.error('[' + envData.idIstanza + '] protocolloModule:sanitizeInput');
+        log.error(msgValidator);
+        return false;
+    }
+     
+}
+
+
+/* SALVA NELLA CARTELLA TEMPORANEA I DATI DI INPUT CON IL PROTOCOLLO */
+
+exports.salvaDatiConProtocollo = function (fieldsObj, envData) {
+    log.info('[' + envData.idIstanza + '] protocolloModule:salvaDatiConProtocollo');
+    log.info('[' + envData.idIstanza + '] protocolloModule:storageFolder:' + envData.storageFolder);
+    var dir = envData.storageFolder + "/" + envData.reqId;
+
+    try{
+        // throw "TEST - File NOT FOUND Exception";
+        if (!fs.existsSync(dir)){
+            try
+            { 
+                fs.mkdirSync(dir);
+                log.info('protocolloModule:Folder OK' + dir);
+            }
+            catch(e) {
+                log.error('[' + envData.idIstanza + '] protocolloModule:salvaDatiConProtocollo: create folder ERROR');
+                log.error(e);
+            }
+        }
+        log.info('protocolloModule:' + dir);
+        
+        // save metadata metadati
+        var jsonFile = dir + "/PROTOCOLLO-" + envData.reqId + ".txt";
+        log.info(jsonFile);
+        fs.writeFileSync(jsonFile, JSON.stringify(fieldsObj));
+        
+
+        return true;
+
+    } catch (e){
+        log.error('[' + envData.idIstanza + '] savingFiles: ERROR');
+        log.error(e);
+        return false;
+    }
+
+}
+
+/* OUTPUT VERSO UN CSV O DB dei dati protocollati */
+
+exports.output2FileDatabase = function (fieldsObj, envData) {
+    log.info('[' + envData.idIstanza + '] protocolloModule:output2FileDatabase');
+    log.info('[' + envData.idIstanza + '] protocolloModule:storageFolder:' + envData.storageFolder);
+    var dir = envData.storageFolder + "/" + envData.reqId;
+
+    if (envData.outputData2CSV){
+        try{
+            log.info('[' + envData.idIstanza + '] write to: ', envData.outputData2CSV.filename);
+            log.info('[' + envData.idIstanza + '] template to: ', envData.outputData2CSV.template);
+            var templateFileName = envData.outputData2CSV.template;
+
+            fileContents = fs.readFileSync(templateFileName).toString();
+                        
+            var template = handlebars.compile(fileContents);
+            outputLine = template(fieldsObj) + "\n";
+            log.info(outputLine);
+            fs.appendFileSync(envData.outputData2CSV.filename, outputLine);
+            return true;
+        }
+        catch (e){
+            log.error('[' + envData.idIstanza + '] protocolloModule.js:output2FileDatabase:template: ERROR');
+            log.error(e);
+            return false;
+        }
+    }
+
+}
+
+
 /* SAVING FILES  
 
     salva i file dell'upload nella cartella temporanea
@@ -320,7 +444,7 @@ exports.savingFiles = function (fileList, fieldsObj, envData) {
     log.info('[' + envData.idIstanza + '] protocolloModule:savingFiles');
     log.info('[' + envData.idIstanza + '] protocolloModule:storageFolder:' + envData.storageFolder);
     // var transactionId = req.body.fields.transactionId;
-    var dir = envData.storageFolder + "/" + envData.reqId;;
+    var dir = envData.storageFolder + "/" + envData.reqId;
 
     log.info('protocolloModule:storageFolder:' + dir);
     fieldsObj.files = [];
