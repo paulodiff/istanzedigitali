@@ -9,7 +9,7 @@ angular.module('myApp', [//'ionic',
                          'ui.router',
                          'ui.select',
                          // 'dialogs.main',
-                         // 'formly',
+                         'formly',
                          // 'formlyBootstrap',
                          //'satellizer',
                          //'ngResource',
@@ -113,6 +113,15 @@ angular.module('myApp', [//'ionic',
       accessLogged: false,
       accessLevel: 'free1' 
     });
+
+    $stateProvider.state('eseguiIstanzaDinamica', {
+      url: '/eseguiIstanzaDinamica/{id}',
+      controller: 'eseguiIstanzaDinamicaCtrl',
+      templateUrl: 'templates/eseguiIstanzaDinamicaITALIA.html',
+      accessLogged: false,
+      accessLevel: 'free1' 
+    });
+
 
     /*
     $stateProvider.state('visualizzaEsitoIstanza', {
@@ -493,15 +502,123 @@ angular.module('myApp', [//'ionic',
 })
 */
 
-/*
+
 //formly configuration GLOBALE
 .config(function(formlyConfigProvider) {
 
+    // formlyConfigProvider.extras.removeChromeAutoComplete = true;
+
+    formlyConfigProvider.setType({
+      name: 'input',
+      template: `
+          <div class="Form-field">
+          <label class="u-text-r-m Form-label is-required">{{options.templateOptions.label}}</label>
+          <input type="{{options.templateOptions.type || 'text'}}"
+	        class="Form-input u-text-r-s u-borderRadius-m"
+	        id="{{id}}"
+	        formly-dynamic-name="id"
+	        formly-custom-validation="options.validators"
+	        placeholder="{{options.templateOptions.placeholder}}"
+	        aria-describedby="{{id}}_description"
+	        ng-required="options.templateOptions.required"
+	        ng-disabled="options.templateOptions.disabled"
+          ng-model="model[options.key]">
+          </div>
+          `
+    });
+
+    formlyConfigProvider.setType({
+      name: 'select',
+      template: `
+        <div class="Form-field">
+          <label class="u-text-r-m Form-label is-required">{{options.templateOptions.label}}</label>
+          <select 
+            class="Form-input u-text-r-s u-borderRadius-m" 
+            ng-model="model[options.key]"
+            ng-options="option.value as option.name group by option.group for option in options.templateOptions.options">
+          </select>
+        </div>
+        `
+      });
 
 
-    formlyConfigProvider.extras.removeChromeAutoComplete = true;
+
+    formlyConfigProvider.setType({
+        name: 'ng-file-upload',
+        extends: 'input',
+        template: '<input type="file"  ngf-select="formState.upload($files)"  name="files" multiple>'
+     });
 
 
+   // ng-model="model[options.key]"
+   formlyConfigProvider.setType({
+        name: 'upload',
+        template: `
+          <div class="Form-field">
+          <label class="u-text-r-m Form-label is-required">{{options.templateOptions.label}}</label><br>
+            <input 
+                type="file" 
+                ngf-select="formState.ngfChange(options.key,$file,$event.type)" 
+                ng-model="files"
+                class="Button Button--default u-text-r-xs u-inlineBlock" 
+                accept="text/csv" 
+                ngf-pattern="'application/pdf'"
+                ngf-max-size="2MB" 
+                ngf-min-size="1"
+                required>
+          </div>
+       `
+      });
+
+
+
+    formlyConfigProvider.setType({
+      name: 'description',
+      template: `
+          <h2 class="u-text-h3">{{options.templateOptions.title}}</h2>
+          <p class="u-text-r-m">{{options.templateOptions.description}}</p>
+          `
+    });
+
+    formlyConfigProvider.setType({
+      name: 'infoAlert',
+      template: `
+      <div class="Callout Callout--could u-text-r-xs" role="note">
+          <h2 class="u-text-h3">{{options.templateOptions.title}}</h2>
+          <p class="u-text-p">{{options.templateOptions.description}}</p>
+      </div>
+      `
+    });
+
+
+
+    formlyConfigProvider.setWrapper([
+      {
+        template: [
+          '<div class="formly-template-wrapper form-group"',
+              'ng-class="{\'has-error\': options.validation.errorExistsAndShouldBeVisible}">',
+            // '<label for="{{::id}}">WRAP - {{options.templateOptions.label}}</label>',
+            '<formly-transclude></formly-transclude>',
+            '<div class="validation"',
+              'style="color:maroon"',
+              'ng-if="options.validation.errorExistsAndShouldBeVisible"',
+              'ng-messages="options.formControl.$error">',
+              // '<div ng-messages-include="validation.html"></div>',
+              '<div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" ng-message="maxSize">Dimensione file eccessiva</div>',
+              '<div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" ng-message="pattern">Formato file non valido</div>',
+              '<div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" ng-message="required">Questo valore è obbligatorio</div>',
+              '<div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" ng-message="minlength">Valore troppo corto</div>',
+              '<div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" ng-message="maxlength">Valore troppo lungo</div>',
+              '<div class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom" ng-message="email">Formato email non valido</div>',
+              '<div ng-message="{{::name}}" ng-repeat="(name, message) in ::options.validation.messages">',
+              '{{message(options.formControl.$viewValue, options.formControl.$modelValue, this)}}',
+            '</div>',
+          '</div>',
+          '</div>'
+        ].join(' ')
+      }]);
+
+    /*
     // set templates here
     formlyConfigProvider.setType({
       name: 'custom',
@@ -532,6 +649,9 @@ angular.module('myApp', [//'ionic',
       templateUrl: 'templates/formly-ui-select-multiple-template.html'
     });
 
+*/
+
+    /*  
 
     var attributes = [
         'date-disabled',
@@ -574,8 +694,6 @@ angular.module('myApp', [//'ionic',
         });
       };
 
-
-
       var ngModelAttrs = {};
 
       angular.forEach(attributes, function(attr) {
@@ -586,7 +704,9 @@ angular.module('myApp', [//'ionic',
         ngModelAttrs[camelize(binding)] = {bound: binding};
       });
 
+    */  
 
+    /*  
 
     formlyConfigProvider.setType({
       name: 'datepicker',
@@ -610,7 +730,11 @@ angular.module('myApp', [//'ionic',
       }]
     });
 
+    */
+
     // formly Wrapper
+
+    /*
 
     formlyConfigProvider.setWrapper({    
         name: 'panel',
@@ -634,9 +758,9 @@ angular.module('myApp', [//'ionic',
         types: 'checkbox'
       }
     ]);
+    */
 
-
-})*/
+})
 
 
 .run(function() {

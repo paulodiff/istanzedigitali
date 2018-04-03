@@ -1,4 +1,25 @@
 <section>
+    <div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-all-xl u-padding-r-top u-padding-bottom-xxl">
+          <formly-error-summary form="vm.form" fields="vm.fields"></formly-error-summary>
+          <form ng-submit="inviaDati()" name="vm.form" novalidate>
+            <formly-form model="vm.model" fields="vm.fields" options="vm.options" form="vm.form">
+              <button type="submit" 
+                      class="Button Button--default u-text-r-xs u-inlineBlock btn-block" 
+                      ng-disabled="vm.form.$invalid">Invia i dati</button>
+            </formly-form>
+          </form>
+          
+          <p>Form Data</p>
+          <pre>{{vm.model | json}}</pre>
+          <p>Form Error</p>
+          <pre>{{vm.errors | json}}</pre>
+</div>
+</section>
+
+
+
+<!--
+<section>
 
   <div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-all-xl u-padding-r-top u-padding-bottom-xxl">
 
@@ -52,8 +73,7 @@
                     ng-maxlength="80"
                     required
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div    ng-messages="dataForm.cognomeRichiedente.$error" 
                     ng-if="dataForm.cognomeRichiedente.$touched"
                     style="color:red" role="alert">
@@ -74,8 +94,7 @@
                     ng-maxlength="16"
                     required
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div    ng-messages="dataForm.codiceFiscaleRichiedente.$error" 
                     ng-if="dataForm.codiceFiscaleRichiedente.$touched"
                     style="color:red" role="alert">
@@ -97,8 +116,7 @@
                     required
                     datanascita-valida
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div    ng-messages="dataForm.dataNascitaRichiedente.$error" 
                     ng-if="dataForm.dataNascitaRichiedente.$touched"
                     style="color:red" role="alert">
@@ -121,8 +139,7 @@
                     ng-maxlength="80"
                     required
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div    ng-messages="dataForm.indirizzoRichiedente.$error" 
                     ng-if="dataForm.indirizzoRichiedente.$touched"
                     style="color:red" role="alert">
@@ -143,8 +160,7 @@
                     ng-maxlength="80"
                     required
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div    ng-messages="dataForm.cittaRichiedente.$error" 
                     ng-if="dataForm.cittaRichiedente.$touched"
                     style="color:red" role="alert">
@@ -166,8 +182,7 @@
                     required
                     only-number
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div    ng-messages="dataForm.capRichiedente.$error" 
                     ng-if="dataForm.capRichiedente.$touched"
                     style="color:red" role="alert">
@@ -190,8 +205,7 @@
                     required
                     email-valida
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div    ng-messages="dataForm.emailRichiedente.$error" 
                     ng-if="dataForm.emailRichiedente.$touched"
                     style="color:red" role="alert">
@@ -214,8 +228,7 @@
                     required
                     only-number
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div    ng-messages="dataForm.recapitoTelefonicoRichiedente.$error" 
                     ng-if="dataForm.recapitoTelefonicoRichiedente.$touched"
                     style="color:red" role="alert">
@@ -236,8 +249,7 @@
                     ng-minlength="0"
                     ng-maxlength="100"
                     >
-            <!-- <pre>{{dataForm.nomeRichiedente.$error}}</pre> -->
-
+    
             <div ng-messages="dataForm.noteRichiedente.$error" style="color:red" role="alert">
                         <div ng-message="required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Campo richiesto</div>
                         <div ng-message="minlength" class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Valore troppo corto</div>
@@ -263,15 +275,13 @@
                 ngf-min-size="1"
                 required>
 
-               <!--  <pre>{{dataForm.file.$error}}</pre> -->
                <div ng-if="dataForm.file1.$touched && dataForm.file1.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
                <div ng-if="dataForm.file1.$touched && dataForm.file1.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
                <div ng-if="dataForm.file1.$touched && dataForm.file1.$error.maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
        
         </div>
 
-        <!-- <pre>{{dataForm.file1.$error}}</pre> -->
-
+        
         
         <div ng-if="iC.file2">
         <p class="u-text-h4 u-padding-r-top">{{iC.file2.description}}</p>
@@ -290,8 +300,7 @@
                 ngf-min-size="1"
                 required>
 
-               <!--  <pre>{{dataForm.file.$error}}</pre> -->
-
+    
                <div ng-if="dataForm.file2.$touched && dataForm.file2.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
                <div ng-if="dataForm.file2.$touched && dataForm.file2.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
                <div ng-if="dataForm.file2.$touched && dataForm.file2.$error.maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
@@ -316,14 +325,13 @@
                 ngf-min-size="1"
                 required>
 
-               <!--  <pre>{{dataForm.file.$error}}</pre> -->
-
+    
                <div ng-if="dataForm.file3.$touched && dataForm.file3.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
                <div ng-if="dataForm.file3.$touched && dataForm.file3.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
                <div ng-if="dataForm.file3.$touched && dataForm.file3.$error.maxSize"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Dimensione allegato supera 2MB</div>
         </div>
 
-        </div> <!-- ng-if -->
+        </div> 
   
         <div ng-if="iC.file4">
         
@@ -342,7 +350,6 @@
                     ngf-min-size="1"
                     required>
     
-                   <!--  <pre>{{dataForm.file.$error}}</pre> -->
     
                    <div ng-if="dataForm.file4.$touched && dataForm.file4.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
                    <div ng-if="dataForm.file4.$touched && dataForm.file4.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
@@ -350,7 +357,7 @@
 
                 </div>
     
-            </div> <!-- ng-if -->
+            </div>
 
             <div ng-if="iC.file5">
         
@@ -369,7 +376,6 @@
                         ngf-min-size="1"
                         required>
         
-                       <!--  <pre>{{dataForm.file.$error}}</pre> -->
         
                        <div ng-if="dataForm.file5.$touched && dataForm.file5.$error.required"  class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Allegato obbligatorio - selezionare un file</div>
                        <div ng-if="dataForm.file5.$touched && dataForm.file5.$error.pattern"   class="Prose Alert Alert--error Alert--withIcon u-layout-prose u-padding-r-bottom u-padding-r-right u-margin-r-bottom">Formato non valido SOLO PDF</div>
@@ -377,10 +383,10 @@
 
                     </div>
         
-                </div> <!-- ng-if -->
+                </div>
 
 
-        <!-- <pre>{{dataForm.$valid | json}}</pre> -->
+        
         <p class="u-padding-r-top"></p>
 
         <h2 class="u-text-h3 u-padding-r-top">(Parte 3) Verifica codice di sicurezza</h2>        
@@ -406,13 +412,16 @@
   
     </form>
 
+-->
+
+
     <div ng-if="iC.contattiFooter">
     <h3 class="u-text-h3 u-padding-r-top">Contatti:</h3>
     <p>{{iC.contattiFooter}}</p>
     </div>  
   
  
-  </div> <!-- ng-if -->
+  </div>
 
   <div ng-if="iC.statoIstanza === 200" class="Alert Alert--success">
         <h1 class="u-text-h2">{{iC.successTitle}} - {{iC.statoIstanza}}</h1>

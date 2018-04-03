@@ -15,6 +15,7 @@
 			apiProfile: 'profilemgr/me',
 			apiUpload:'segnalazioni/upload',
 			apiIstanzeUpload:'protocollo/upload',
+			apiIstanzeUploadDinamico:'protocollo/uploadDinamico',
 			apiIstanzeRecuperaImpostazioni:'protocollo/getInfoIstanza',
 			apiGatewayUrl :'protocollo/getGatewayAuthUrl',
 			
