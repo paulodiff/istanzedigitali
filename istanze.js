@@ -165,16 +165,17 @@ var log4js = require('log4js');
 log4js.configure(ENV.log4jsConfig);
 var log = log4js.getLogger("app");
 
-
 // var PassportAuth = require('./routes/PassportAuth')();
 // app.use('/passportauth', PassportAuth);
 // app.use('/module.php', PassportAuth);
 
-// var ProfileMgr = require('./routes/ProfileMgr')();
-// app.use('/profilemgr', ProfileMgr);
 
 var Protocollo = require('./routes/Protocollo')();
 app.use('/protocollo', Protocollo);
+
+var ProfileMgr = require('./routes/ProfileMgr')();
+app.use('/profilemgr', ProfileMgr);
+
 
 //var IstanzeMgr = require('./routes/IstanzeMgr')();
 //app.use('/istanzemgr', IstanzeMgr);

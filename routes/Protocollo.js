@@ -111,23 +111,29 @@ router.get('/getGatewayAuthUrl/:formId', function(req, res) {
       // nel token devo passare una serie di parametri che devono tornare indietro ad autenticazione 
       // avvenuta a seconda della istanza
   
-      // cifrare il token con il certificato
+      // cifrare il token con la chiave segreta :-)
       // fare base64
       // passarlo al client
   
       // ENV.appLandingUrl
       // ENV.gatewayAuthUrl
-  
-      var sToReturn = req.params.formId + ";" + ENV.apiLandingUrl;
+      var uuid = require('uuidv4'); 
+      var uuidStr = uuid();
+      // uuidStr = 'FAKEUUIDV4';
+      var sToReturn = ENV.gatewayFederaClientId + ";" + uuidStr;
       //var sToReturn = req.params.formId + ";http1" ;
 
-      console.log(sToReturn);
-      var dataEncrypted = uM.encryptStringWithRsaPrivateKey64(sToReturn);
+      
+      let iv = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10.);
+      // iv = 'FAKEIV1234567890';
+      console.log(iv);
+
+      var dataEncrypted = uM.encryptStringWithAES_64(sToReturn, iv);
       console.log(sToReturn);
   
       msg.token = uM.createJWT('federaToken');
       msg.id = req.params.formId;
-      msg.url = ENV.gatewayAuthUrl + '?' + ENV.gatewayAppNameIntegration + '=' + dataEncrypted;
+      msg.url = ENV.gatewayAuthUrl + '?appId=' + ENV.gatewayFederaClientId + '&data=' + iv + dataEncrypted;
     }
     
     console.log('/federaToken');
@@ -143,20 +149,33 @@ router.get('/getGatewayAuthUrl/:formId', function(req, res) {
 
 router.get('/gwLanding', function (req, res) {
         console.log('Protocollo.js');
-        console.log(req.query.authenticatedUser);
+        console.log(req.query.data);
+        console.log(req.query.iv);
         // console.log('Save auth transaction to db');
                 
-        var authenticatedUser = req.query.authenticatedUser;
-        console.log('Protocollo.js: ', authenticatedUser);
-        var dataDecrypted = uM.decryptStringWithRsaPrivateKey64(authenticatedUser);
+        var data2decrypt = (req.query.data).substring(16);
+        var dataIV = (req.query.data).substring(0,16);
+       
+        var dataDecrypted = uM.decryptStringWithAES_64(data2decrypt, dataIV);
         console.log('Protocollo.js: ', dataDecrypted);
 
+        // TODO verificare se il token
+        var dataSplitted  = dataDecrypted.split(";");
+        var userData = {};
+
+        userData.nome = dataSplitted[8];
+        userData.cognome = dataSplitted[9];
+        userData.transactionId = dataSplitted[0];
+        userData.CodiceFiscale = dataSplitted[1];
+        
+        console.log('Protocollo.js:gwLanding userData ', userData);
+
         // con l'utente generare il token e ritornarlo al chiamante..
-        // var token = utilityModule.createJWT(req.user);
+        var token = uM.createJWT(userData);
         // res.redirect('/simplesaml/cli/#/landingSAML/' + token + '/' + req.body.RelayState);
         
-        // res.redirect('/protocollo/cli/#/landingGateway/' + token + '/' + req.body.RelayState);
-        res.status(200).send({msg: 'ok'});
+        res.redirect('/cli/#!/landingGatewayFedera/' + token);
+        // res.status(200).send({msg: 'ok'});
 });
 
 /* Restituisce la configurazione del form */
@@ -206,13 +225,13 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         }
 
         // verifica se richiesta autenticazione
-        log.info('auth enable ?');
+        log.info('Protocollo.js: auth enable ?');
         var loggedUser = {};
         if(ENV_FORM_CONFIG.authEnable){
-            log.info('Protocollo.js: auth enable ! check!');
+            log.info('Protocollo.js: auth enable >> check!');
             if (!uM.ensureAuthenticatedFun(req)){
-                log.info('Protocollo.js: NOT AUTH'); // cli/#!/login/D
-                log.error('Protocollo.js: NOT AUTH');
+                log.info('Protocollo.js: NOT AUTH TOKEN!'); // cli/#!/login/D
+                log.error('Protocollo.js: NOT AUTH TOKEN!');
                 ErrorMsg = {
                         title: 'Eseguire autenticazione',
                         msg: 'Eseguire autenticazione',
@@ -221,7 +240,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
                 res.status(999).send(ErrorMsg);
                 return;
             } else {
-                log.info('Protocollo.js: logged!');
+                log.info('Protocollo.js: logged go!');
                 loggedUser = uM.ensureAuthenticatedFun(req);
                 log.info(loggedUser);
             }

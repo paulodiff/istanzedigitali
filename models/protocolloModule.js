@@ -611,7 +611,9 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
                MittentiDestinatari: {
                 MittenteDestinatario: [
                   {
-                    CodiceFiscale : objFilesList.codiceFiscaleRichiedente,
+                    // PATCH per segnalazione Maggioli - Miriam Saladino  
+                    // CodiceFiscale : objFilesList.codiceFiscaleRichiedente,
+                    CodiceFiscale : '',
                     CognomeNome: objFilesList.cognomeRichiedente + ' ' + objFilesList.nomeRichiedente,
                     DataNascita : objFilesList.dataNascitaRichiedente,
                     Indirizzo : objFilesList.indirizzoRichiedente,

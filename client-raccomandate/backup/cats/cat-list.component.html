@@ -1,0 +1,53 @@
+<hello name="{{ name }}"></hello>
+
+
+<form [formGroup]="formSearch" (ngSubmit)="submitSearch()">
+  <formly-form [model]="modelSearch" [fields]="fieldsSearch" [options]="optionsSearch" [form]="form">
+    <button type="submit" class="btn btn-primary submit-button" [disabled]="!formSearch.valid">Ricerca</button>
+  </formly-form>
+</form>
+
+<form [formGroup]="formNew" (ngSubmit)="submitNew()">
+  <formly-form [model]="modelNew" [fields]="fieldsNew" [options]="optionsNew" [form]="form">
+  </formly-form>
+</form>
+
+
+
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Data Registrazione</th>
+      <th scope="col">Nominativo</th>
+      <th scope="col">Consegnatario</th>
+      <th scope="col">Cronologico</th>
+      <th scope="col">Data Consegna</th>
+      <th scope="col">Documento</th>
+      <th scope="col">Data documento</th>
+      <th scope="col">Note</th>
+      <th scope="col">Operatore</th>
+      <th scope="col">Azione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of items">
+      <th><a [routerLink]="['/cats', item.id]">{{item.id}}</a></th>
+      <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
+      <td>{{item.atti_nominativo}}</td>
+      <td>{{item.atti_consegnatario}}</td>
+      <td>{{item.atti_cronologico}}</td>
+      <td>{{item.atti_data_consegna}}</td>
+      <td>{{item.atti_documento}}</td>
+      <td>{{item.atti_data_doc}}</td>
+      <td>{{item.atti_data_note}}</td>
+      <td>{{item.atti_operatore}}</td>
+      <td>
+        <button type="submit" 
+                (click)="eliminaAtto(item.id)"
+                class="btn btn-primary submit-button">Elimina</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -9,7 +9,7 @@ var request = require('request');
 var qs = require('querystring');
 var path = require('path');
 var models = require("../modelsSequelize");
-var log = require('../models/loggerModule.js');
+// var log = require('../models/loggerModule.js');
 var uuidV4 = require('uuid/v4');
 var Sequelize = require("sequelize");
 

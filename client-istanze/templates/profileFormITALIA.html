@@ -1,0 +1,106 @@
+<section>
+
+<div class="u-layout-wide u-layoutCenter u-layout-withGutter u-padding-r-top u-padding-bottom-xxl">
+          
+<h1 class="u-text-h2">Pagina di riepilogo dati di autenticazione</h1>
+
+<table class="Table Table--withBorder Table--responsive u-text-r-xs">
+  <tbody>
+    <tr>
+          <td><b>Nome<b></td>
+          <td>{{user.nome}} - {{user.cognome}}</td>
+    </tr>
+    <tr>
+          <td><b>Codice Fiscale<b></td>
+          <td>{{user.CodiceFiscale}}</td>
+    </tr>
+    <tr>
+          <td><b>userid<b></td>
+          <td>{{user.userid}}</td>
+    </tr>
+    <tr>
+          <td><b>Data Nascita<b></td>
+          <td>{{user.dataNascita}}</td>
+    </tr>
+    <tr>
+      <td><b>TrasactionId<b></td>
+      <td>{{user.transactionId}}</td>
+</tr>    
+<tr>
+  <td><b>La sessione scade alle:<b></td>
+  <td>{{user.timeOutFormatted}}</td>
+</tr>    
+  </tbody>
+</table>
+<hr>
+<h1 class="u-text-h2">Azioni che è possibile effettuare:</h1>
+
+<article class="Prose">
+
+<h3>Presentare una nuova istanza cliccando il bottone seguente:</h3>
+<a class="Button Button--info u-text-r-xs" ui-sref="elencoIstanze" ui-sref-active="active">Presenta una nuova istanza</a>
+<hr>
+<h3>Visualizzare un breve elenco delle istanze già presentate cliccando il bottone seguente:</h3>
+
+<button class="Button Button--info u-text-r-xs" data-toggle="collapse" data-target="#istanzepresentate">Mostra istanze presentate</button>
+  
+      <table class="Table Table--withBorder Table--responsive u-text-r-xs">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Protocollo</th>
+          <th>tipo</th>
+          <th>stato</th>
+          <th>azione</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="istanza in user.Istanze">
+                <td>{{$index + 1}}</td>
+                <td>{{istanza.protocolloIdDocumento}}/{{istanza.protocolloAnno}}/{{istanza.protocolloNumero}}</td>
+                <td>{{istanza.tipoIstanza}}</td>
+                <td>{{istanza.statoIter}}</td>
+                <td class="pull-right"><a class="btn btn-raised btn-success">Dettagli <span class="glyphicon glyphicon-print"></span></a></td>
+          </tr>
+        </tbody>
+      </table>
+<hr>  
+
+<h3>Mostrare lo storico degli accessi al portale cliccando il bottone seguente</h3>
+<button class="Button Button--info u-text-r-xs" data-toggle="collapse" data-target="#demo">Mostra storico accessi</button>
+
+<table class="Table Table--withBorder Table--responsive u-text-r-xs">
+  <thead>
+  <tr>
+    <th>#</th>
+    <th>ts</th>
+    <th>trustLevel</th>
+    <th>policyLevel</th>
+    <th>uuidV4</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="authEvent in user.AuthEvents">
+          <td>{{$index + 1}}</td>
+          <td>{{authEvent.ts}}</td>
+          <td>{{authEvent.trustLevel}}</td>
+          <td>{{authEvent.policyLevel}}</td>
+          <td>{{authEvent.uuidV4}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h3>Disconnetersi dall'account di autenticazione SPID o FEDERA cliccando il bottone seguente</h3>
+<a class="Button Button--info u-text-r-xs"  ui-sref="login" ui-sref-active="active">Disconnetti</a>
+
+
+</article>
+</div>    
+
+
+
+</section>
+
+

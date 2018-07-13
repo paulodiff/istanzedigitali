@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-primary">
+    <a class="navbar-brand text-white" href="#">AeR</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link text-white" [routerLink]="['/atti/inserimento']"><span>Atti inserimento</span></a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link text-white" [routerLink]="['/atti/ricerca']"><span>Atti ricerca</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-white" [routerLink]="['/login']"><span>Login</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-white" [routerLink]="['/socket']"><span>Socket</span></a>
+        </li>
+
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
+        <button class="btn btn-warning my-2 my-sm-0 text-success" type="submit" (click)="showLoginInfo()">{{_userService.username}}</button>
+      </form>
+      <button class="btn btn-success my-2 my-sm-0 text-warning" type="submit" (click)="showLoginInfo()">Da consegnare: {{_userService.carrello.length}}</button>
+    </div>
+  </nav>  
+  
+
+<!-- Router Outlet -->
+<router-outlet></router-outlet>

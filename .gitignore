@@ -17,6 +17,9 @@ docs
 client/bower_components
 client/scripts/configuration.js
 client/dist
+client-raccomandate/bower_components
+client-raccomandate/scripts/configuration.js
+client-raccomandate/dist
 coverage
 platforms
 plugins

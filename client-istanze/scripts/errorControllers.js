@@ -2,8 +2,8 @@ angular.module('myApp.controllers')
 
   .controller('errorMgrCtrl', 
 
-           ['$scope', '$stateParams', '$http', 'dialogs',  '$rootScope', 'AuthService', 'SseService', 'DatabaseService', '$state','ENV', '$log', 'usSpinnerService','Upload',
-    function($scope,   $stateParams, $http,  dialogs,     $rootScope,   AuthService,   SseService,  DatabaseService,  $state,  ENV ,  $log,   usSpinnerService,  Upload ) {
+           ['$scope', '$stateParams', '$http',  '$rootScope', '$state','ENV', '$log', 'usSpinnerService',
+    function($scope,   $stateParams, $http,     $rootScope,    $state,  ENV ,  $log,   usSpinnerService ) {
 
     
     $log.info('errorMgrCtrl: startUp!');

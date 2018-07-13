@@ -1,0 +1,56 @@
+<hello name="{{ name }}"></hello>
+
+<!-- Not logged! -->
+
+<div *ngIf="!_userService.token" class="alert alert-light">
+
+    <h3>Accesso</h3>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form">
+          <button type="submit" class="btn btn-primary submit-button" [disabled]="!form.valid">Invia</button>
+        </formly-form>
+    </form>
+    <div *ngIf="_userService.errors">
+        <div class="alert alert-danger" role="alert" >
+            {{ _userService.errors }}
+        </div>
+    </div>
+    <span>{{ _userService.errors }}</span>
+
+</div>
+
+<!--  logged! -->
+
+<div *ngIf="_userService.token">
+  <div class="col-sm-12">You are logged in as {{ _userService.username }}.<br />
+    Token Expires: {{ _userService.token_expires }}<br />
+    <button (click)="refreshToken()" class="btn btn-primary">Refresh Token</button>
+    <button (click)="logout()" class="btn btn-primary">Log Out</button>
+  </div>
+</div>
+
+
+<form novalidate="" ng-reflect-form="[object Object]" class="ng-pristine ng-invalid ng-touched">
+    <div class="form-group">
+         <input type="text" class="form-control" id="exampleInputText">
+         <label class="form-control-label control-label" for="exampleInputText">Nominativo</label>
+        </div>
+        <div class="form-group">
+          <input type="number" class="form-control" id="exampleInputNumber">
+          <label for="exampleInputNumber">Numero partecipanti</label>
+        </div>
+        <div class="form-group">
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-labelledby="emailHelp1">
+          <label for="exampleInputEmail1">Indirizzo email</label>
+          <small id="emailHelp1" class="form-text text-muted">Non condivideremo mai la tua email con nessun altro.</small>
+        </div>
+</form>
+
+
+<div class="alert alert-success" role="alert">
+  Questo è un alert di <em>success</em>!
+</div>
+
+
+<button class="Button Button--info u-text-r-xs" type="button" (click)="testSse()">Check Sse</button>

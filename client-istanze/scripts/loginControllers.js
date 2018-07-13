@@ -669,7 +669,7 @@ angular.module('myApp.controllers')
   }])
 
 
-// SNavbarCtrl ------------------------------------------------------------------------------------
+// landingSAMLCtrl ------------------------------------------------------------------------------------
 .controller('landingSAMLCtrl',
 
            ['$scope', '$stateParams', 'dialogs', '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log',
@@ -698,15 +698,10 @@ angular.module('myApp.controllers')
         $log.info('landingSAMLCtrl: No RelayState');
     }
 
-
-    
     $scope.isAuthenticated = function() {
       // return $auth.isAuthenticated();
       return AuthService.isAuthenticated();
     };
-
-
-
 
 
     $scope.getUserId = function() {
@@ -720,6 +715,34 @@ angular.module('myApp.controllers')
     };
 
   }])
+
+// landingGatewayFederaCtrl ------------------------------------------------------------------------------------
+// azione di ritorno chiamato dal gateway federa
+.controller('landingGatewayFederaCtrl',
+
+           ['$scope', '$stateParams', '$rootScope', 'AuthService', 'Session', '$state','ENV', '$log',
+    function($scope,   $stateParams,   $rootScope,   AuthService,   Session,   $state,  ENV ,  $log ) {
+
+        $log.info('landingGatewayFederaCtrl...');
+        
+        // Verifica presenza del token
+        if($stateParams.tokenId) {
+            $log.info('landingGatewayFederaCtrl: STORE TOKEN. ..');
+            AuthService.storeToken($stateParams.tokenId);
+            $log.info('landingGatewayFederaCtrl: go to profile. ..');
+            // $state.go('profile');
+        } else{
+            $log.info('landingSAMLCtrl: No TokenId');
+        };
+    
+
+        $scope.isAuthenticated = function() {
+        // return $auth.isAuthenticated();
+            return AuthService.isAuthenticated();
+        };
+
+  }])
+
 
 
 // HelpController ------------------------------------------------------------------------------------

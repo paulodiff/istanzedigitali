@@ -6,6 +6,7 @@ var crypto = require('crypto');
 var constants = require('constants');
 var request = require('request');
 
+
 var log4js = require('log4js');
 log4js.configure(ENV.log4jsConfig);
 var log = log4js.getLogger("app")
@@ -96,6 +97,73 @@ module.exports = {
     console.log('[#ENC64#]', encrypted64);
     return encrypted64;
   },
+
+  // Encrypt with AES 64
+  encryptStringWithAES_64: function(toEncrypt, iv) {
+
+    let cipher_algorithm = 'AES-256-CBC';
+    console.log('[#AES#]','toEncrypt=', toEncrypt); // 098F6BCD4621D373CADE4E832627B4F6
+
+    // get password's md5 hash
+    let password = ENV.secretKey;
+    console.log('[#AES#e]','password=', password); // 098F6BCD4621D373CADE4E832627B4F6
+
+    // our data to encrypt
+    // let data = '06401;0001001;04;15650.05;03';
+    let data = toEncrypt;
+    console.log('[#AES#e]','data=', data);
+    console.log('[#AES#e]','iv=', iv);
+
+    // encrypt data
+    var cipher = crypto.createCipheriv(cipher_algorithm, password, iv);
+    var encryptedData = cipher.update(data, 'utf8', 'base64');
+    encryptedData += cipher.final('base64');
+    console.log('[#AES#e]','encrypted data=', encryptedData);
+    
+    var encrypted64 = base64url(encryptedData);
+    console.log('[#AES#e]','encrypted64 data=', encrypted64);
+
+    // TO REMOVE!!!
+    var d1 = 'RFd1U2hIT29Qczh0dU4zOHJoU2FRVGF6cE5rMnltaG1pMHBRT0pIRHgvMGkxakllSEUwTTNidnJyaVJkLy92cndKdGxpcElKUDFhd3F6SGpjeEQ3MDM1NktGMzIvTU9mWVpORVR1ODN6Zmd2THh4dkUzRUhJMzFLWU53eDBqZXE3SDZudlFTMXRUbjJocjQyT2V6K3FWR1lWSkJWNjUxTVNIMGJMdjFDbXpGVlFJeW5UcDc5VHhsTTNIeE5vOC9iRE8rNEFVQWtLNDlYNktodXA4QTNzK0o3MUNFWFNNZERPVUZZMVFEZS81TT0';
+    var iv = 'GflWdWVhkGodG5yo';
+
+    var dataDecoded = base64url.decode(d1);
+    console.log('[#AES# - reverse]','encryptedDecoded data=', dataDecoded);
+
+    var decryptor = crypto.createDecipheriv(cipher_algorithm, password, iv);
+    var decryptedData = decryptor.update(dataDecoded, 'base64', 'utf8') + decryptor.final('utf8');
+    console.log('[#AES# - reverse]','decrypted data=', decryptedData);
+
+    return encrypted64;
+  },
+
+
+  // Encrypt with AES 64
+  decryptStringWithAES_64: function(toDecrypt, iv) {
+
+      let cipher_algorithm = 'AES-256-CBC';
+      console.log('[#AES#d]','toDecrypt=', toDecrypt);
+      
+  
+      // get password's md5 hash
+      let password = ENV.secretKey;
+      console.log('[#AES#d]','password=', password); // 098F6BCD4621D373CADE4E832627B4F6
+  
+      console.log('[#AES#d]','data=', toDecrypt);
+      console.log('[#AES#d]','iv=', iv);
+  
+      // decrypt data
+      var dataDecoded = base64url.decode(toDecrypt);
+      console.log('[#AES#d]','dataDecoded=', dataDecoded);
+
+      var decryptor = crypto.createDecipheriv(cipher_algorithm, password, iv);
+      var decryptedData = decryptor.update(dataDecoded, 'base64', 'utf8') + decryptor.final('utf8');
+ 
+      console.log('[#AES#d]','decrypted data=', decryptedData);
+      return decryptedData;
+    },
+  
+  
 
   decryptStringWithRsaPrivateKey64: function(toDecrypt) {
 
@@ -402,13 +470,16 @@ module.exports = {
     
     createJWT: function(user, timeout1, timeout2) {
           // moment.js syntax 
-          timeout1 = timeout1 || 8;
-          timeout2 = timeout2 || 'h';
+          timeout1 = timeout1 || ENV.sessionTokenTimeOut;
+          timeout2 = timeout2 || ENV.sessionTokenTimeType;
+          timeOut = moment().add(timeout1, timeout2).unix();
+          user.sessionTimeout = timeOut;
+
           var payload = {
             sub: user,
             iat: moment().unix(),
-            // timeout di 2 ore
-            exp: moment().add(timeout1, timeout2).unix()
+            // timeout di 8 ore
+            exp: timeOut
           };
           return jwt.sign(payload, ENV.secret);
     },

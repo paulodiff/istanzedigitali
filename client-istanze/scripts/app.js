@@ -203,15 +203,37 @@ angular.module('myApp', [//'ionic',
     
     
     
-    
     /* Login/Logout/Auth/Profile */
-    
+
+    $stateProvider.state('landingGatewayFedera', {
+      url: '/landingGatewayFedera/{tokenId}',
+      templateUrl: 'templates/landingGatewayFedera.html',
+      controller: 'landingGatewayFederaCtrl',
+      accessLogged: false
+    });
+
+
     $stateProvider.state('login', {
       url: '/login/{id}',
       templateUrl: 'templates/loginFormITALIA.html',
       // controller: 'SLoginCtrl',
       controller: 'LoginController',
       accessLogged: false
+    });
+
+    $stateProvider.state('profile', {
+      url: '/profile',
+      templateUrl: 'templates/profileFormITALIA.html',
+      controller: 'profileMgrCtrl',
+      accessLogged: true
+  });
+
+  $stateProvider.state('error', {
+    url: '/error',
+    templateUrl: 'templates/errorFormITALIA.html',
+    params:      { 'response': null, 'info': null },
+    controller: 'errorMgrCtrl',
+    accessLogged: false
   });
 
 
@@ -238,12 +260,7 @@ angular.module('myApp', [//'ionic',
         controller: 'LoginController'
     });
       
-    $stateProvider.state('profile', {
-        url: '/profile',
-        templateUrl: 'templates/profileFormITALIA.html',
-        controller: 'profileMgrCtrl',
-        accessLogged: true
-    });
+
 
     $stateProvider.state('landingSAML', {
         url: '/landingSAML/{tokenId}/{RelayState}',
