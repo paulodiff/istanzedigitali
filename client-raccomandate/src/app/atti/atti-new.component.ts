@@ -14,13 +14,13 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts.js';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
-  templateUrl: './atti-list.component.html',
+  templateUrl: './atti-new.component.html',
 })
 
 // Component class
-export class AttiListComponent implements OnInit, OnDestroy {
+export class AttiNewComponent implements OnInit, OnDestroy {
 
-public name = 'Atti - ricerca - consegna';
+public name = 'Atti - Inserimento del ' + moment().format("YYYYMMDD");
 public action:any;
 private sub:any;
 
@@ -32,74 +32,6 @@ public dataReturned:any;
 public sseEventBus:any;
 
 
-
-// form ricerca
-
-public formSearch = new FormGroup({});
-public modelSearch: any = {};
-public optionsSearch: FormlyFormOptions = {};
-
-public fieldsSearch: FormlyFieldConfig[] = [
-  {
-    fieldGroupClassName: 'row',
-    fieldGroup: [
-        {
-          className: 'col-3',
-          type: 'input',
-          key: 'dataRicerca',
-          templateOptions: {
-            label: 'Data',
-          },
-          validators: {
-            ip: {
-              expression: (c) => /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/.test(c.value),
-              message: (error, field: FormlyFieldConfig) => `"${field.formControl.value}" data non valida`,
-            },
-          },
-        },
-        {
-          className: 'col-3',
-          type: 'inputR',
-          key: 'nominativo',
-          templateOptions: {
-            label: 'Nominativo',
-          },
-        },
-        {
-          className: 'col-3',
-          type: 'inputR',
-          key: 'cronologico',
-          templateOptions: {
-            label: 'Cronologico',
-          }
-        },
-        /*,{
-          className: 'col-3',
-          key: 'maxnumrighe',
-          type: 'select',
-          defaultValue: '100',
-          templateOptions: {
-            label: 'Max righe',
-            options: [
-              { label: '10', value: '10' },
-              { label: '100', value: '100' },
-              { label: '1000', value: '1000' },
-            ],
-          },
-        },*/
-        {
-          className: 'col-3',
-          type: 'button',
-          templateOptions: {
-            btnType: 'btn btn-outline-primary',
-            text: 'Ricerca',
-            label: 'Azione',
-            onClick: ($event) => {console.log(this.formSearch.valid); this.submitSearch(this.modelSearch); }
-          }
-        }
-      ]
-    }
-];
 
 // form New
 
@@ -130,6 +62,7 @@ public fieldsNew: FormlyFieldConfig[] = [
           key: 'nominativo',
           templateOptions: {
             label: 'Nominativo',
+            required: true
           },
           validators: {
             validation: Validators.compose([Validators.required])
@@ -143,6 +76,7 @@ public fieldsNew: FormlyFieldConfig[] = [
           key: 'cronologico',
           templateOptions: {
             label: 'Cronologico',
+            required: true
           },
           validators: {
             validation: Validators.compose([Validators.required])
@@ -159,9 +93,6 @@ public fieldsNew: FormlyFieldConfig[] = [
             text: 'Inserisci',
             label: 'Azione',
             onClick: ($event) => {console.log(this.formNew.valid); this.submitNew(this.modelNew); }
-          },
-          expressionProperties: {
-            'templateOptions.disabled': '!model.nominativo',
           }
         },
       ],
@@ -169,13 +100,14 @@ public fieldsNew: FormlyFieldConfig[] = [
 ];
 
 
-// form Consegna
 
-public formConsegna = new FormGroup({});
-public modelConsegna: any = {};
-public optionsConsegna: FormlyFormOptions = {};
+// form Modifica
 
-public fieldsConsegna: FormlyFieldConfig[] = [
+public formModifica = new FormGroup({});
+public modelModifica: any = {};
+public optionsModifica: FormlyFormOptions = {};
+
+public fieldsModifica: FormlyFieldConfig[] = [
     {
       fieldGroupClassName: 'row',
       fieldGroup: [
@@ -190,6 +122,19 @@ public fieldsConsegna: FormlyFieldConfig[] = [
             validation: Validators.compose([Validators.required])
           }
         },*/
+        {
+          className: 'col-3',
+          key: 'consegnatario',
+          type: 'select',
+          defaultValue: 'MESSI_NOTIFICATORI',
+          templateOptions: {
+            label: 'Consegnatario',
+            options: [
+              { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
+              { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
+            ],
+          },
+        },
         {
           className: 'col-4',
           type: 'input',
@@ -208,23 +153,9 @@ public fieldsConsegna: FormlyFieldConfig[] = [
         {
           className: 'col-4',
           type: 'input',
-          key: 'estremidocumento',
+          key: 'cronologico',
           templateOptions: {
-            label: 'Estremi Documento',
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
-          }
-          //,expressionProperties: {
-          //  'templateOptions.disabled': '!model.nominativo',
-          //}
-        },
-        {
-          className: 'col-4',
-          type: 'input',
-          key: 'note',
-          templateOptions: {
-            label: 'Note',
+            label: 'Cronologico',
           },
           validators: {
             validation: Validators.compose([Validators.required])
@@ -251,7 +182,8 @@ toUpperCase(value) {
 }
 
 ngOnInit() {
-  console.log('ATTI:ngOnInit');
+  console.log('ATTI:ngOnInit:new');
+  /*
   this.sub = this._route.params.subscribe(params => {
     this.action = params['action'];
     console.log(this.action);
@@ -259,18 +191,16 @@ ngOnInit() {
 
     // inserimenti imposta la data di lavoro ad oggi
   });
+  */
 
   console.log('ATTI:getAtti call');
   this.getAtti({dataricerca : this.oggi});
 
 }
 
-
 ngOnDestroy() {
-  console.log('ATTI:ngOnDestroy');
-
+  console.log('ATTI:ngOnDestroy:new');
 }
-
 
 submitSearch(modelSearch) {
   console.log('ATTI:submitSearch');
@@ -282,20 +212,25 @@ submitSearch(modelSearch) {
 submitNew(modelNew) {
   console.log('ATTI:submitNew');
   console.log(this.modelNew);
-  this._appService.saveAtti(this.modelNew).subscribe(
-    data => {
-      this.dataReturned = data;
-      console.log(data);
-      this.lastInsertedId = this.dataReturned.newId;
-    },
-    err => { console.log('ERRORE:'); console.log(err);},
-    () => { console.log('submitNew ok reload!'); 
-            this.modelNew.nominativo = '';
-            this.modelNew.cronologico = '';
-            this.getAtti({dataricerca : this.oggi});
-            this._toastr.success('Atto inserito!', 'Tutto ok!');
-    }
-  );
+  if (this.formNew.valid) {
+    this._appService.saveAtti(this.modelNew).subscribe(
+      data => {
+        this.dataReturned = data;
+        console.log(data);
+        this.lastInsertedId = this.dataReturned.newId;
+      },
+      err => { console.log('ERRORE:'); console.log(err);},
+      () => { console.log('submitNew ok reload!'); 
+              this.modelNew.nominativo = '';
+              this.modelNew.cronologico = '';
+              this.getAtti({dataricerca : this.oggi});
+              this._toastr.success('Atto inserito!', 'Tutto ok!');
+      }
+    );
+  } else {
+    this._toastr.error('Dati non validi!', 'Inserire i dati obbligatori!');
+  }
+  
   // this.getTodos(this.modelSearch);
 }
 
@@ -350,7 +285,6 @@ filterValue(obj, key, value) {
   return obj.find(function(v){ return v[key] === value});
 }
 
-/*
 // controlla se la notifica di aggiornamento ha modificato la lista in visualizzazione
 updateListFromMessage(msg){
   console.log('ATTI:updateListFromMessage ..');
@@ -368,13 +302,12 @@ updateListFromMessage(msg){
         this.items[i].atti_documento = msg.msg.atti_documento;
         this.items[i].atti_soggetto = msg.msg.atti_soggetto;
         this.items[i].atti_flag_consegna = msg.msg.atti_flag_consegna;
-        break; 
+        break; //Stop this loop, we found it!
       }
     }
   }
 
 }
-*/
 
 
 stampaReport() {
@@ -399,25 +332,22 @@ stampaReport() {
     ]);
 
     elencoTabellare.push([
-      {
-        text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
-        colSpan: 3, 
-        fontSize: 12,
-        alignment: 'left', 
-        border: [true, false, false, true]
-      },
+      {   text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
+          colSpan: 3, 
+          fontSize: 12,
+          alignment: 'left', 
+          border: [true, false, false, true]
+        },
         '',
         '',
-      {
-        text: '', 
+      { text: '', 
         colSpan: 2, 
         fontSize: 10,
         alignment: 'center',
         border: [true, false, true, true]
       },
-      ''
+       ''
     ]);
-
   });
 
   let tabellaStampa = {

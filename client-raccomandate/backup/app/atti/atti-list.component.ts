@@ -20,7 +20,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 // Component class
 export class AttiListComponent implements OnInit, OnDestroy {
 
-public name = 'Atti - ricerca - consegna';
+public name = 'Atti';
 public action:any;
 private sub:any;
 
@@ -225,6 +225,73 @@ public fieldsConsegna: FormlyFieldConfig[] = [
           key: 'note',
           templateOptions: {
             label: 'Note',
+          },
+          validators: {
+            validation: Validators.compose([Validators.required])
+          }
+          //,expressionProperties: {
+          //  'templateOptions.disabled': '!model.nominativo',
+          //}
+        }
+      ],
+    }
+];
+
+// form Modifica
+
+public formModifica = new FormGroup({});
+public modelModifica: any = {};
+public optionsModifica: FormlyFormOptions = {};
+
+public fieldsModifica: FormlyFieldConfig[] = [
+    {
+      fieldGroupClassName: 'row',
+      fieldGroup: [
+        /*{
+          className: 'col-4',
+          type: 'input',
+          key: 'dataconsegna',
+          templateOptions: {
+            label: 'Data Consegna',
+          },
+          validators: {
+            validation: Validators.compose([Validators.required])
+          }
+        },*/
+        {
+          className: 'col-3',
+          key: 'consegnatario',
+          type: 'select',
+          defaultValue: 'MESSI_NOTIFICATORI',
+          templateOptions: {
+            label: 'Consegnatario',
+            options: [
+              { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
+              { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
+            ],
+          },
+        },
+        {
+          className: 'col-4',
+          type: 'input',
+          key: 'nominativo',
+          templateOptions: {
+            label: 'Nominativo',
+          },
+          validators: {
+            validation: Validators.compose([Validators.required])
+          }
+          //,expressionProperties: {
+          //  'templateOptions.disabled': '!model.nominativo',
+          //}
+        },
+        
+        {
+          className: 'col-4',
+          type: 'input',
+          key: 'cronologico',
+          templateOptions: {
+            label: 'Cronologico',
           },
           validators: {
             validation: Validators.compose([Validators.required])

@@ -13,7 +13,7 @@ function Event () {
 util.inherits(Event, eventEmitter)
 
 Event.prototype.sendEvent = function(type, data) {
-    console.log('emitterModule.js:sendEvent:', type, data);
+    console.log('emitterModule.js:sendEvent:', type);
     this.emit(type, data)
 }
 

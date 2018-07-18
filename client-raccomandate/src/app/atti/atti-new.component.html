@@ -1,11 +1,13 @@
 <hello name="{{ name }}"></hello>
 
 <div class="alert alert-info">
-<form [formGroup]="formSearch" (ngSubmit)="submitSearch()"> 
-  <formly-form [model]="modelSearch" [fields]="fieldsSearch" [options]="optionsSearch" [form]="form">
+<!-- <form [formGroup]="formNew" (ngSubmit)="submitNew()"> -->
+<form [formGroup]="formNew">  
+  <formly-form [model]="modelNew" [fields]="fieldsNew" [options]="optionsNew" [form]="formNew">
   </formly-form>
 </form>
 </div>
+
 
 <table class="table table-striped bg-light">
   <thead class="thead-dark">
@@ -15,7 +17,6 @@
       <th scope="col">Nominativo</th>
       <th scope="col">Consegnatario</th>
       <th scope="col">Cronologico</th>
-      <th scope="col">Estremi consegna</th>
       <th scope="col">Operatore</th>
       <th scope="col">Azione</th>
     </tr>
@@ -31,32 +32,15 @@
       <td>{{item.atti_nominativo}}</td>
       <td>{{item.atti_consegnatario}}</td>
       <td>{{item.atti_cronologico}}</td>
-      <td>{{item.atti_data_consegna}} - {{item.atti_documento}} - {{item.atti_soggetto}} - {{item.atti_note}} - {{item.atti_operatore_consegna}} - {{item.atti_flag_consegna}}</td>
       <td>{{item.atti_operatore}}</td>
 
 
       <td *ngIf="item.atti_flag_consegna == '0'">
-
-        
-
-        <!-- <div *ngIf="action == 'ricerca' && item.atti_flag_consegna == '0'"> -->
-          <!--
-          <button type="submit" 
-                    (click)="showConsegnaForm(item.id)"
-                    class="btn btn-primary submit-button">C</button>
-          -->
-
-          <button type="submit" 
-                    (click)="aggiungiAllaConsegna(item)"
-                    class="btn btn-success submit-button">In Consegna</button>
-          <button type="submit" 
-                    (click)="showModificaAttoForm(item.id)"
-                    class="btn btn-primary submit-button">Modifica</button>
-
-
-        <!-- </div> -->
-        
+        <button type="submit" 
+                      (click)="showModificaAttoForm(item.id)"
+                      class="btn btn-primary submit-button">Modifica</button>
       </td>
+
     </tr>
     <tr *ngIf="form2show == item.id">
       <td colspan="10" class="bg-warning">
@@ -73,7 +57,5 @@
   </tbody>
 </table>
 
-<!--
-  <button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa report</button>
--->
+<button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa report</button>
 

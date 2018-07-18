@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-sm navbar-light bg-primary">
-    
+    <a class="navbar-brand text-white" href="#">AeR</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -9,30 +9,30 @@
         <li class="nav-item">
             <a class="nav-link text-white" 
             [routerLinkActive]="['bg-success']"
-            [routerLink]="['/atti/inserimento']"><span>ATTI INSERIMENTO</span></a>
+            [routerLink]="['/atti/inserimento']"><span>Atti inserimento</span></a>
         </li>
         
         <li class="nav-item">
             <a class="nav-link text-white" 
             [routerLinkActive]="['bg-success']"
-            [routerLink]="['/atti/ricerca']"><span>ATTI RICERCA</span></a>
+            [routerLink]="['/atti/ricerca']"><span>Atti ricerca</span></a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link text-white" 
             [routerLinkActive]="['bg-success']"
-            [routerLink]="['/login']"><span>LOGIN</span></a>
+            [routerLink]="['/login']"><span>Login</span></a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link text-white" 
                   [routerLink]="['/socket']"
-                  [routerLinkActive]="['btn-warning','text-black']" ><span>@sio@</span></a>
+                  [routerLinkActive]="['bg-success']" ><span>@sio@</span></a>
         </li>
 
       </ul>
       
-      <a class="nav-link text-white my-2 my-sm-0 text-warning" 
+      <a class="btn btn-success my-2 my-sm-0 text-warning" 
         [routerLinkActive]="['bg-success']"
         [routerLink]="['/consegna']"><span>Da consegnare: {{_userService.carrello.length}}</span></a>
       <button class="btn btn-warning my-2 my-sm-0 text-success" type="submit" (click)="showLoginInfo()">{{_userService.username}}</button>

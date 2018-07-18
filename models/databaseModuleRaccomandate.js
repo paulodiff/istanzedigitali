@@ -12,9 +12,16 @@ var models = require("../modelsSequelizeRaccomandate");
 // var log = require('../models/loggerModule.js');
 var uuidV4 = require('uuid/v4');
 var Sequelize = require("sequelize");
+var async = require('async');
+var _ = require('underscore');
+
+
+
 
 
 module.exports = {
+
+
 
 // rende persistente su database i dati della transazione di autenticazione
 saveAuthTransaction: function(user){
@@ -121,7 +128,26 @@ getIstanzeList: function(userid){
     })
 },
 
-/* metodi per la posta */
+getInfoLog: function(opts){
+
+    return new Promise(function(resolve, reject) {
+
+        console.log('databaseModule:getInfoLog');
+        console.log(opts);
+
+        models.logSequelize.findAll({
+          where: {
+             tblName : opts.tblName,
+             tblId : opts.tblId
+            } 
+        }).then(function(anotherTask) {
+            resolve(anotherTask);
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
 
 getAttiList: function(opts){
     return new Promise(function(resolve, reject) {
@@ -220,7 +246,7 @@ saveAtti: function(data){
         })
         .save()
         .then(function(anotherTask) {
-            resolve(anotherTask)
+            resolve(anotherTask);
         }).catch(function(error) {
             reject(error);
         });
@@ -234,7 +260,7 @@ updateConsegnaAtti: function(data){
         console.log('databaseModuleRaccomandate:updateConsegnaAtti');
         console.log('update:' + data.id);
 
-        models.rAtti.findOne({ where: {id: data.id} }).then(item => {
+        models.rAtti.findOne({ where: {id: data.id} }).then(function(item) {
             // project will be the first entry of the Projects table with the title 'aProject' || null
             item.update({
                 atti_note: data.note,
@@ -245,12 +271,111 @@ updateConsegnaAtti: function(data){
                 atti_flag_consegna : '1',
                 atti_operatore_consegna : 'TODO'
             })
-            .then(function(anotherTask) {resolve(anotherTask)})
-            .catch(function(error) {reject(error)});
+            .then(function(anotherTask) {
+                resolve(anotherTask);
+            }).catch(function(error) {
+                reject(error); 
+            });
+        }).catch(function(error) { 
+            reject(error); 
         });
 
     });
 },
+
+
+// aggiorna i dati di un atto
+updateAtto: function(data){
+
+    return new Promise(function(resolve, reject) {
+        console.log('databaseModuleRaccomandate:updateAtto');
+        console.log('atto update:' + data.id);
+
+        var tmpValues = {};
+
+        async.waterfall([
+
+            function(callback){
+                console.log('dMR:getAtto');
+                models.rAtti.findOne({ where: {id: data.id} }).then(function(item) {
+                    tmpValues = _.clone(item.dataValues);
+                    console.log(item.dataValues);
+                    callback(null, item);
+                }).catch(function(error) { 
+                    callback(error, null);
+                    // reject(error); 
+                });
+            },
+
+            function(item, callback){
+                console.log('dMR:updateAtto');
+                item.update({
+                    atti_nominativo: data.nominativo,
+                    atti_cronologico: data.cronologico,
+                    atti_consegnatario : data.consegnatario
+                }).then(function(anotherTask) {
+                    console.log('dMR:updateAtto:ok');
+                    callback(null, item, anotherTask);
+                }).catch(function(error){
+                    console.log('dMR:updateAtto:error');
+                    callback(error, null);
+                });
+            },
+
+            function(oldData, newData, callback){
+                console.log('dMR:updateLog');
+                console.log(oldData.dataValues);
+                console.log(newData);
+                console.log(tmpValues);
+                logArray = [];
+                for (var key in newData._changed) {
+
+                    logArray.push({
+                        ts: new Date(),
+                        tblName: 'rAtti',
+                        tblId: data.id,
+                        fldName: key,
+                        oldValue: tmpValues[key],
+                        newValue: newData.dataValues[key],
+                        userId: 'TODO'
+                    });
+                    console.log(key);
+                    console.log(tmpValues[key],newData.dataValues[key]);
+                }
+
+                console.log(logArray);
+
+                models.logSequelize.bulkCreate(logArray)
+                .then(function() {
+                    console.log('dMR:updateLog:ok');
+                    callback(null, 'logOk');
+                }).catch(function(error){
+                    console.log('dMR:updateLog:error');
+                    callback(error, null);
+                });
+                
+            }
+
+        ],function(err, results) {
+            // results is now equal to: {one: 1, two: 2}
+            console.log('dMR:Final!');
+            if(err){
+                console.log('dMR:Final:ERROR!');
+                console.log(err);
+                reject(err); 
+                // res.status(500).send(err);
+            } else {
+                console.log('dMR:Final:SUCCESS!');
+                // res.status(200).send();
+                resolve({updateAtto:'ok'});
+            }
+        });
+
+    });
+},
+
+
+
 
 // aggiorna i dati di una istanza per consultazioni
 updatePosta: function(data){

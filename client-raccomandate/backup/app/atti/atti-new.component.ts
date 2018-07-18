@@ -14,13 +14,13 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts.js';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
-  templateUrl: './atti-list.component.html',
+  templateUrl: './atti-new.component.html',
 })
 
 // Component class
-export class AttiListComponent implements OnInit, OnDestroy {
+export class AttiNewComponent implements OnInit, OnDestroy {
 
-public name = 'Atti - ricerca - consegna';
+public name = 'Atti';
 public action:any;
 private sub:any;
 
@@ -32,74 +32,6 @@ public dataReturned:any;
 public sseEventBus:any;
 
 
-
-// form ricerca
-
-public formSearch = new FormGroup({});
-public modelSearch: any = {};
-public optionsSearch: FormlyFormOptions = {};
-
-public fieldsSearch: FormlyFieldConfig[] = [
-  {
-    fieldGroupClassName: 'row',
-    fieldGroup: [
-        {
-          className: 'col-3',
-          type: 'input',
-          key: 'dataRicerca',
-          templateOptions: {
-            label: 'Data',
-          },
-          validators: {
-            ip: {
-              expression: (c) => /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/.test(c.value),
-              message: (error, field: FormlyFieldConfig) => `"${field.formControl.value}" data non valida`,
-            },
-          },
-        },
-        {
-          className: 'col-3',
-          type: 'inputR',
-          key: 'nominativo',
-          templateOptions: {
-            label: 'Nominativo',
-          },
-        },
-        {
-          className: 'col-3',
-          type: 'inputR',
-          key: 'cronologico',
-          templateOptions: {
-            label: 'Cronologico',
-          }
-        },
-        /*,{
-          className: 'col-3',
-          key: 'maxnumrighe',
-          type: 'select',
-          defaultValue: '100',
-          templateOptions: {
-            label: 'Max righe',
-            options: [
-              { label: '10', value: '10' },
-              { label: '100', value: '100' },
-              { label: '1000', value: '1000' },
-            ],
-          },
-        },*/
-        {
-          className: 'col-3',
-          type: 'button',
-          templateOptions: {
-            btnType: 'btn btn-outline-primary',
-            text: 'Ricerca',
-            label: 'Azione',
-            onClick: ($event) => {console.log(this.formSearch.valid); this.submitSearch(this.modelSearch); }
-          }
-        }
-      ]
-    }
-];
 
 // form New
 
@@ -237,6 +169,73 @@ public fieldsConsegna: FormlyFieldConfig[] = [
     }
 ];
 
+// form Modifica
+
+public formModifica = new FormGroup({});
+public modelModifica: any = {};
+public optionsModifica: FormlyFormOptions = {};
+
+public fieldsModifica: FormlyFieldConfig[] = [
+    {
+      fieldGroupClassName: 'row',
+      fieldGroup: [
+        /*{
+          className: 'col-4',
+          type: 'input',
+          key: 'dataconsegna',
+          templateOptions: {
+            label: 'Data Consegna',
+          },
+          validators: {
+            validation: Validators.compose([Validators.required])
+          }
+        },*/
+        {
+          className: 'col-3',
+          key: 'consegnatario',
+          type: 'select',
+          defaultValue: 'MESSI_NOTIFICATORI',
+          templateOptions: {
+            label: 'Consegnatario',
+            options: [
+              { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
+              { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
+            ],
+          },
+        },
+        {
+          className: 'col-4',
+          type: 'input',
+          key: 'nominativo',
+          templateOptions: {
+            label: 'Nominativo',
+          },
+          validators: {
+            validation: Validators.compose([Validators.required])
+          }
+          //,expressionProperties: {
+          //  'templateOptions.disabled': '!model.nominativo',
+          //}
+        },
+        
+        {
+          className: 'col-4',
+          type: 'input',
+          key: 'cronologico',
+          templateOptions: {
+            label: 'Cronologico',
+          },
+          validators: {
+            validation: Validators.compose([Validators.required])
+          }
+          //,expressionProperties: {
+          //  'templateOptions.disabled': '!model.nominativo',
+          //}
+        }
+      ],
+    }
+];
+
 
 constructor(
             private _appService: AppService,
@@ -350,7 +349,6 @@ filterValue(obj, key, value) {
   return obj.find(function(v){ return v[key] === value});
 }
 
-/*
 // controlla se la notifica di aggiornamento ha modificato la lista in visualizzazione
 updateListFromMessage(msg){
   console.log('ATTI:updateListFromMessage ..');
@@ -368,13 +366,12 @@ updateListFromMessage(msg){
         this.items[i].atti_documento = msg.msg.atti_documento;
         this.items[i].atti_soggetto = msg.msg.atti_soggetto;
         this.items[i].atti_flag_consegna = msg.msg.atti_flag_consegna;
-        break; 
+        break; //Stop this loop, we found it!
       }
     }
   }
 
 }
-*/
 
 
 stampaReport() {
@@ -399,25 +396,22 @@ stampaReport() {
     ]);
 
     elencoTabellare.push([
-      {
-        text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
-        colSpan: 3, 
-        fontSize: 12,
-        alignment: 'left', 
-        border: [true, false, false, true]
-      },
+      {   text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
+          colSpan: 3, 
+          fontSize: 12,
+          alignment: 'left', 
+          border: [true, false, false, true]
+        },
         '',
         '',
-      {
-        text: '', 
+      { text: '', 
         colSpan: 2, 
         fontSize: 10,
         alignment: 'center',
         border: [true, false, true, true]
       },
-      ''
+       ''
     ]);
-
   });
 
   let tabellaStampa = {

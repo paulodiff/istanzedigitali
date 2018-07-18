@@ -28,6 +28,7 @@ router.get('/info',
   //utilityModule.ensureAuthenticated, 
   function(req, res) {
     console.log('RaccomandateMgr info : ');
+    log.info('Info request!');
     emitterBus.eventBus.sendEvent('logMessage', { sseId: 'INFO', msg: 'INFO'});
     return res.status(200).send({msg:'info'});
 });
@@ -40,6 +41,24 @@ router.get('/cdc',
     console.log(req.query);
 
     databaseModule.getPostaCDC()
+    .then( function (result) {
+      // log.log2console(result);
+      return res.status(200).send(result);
+    })
+    .catch(function (err) {
+      console.log(err);
+      return res.status(200).send(err);
+    });
+});
+
+router.get('/infolog', 
+  //utilityModule.ensureAuthenticated, 
+  function(req, res) {
+    log.info('RaccomandateMgr get /atti : ');
+
+    console.log(req.query);
+
+    databaseModule.getInfoLog(req.query)
     .then( function (result) {
       // log.log2console(result);
       return res.status(200).send(result);
@@ -127,7 +146,7 @@ router.get('/atti',
      
 });
 
-// PUT aggiorna i dati di consegna degli atti
+// PUT aggiorna i dati di consegna degli atti o i dati dell'atto a seconda del parametro
 
 router.put('/atti', 
             // utilityModule.ensureAuthenticated, 
@@ -136,16 +155,34 @@ router.put('/atti',
     log.info('RaccomandateMgr PUT /atti UPDATE data');
     log.info(req.user);
     log.info(req.body);
+      
+    if(req.body.action == 'updateConsegna') {
+      log.info('updateConsegna');
+      databaseModule.updateConsegnaAtti(req.body).then(function (response) {
+        console.log('RaccomandateMgr atti consegna updated!');
+        // emitterBus.eventBus.sendEvent('updateMessage', { sseId: 'MYSSEDID', msg: response});
+        return res.status(200).send({action: 'updateConsegna', status: 'ok'});
+      }).catch(function (err) {
+        console.log('##ERRORE## RaccomandateMgr updateConsegna');
+        console.log(err);
+        return res.status(500).send(err);
+      });
+    };
 
-  // verifica se il dato è storico 
-    databaseModule.updateConsegnaAtti(req.body).then(function (response) {
-      console.log('RaccomandateMgr atti consegna updatedd!');
-      emitterBus.eventBus.sendEvent('updateMessage', { sseId: 'MYSSEDID', msg: response});
-      return res.status(200).send(response);
-    }).catch(function (err) {
-      console.log(err)
-      return res.status(500).send(err);
-    });
+    if(req.body.action == 'updateAtto') {
+      log.info('updateAtto');
+      databaseModule.updateAtto(req.body).then(function (response) {
+        console.log('RaccomandateMgr atti updatedd!');
+        // emitterBus.eventBus.sendEvent('updateMessage', { data: response.dataValues});
+        return res.status(200).send({action: 'updateAtto', status: 'ok'});
+      }).catch(function (err) {
+        console.log('##ERRORE## RaccomandateMgr updateAtto');
+        console.log(err);
+        return res.status(500).send(err);
+      });
+    };
+    
+    // return res.status(500).send({msg: 'action NOT found!'});
 
 });
 

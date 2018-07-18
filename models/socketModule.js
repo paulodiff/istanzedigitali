@@ -28,6 +28,22 @@ emitterBus.eventBus.on('logMessage', function(data) {
 });
 
 
+emitterBus.eventBus.on('updateMessage', function(data) {
+    console.log('#SM#: updateMessage!');
+    console.log(data);
+      
+    
+    console.log('#SM#:broadcast');
+    io_root.sockets.emit('message', {type:'updateMessage', data: data });
+
+    console.log('#SM#:list clients!');
+    io_root.clients(function(error, clients) {
+        if (error) throw error;
+        console.log(clients); // => [6em3d4TJP8Et9EMNAAAA, G5p55dHhGgUnLUctAAAB]
+      });
+    // io_socket.broadcast.emit(msg);
+});
+
 module.exports = function (io) {
     'use strict';
     io_root = io;

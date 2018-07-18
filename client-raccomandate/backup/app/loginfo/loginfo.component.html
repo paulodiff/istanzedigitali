@@ -1,0 +1,30 @@
+<hello name="{{ name }}"></hello>
+
+
+<table class="table table-striped bg-light">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">ts</th>
+            <th scope="col">TbName</th>
+            <th scope="col">TbId</th>
+            <th scope="col">fldName</th>
+            <th scope="col">oldValue</th>
+            <th scope="col">newValue</th>
+            <th scope="col">userId</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of items">
+          <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
+            <td>{{item.id}}</td>
+            <td>{{item.ts | date : "dd/MM/yyyy hh:mm:ss"}}</td>
+            <td>{{item.tblName}}</td>
+            <td>{{item.tblId}}</td>
+            <td>{{item.fldName}}</td>
+            <td>{{item.oldValue}}</td>
+            <td>{{item.newValue}}</td>
+            <td>{{item.userId}}</td>
+          </tr>
+        </tbody>
+    </table>
+

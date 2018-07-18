@@ -1,0 +1,64 @@
+<hello name="{{ name }}"></hello>
+
+
+<table class="table table-striped bg-light">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Data Reg.</th>
+            <th scope="col">Nominativo</th>
+            <th scope="col">Consegnatario</th>
+            <th scope="col">Cronologico</th>
+            <th scope="col">Azione</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of _appService.carrello">
+          <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
+            <td>{{item.id}}</td>
+            <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
+            <td>{{item.atti_nominativo}}</td>
+            <td>{{item.atti_consegnatario}}</td>
+            <td>{{item.atti_cronologico}}</td>
+            <td>
+                    <button type="submit" 
+                    (click)="removeItemFromList(item)"
+                    class="btn btn-primary submit-button">Elimina dalla consegna</button>
+
+            </td>
+            <td *ngIf="action == 'ricerca' && item.atti_flag_consegna == '0'">
+      
+              <!--
+              <div *ngIf="action == 'inserimentoFAKE'">
+                <button type="submit" 
+                        (click)="eliminaAtto(item.id)"
+                        class="btn btn-primary submit-button">Elimina</button>
+              </div>
+            -->
+      
+              <!-- <div *ngIf="action == 'ricerca' && item.atti_flag_consegna == '0'"> -->
+                <button type="submit" 
+                          (click)="showConsegnaForm(item.id)"
+                          class="btn btn-primary submit-button">C</button>
+      
+                <button type="submit" 
+                          (click)="aggiungiAllaConsegna(item)"
+                          class="btn btn-success submit-button">In Consegna</button>
+      
+      
+              <!-- </div> -->
+              
+            </td>
+          </tr>
+        </tbody>
+    </table>
+
+
+
+    <form [formGroup]="formConsegna" (cli)="eliminaAtto(item.id)">
+            <formly-form [model]="modelConsegna" [fields]="fieldsConsegna" [options]="optionsConsegna" [form]="form">
+                <button type="submit" 
+                (click)="updateConsegna(item.id)"
+                class="btn btn-primary submit-button">Aggiorna i dati di consegna</button>
+                <button type="button" class="btn btn-default" (click)="resetFormConsegna()">Annulla</button>
+            </formly-form>
+    </form>

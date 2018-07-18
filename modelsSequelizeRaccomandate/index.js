@@ -12,6 +12,7 @@ var sequelize = new Sequelize(ENV.mysql_sequelize.MYSQLdatabase,
                               ENV.mysql_sequelize.MYSQLpassword, {
 
     host: ENV.mysql_sequelize.MYSQLhost,
+    // logging: console.log, // log sql generated
     dialect: 'mysql',
     dialectOptions: {
         ssl: false
