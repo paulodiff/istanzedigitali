@@ -36,6 +36,7 @@ fs
         return (file.indexOf(".") !== 0) && (file !== "index.js");
     })
     .forEach(function(file) {
+        // console.log('Sequelize:reading...:',file);
         var model = sequelize["import"](path.join(__dirname, file));
         db[model.name] = model;
     });
@@ -46,9 +47,12 @@ Object.keys(db).forEach(function(modelName) {
     }
 });
 
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// relazione ... 
+// definizione delle relazioni ... 
+
+// db.rAtti.belongsTo(db.attiConsegnatari,     {foreignKey: 'atti_consegnatario_codice'}  );
 
 module.exports = db;

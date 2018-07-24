@@ -294,6 +294,7 @@ log.info('Sequelize START');
 models.sequelize.sync().then(function() {
   // models.rAtti.sync({f11orce:true});
   // models.logSequelize.sync({11force:true});
+  // models.AttiConsegnatari.sync({11force:true});
   /**
    * Listen on provided port, on all network interfaces.
    */

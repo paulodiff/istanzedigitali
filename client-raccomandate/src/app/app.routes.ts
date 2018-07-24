@@ -9,14 +9,14 @@ import { LoginComponent } from './login/login.component';
 import { SocketComponent } from './socket/socket.component';
 import { ConsegnaComponent } from './consegna/consegna.component';
 import { LogInfoComponent } from './loginfo/loginfo.component';
-import { dogRoutes } from './dogs/dog.routes';
+// import { dogRoutes } from './dogs/dog.routes';
 import { attiRoutes } from './atti/atti.routes';
 
 // Route Configuration
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/cats',
+    redirectTo: '/atti/inserimento',
     pathMatch: 'full'
   },
 
@@ -24,7 +24,7 @@ export const routes: Routes = [
   { path: 'socket', component: SocketComponent },
   { path: 'consegna', component: ConsegnaComponent },
   { path: 'loginfo/:id', component: LogInfoComponent },
-  ...dogRoutes,
+  // ...dogRoutes,
   ...attiRoutes
     // ,  { path: 'dogs', component: DogListComponent }
 ];

@@ -1,10 +1,12 @@
 <hello name="{{ name }}"></hello>
 
+<h1>Accesso</h1>
+
 <!-- Not logged! -->
 
 <div *ngIf="!_userService.token" class="alert alert-light">
 
-    <h3>Accesso</h3>
+    
 
     <form [formGroup]="form" (ngSubmit)="submit()">
         <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form">
@@ -54,3 +56,6 @@
 
 
 <button class="Button Button--info u-text-r-xs" type="button" (click)="testSse()">Check Sse</button>
+
+
+<button class="btn btn-warning my-2 my-sm-0 text-success" type="submit" (click)="showLoginInfo()">{{_userService.username}}</button>

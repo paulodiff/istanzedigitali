@@ -12,7 +12,7 @@ import { AppService } from '../services/app.service';
 export class LogInfoComponent implements OnInit, OnDestroy {
 
     public name = 'LogInfo Informazioni di Log';
-    public items = [];
+    public items: any;
     public id;
     connection;
     message;

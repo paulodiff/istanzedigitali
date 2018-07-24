@@ -3,21 +3,12 @@ var emitterBus = require('../models/emitterModule.js');
 var io_root = {};
 var io_socket = {};
 
-emitterBus.eventBus.on('logMessage', function(data) {
-    console.log('#SM#: on message!');
+emitterBus.eventBus.on('newItemMessage', function(data) {
+    console.log('#SM#: on message: newItemMessage');
     console.log(data);
-    
-  
-    var msg = {
-      msg: data.msg,
-      channelId: 'broadcast',
-      rnd: Math.random(),
-      sseId: data.sseId
-    }
-    
-
+      
     console.log('#SM#:broadcast');
-    io_root.sockets.emit('message', {type:'new-message', text: 'from_bus:' + new Date()});
+    io_root.sockets.emit('message', {type:'newItemMessage', data: data});
 
     console.log('#SM#:list clients!');
     io_root.clients(function(error, clients) {
@@ -28,13 +19,13 @@ emitterBus.eventBus.on('logMessage', function(data) {
 });
 
 
-emitterBus.eventBus.on('updateMessage', function(data) {
-    console.log('#SM#: updateMessage!');
+emitterBus.eventBus.on('updateItemMessage', function(data) {
+    console.log('#SM#: updateItemMessage!');
     console.log(data);
       
     
     console.log('#SM#:broadcast');
-    io_root.sockets.emit('message', {type:'updateMessage', data: data });
+    io_root.sockets.emit('message', {type:'updateItemMessage', data: data });
 
     console.log('#SM#:list clients!');
     io_root.clients(function(error, clients) {

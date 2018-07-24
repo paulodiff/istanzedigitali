@@ -13,14 +13,14 @@ export class SocketService {
 
   sendMessage(message){
     console.log('SocketService:sendMessage');
-    this.socket.emit('add-message', message);
+    this.socket.emit('message', message);
   }
 
   getMessages() {
     let observable = new Observable(observer => {
 
       this.socket = io(this.url);
-      
+
       this.socket.on('message', (data) => {
         console.log('SocketService:getMessage:on');
         observer.next(data);

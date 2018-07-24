@@ -48,6 +48,7 @@ export class AppService {
 
     getAtti(options) {
         // Begin assigning parameters
+        console.log('APP_SERVICE:getAtti');
         let Params = new HttpParams();
         console.log(options);
         console.log(environment.apiAtti);
@@ -110,6 +111,19 @@ export class AppService {
       return this.http.get(environment.apiInfoLog, { params: Params, headers: this.httpOptions } );
     }
 
+    // atticonsegnatari
+
+    getAttiConsegnatari(options) {
+      // get info log di una registrazione
+      console.log('APP_SERVICE:getAttiConsegnatari');
+      let Params = new HttpParams();
+      Params = Params.append('tblName', options.tblName);
+      Params = Params.append('tblId', options.tblId);
+      console.log(options);
+      // console.log(JSON.stringify(options));
+      return this.http.get(environment.apiAttiConsegnatari, { params: Params, headers: this.httpOptions } );
+    }
+
   // generate a random user id
   public fakeLogin() {
     this.username = ('M' + Math.random() * (10000) + 10000).substring(0, 5);
@@ -160,7 +174,7 @@ export class AppService {
 
   getStatus() {
     console.log('APP_SERVICE:getStatus');
-    let sseUrl = environment.apiInfo;
+    const sseUrl = environment.apiInfo;
     console.log(sseUrl);
     return this.http.get(sseUrl);
   }

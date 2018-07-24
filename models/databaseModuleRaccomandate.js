@@ -18,7 +18,6 @@ var _ = require('underscore');
 
 
 
-
 module.exports = {
 
 
@@ -171,10 +170,14 @@ getAttiList: function(opts){
             maxnumrighe = parseInt(opts.maxnumrighe);
         }
 
-        if (opts.dataricerca != 'undefined') {
+        //if (opts.dataricerca != 'undefined' || opts.dataricerca != '') {
+        var dataPosta = moment(opts.dataricerca, "DD/MM/YYYY").format();
+        console.log(dataPosta);
+        if(dataPosta != 'Invalid date') {
             console.log(opts.dataricerca);
-            var daDataPosta = moment(opts.dataricerca).hours(0).minutes(0).seconds(0).milliseconds(0).format();
-            var aDataPosta = moment(opts.dataricerca).hours(23).minutes(59).seconds(59).milliseconds(0).format();
+
+            var daDataPosta = moment(opts.dataricerca, "DD/MM/YYYY").hours(0).minutes(0).seconds(0).milliseconds(0).format();
+            var aDataPosta = moment(opts.dataricerca, "DD/MM/YYYY").hours(23).minutes(59).seconds(59).milliseconds(0).format();
             console.log(daDataPosta);
             console.log(aDataPosta);
             /*
@@ -203,9 +206,15 @@ getAttiList: function(opts){
 
         
         models.rAtti.findAll({
-          where: parametriFiltro,
-          order: [['id','ASC']],
-          limit: maxNumRighe
+            include: [
+                {   
+                    model: models.Consegnatari
+                    // ,where: { state: Sequelize.col('project.state') }
+                }
+            ],
+            where: parametriFiltro,
+            order: [['id','ASC']],
+            limit: maxNumRighe
         /*
         models.Posta.findAll({
           where: {
@@ -234,7 +243,8 @@ saveAtti: function(data){
             atti_ts: new Date(),
             atti_data_reg: new Date(),
             atti_nominativo: data.nominativo,
-            atti_consegnatario: data.consegnatario,
+            atti_consegnatario: '',
+            atti_consegnatario_codice: data.consegnatario,
             atti_cronologico: data.cronologico,
             atti_data_consegna: '',
             atti_documento: '',
@@ -253,31 +263,120 @@ saveAtti: function(data){
     })
 },
 
-// aggiorna i dati di consegna di un atto
+// aggiorna i dati di consegna di uno o più atti atto
 updateConsegnaAtti: function(data){
 
     return new Promise(function(resolve, reject) {
         console.log('databaseModuleRaccomandate:updateConsegnaAtti');
-        console.log('update:' + data.id);
+        console.log('update:', data);
+        console.log('user:', data.user);
 
-        models.rAtti.findOne({ where: {id: data.id} }).then(function(item) {
-            // project will be the first entry of the Projects table with the title 'aProject' || null
-            item.update({
-                atti_note: data.note,
-                atti_soggetto: data.nominativo,
-                atti_documento : data.estremidocumento,
-                atti_data_consegna : moment().format("DD/MM/YYYY h:mm:ss"),
-                atti_data_consegna_ok : new Date(),
-                atti_flag_consegna : '1',
-                atti_operatore_consegna : 'TODO'
-            })
-            .then(function(anotherTask) {
-                resolve(anotherTask);
-            }).catch(function(error) {
-                reject(error); 
-            });
-        }).catch(function(error) { 
-            reject(error); 
+        var listIdArray = data.idList.split(',');
+        console.log(listIdArray);
+
+
+        async.waterfall([
+
+            function(callback){
+                console.log('uC:findAndCountAll');
+                models.rAtti.findAndCountAll({ 
+                    where: {
+                        id: {
+                          $in: listIdArray
+                        },
+                        atti_flag_consegna: 0
+                      }
+                }).then(function(result) {
+                    console.log(result.count);
+                    // console.log(result.rows);
+                    console.log(listIdArray.length);
+
+                    if (result.count != listIdArray.length){
+                        callback({msg: 'I dati da aggiornare non possono essere aggiornati'}, null);
+                    } else {
+                        callback(null, result.count);
+                    }
+                }).catch(function(error) { 
+                    callback(error, null);
+                    // reject(error); 
+                });
+            },
+
+            function(item, callback){
+                console.log('dC:updateConsegna');
+                models.rAtti.update(
+                    {
+                        atti_note: data.note,
+                        atti_soggetto: data.nominativo,
+                        atti_documento : data.estremidocumento,
+                        atti_data_consegna : new Date(),
+                        atti_data_consegna_ok : new Date(),
+                        atti_flag_consegna : '1',
+                        atti_operatore_consegna : 'TODO'
+                    },
+                    { 
+                        where: {
+                            id: {
+                              $in: listIdArray
+                            }
+                          }
+                    }
+                ).then(function(anotherTask) {
+                    callback(null, anotherTask);
+                    //resolve(anotherTask);
+                }).catch(function(error) {
+                    //reject(error); 
+                    callback(error, null);
+                });
+            }
+            
+            /* ,function(oldData, callback){
+                console.log('dMR:updateLog');
+                console.log(oldData.dataValues);
+                console.log(newData);
+                console.log(tmpValues);
+                logArray = [];
+                for (var key in listIdArray) {
+
+                    logArray.push({
+                        ts: new Date(),
+                        tblName: 'rAtti',
+                        tblId: data.id,
+                        fldName: key,
+                        oldValue: tmpValues[key],
+                        newValue: newData.dataValues[key],
+                        userId: 'TODO'
+                    });
+                    console.log(key);
+                    console.log(tmpValues[key],newData.dataValues[key]);
+                }
+
+                console.log(logArray);
+
+                models.logSequelize.bulkCreate(logArray)
+                .then(function() {
+                    console.log('dMR:updateLog:ok');
+                    callback(null, 'logOk');
+                }).catch(function(error){
+                    console.log('dMR:updateLog:error');
+                    callback(error, null);
+                });
+                
+            }*/
+
+        ],function(err, results) {
+            // results is now equal to: {one: 1, two: 2}
+            console.log('uC:Final!');
+            if(err){
+                console.log('uC:Final:ERROR!');
+                console.log(err);
+                reject(err); 
+                // res.status(500).send(err);
+            } else {
+                console.log('uC:Final:SUCCESS!');
+                // res.status(200).send();
+                resolve({updateConsegna:'ok'});
+            }
         });
 
     });
@@ -312,7 +411,7 @@ updateAtto: function(data){
                 item.update({
                     atti_nominativo: data.nominativo,
                     atti_cronologico: data.cronologico,
-                    atti_consegnatario : data.consegnatario
+                    atti_consegnatario_codice : data.consegnatario
                 }).then(function(anotherTask) {
                     console.log('dMR:updateAtto:ok');
                     callback(null, item, anotherTask);
@@ -376,6 +475,19 @@ updateAtto: function(data){
 
 
 
+getAttiConsegnatari: function(){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getAttiConsegnatari');
+
+        models.Consegnatari.findAll()
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
 
 // aggiorna i dati di una istanza per consultazioni
 updatePosta: function(data){

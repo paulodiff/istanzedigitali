@@ -9,8 +9,9 @@ module.exports = function(sequelize, DataTypes) {
         atti_data_reg:      { type: DataTypes.DATE,     allowNull: false  },        
         atti_nominativo:    { type: DataTypes.STRING,   allowNull: false  },        
         atti_consegnatario: { type: DataTypes.STRING,   allowNull: false  },        
+        atti_consegnatario_codice: { type: DataTypes.INTEGER,   allowNull: false  }, 
         atti_cronologico:   { type: DataTypes.STRING,   allowNull: false  },        
-        atti_data_consegna: { type: DataTypes.STRING,   allowNull: false  },        
+        atti_data_consegna: { type: DataTypes.DATE,   allowNull: true  },        
         atti_data_consegna_ok: { type: DataTypes.DATE,   allowNull: true  }, 
         atti_documento:     { type: DataTypes.STRING,   allowNull: true  },        
         atti_data_doc:      { type: DataTypes.STRING,   allowNull: false  },        
@@ -26,5 +27,9 @@ module.exports = function(sequelize, DataTypes) {
        paranoid: true
     });
 
+    rAtti.associate = function (models) {
+        models.rAtti.belongsTo(models.Consegnatari, { foreignKey: 'atti_consegnatario_codice'  });
+    };
+ 
     return rAtti;
 }

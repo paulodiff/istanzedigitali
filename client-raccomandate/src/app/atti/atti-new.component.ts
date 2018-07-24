@@ -5,6 +5,8 @@ import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { Validators, FormGroup } from '@angular/forms';
 import { AppService} from '../services/app.service';
 import { ToastrService } from 'ngx-toastr';
+import { SocketService } from '../services/socket.service';
+import { ReportService } from '../services/report.service';
 // import { SseEventService } from '../services/sseevent.service';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
@@ -25,13 +27,13 @@ public action:any;
 private sub:any;
 
 public items: any;
+public attiConsegnatari: any;
 public form2show = 131102;
-public oggi = moment().format("YYYYMMDD");
+public oggi = moment().format("DD/MM/YYYY");
 public lastInsertedId:any;
 public dataReturned:any;
 public sseEventBus:any;
-
-
+public socketConnection:any;
 
 // form New
 
@@ -50,10 +52,15 @@ public fieldsNew: FormlyFieldConfig[] = [
           defaultValue: 'MESSI_NOTIFICATORI',
           templateOptions: {
             label: 'Consegnatario',
+            options: this._appService.getAttiConsegnatari({}),
+            valueProp: 'id',
+            labelProp: 'consegnatario_descrizione'
+            /*
             options: [
               { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
               { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
             ],
+            */
           },
         },
         {
@@ -63,9 +70,6 @@ public fieldsNew: FormlyFieldConfig[] = [
           templateOptions: {
             label: 'Nominativo',
             required: true
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
           }
           // ,parsers: [this.toUpperCase],
           // formatters: [this.toUpperCase]
@@ -77,9 +81,6 @@ public fieldsNew: FormlyFieldConfig[] = [
           templateOptions: {
             label: 'Cronologico',
             required: true
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
           }
           //,expressionProperties: {
           //  'templateOptions.disabled': '!model.nominativo',
@@ -89,7 +90,7 @@ public fieldsNew: FormlyFieldConfig[] = [
           className: 'col-3',
           type: 'button',
           templateOptions: {
-            btnType: 'btn btn-outline-primary',
+            btnType: 'btn btn-success',
             text: 'Inserisci',
             label: 'Azione',
             onClick: ($event) => {console.log(this.formNew.valid); this.submitNew(this.modelNew); }
@@ -98,8 +99,6 @@ public fieldsNew: FormlyFieldConfig[] = [
       ],
     }
 ];
-
-
 
 // form Modifica
 
@@ -129,10 +128,15 @@ public fieldsModifica: FormlyFieldConfig[] = [
           defaultValue: 'MESSI_NOTIFICATORI',
           templateOptions: {
             label: 'Consegnatario',
+            /*
             options: [
               { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
               { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
             ],
+            */
+          options: this._appService.getAttiConsegnatari({}),
+          valueProp: 'id',
+          labelProp: 'consegnatario_descrizione'
           },
         },
         {
@@ -171,8 +175,11 @@ public fieldsModifica: FormlyFieldConfig[] = [
 
 constructor(
             private _appService: AppService,
+            private _socketService: SocketService,
+            private _reportService: ReportService,
             private _route: ActivatedRoute,
-            private _toastr: ToastrService) {
+            private _toastr: ToastrService
+          ) {
   // this.items = db.collection('/items').valueChanges();
   // https://jsonplaceholder.typicode.com/todos
 }
@@ -182,7 +189,7 @@ toUpperCase(value) {
 }
 
 ngOnInit() {
-  console.log('ATTI:ngOnInit:new');
+  console.log('ATTI_NEW:ngOnInit:new');
   /*
   this.sub = this._route.params.subscribe(params => {
     this.action = params['action'];
@@ -193,24 +200,47 @@ ngOnInit() {
   });
   */
 
-  console.log('ATTI:getAtti call');
-  this.getAtti({dataricerca : this.oggi});
+  this.socketConnection = this._socketService.getMessages().subscribe(message => {
+    console.log('ATTI_NEW:message received from socket!');
+    console.log(message);
 
+    switch (message.type)
+    {
+       case 'newItemMessage':
+       case 'updateItemMessage':
+        console.log('ATTI_NEW: reloading data...');
+        this.getAtti({dataricerca : this.oggi});
+        break;
+
+       default: 
+       console.log('ATTI_NEW: no action form message type:', message.type);
+    }
+
+    // this.messages.push(message);
+  });
+
+  console.log('ATTI_NEW:getAtti call');
+  this.getAttiConsegnatari();
+  this.getAtti({dataricerca : this.oggi});
 }
 
 ngOnDestroy() {
-  console.log('ATTI:ngOnDestroy:new');
+  console.log('ATTI_NEW:ngOnDestroy');
+  console.log('ATTI_NEW:ngOnDestroy:unsubscribe');
+  this.socketConnection.unsubscribe();
 }
 
+/*
 submitSearch(modelSearch) {
-  console.log('ATTI:submitSearch');
+  console.log('ATTI_NEW:submitSearch');
   this.form2show = 0;
   console.log(this.modelSearch);
   this.getAtti(this.modelSearch);
 }
+*/
 
 submitNew(modelNew) {
-  console.log('ATTI:submitNew');
+  console.log('ATTI_NEW:submitNew');
   console.log(this.modelNew);
   if (this.formNew.valid) {
     this._appService.saveAtti(this.modelNew).subscribe(
@@ -220,45 +250,75 @@ submitNew(modelNew) {
         this.lastInsertedId = this.dataReturned.newId;
       },
       err => { console.log('ERRORE:'); console.log(err);},
-      () => { console.log('submitNew ok reload!'); 
-              this.modelNew.nominativo = '';
-              this.modelNew.cronologico = '';
+      () =>  { 
+              console.log('submitNew ok reload!');
+              // this.modelNew.nominativo = '';
+              // this.modelNew.cronologico = '';
               this.getAtti({dataricerca : this.oggi});
+              // this._socketService.sendMessage({action: 'updateMessage'});
               this._toastr.success('Atto inserito!', 'Tutto ok!');
       }
     );
   } else {
     this._toastr.error('Dati non validi!', 'Inserire i dati obbligatori!');
   }
-  
   // this.getTodos(this.modelSearch);
 }
 
 getAtti(ops) {
-  console.log('ATTI:getAtti');
+  console.log('ATTI_NEW:getAtti');
   this._appService.getAtti(ops).subscribe(
-      data => { 
+      data => {
         console.log(data);
         this.items = data;
       },
       err => console.log(err),
-      () => console.log('ATTI:getAtti done loading atti')
+      () => console.log('ATTI_NEW:getAtti done loading atti')
     );
 }
 
+getAttiConsegnatari() {
+  console.log('ATTI_NEW:getAttiConsegnatari');
+  var ops = {};
+  this._appService.getAttiConsegnatari(ops).subscribe(
+      data => { 
+        console.log(data);
+        this.attiConsegnatari = data;
+      },
+      err => console.log(err),
+      () => console.log('ATTI_NEW:getAttiConsegnatari done loading atti')
+    );
+}
+
+getInfo() {
+  this._appService.getStatus().subscribe(
+    data => {
+      console.log(data);
+    },
+    err => console.log(err),
+    () => console.log('ATTI_NEW:getInfo')
+  );
+
+}
+
+
+/*
 eliminaAtto(id){
   console.log(id);
   this._toastr.success('Hello world!', 'Toastr fun!');
 }
+*/
+
+/*
 
 updateConsegna(id){
-  console.log('ATTI:Update Consegna');
+  console.log('ATTI_NEW:Update Consegna');
   console.log(id);
   console.log(this.modelConsegna);
   this.modelConsegna.id = id;
   this._appService.updateConsegnaAtti(this.modelConsegna).subscribe(
     data => { 
-      console.log('ATTI:Update SUCCESS!');
+      console.log('ATTI_NEW:Update SUCCESS!');
       console.log(data);
       this.form2show = 0;
       this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
@@ -267,18 +327,23 @@ updateConsegna(id){
     () => console.log('done loading atti')
   );
 }
+*/
 
+/*
 showConsegnaForm(id){
-  console.log('ATTI:showConsegnaForm Consegna ..');
+  console.log('ATTI_NEW:showConsegnaForm Consegna ..');
   console.log(id);
   this.form2show = id;
   this.lastInsertedId = id;
 }
+*/
 
+/*
 resetFormConsegna(){
-  console.log('ATTI:resetForm Consegna ..');
+  console.log('ATTI_NEW:resetForm Consegna ..');
   this.form2show = 0;
 }
+*/
 
 
 filterValue(obj, key, value) {
@@ -287,17 +352,17 @@ filterValue(obj, key, value) {
 
 // controlla se la notifica di aggiornamento ha modificato la lista in visualizzazione
 updateListFromMessage(msg){
-  console.log('ATTI:updateListFromMessage ..');
+  console.log('ATTI_NEW:updateListFromMessage ..');
 
   // solo se ricerca
   if (this.action == 'ricerca') {
     var itemId  = msg.msg.id;
     console.log(this.items);
-    console.log('ATTI: search for ', itemId);
+    console.log('ATTI_NEW: search for ', itemId);
 
     for (var i in this.items) {
       if (this.items[i].id == itemId) {
-        console.log('ATTI: ITEM FOUND update!');
+        console.log('ATTI_NEW: ITEM FOUND update!');
         this.items[i].atti_note = msg.msg.atti_note + ' @@ ';
         this.items[i].atti_documento = msg.msg.atti_documento;
         this.items[i].atti_soggetto = msg.msg.atti_soggetto;
@@ -309,6 +374,10 @@ updateListFromMessage(msg){
 
 }
 
+stampaReportService(){
+  console.log('ATTI_NEW:stampaReportService ..');
+  this._reportService.stampaReport(this.items);
+}
 
 stampaReport() {
 
@@ -319,8 +388,6 @@ stampaReport() {
 
   elencoTabellare.push([ 'Progr.', 'Data', 'Nominativo', 'Data Consegna - Documento - Firma  ', 'Progr' ]);
   tableWidhts =        [ 50,        65,     150,         '*',                                     60 ];
-
-
 
   this.items.forEach(function(obj){
     elencoTabellare.push([
@@ -360,7 +427,6 @@ stampaReport() {
       }
   };
 
-
   contenutoStampa.push( { 
     text: 'Comune di Rimini - Ufficio Protocollo - Deposito atti comunali - Data deposito: ' + moment().format('DD/MM/YYYY'), fontSize: 18 } 
   );
@@ -375,7 +441,6 @@ stampaReport() {
     contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
   }
   */
-
 
   const docDefinition = { 
     pageSize: 'A4',
@@ -396,45 +461,53 @@ stampaReport() {
     content: [contenutoStampa]
    };
 
-
    pdfMake.createPdf(docDefinition).open();
 }
 
-showModificaAttoForm(id) {
-  console.log('ATTI:showModificaAttoForm show form! ..');
-  console.log(id);
-  this.form2show = id;
-  this.lastInsertedId = id;
+showModificaAttoForm(item) {
+  console.log('ATTI_NEW:showModificaAttoForm show form! ..');
+  console.log(item);
+  this.form2show = item.id;
+  this.lastInsertedId = item.id;
+  this.modelModifica.nominativo = item.atti_nominativo;
+  this.modelModifica.cronologico = item.atti_cronologico;
+  this.modelModifica.consegnatario = item.atti_consegnatario_codice;
+    
 }
 
 hideModificaAttoForm(){
-  console.log('ATTI:hideModificaAttoForm Consegna ..');
+  console.log('ATTI_NEW:hideModificaAttoForm Consegna ..');
   this.form2show = 0;
 }
 
 updateAtto(id){
-  console.log('ATTI:updateAtto');
+  console.log('ATTI_NEW:updateAtto');
   console.log(id);
   console.log(this.modelModifica);
 
   this.modelModifica.id = id;
   this._appService.updateAtti(this.modelModifica).subscribe(
     data => { 
-      console.log('ATTI:updateAtto SUCCESS!');
+      console.log('ATTI_NEW:updateAtto SUCCESS!');
       console.log(data);
+      this.modelNew.nominativo = '';
+      this.modelNew.cronologico = '';
+      this.getAtti({dataricerca : this.oggi});
       this.form2show = 0;
       this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
     },
     err => { console.log(err); this._toastr.error('Errore - Aggiornamento errato', err.statusText); },
-    () => console.log('ATTI:updateAtto completed!')
+    () => console.log('ATTI_NEW:updateAtto completed!')
   );
 }
 
+/*
 aggiungiAllaConsegna(item) {
-  console.log('ATTI:aggiungiAllaConsegna');
+  console.log('ATTI_NEW:aggiungiAllaConsegna');
   console.log(item);
   this._appService.carrello.push(item);
   console.log(this._appService.carrello);
 }
+*/
 
 }

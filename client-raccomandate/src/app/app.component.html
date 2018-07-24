@@ -8,21 +8,16 @@
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
             <a class="nav-link text-white" 
-            [routerLinkActive]="['bg-success']"
+            [routerLinkActive]="['bg-warning']"
             [routerLink]="['/atti/inserimento']"><span>ATTI INSERIMENTO</span></a>
         </li>
         
         <li class="nav-item">
             <a class="nav-link text-white" 
-            [routerLinkActive]="['bg-success']"
+            [routerLinkActive]="['bg-warning']"
             [routerLink]="['/atti/ricerca']"><span>ATTI RICERCA</span></a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link text-white" 
-            [routerLinkActive]="['bg-success']"
-            [routerLink]="['/login']"><span>LOGIN</span></a>
-        </li>
 
         <li class="nav-item">
             <a class="nav-link text-white" 
@@ -32,11 +27,16 @@
 
       </ul>
       
-      <a class="nav-link text-white my-2 my-sm-0 text-warning" 
-        [routerLinkActive]="['bg-success']"
+      <a class="nav-link text-white my-2 my-sm-0" 
+        [routerLinkActive]="['bg-warning']"
         [routerLink]="['/consegna']"><span>Da consegnare: {{_userService.carrello.length}}</span></a>
-      <button class="btn btn-warning my-2 my-sm-0 text-success" type="submit" (click)="showLoginInfo()">{{_userService.username}}</button>
-      
+
+        
+        <a class="nav-link text-white" 
+        [routerLinkActive]="['bg-warning']"
+        [routerLink]="['/login']"><span>{{_userService.username}}</span></a>
+
+
     </div>
   </nav>  
   

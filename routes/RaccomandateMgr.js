@@ -33,21 +33,21 @@ router.get('/info',
     return res.status(200).send({msg:'info'});
 });
 
-router.get('/cdc', 
+router.get('/atticonsegnatari', 
   //utilityModule.ensureAuthenticated, 
   function(req, res) {
-    console.log('PostaMgr get /cdc : ');
+    console.log('RaccomandateMgr get /atticonsegnatari : ');
 
     console.log(req.query);
 
-    databaseModule.getPostaCDC()
+    databaseModule.getAttiConsegnatari()
     .then( function (result) {
       // log.log2console(result);
       return res.status(200).send(result);
     })
     .catch(function (err) {
       console.log(err);
-      return res.status(200).send(err);
+      return res.status(500).send(err);
     });
 });
 
@@ -161,11 +161,11 @@ router.put('/atti',
       databaseModule.updateConsegnaAtti(req.body).then(function (response) {
         console.log('RaccomandateMgr atti consegna updated!');
         // emitterBus.eventBus.sendEvent('updateMessage', { sseId: 'MYSSEDID', msg: response});
-        return res.status(200).send({action: 'updateConsegna', status: 'ok'});
+        return res.status(200).send({action: 'updateConsegna', status: 'ok', data: response});
       }).catch(function (err) {
         console.log('##ERRORE## RaccomandateMgr updateConsegna');
         console.log(err);
-        return res.status(500).send(err);
+        return res.status(405).send(err);
       });
     };
 
@@ -173,7 +173,7 @@ router.put('/atti',
       log.info('updateAtto');
       databaseModule.updateAtto(req.body).then(function (response) {
         console.log('RaccomandateMgr atti updatedd!');
-        // emitterBus.eventBus.sendEvent('updateMessage', { data: response.dataValues});
+        emitterBus.eventBus.sendEvent('updateItemMessage', { msg: 'updateItem', newId: response.id});
         return res.status(200).send({action: 'updateAtto', status: 'ok'});
       }).catch(function (err) {
         console.log('##ERRORE## RaccomandateMgr updateAtto');
@@ -253,7 +253,9 @@ router.post('/atti',
       console.log('RaccomandateMgr posta saved!');
       console.log(response.id);
       console.log(response.dataValues.id);
-      return res.status(200).send({msg:'ok:atti:saved!',newId: response.id});
+      emitterBus.eventBus.sendEvent('newItemMessage', { msg: 'newItem', newId: response.id});
+      //newItemMessage
+      return res.status(200).send({msg:'ok:atti:saved!', newId: response.id, data: response});
     }).catch(function (err) {
       console.log(err)
       return res.status(500).send(err);

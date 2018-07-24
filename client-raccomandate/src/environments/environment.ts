@@ -7,6 +7,7 @@ export const environment = {
   apiAtti: 'http://localhost:8010/raccomandatemgr/atti',
   apiInfo: 'http://localhost:8010/raccomandatemgr/info',
   apiInfoLog: 'http://localhost:8010/raccomandatemgr/infolog',
+  apiAttiConsegnatari: 'http://localhost:8010/raccomandatemgr/atticonsegnatari',
   apiSse: 'http://localhost:8010/sse',
   apiSocket: 'http://localhost:8010'
 };

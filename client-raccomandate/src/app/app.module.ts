@@ -33,6 +33,7 @@ import { routing } from './app.routes';
 import { ToastrModule } from 'ngx-toastr';
 // import { SseEventService } from './services/sseevent.service';
 import { SocketService } from './services/socket.service';
+import { ReportService } from './services/report.service';
 
 
 @NgModule({
@@ -83,7 +84,7 @@ import { SocketService } from './services/socket.service';
     FormlyFieldInput,
     FormlyFieldSelect
   ],
-  providers: [ AppService, SocketService ],
+  providers: [ AppService, SocketService, ReportService ],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }
