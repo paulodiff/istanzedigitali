@@ -13,11 +13,15 @@ import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
 import { environment } from '../environments/environment';
 
-import { DogListComponent }  from './dogs/dog-list.component';
-import { DogDetailsComponent }  from './dogs/dog-details.component';
 import { LoginComponent }  from './login/login.component';
 import { AttiListComponent }  from './atti/atti-list.component';
 import { AttiNewComponent }  from './atti/atti-new.component';
+import { RaccomandateListComponent }  from './raccomandate/raccomandate-list.component';
+import { RaccomandateNewComponent }  from './raccomandate/raccomandate-new.component';
+import { ConsegnaListComponent }  from './consegna/consegna-list.component';
+import { ConsegnaNewComponent }  from './consegna/consegna-new.component';
+
+
 import { SocketComponent }  from './socket/socket.component';
 import { ConsegnaComponent }  from './consegna/consegna.component';
 import { LogInfoComponent } from './loginfo/loginfo.component';
@@ -74,8 +78,10 @@ import { ReportService } from './services/report.service';
     HelloComponent,
     AttiListComponent,
     AttiNewComponent,
-    DogListComponent, 
-    DogDetailsComponent,
+    RaccomandateListComponent,
+    RaccomandateNewComponent,
+    ConsegnaListComponent,
+    ConsegnaNewComponent,
     LoginComponent,
     SocketComponent,
     ConsegnaComponent,

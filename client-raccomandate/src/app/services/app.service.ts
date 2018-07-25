@@ -76,6 +76,17 @@ export class AppService {
         return this.http.post(environment.apiAtti, JSON.stringify(options), this.httpOptions );
     }
 
+    saveConsegna(options) {
+      // Begin assigning parameters
+      console.log('APP_SERVICE:saveConsegna');
+      let Params = new HttpParams();
+      console.log(options);
+
+      // console.log(JSON.stringify(options));
+      return this.http.post(environment.apiConsegna, JSON.stringify(options), this.httpOptions );
+  }
+
+
     updateConsegnaAtti(options) {
       // Begin assigning parameters
       console.log('APP_SERVICE:updateConsegnaAtti');
@@ -89,6 +100,9 @@ export class AppService {
       // console.log(JSON.stringify(options));
       return this.http.put(environment.apiAtti, JSON.stringify(options), this.httpOptions );
     }
+
+
+
 
     updateAtti(options) {
       // Begin assigning parameters

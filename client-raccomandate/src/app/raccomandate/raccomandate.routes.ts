@@ -1,16 +1,12 @@
-// ======= ./app/cats/cat.routes.ts =====
-// Imports
-// Deprecated import
-// import { RouterConfig } from '@angular/router';
 import { Routes } from '@angular/router';
 
-import { AttiListComponent } from './atti-list.component';
-import { AttiNewComponent } from './atti-new.component';
+import { RaccomandateListComponent } from './raccomandate-list.component';
+import { RaccomandateNewComponent } from './raccomandate-new.component';
 
 
 // Route Configuration
-export const attiRoutes: Routes = [
-  { path: 'atti', component: AttiListComponent },
-  { path: 'atti/inserimento', component: AttiNewComponent },
-  { path: 'atti/ricerca', component: AttiListComponent }
+export const raccomandateRoutes: Routes = [
+  { path: 'raccomandate', component: RaccomandateListComponent },
+  { path: 'raccomandate/inserimento', component: RaccomandateNewComponent },
+  { path: 'raccomandate/ricerca', component: RaccomandateListComponent }
 ];

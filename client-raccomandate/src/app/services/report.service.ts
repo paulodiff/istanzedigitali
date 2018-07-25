@@ -17,14 +17,14 @@ import * as moment from 'moment';
 import * as pdfMake from 'pdfmake/build/pdfmake.js';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts.js';
 
-
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 
 @Injectable()
 export class ReportService {
     // http options used for making API calls
 
-    public pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    
 
     private httpOptions: any;
     

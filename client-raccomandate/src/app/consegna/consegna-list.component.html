@@ -1,0 +1,79 @@
+<hello name="{{ name }}"></hello>
+
+<div class="alert alert-info">
+<form [formGroup]="formSearch" (ngSubmit)="submitSearch()"> 
+  <formly-form [model]="modelSearch" [fields]="fieldsSearch" [options]="optionsSearch" [form]="form">
+  </formly-form>
+</form>
+</div>
+
+<table class="table table-striped bg-light">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Data Reg.</th>
+      <th scope="col">Nominativo</th>
+      <th scope="col">Consegnatario</th>
+      <th scope="col">Cronologico</th>
+      <th scope="col">Estremi consegna</th>
+      <th scope="col">Operatore</th>
+      <th scope="col">Azione</th>
+    </tr>
+  </thead>
+  <tbody *ngFor="let item of items">
+    <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
+      <td>
+          <a  
+          [routerLink]="['/loginfo', item.id]"
+          >{{item.id}}</a>
+      </td>
+      <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
+      <td>{{item.atti_nominativo}}</td>
+      <td>{{item.Consegnatari.consegnatario_descrizione}}</td>
+      <td>{{item.atti_cronologico}}</td>
+      <td *ngIf="item.atti_flag_consegna == '1'">consegnato il: {{item.atti_data_consegna | date : "dd/MM/yyyy"}} a: {{item.atti_soggetto}} con documento: {{item.atti_documento}} eventuali note: {{item.atti_note}} operatore: {{item.atti_operatore_consegna}} ({{item.atti_flag_consegna}})</td>
+      <td *ngIf="item.atti_flag_consegna == '0'">NON CONSEGNATO {{item.atti_data_consegna | date : "dd/MM/yyyy"}} {{item.atti_soggetto}} {{item.atti_documento}}  {{item.atti_note}} {{item.atti_operatore_consegna}}</td>
+      <td>{{item.atti_operatore}}</td>
+
+
+      <td>
+
+        <!-- <div *ngIf="action == 'ricerca' && item.atti_flag_consegna == '0'"> -->
+          <!--
+          <button type="submit" 
+                    (click)="showConsegnaForm(item.id)"
+                    class="btn btn-primary submit-button">C</button>
+          -->
+
+          <button *ngIf="item.atti_flag_consegna == '0'" type="submit" 
+                    (click)="aggiungiAllaConsegna(item)"
+                    class="btn btn-success">Consegna</button>
+
+          <button *ngIf="item.atti_flag_consegna == '0'" type="submit" 
+                    (click)="showModificaAttoForm(item)"
+                    class="btn btn-primary">Modifica</button>
+
+
+        <!-- </div> -->
+        
+      </td>
+    </tr>
+    <tr *ngIf="form2show == item.id">
+      <td colspan="10" class="bg-warning">
+          <form [formGroup]="formModifica" (cli)="eliminaAtto(item.id)">
+            <formly-form [model]="modelModifica" [fields]="fieldsModifica" [options]="optionsModifica" [form]="form">
+                <button type="submit" 
+                (click)="updateAtto(item.id)"
+                class="btn btn-primary submit-button">Aggiorna i dati</button>
+                <button type="button" class="btn btn-default" (click)="hideModificaAttoForm()">Chiudi</button>
+            </formly-form>
+          </form>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa elenco</button>
+
+

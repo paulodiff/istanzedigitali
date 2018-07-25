@@ -263,6 +263,9 @@ saveAtti: function(data){
     })
 },
 
+
+
+
 // aggiorna i dati di consegna di uno o più atti atto
 updateConsegnaAtti: function(data){
 
@@ -488,6 +491,54 @@ getAttiConsegnatari: function(){
         });
     })
 },
+
+
+
+// memorizza i dati di una consegna
+saveConsegna: function(data){
+
+    return new Promise(function(resolve, reject) {
+        console.log('databaseModule:saveConsegna');
+        console.log(data);
+
+        listId = data.idList.split(',');
+        attiArray = [];
+        listId.forEach( function(element) {
+            attiArray.push({
+                attiinconsegna_codice_atto : element,
+                attiinconsegna_note: data.idList
+            })
+        });
+        console.log(attiArray);
+
+        models.Consegne.create({
+            consegna_ts:        new Date(),
+            consegna_data_reg:  new Date(), 
+            consegna_documento:  data.estremidocumento,        
+            consegna_soggetto:   data.nominativo,        
+            consegna_note:       data.note,        
+            consegna_stato: 'PENDING',        
+            consegna_operatore: data.operatore,
+            atti_in_consegna : attiArray
+        },{
+            include: [{
+              model: models.Attiinconsegna,
+              as: 'atti_in_consegna'
+            }]
+        })
+        // .save()
+        .then(function(anotherTask) {
+            resolve(anotherTask);
+        }).catch(function(error) {
+            console.log(error);
+            reject(error);
+        });
+    })
+},
+
+
+
+
 
 // aggiorna i dati di una istanza per consultazioni
 updatePosta: function(data){

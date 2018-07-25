@@ -1,0 +1,63 @@
+<hello name="{{ name }}"></hello>
+
+<div class="alert alert-info">
+<!-- <form [formGroup]="formNew" (ngSubmit)="submitNew()"> -->
+<form [formGroup]="formNew">  
+  <formly-form [model]="modelNew" [fields]="fieldsNew" [options]="optionsNew" [form]="formNew">
+  </formly-form>
+</form>
+</div>
+
+
+<table class="table table-striped bg-light">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Data Reg.</th>
+      <th scope="col">Nominativo</th>
+      <th scope="col">Consegnatario</th>
+      <th scope="col">Cronologico</th>
+      <th scope="col">Operatore</th>
+      <th scope="col">Azione</th>
+    </tr>
+  </thead>
+  <tbody *ngFor="let item of items">
+    <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
+      <td>
+          <a  
+          [routerLink]="['/loginfo', item.id]"
+          >{{item.id}}</a>
+      </td>
+      <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
+      <td>{{item.atti_nominativo}}</td>
+      <td>{{item.Consegnatari.consegnatario_descrizione}}</td>
+      <td>{{item.atti_cronologico}}</td>
+      <td>{{item.atti_operatore}}</td>
+
+
+      <td *ngIf="item.atti_flag_consegna == '0'">
+        <button type="submit" 
+                      (click)="showModificaAttoForm(item)"
+                      class="btn btn-primary submit-button">Modifica</button>
+      </td>
+
+    </tr>
+    <tr *ngIf="form2show == item.id">
+      <td colspan="10" class="bg-warning">
+          <form [formGroup]="formModifica">
+            <formly-form [model]="modelModifica" [fields]="fieldsModifica" [options]="optionsModifica" [form]="form">
+                <button type="submit" 
+                (click)="updateAtto(item.id)"
+                class="btn btn-primary submit-button">Aggiorna i dati</button>
+                <button type="button" class="btn btn-default" (click)="hideModificaAttoForm()">Chiudi</button>
+            </formly-form>
+          </form>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa report</button>
+<button type="button" class="btn btn-success btn-default" (click)="getInfo()">S</button>
+<button type="button" class="btn btn-success btn-default" (click)="stampaReportService()">S2</button>
+

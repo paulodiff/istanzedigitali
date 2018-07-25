@@ -6,17 +6,21 @@ import { Validators, FormGroup } from '@angular/forms';
 import { AppService} from '../services/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { SocketService } from '../services/socket.service';
+import { ReportService } from '../services/report.service';
 // import { SseEventService } from '../services/sseevent.service';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
+import * as pdfMake from 'pdfmake/build/pdfmake.js';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts.js';
 
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
-  templateUrl: './raccomandate-new.component.html'
+  templateUrl: './consegna-new.component.html',
 })
 
 // Component class
-export class RaccomandateNewComponent implements OnInit, OnDestroy {
+export class ConsegnaNewComponent implements OnInit, OnDestroy {
 
 public name = 'Atti - Inserimento del ' + moment().format("YYYYMMDD");
 public action:any;
@@ -172,6 +176,7 @@ public fieldsModifica: FormlyFieldConfig[] = [
 constructor(
             private _appService: AppService,
             private _socketService: SocketService,
+            private _reportService: ReportService,
             private _route: ActivatedRoute,
             private _toastr: ToastrService
           ) {
@@ -201,7 +206,8 @@ ngOnInit() {
 
     switch (message.type)
     {
-       case "newItemMessage":
+       case 'newItemMessage':
+       case 'updateItemMessage':
         console.log('ATTI_NEW: reloading data...');
         this.getAtti({dataricerca : this.oggi});
         break;
@@ -245,9 +251,9 @@ submitNew(modelNew) {
       },
       err => { console.log('ERRORE:'); console.log(err);},
       () =>  { 
-              console.log('submitNew ok reload!'); 
-              //this.modelNew.nominativo = '';
-              //this.modelNew.cronologico = '';
+              console.log('submitNew ok reload!');
+              // this.modelNew.nominativo = '';
+              // this.modelNew.cronologico = '';
               this.getAtti({dataricerca : this.oggi});
               // this._socketService.sendMessage({action: 'updateMessage'});
               this._toastr.success('Atto inserito!', 'Tutto ok!');
@@ -286,7 +292,7 @@ getAttiConsegnatari() {
 
 getInfo() {
   this._appService.getStatus().subscribe(
-    data => { 
+    data => {
       console.log(data);
     },
     err => console.log(err),
@@ -366,6 +372,11 @@ updateListFromMessage(msg){
     }
   }
 
+}
+
+stampaReportService(){
+  console.log('ATTI_NEW:stampaReportService ..');
+  this._reportService.stampaReport(this.items);
 }
 
 stampaReport() {

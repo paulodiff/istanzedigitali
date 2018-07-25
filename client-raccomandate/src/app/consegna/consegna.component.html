@@ -35,8 +35,8 @@
     <form [formGroup]="formConsegna">
         <formly-form [model]="modelConsegna" [fields]="fieldsConsegna" [options]="optionsConsegna" [form]="formConsegna">
             <button type="submit" 
-                (click)="updateConsegna()"
-                class="btn btn-primary submit-button">Aggiorna i dati di consegna</button>
+                (click)="buildConsegna()"
+                class="btn btn-primary submit-button">Crea la consegna</button>
                 <button type="button" class="btn btn-default" (click)="resetFormConsegna()">Annulla</button>
         </formly-form>
     </form>

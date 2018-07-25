@@ -11,6 +11,8 @@ import { ConsegnaComponent } from './consegna/consegna.component';
 import { LogInfoComponent } from './loginfo/loginfo.component';
 // import { dogRoutes } from './dogs/dog.routes';
 import { attiRoutes } from './atti/atti.routes';
+import { raccomandateRoutes } from './raccomandate/raccomandate.routes';
+import { consegnaRoutes } from './consegna/consegna.routes';
 
 // Route Configuration
 export const routes: Routes = [
@@ -25,7 +27,9 @@ export const routes: Routes = [
   { path: 'consegna', component: ConsegnaComponent },
   { path: 'loginfo/:id', component: LogInfoComponent },
   // ...dogRoutes,
-  ...attiRoutes
+  ...attiRoutes,
+  ...raccomandateRoutes,
+  ...consegnaRoutes
     // ,  { path: 'dogs', component: DogListComponent }
 ];
 

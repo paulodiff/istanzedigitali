@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
   apiAtti: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/atti',
+  apiConsegna: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/consegna',
   apiInfo: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/info',
   apiInfoLog: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/infolog',
   apiAttiConsegnatari: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/atticonsegnatari',

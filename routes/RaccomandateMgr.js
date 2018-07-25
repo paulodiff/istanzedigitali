@@ -274,6 +274,39 @@ router.post('/atti',
 });
 
 
+// Consegna POST inserisce 
+router.post('/consegna', 
+            // utilityModule.ensureAuthenticated, 
+            function(req, res) {
+              
+              console.log('RaccomandateMgr POST /consegna');
+
+  req.user = {userid: 'USER_TEST', userEmail: 'USER_EMAIL_TEST', displayName: 'USER_DISPLAY_NAME_TEST'};
+
+  console.log(req.user);
+  console.log(req.body);
+
+  // assegna il campo id utente da autenticazione
+  req.body.userid = req.user.userid;
+  req.body.userEmail = req.user.userEmail;
+  req.body.userDisplayName = req.user.displayName;
+  req.body.operatore = req.user.userid;
+    //req.user.uuidV4 = uuidV4();
+  databaseModule.saveConsegna(req.body).then(function (response) {
+      console.log('RaccomandateMgr consegna saved!');
+      console.log(response.id);
+      console.log(response.dataValues.id);
+      emitterBus.eventBus.sendEvent('newConsegnaMessage', { msg: 'newConsegna', newId: response.id});
+      //newItemMessage
+      return res.status(200).send({msg:'ok:consegna:saved!', newId: response.id, data: response});
+    }).catch(function (err) {
+      console.log(err)
+      return res.status(500).send(err);
+  });
+});
+
+
+
 // DELETE elimina righe inserite
 router.delete(  '/posta/:posta_id', 
                 utilityModule.ensureAuthenticated, 

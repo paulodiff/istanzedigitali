@@ -16,14 +16,14 @@ messages = [];
 
 public consegnaStatus = 0;
 
-/*
+
 initData = 
 [
 {id: 7, atti_data_reg: "2009-01-02T00:00:00.000Z", atti_nominativo: "RENZI ERCOLE - PROVA!", atti_consegnatario: "UFFICIALI  GIUDIZIARI", atti_cronologico: '9999'},
 {id: 8, atti_data_reg: "2009-01-02T00:00:00.000Z", atti_nominativo: "RENZI ERCOLE", atti_consegnatario: "UFFICIALI  GIUDIZIARI",atti_cronologico: '1119999'},
 {id: 9, atti_data_reg: "2009-01-02T00:00:00.000Z", atti_nominativo: "BARONE GIORGIO", atti_consegnatario: "UFFICIALI  GIUDIZIARI"}
 ];
-*/
+
 
 //  form Consegna
 
@@ -103,8 +103,10 @@ public fieldsConsegna: FormlyFieldConfig[] = [
 
   ngOnInit() {
 
-    // this._appService.carrello = this.initData;
+    this._appService.carrello = this.initData;
     this.messages = this._appService.carrello;
+    this.modelConsegna.nominativo = 'MARIO PROVA';
+    this.modelConsegna.estremidocumento = 'PAT. 2134';
     /*
     this.connection = this._socketService.getMessages().subscribe(message => {
       this.messages.push(message);
@@ -125,6 +127,40 @@ public fieldsConsegna: FormlyFieldConfig[] = [
         return el.id !== item.id;
     });
 
+  }
+
+  buildConsegna(){
+    console.log('CONSEGNA:buildConsegna');
+    console.log(this.modelConsegna);
+    console.log(this.formConsegna.valid);
+
+    if (this._appService.carrello.length == 0 ) {
+        this._toastr.error('Non vi sono elementi selezionati', 'Errore!');
+    }
+
+    if (this.formConsegna.valid && this._appService.carrello ) {
+
+        let itemIds = this._appService.carrello.map(function(item) { return item.id; }).join(',');
+        this.modelConsegna.idList = itemIds;
+
+        this._appService.saveConsegna(this.modelConsegna).subscribe(
+        data => { 
+            console.log('CONSEGNA:buildConsegna SUCCESS!');
+            console.log(data);
+            this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
+            this._appService.carrello = [];
+            console.log(this.messages);
+        },
+        err => { 
+            console.log(err);  
+            this._toastr.error('Errore di controllo nei dati', err.error.msg);
+        },
+        () => console.log('done loading atti')
+        );
+
+    } else {
+        this._toastr.error('Mancano i dati obbligatori', 'Errore!');
+    }
   }
 
   updateConsegna(){
