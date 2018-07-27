@@ -1,8 +1,10 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 // import { Http, Response, Headers, URLSearchParams, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { shareReplay, map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { LookupResponse, LookupObject } from './lookup-interface';
  
 // https://www.metaltoad.com/blog/angular-5-making-api-calls-httpclient-service
 
@@ -12,7 +14,7 @@ const httpOptions = {
 };
 */
 
-
+const CACHE_SIZE = 1;
 
 @Injectable()
 export class AppService {
@@ -28,12 +30,12 @@ export class AppService {
     // the username of the logged in user
     public username: string;
 
-    public carrello: any = []; 
+    public carrello: any = [];
 
     // error messages received from the login attempt
-    public errors: any = []; 
+    public errors: any = [];
     configUrl = 'https://jsonplaceholder.typicode.com/users';
-    constructor(private http:HttpClient) {
+    constructor(private http: HttpClient) {
 
       console.log('APP_SERVICE:build');
 
@@ -42,9 +44,57 @@ export class AppService {
       };
 
         // TO REMOVE
-      this.username = "USER_TEST";
+      this.username = 'USER_TEST';
     }
 
+    private cache$: Observable<Array<LookupObject>>;
+
+    private cacheConsegnatari: any[];
+
+    
+    get consegnatariPromise() {
+      console.log('APP_SERVICE:consegnatariPromise ...');
+      if (!this.cacheConsegnatari) {
+        console.log('APP_SERVICE:consegnatari:RELOAD CACHE!');
+        // this.person = this.http.get("https://jsonplaceholder.typicode.com/posts/1").map(res => res.json()).toPromise()
+        this.http.get<any>(environment.apiAttiConsegnatari, {} )
+        // .pipe(map(res => res.json()))
+        .toPromise()
+        .then((data: any) => {
+          /* tslint:disable:no-console */
+          console.time('request-length');
+          console.log(data);
+          console.timeEnd('request-length');
+          this.cacheConsegnatari = data;
+        });
+      }
+      return this.cacheConsegnatari;
+    }
+
+
+    get consegnatari() {
+        console.log('APP_SERVICE:consegnatari ...');
+        if (!this.cache$) {
+          console.log('APP_SERVICE:consegnatari:RELOAD CACHE!');
+          this.cache$ = this.requestConsegnatari().pipe(
+            // tap(val => console.log(`BEFORE MAP: ${val}`)),
+            shareReplay(CACHE_SIZE)
+          );
+        }
+        return this.cache$;
+    }
+
+    private requestConsegnatari() {
+      console.log('req:', environment.apiAttiConsegnatari);
+      // return this.http.get<any>(environment.apiAttiConsegnatari)
+      return this.http.get<any>(environment.apiAttiConsegnatari, {} );
+      /*
+      .pipe(
+        tap(val => console.log(`BEFORE MAP: ${val}`)),
+        map(response => response.value)
+      );
+      */
+    }
 
     getAtti(options) {
         // Begin assigning parameters
@@ -76,6 +126,19 @@ export class AppService {
         return this.http.post(environment.apiAtti, JSON.stringify(options), this.httpOptions );
     }
 
+    getConsegna(options) {
+      // Begin assigning parameters
+      console.log('APP_SERVICE:getConsegna');
+      let Params = new HttpParams();
+      console.log(options);
+      // Params = Params.append('dataricerca', options.dataricerca);
+      Params = Params.append('id', options.id);
+      Params = Params.append('order', options.maxnumrighe);
+      console.log(JSON.stringify(options));
+      console.log(environment.apiConsegna);
+      return this.http.get(environment.apiConsegna, { params: Params, headers: this.httpOptions } );
+  }
+
     saveConsegna(options) {
       // Begin assigning parameters
       console.log('APP_SERVICE:saveConsegna');
@@ -84,7 +147,7 @@ export class AppService {
 
       // console.log(JSON.stringify(options));
       return this.http.post(environment.apiConsegna, JSON.stringify(options), this.httpOptions );
-  }
+    }
 
 
     updateConsegnaAtti(options) {
@@ -133,7 +196,7 @@ export class AppService {
       let Params = new HttpParams();
       Params = Params.append('tblName', options.tblName);
       Params = Params.append('tblId', options.tblId);
-      console.log(options);
+      // console.log(options);
       // console.log(JSON.stringify(options));
       return this.http.get(environment.apiAttiConsegnatari, { params: Params, headers: this.httpOptions } );
     }

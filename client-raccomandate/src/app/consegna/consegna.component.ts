@@ -4,6 +4,8 @@ import { Validators, FormGroup } from '@angular/forms';
 import { SocketService } from '../services/socket.service';
 import { AppService } from '../services/app.service';
 import { ToastrService } from 'ngx-toastr';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
     templateUrl: './consegna.component.html'
@@ -94,6 +96,8 @@ public fieldsConsegna: FormlyFieldConfig[] = [
 
   constructor(  private _socketService: SocketService,
                 private _toastr: ToastrService,
+                private _route: ActivatedRoute,
+                private _router: Router,
                 private _appService: AppService ) {}
 
   sendMessage() {
@@ -147,12 +151,14 @@ public fieldsConsegna: FormlyFieldConfig[] = [
         data => { 
             console.log('CONSEGNA:buildConsegna SUCCESS!');
             console.log(data);
+            console.log('consegna:', data.newId);
             this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
             this._appService.carrello = [];
             console.log(this.messages);
+            this._router.navigate(['/consegna/visualizzazione/' ,  data.newId ] );
         },
-        err => { 
-            console.log(err);  
+        err => {
+            console.log(err);
             this._toastr.error('Errore di controllo nei dati', err.error.msg);
         },
         () => console.log('done loading atti')

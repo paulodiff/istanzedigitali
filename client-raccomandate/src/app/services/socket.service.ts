@@ -16,7 +16,7 @@ export class SocketService {
     this.socket.emit('message', message);
   }
 
-  getMessages() {
+  getMessages(): Observable<any> {
     let observable = new Observable(observer => {
 
       this.socket = io(this.url);

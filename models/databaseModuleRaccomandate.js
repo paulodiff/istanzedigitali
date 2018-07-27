@@ -185,30 +185,20 @@ getAttiList: function(opts){
                 $between: [obj.daDataPosta, obj.aDataPosta]
             }
             */
-            parametriFiltro.atti_data_reg = { $between: [daDataPosta, aDataPosta] };
+            parametriFiltro.atti_data_registrazione = { $between: [daDataPosta, aDataPosta] };
         }
 
-        if (opts.tipo_spedizione && opts.tipo_spedizione != '') {
-            parametriFiltro.tipo_spedizione = opts.tipo_spedizione;
-        }
-
-        if (opts.cdc && opts.cdc != '') {
-            parametriFiltro.cdc = opts.cdc;
-        }
-
-        if (opts.dataStampaTxt != '') {
-            // parametriFiltro.posta_id = { $like: opts.dataStampaTxt + '%' };
-        }
 
         console.log('---PAMETRI FILTRO FINALE-------------------------------------------------');
         console.log(parametriFiltro);
         console.log('---PAMETRI FILTRO FINALE-------------------------------------------------');
 
         
-        models.rAtti.findAll({
+        models.Atti.findAll({
             include: [
                 {   
-                    model: models.Consegnatari
+                    model: models.Consegnatari,
+                    as: 'atti_consegnatari'
                     // ,where: { state: Sequelize.col('project.state') }
                 }
             ],
@@ -239,20 +229,13 @@ saveAtti: function(data){
         console.log('databaseModule:saveAtti');
         console.log(data);
 
-        models.rAtti.build({
-            atti_ts: new Date(),
-            atti_data_reg: new Date(),
+        models.Atti.build({
+            atti_data_registrazione: new Date(),
             atti_nominativo: data.nominativo,
-            atti_consegnatario: '',
-            atti_consegnatario_codice: data.consegnatario,
+            atti_consegnatario_id: data.consegnatario,
             atti_cronologico: data.cronologico,
-            atti_data_consegna: '',
-            atti_documento: '',
-            atti_data_doc: '',
-            atti_soggetto: '',
-            atti_flag_consegna: '0',
-            atti_note: '',
-            atti_operatore: data.operatore
+            atti_consegna_flag: '0',
+            atti_operatore_inserimento: data.operatore
         })
         .save()
         .then(function(anotherTask) {
@@ -282,7 +265,7 @@ updateConsegnaAtti: function(data){
 
             function(callback){
                 console.log('uC:findAndCountAll');
-                models.rAtti.findAndCountAll({ 
+                models.Atti.findAndCountAll({ 
                     where: {
                         id: {
                           $in: listIdArray
@@ -307,7 +290,7 @@ updateConsegnaAtti: function(data){
 
             function(item, callback){
                 console.log('dC:updateConsegna');
-                models.rAtti.update(
+                models.Atti.update(
                     {
                         atti_note: data.note,
                         atti_soggetto: data.nominativo,
@@ -343,7 +326,7 @@ updateConsegnaAtti: function(data){
 
                     logArray.push({
                         ts: new Date(),
-                        tblName: 'rAtti',
+                        tblName: 'Atti',
                         tblId: data.id,
                         fldName: key,
                         oldValue: tmpValues[key],
@@ -399,7 +382,7 @@ updateAtto: function(data){
 
             function(callback){
                 console.log('dMR:getAtto');
-                models.rAtti.findOne({ where: {id: data.id} }).then(function(item) {
+                models.Atti.findOne({ where: {id: data.id} }).then(function(item) {
                     tmpValues = _.clone(item.dataValues);
                     console.log(item.dataValues);
                     callback(null, item);
@@ -434,7 +417,7 @@ updateAtto: function(data){
 
                     logArray.push({
                         ts: new Date(),
-                        tblName: 'rAtti',
+                        tblName: 'Atti',
                         tblId: data.id,
                         fldName: key,
                         oldValue: tmpValues[key],
@@ -492,7 +475,52 @@ getAttiConsegnatari: function(){
     })
 },
 
+getConsegna: function(opts){
 
+    return new Promise(function(resolve, reject) {
+
+        console.log('databaseModule:getConsegna');
+        console.log(opts);
+
+        var includeObj = {
+            // attributes: ['consegna_documento'],
+            include: [ {
+                model: models.Attiinconsegna,
+                // attributes: ['attiinconsegna_note'],
+                as: 'atti_in_consegna',
+                include :[
+                    {
+                        model: models.Atti,
+                        // attributes: ['atti_nominativo'],
+                        as: 'codice_atto',
+                        include: [ 
+                            { 
+                                model: models.Consegnatari,
+                                as: 'atti_consegnatari'
+                            } 
+                        ]
+                    }
+                ],
+            } ],
+            order : [ ['id', 'DESC'] ]
+        };
+       
+
+        if(opts.id && (opts.id != 'undefined')) {
+            console.log('databaseModule:getConsegna:byId');
+            includeObj.where = {id : opts.id };
+        }
+
+        console.log(includeObj);
+
+        models.Consegne.findAll(includeObj)
+        .then(function(anotherTask) {
+            resolve(anotherTask);
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
 
 // memorizza i dati di una consegna
 saveConsegna: function(data){
@@ -519,7 +547,9 @@ saveConsegna: function(data){
             consegna_note:       data.note,        
             consegna_stato: 'PENDING',        
             consegna_operatore: data.operatore,
-            atti_in_consegna : attiArray
+            consegna_ids_atti: data.idList,
+            consegna_numero_atti: listId.length,
+            atti_in_consegna: attiArray
         },{
             include: [{
               model: models.Attiinconsegna,

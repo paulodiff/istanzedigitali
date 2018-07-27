@@ -10,10 +10,9 @@ import { ReportService } from '../services/report.service';
 // import { SseEventService } from '../services/sseevent.service';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
-import * as pdfMake from 'pdfmake/build/pdfmake.js';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts.js';
+import { Observable } from 'rxjs/Observable';
+import { LookupObject } from '../services/lookup-interface';
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   templateUrl: './atti-new.component.html',
@@ -52,7 +51,7 @@ public fieldsNew: FormlyFieldConfig[] = [
           defaultValue: 'MESSI_NOTIFICATORI',
           templateOptions: {
             label: 'Consegnatario',
-            options: this._appService.getAttiConsegnatari({}),
+            options: this._appService.consegnatari,
             valueProp: 'id',
             labelProp: 'consegnatario_descrizione'
             /*
@@ -134,7 +133,7 @@ public fieldsModifica: FormlyFieldConfig[] = [
               { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
             ],
             */
-          options: this._appService.getAttiConsegnatari({}),
+          options: this._appService.consegnatari,
           valueProp: 'id',
           labelProp: 'consegnatario_descrizione'
           },
@@ -172,6 +171,7 @@ public fieldsModifica: FormlyFieldConfig[] = [
     }
 ];
 
+consegnatari$: Observable<Array<LookupObject>>;
 
 constructor(
             private _appService: AppService,
@@ -190,6 +190,7 @@ toUpperCase(value) {
 
 ngOnInit() {
   console.log('ATTI_NEW:ngOnInit:new');
+  // this.consegnatari$ = this._appService.consegnatari;
   /*
   this.sub = this._route.params.subscribe(params => {
     this.action = params['action'];
@@ -220,7 +221,7 @@ ngOnInit() {
   });
 
   console.log('ATTI_NEW:getAtti call');
-  this.getAttiConsegnatari();
+  // this.getAttiConsegnatari();
   this.getAtti({dataricerca : this.oggi});
 }
 
@@ -284,6 +285,20 @@ getAttiConsegnatari() {
       data => { 
         console.log(data);
         this.attiConsegnatari = data;
+      },
+      err => console.log(err),
+      () => console.log('ATTI_NEW:getAttiConsegnatari done loading atti')
+    );
+}
+
+getAttiConsegnatariBlock() {
+  console.log('ATTI_NEW:getAttiConsegnatari');
+  var ops = {};
+  this._appService.getAttiConsegnatari(ops).subscribe(
+      data => { 
+        console.log(data);
+        this.attiConsegnatari = data;
+        return data;
       },
       err => console.log(err),
       () => console.log('ATTI_NEW:getAttiConsegnatari done loading atti')
@@ -380,89 +395,8 @@ stampaReportService(){
 }
 
 stampaReport() {
-
-  let contenutoStampa = [];
-  let elencoTabellare = [];
-  let progressivo = 1;
-  let tableWidhts = [];
-
-  elencoTabellare.push([ 'Progr.', 'Data', 'Nominativo', 'Data Consegna - Documento - Firma  ', 'Progr' ]);
-  tableWidhts =        [ 50,        65,     150,         '*',                                     60 ];
-
-  this.items.forEach(function(obj){
-    elencoTabellare.push([
-          {text: obj.id, fontSize: 12, border: [true, false, false, false]},
-          {text: moment(obj.atti_data_reg).format('DD/MM/YYYY'), fontSize: 12,border: [false, true, false, false]},
-          {text: obj.atti_nominativo, fontSize: 12, border: [false, false, false, false]},
-          {text: '', fontSize: 10, border: [true, false, false, false]},
-          {text: obj.id, fontSize: 12, alignment: 'right',border: [false, false, true, false]}
-    ]);
-
-    elencoTabellare.push([
-      {   text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
-          colSpan: 3, 
-          fontSize: 12,
-          alignment: 'left', 
-          border: [true, false, false, true]
-        },
-        '',
-        '',
-      { text: '', 
-        colSpan: 2, 
-        fontSize: 10,
-        alignment: 'center',
-        border: [true, false, true, true]
-      },
-       ''
-    ]);
-  });
-
-  let tabellaStampa = {
-      table: {
-        // headers are automatically repeated if the table spans over multiple pages
-        // you can declare how many rows should be treated as headers
-        headerRows: 1,
-        widths: tableWidhts,
-        body: elencoTabellare
-      }
-  };
-
-  contenutoStampa.push( { 
-    text: 'Comune di Rimini - Ufficio Protocollo - Deposito atti comunali - Data deposito: ' + moment().format('DD/MM/YYYY'), fontSize: 18 } 
-  );
-  // contenutoStampa.push( { text: 'Matricola: ' + 'MMMMMM', fontSize: 12 } );
-  contenutoStampa.push( tabellaStampa );
-  contenutoStampa.push({ text: 'Totale: ' + this.items.length , fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
-
-  /*
-  if(numeroPagina == maxPagina){
-    contenutoStampa.push({ text: '  ', fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
-  }else{
-    contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
-  }
-  */
-
-  const docDefinition = { 
-    pageSize: 'A4',
-    pageOrientation: 'landscape',
-    pageMargins: [ 30, 30, 30, 30 ],
-    footer: function(currentPage, pageCount) {  
-      return    { 
-                  text: 'pagina ' + currentPage.toString() + ' di ' + pageCount, 
-                  alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8] 
-                }
-     },
-    header: function(currentPage, pageCount) {
-       return {
-                text: 'Report generato il: ' + moment().format('DD/MM/YYYY'), fontSize: 8, 
-                alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8] 
-              };
-    },
-    content: [contenutoStampa]
-   };
-
-   pdfMake.createPdf(docDefinition).open();
-}
+  console.log('ATTI_NEW:stampaReport ..');
+ }
 
 showModificaAttoForm(item) {
   console.log('ATTI_NEW:showModificaAttoForm show form! ..');

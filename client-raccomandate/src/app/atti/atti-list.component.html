@@ -27,13 +27,13 @@
           [routerLink]="['/loginfo', item.id]"
           >{{item.id}}</a>
       </td>
-      <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
+      <td>{{item.atti_data_registrazione | date : "dd/MM/yyyy"}}</td>
       <td>{{item.atti_nominativo}}</td>
-      <td>{{item.Consegnatari.consegnatario_descrizione}}</td>
+      <td>{{item.atti_consegnatari.consegnatario_descrizione}}</td>
       <td>{{item.atti_cronologico}}</td>
-      <td *ngIf="item.atti_flag_consegna == '1'">consegnato il: {{item.atti_data_consegna | date : "dd/MM/yyyy"}} a: {{item.atti_soggetto}} con documento: {{item.atti_documento}} eventuali note: {{item.atti_note}} operatore: {{item.atti_operatore_consegna}} ({{item.atti_flag_consegna}})</td>
-      <td *ngIf="item.atti_flag_consegna == '0'">NON CONSEGNATO {{item.atti_data_consegna | date : "dd/MM/yyyy"}} {{item.atti_soggetto}} {{item.atti_documento}}  {{item.atti_note}} {{item.atti_operatore_consegna}}</td>
-      <td>{{item.atti_operatore}}</td>
+      <td *ngIf="item.atti_consegna_flag == '1'">consegnato il: {{item.atti_consegna_data | date : "dd/MM/yyyy"}} a: {{item.atti_soggetto}} con documento: {{item.atti_documento}} eventuali note: {{item.atti_note}} operatore: {{item.atti_operatore_consegna}} ({{item.atti_flag_consegna}})</td>
+      <td *ngIf="item.atti_consegna_flag == '0'">NON CONSEGNATO</td>
+      <td>{{item.atti_operatore_inserimento}}</td>
 
 
       <td>
@@ -45,11 +45,11 @@
                     class="btn btn-primary submit-button">C</button>
           -->
 
-          <button *ngIf="item.atti_flag_consegna == '0'" type="submit" 
+          <button *ngIf="item.atti_consegna_flag == '0'" type="submit" 
                     (click)="aggiungiAllaConsegna(item)"
                     class="btn btn-success">Consegna</button>
 
-          <button *ngIf="item.atti_flag_consegna == '0'" type="submit" 
+          <button *ngIf="item.atti_consegna_flag == '0'" type="submit" 
                     (click)="showModificaAttoForm(item)"
                     class="btn btn-primary">Modifica</button>
 

@@ -14,7 +14,9 @@ module.exports = function(sequelize, DataTypes) {
         consegna_protocollo:    { type: DataTypes.STRING,   allowNull: true  },        
         consegna_filename:      { type: DataTypes.STRING,   allowNull: true  },        
         consegna_filedata:      { type: DataTypes.BLOB,     allowNull: true  },        
-        consegna_operatore:     { type: DataTypes.STRING,   allowNull: false  }
+        consegna_operatore:     { type: DataTypes.STRING,   allowNull: false  },
+        consegna_numero_atti:   { type: DataTypes.STRING,   allowNull: true  },        
+        consegna_ids_atti:      { type: DataTypes.STRING,   allowNull: true  }        
     },
      {
        tableName: 'Consegne',

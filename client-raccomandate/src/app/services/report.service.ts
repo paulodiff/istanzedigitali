@@ -138,19 +138,120 @@ export class ReportService {
         pdfMake.createPdf(docDefinition).open();
     }
 
-    getAtti(options) {
-        // Begin assigning parameters
-        console.log('APP_SERVICE:getAtti');
-        let Params = new HttpParams();
-        console.log(options);
-        console.log(environment.apiAtti);
-        Params = Params.append('dataricerca', options.dataricerca);
-        Params = Params.append('nominativo', options.nominativo);
-        Params = Params.append('cronologico', options.cronologico);
-        Params = Params.append('maxnumrighe', options.maxnumrighe);
-        console.log(JSON.stringify(options));
-        return this.http.get(environment.apiAtti, { params: Params, headers: this.httpOptions } );
+// RICEVUTA
+
+    stampaRicevuta(consegna) {
+
+        let contenutoStampa = [];
+        let elencoTabellare = [];
+        let progressivo = 1;
+        let tableWidhts = [];
+
+        console.log(consegna);
+        
+        elencoTabellare.push([ 'Progr.', 'Data', 'Nominativo', 'Data Consegna - Documento - Firma  ', 'Progr' ]);
+        tableWidhts =        [ 50,        65,     150,         '*',                                     60 ];
+
+        consegna.atti_in_consegna.forEach(function(obj){
+          elencoTabellare.push([
+                {text: obj.id, fontSize: 12, border: [true, false, false, false]},
+                {text: moment(obj.atti_data_reg).format('DD/MM/YYYY'), fontSize: 12,border: [false, true, false, false]},
+                {text: obj.atti_nominativo, fontSize: 12, border: [false, false, false, false]},
+                {text: '', fontSize: 10, border: [true, false, false, false]},
+                {text: obj.id, fontSize: 12, alignment: 'right',border: [false, false, true, false]}
+          ]);
+
+        elencoTabellare.push([
+            {   text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
+                colSpan: 3, 
+                fontSize: 12,
+                alignment: 'left', 
+                border: [true, false, false, true]
+              },
+              '',
+              '',
+            { text: '', 
+              colSpan: 2, 
+              fontSize: 10,
+              alignment: 'center',
+              border: [true, false, true, true]
+            },
+             ''
+          ]);
+        });
+
+        let tabellaStampa = {
+            table: {
+              // headers are automatically repeated if the table spans over multiple pages
+              // you can declare how many rows should be treated as headers
+              headerRows: 1,
+              widths: tableWidhts,
+              body: elencoTabellare
+            }
+        };
+
+        contenutoStampa.push({
+          text: 'Comune di Rimini - Ufficio Protocollo', 
+          fontSize: 18
+        });
+
+        contenutoStampa.push({
+            text: 'Ricevuta per consegna n:' + consegna.id, 
+            fontSize: 18
+        });
+
+        contenutoStampa.push({ 
+            text: 'Il sottoscritto ' + consegna.consegna_soggetto + ' identificato da:' + consegna.consegna_documento, 
+            fontSize: 16 
+        });
+
+        contenutoStampa.push( { 
+            text: 'dichiara di ricevere i seguenti atti ... ', 
+            fontSize: 16 } 
+        );
+
+
+        // contenutoStampa.push( { text: 'Matricola: ' + 'MMMMMM', fontSize: 12 } );
+        contenutoStampa.push( tabellaStampa );
+        contenutoStampa.push({ text: 'Totale: 44' , fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
+
+        /*
+        if(numeroPagina == maxPagina){
+          contenutoStampa.push({ text: '  ', fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
+        }else{
+          contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
+        }
+        */
+
+        const docDefinition = {
+          info: {
+                title: 'ric_cons_1234',
+                author: 'Comune di Rimini - Protocollo Generale',
+                subject: 'Ricevuta consegna atti',
+                keywords: 'ricevuta consegna atti',
+          },
+          pageSize: 'A4',
+          // pageOrientation: 'landscape',
+          pageMargins: [ 30, 30, 30, 30 ],
+          footer: function(currentPage, pageCount) {
+            return    { 
+                        text: 'pagina ' + currentPage.toString() + ' di ' + pageCount,
+                        alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
+                      }
+           },
+          header: function(currentPage, pageCount) {
+             return {
+                      text: 'pagina generata il: ' + moment().format('DD/MM/YYYY'), fontSize: 8,
+                      alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
+                    };
+          },
+          content: [contenutoStampa]
+        };
+
+        pdfMake.createPdf(docDefinition).open();
     }
+
+
 
 
 

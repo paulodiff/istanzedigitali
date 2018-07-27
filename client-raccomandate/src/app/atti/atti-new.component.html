@@ -28,14 +28,14 @@
           [routerLink]="['/loginfo', item.id]"
           >{{item.id}}</a>
       </td>
-      <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
+      <td>{{item.atti_data_registrazione | date : "dd/MM/yyyy"}}</td>
       <td>{{item.atti_nominativo}}</td>
-      <td>{{item.Consegnatari.consegnatario_descrizione}}</td>
+      <td>{{item.atti_consegnatari.consegnatario_descrizione}}</td>
       <td>{{item.atti_cronologico}}</td>
-      <td>{{item.atti_operatore}}</td>
+      <td>{{item.atti_operatore_inserimento}}</td>
 
 
-      <td *ngIf="item.atti_flag_consegna == '0'">
+      <td *ngIf="item.atti_consegna_flag == '0'">
         <button type="submit" 
                       (click)="showModificaAttoForm(item)"
                       class="btn btn-primary submit-button">Modifica</button>
@@ -61,3 +61,6 @@
 <button type="button" class="btn btn-success btn-default" (click)="getInfo()">S</button>
 <button type="button" class="btn btn-success btn-default" (click)="stampaReportService()">S2</button>
 
+<b>START</b>
+<div *ngFor="let joke of consegnatari$ | async">1 - {{joke.id}} {{joke.consegnatario_descrizione}}</div>
+<b>END!</b>

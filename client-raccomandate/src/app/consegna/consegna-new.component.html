@@ -1,38 +1,37 @@
 <hello name="{{ name }}"></hello>
 
-<div class="alert alert-info">
-<!-- <form [formGroup]="formNew" (ngSubmit)="submitNew()"> -->
-<form [formGroup]="formNew">  
-  <formly-form [model]="modelNew" [fields]="fieldsNew" [options]="optionsNew" [form]="formNew">
-  </formly-form>
-</form>
-</div>
+<h1>Consegna</h1>
+
+
+<table class="table table-striped bg-light">
+      <tr><td>Id</td><td>{{item?.id}}</td></tr>
+      <tr><td>Soggetto</td><td>{{item?.consegna_soggetto}}</td></tr>
+      <tr><td>Data</td><td>{{item?.consegna_data_reg | date : "dd/MM/yyyy"}}</td></tr>
+      <tr><td>Documento</td><td>{{item?.consegna_documento}}</td></tr>
+</table>  
 
 
 <table class="table table-striped bg-light">
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Id</th>
+      <th scope="col">Codice atto</th>
       <th scope="col">Data Reg.</th>
       <th scope="col">Nominativo</th>
       <th scope="col">Consegnatario</th>
       <th scope="col">Cronologico</th>
       <th scope="col">Operatore</th>
-      <th scope="col">Azione</th>
     </tr>
   </thead>
-  <tbody *ngFor="let item of items">
-    <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
-      <td>
-          <a  
-          [routerLink]="['/loginfo', item.id]"
-          >{{item.id}}</a>
-      </td>
-      <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
-      <td>{{item.atti_nominativo}}</td>
-      <td>{{item.Consegnatari.consegnatario_descrizione}}</td>
-      <td>{{item.atti_cronologico}}</td>
-      <td>{{item.atti_operatore}}</td>
+  <tbody *ngFor="let item_ of item?.atti_in_consegna">
+    <tr> 
+     
+      <td>{{item_.codice_atto.id }}</td>
+      <td>{{item_.codice_atto.atti_data_registrazione | date : "dd/MM/yyyy"}}</td>
+      <td>{{item_.codice_atto.atti_nominativo}}</td>
+      <td>{{item_.codice_atto.atti_consegnatari.consegnatario_descrizione}}</td>
+      <td>{{item_.codice_atto.atti_cronologico}}</td>
+      <td>{{item_.attiinconsegna_codice_atto}} - {{item_.attiinconsegna_note}}</td>
+
 
 
       <td *ngIf="item.atti_flag_consegna == '0'">
@@ -42,6 +41,7 @@
       </td>
 
     </tr>
+
     <tr *ngIf="form2show == item.id">
       <td colspan="10" class="bg-warning">
           <form [formGroup]="formModifica">
@@ -57,7 +57,9 @@
   </tbody>
 </table>
 
-<button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa report</button>
-<button type="button" class="btn btn-success btn-default" (click)="getInfo()">S</button>
-<button type="button" class="btn btn-success btn-default" (click)="stampaReportService()">S2</button>
+<button type="button" class="btn btn-success btn-default" (click)="stampaRicevuta(item)">Stampa ricevuta</button>
+<br/>
+<button type="button" class="btn btn-success btn-default" (click)="getInfo()">Ricevuta</button>
+<br/>
+<button type="button" class="btn btn-success btn-default" (click)="stampaReportService()">Protocolla</button>
 

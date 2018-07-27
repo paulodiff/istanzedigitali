@@ -85,139 +85,7 @@ public fieldsSearch: FormlyFieldConfig[] = [
 ];
 
 
-/*
-// form New
 
-public formNew = new FormGroup({});
-public modelNew: any = {};
-public optionsNew: FormlyFormOptions = {};
-
-public fieldsNew: FormlyFieldConfig[] = [
-    {
-      fieldGroupClassName: 'row',
-      fieldGroup: [
-        {
-          className: 'col-3',
-          key: 'consegnatario',
-          type: 'select',
-          defaultValue: 'MESSI_NOTIFICATORI',
-          templateOptions: {
-            label: 'Consegnatario',
-            options: [
-              { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
-              { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
-            ],
-          },
-        },
-        {
-          className: 'col-3',
-          type: 'input',
-          key: 'nominativo',
-          templateOptions: {
-            label: 'Nominativo',
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
-          }
-        },
-        {
-          className: 'col-3',
-          type: 'input',
-          key: 'cronologico',
-          templateOptions: {
-            label: 'Cronologico',
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
-          }
-        },
-        {
-          className: 'col-3',
-          type: 'button',
-          templateOptions: {
-            btnType: 'btn btn-outline-primary',
-            text: 'Inserisci',
-            label: 'Azione',
-            onClick: ($event) => {console.log(this.formNew.valid); this.submitNew(this.modelNew); }
-          },
-          expressionProperties: {
-            'templateOptions.disabled': '!model.nominativo',
-          }
-        },
-      ],
-    }
-
-];
-*/
-
-// form Consegna
-/*
-public formConsegna = new FormGroup({});
-public modelConsegna: any = {};
-public optionsConsegna: FormlyFormOptions = {};
-
-public fieldsConsegna: FormlyFieldConfig[] = [
-    {
-      fieldGroupClassName: 'row',
-      fieldGroup: [
-        {
-          className: 'col-4',
-          type: 'input',
-          key: 'dataconsegna',
-          templateOptions: {
-            label: 'Data Consegna',
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
-          }
-        },
-        {
-          className: 'col-4',
-          type: 'input',
-          key: 'nominativo',
-          templateOptions: {
-            label: 'Nominativo',
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
-          }
-          //,expressionProperties: {
-          //  'templateOptions.disabled': '!model.nominativo',
-          //}
-        },
-        
-        {
-          className: 'col-4',
-          type: 'input',
-          key: 'estremidocumento',
-          templateOptions: {
-            label: 'Estremi Documento',
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
-          }
-          //,expressionProperties: {
-          //  'templateOptions.disabled': '!model.nominativo',
-          //}
-        },
-        {
-          className: 'col-4',
-          type: 'input',
-          key: 'note',
-          templateOptions: {
-            label: 'Note',
-          },
-          validators: {
-            validation: Validators.compose([Validators.required])
-          }
-          //,expressionProperties: {
-          //  'templateOptions.disabled': '!model.nominativo',
-          //}
-        }
-      ],
-    }
-];
-*/
 // form Modifica
 
 public formModifica = new FormGroup({});
@@ -343,7 +211,7 @@ toUpperCase(value) {
 }
 
 ngOnInit() {
-  console.log('ATTI_LIST:ngOnInit');
+  console.log('CONSEGNA_LIST:ngOnInit');
   /*
   this.sub = this._route.params.subscribe(params => {
     this.action = params['action'];
@@ -354,28 +222,26 @@ ngOnInit() {
   });
   */
 
-  console.log('ATTI_LIST:getAtti call');
-  this.getAtti({dataricerca : this.oggi});
+  console.log('CONSEGNA_LIST:getAtti call');
+  this.getConsegna({});
 
 }
 
 
 ngOnDestroy() {
-  console.log('ATTI_LIST:ngOnDestroy');
-
+  console.log('CONSEGNA_LIST:ngOnDestroy');
 }
 
-
 submitSearch(modelSearch) {
-  console.log('ATTI_LIST:submitSearch');
+  console.log('CONSEGNA_LIST:submitSearch');
   this.form2show = 0;
   console.log(this.modelSearch);
-  this.getAtti(this.modelSearch);
+  this.getConsegna(this.modelSearch);
 }
 
 /*
 submitNew(modelNew) {
-  console.log('ATTI_LIST:submitNew');
+  console.log('CONSEGNA_LIST:submitNew');
   console.log(this.modelNew);
   this._appService.saveAtti(this.modelNew).subscribe(
     data => {
@@ -395,32 +261,32 @@ submitNew(modelNew) {
 }
 */
 
-getAtti(ops) {
-  console.log('ATTI_LIST:getAtti');
-  this._appService.getAtti(ops).subscribe(
-      data => { 
+getConsegna(ops) {
+  console.log('CONSEGNA_LIST:getConsegna');
+  this._appService.getConsegna(ops).subscribe(
+      data => {
         console.log(data);
         this.items = data;
       },
       err => console.log(err),
-      () => console.log('ATTI_LIST:getAtti done loading atti')
+      () => console.log('CONSEGNA_LIST:getConsegna done loading atti')
     );
 }
 
-eliminaAtto(id){
+eliminaAtto(id) {
   console.log(id);
   this._toastr.success('Hello world!', 'Toastr fun!');
 }
 
 /*
 updateConsegna(id){
-  console.log('ATTI_LIST:Update Consegna');
+  console.log('CONSEGNA_LIST:Update Consegna');
   console.log(id);
   console.log(this.modelConsegna);
   this.modelConsegna.id = id;
   this._appService.updateConsegnaAtti(this.modelConsegna).subscribe(
     data => { 
-      console.log('ATTI_LIST:Update SUCCESS!');
+      console.log('CONSEGNA_LIST:Update SUCCESS!');
       console.log(data);
       this.form2show = 0;
       this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
@@ -432,14 +298,14 @@ updateConsegna(id){
 */
 
 showConsegnaForm(id){
-  console.log('ATTI_LIST:showConsegnaForm Consegna ..');
+  console.log('CONSEGNA_LIST:showConsegnaForm Consegna ..');
   console.log(id);
   this.form2show = id;
   this.lastInsertedId = id;
 }
 
 resetFormConsegna(){
-  console.log('ATTI_LIST:resetForm Consegna ..');
+  console.log('CONSEGNA_LIST:resetForm Consegna ..');
   this.form2show = 0;
 }
 
@@ -451,17 +317,17 @@ filterValue(obj, key, value) {
 /*
 // controlla se la notifica di aggiornamento ha modificato la lista in visualizzazione
 updateListFromMessage(msg){
-  console.log('ATTI_LIST:updateListFromMessage ..');
+  console.log('CONSEGNA_LIST:updateListFromMessage ..');
 
   // solo se ricerca
   if (this.action == 'ricerca') {
     var itemId  = msg.msg.id;
     console.log(this.items);
-    console.log('ATTI_LIST: search for ', itemId);
+    console.log('CONSEGNA_LIST: search for ', itemId);
 
     for (var i in this.items) {
       if (this.items[i].id == itemId) {
-        console.log('ATTI_LIST: ITEM FOUND update!');
+        console.log('CONSEGNA_LIST: ITEM FOUND update!');
         this.items[i].atti_note = msg.msg.atti_note + ' @@ ';
         this.items[i].atti_documento = msg.msg.atti_documento;
         this.items[i].atti_soggetto = msg.msg.atti_soggetto;
@@ -475,101 +341,9 @@ updateListFromMessage(msg){
 */
 
 
-stampaReport() {
-
-  let contenutoStampa = [];
-  let elencoTabellare = [];
-  let progressivo = 1;
-  let tableWidhts = [];
-
-  elencoTabellare.push([ 'Progr.', 'Data', 'Nominativo', 'Data Consegna - Documento - Firma  ', 'Progr' ]);
-  tableWidhts =        [ 50,        65,     150,         '*',                                     60 ];
-
-
-
-  this.items.forEach(function(obj){
-    elencoTabellare.push([
-          {text: obj.id, fontSize: 12, border: [true, false, false, false]},
-          {text: moment(obj.atti_data_reg).format('DD/MM/YYYY'), fontSize: 12,border: [false, true, false, false]},
-          {text: obj.atti_nominativo, fontSize: 12, border: [false, false, false, false]},
-          {text: '', fontSize: 10, border: [true, false, false, false]},
-          {text: obj.id, fontSize: 12, alignment: 'right',border: [false, false, true, false]}
-    ]);
-
-    elencoTabellare.push([
-      {
-        text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
-        colSpan: 3, 
-        fontSize: 12,
-        alignment: 'left', 
-        border: [true, false, false, true]
-      },
-        '',
-        '',
-      {
-        text: '', 
-        colSpan: 2, 
-        fontSize: 10,
-        alignment: 'center',
-        border: [true, false, true, true]
-      },
-      ''
-    ]);
-
-  });
-
-  let tabellaStampa = {
-      table: {
-        // headers are automatically repeated if the table spans over multiple pages
-        // you can declare how many rows should be treated as headers
-        headerRows: 1,
-        widths: tableWidhts,
-        body: elencoTabellare
-      }
-  };
-
-
-  contenutoStampa.push( { 
-    text: 'Comune di Rimini - Ufficio Protocollo - Deposito atti comunali - Data deposito: ' + moment().format('DD/MM/YYYY'), fontSize: 18 } 
-  );
-  // contenutoStampa.push( { text: 'Matricola: ' + 'MMMMMM', fontSize: 12 } );
-  contenutoStampa.push( tabellaStampa );
-  contenutoStampa.push({ text: 'Totale: ' + this.items.length , fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
-
-  /*
-  if(numeroPagina == maxPagina){
-    contenutoStampa.push({ text: '  ', fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
-  }else{
-    contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
-  }
-  */
-
-
-  const docDefinition = { 
-    pageSize: 'A4',
-    pageOrientation: 'landscape',
-    pageMargins: [ 30, 30, 30, 30 ],
-    footer: function(currentPage, pageCount) {  
-      return    { 
-                  text: 'pagina ' + currentPage.toString() + ' di ' + pageCount, 
-                  alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8] 
-                }
-     },
-    header: function(currentPage, pageCount) {
-       return {
-                text: 'Report generato il: ' + moment().format('DD/MM/YYYY'), fontSize: 8, 
-                alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8] 
-              };
-    },
-    content: [contenutoStampa]
-   };
-
-
-   pdfMake.createPdf(docDefinition).open();
-}
 
 showModificaAttoForm(item) {
-  console.log('ATTI_LIST:showModificaAttoForm show form! ..');
+  console.log('CONSEGNA_LIST:showModificaAttoForm show form! ..');
   console.log(item);
   this.form2show = item.id;
   this.lastInsertedId = item.id;
@@ -583,31 +357,13 @@ showModificaAttoForm(item) {
 }
 
 hideModificaAttoForm(){
-  console.log('ATTI_LIST:hideModificaAttoForm Consegna ..');
+  console.log('CONSEGNA_LIST:hideModificaAttoForm Consegna ..');
   this.form2show = 0;
 }
 
-updateAtto(id){
-  console.log('ATTI_LIST:updateAtto');
-  console.log(id);
-  console.log(this.modelModifica);
-
-  this.modelModifica.id = id;
-  this._appService.updateAtti(this.modelModifica).subscribe(
-    data => { 
-      console.log('ATTI_LIST:updateAtto SUCCESS!');
-      console.log(data);
-      this.form2show = 0;
-      this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
-      this.getAtti(this.modelSearch);
-    },
-    err => { console.log(err); this._toastr.error('Errore - Aggiornamento errato', err.statusText); },
-    () => console.log('ATTI_LIST:updateAtto completed!')
-  );
-}
 
 aggiungiAllaConsegna(item) {
-  console.log('ATTI_LIST:aggiungiAllaConsegna');
+  console.log('CONSEGNA_LIST:aggiungiAllaConsegna');
   console.log(item);
   let bFound = false;
   this._appService.carrello.forEach(function(el){

@@ -13,6 +13,6 @@ import { ConsegnaComponent } from './consegna.component';
 export const consegnaRoutes: Routes = [
   { path: 'consegna', component: ConsegnaListComponent },
   { path: 'consegna/inserimento', component: ConsegnaComponent },
-  // { path: 'consegne/visualizzazione', component: ConsegneNewComponent },
+  { path: 'consegna/visualizzazione/:id', component: ConsegnaNewComponent },
   { path: 'consegna/ricerca', component: ConsegnaListComponent }
 ];

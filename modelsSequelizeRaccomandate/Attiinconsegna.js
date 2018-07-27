@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
 
     
     Attiinconsegna.associate = function (models) {
-        models.Attiinconsegna.belongsTo(models.rAtti, { foreignKey: 'attiinconsegna_codice_atto', as: 'codice_atto'  });
+        models.Attiinconsegna.belongsTo(models.Atti, { foreignKey: 'attiinconsegna_codice_atto', as: 'codice_atto'  });
     };
     
  

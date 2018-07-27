@@ -306,6 +306,28 @@ router.post('/consegna',
 });
 
 
+// GET recupera i dati inseriti con alcuni filtri da sistemare
+// 
+router.get('/consegna', 
+    // utilityModule.ensureAuthenticated, 
+    function(req, res) {
+    log.info('RaccomandateMgr get /consegna : ');
+
+    console.log(req.query);
+    var options = req.query;
+    databaseModule.getConsegna(options)
+         .then( function (result) {
+                  // log.log2console(result);
+                  return res.status(200).send(result);
+               })
+         .catch(function (err) {
+                  log.info(err);
+                  return res.status(200).send(err);
+                });
+     
+});
+
+
 
 // DELETE elimina righe inserite
 router.delete(  '/posta/:posta_id', 
