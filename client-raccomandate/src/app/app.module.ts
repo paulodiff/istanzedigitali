@@ -1,9 +1,10 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
-import { HttpClientModule } from '@angular/common/http';
+
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
@@ -20,6 +21,7 @@ import { RaccomandateListComponent }  from './raccomandate/raccomandate-list.com
 import { RaccomandateNewComponent }  from './raccomandate/raccomandate-new.component';
 import { ConsegnaListComponent }  from './consegna/consegna-list.component';
 import { ConsegnaNewComponent }  from './consegna/consegna-new.component';
+import { ErrorsComponent }  from './errors/errors.component';
 
 
 import { SocketComponent }  from './socket/socket.component';
@@ -38,6 +40,10 @@ import { ToastrModule } from 'ngx-toastr';
 // import { SseEventService } from './services/sseevent.service';
 import { SocketService } from './services/socket.service';
 import { ReportService } from './services/report.service';
+import { ErrorHandlerService } from './services/error-handler.service';
+import { NotificationService } from './services/notification.service';
+
+import { RequestInterceptor } from './services/http-interceptor.service';
 
 
 @NgModule({
@@ -73,8 +79,8 @@ import { ReportService } from './services/report.service';
       preventDuplicates: true,
     })
     ],
-  declarations: [ 
-    AppComponent, 
+  declarations: [
+    AppComponent,
     HelloComponent,
     AttiListComponent,
     AttiNewComponent,
@@ -86,11 +92,27 @@ import { ReportService } from './services/report.service';
     SocketComponent,
     ConsegnaComponent,
     LogInfoComponent,
+    ErrorsComponent,
     FormlyFieldButton,
     FormlyFieldInput,
     FormlyFieldSelect
   ],
-  providers: [ AppService, SocketService, ReportService ],
-  bootstrap:    [ AppComponent ]
+  providers: [
+    AppService,
+    SocketService,
+    ReportService,
+    NotificationService,
+    ErrorHandlerService,
+    {
+      provide: ErrorHandler,
+      useClass: ErrorHandlerService,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RequestInterceptor,
+      multi: true
+    }
+  ],
+  bootstrap:  [ AppComponent ]
 })
 export class AppModule { }

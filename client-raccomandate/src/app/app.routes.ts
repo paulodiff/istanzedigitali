@@ -13,9 +13,11 @@ import { LogInfoComponent } from './loginfo/loginfo.component';
 import { attiRoutes } from './atti/atti.routes';
 import { raccomandateRoutes } from './raccomandate/raccomandate.routes';
 import { consegnaRoutes } from './consegna/consegna.routes';
+import { ErrorsComponent } from './errors/errors.component';
 
 // Route Configuration
 export const routes: Routes = [
+
   {
     path: '',
     redirectTo: '/atti/inserimento',
@@ -29,7 +31,9 @@ export const routes: Routes = [
   // ...dogRoutes,
   ...attiRoutes,
   ...raccomandateRoutes,
-  ...consegnaRoutes
+  ...consegnaRoutes,
+  { path: 'error', component: ErrorsComponent },
+  { path: '**', component: ErrorsComponent, data: { error: 404 } }
     // ,  { path: 'dogs', component: DogListComponent }
 ];
 

@@ -5,6 +5,8 @@ export const environment = {
   apiInfo: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/info',
   apiInfoLog: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/infolog',
   apiAttiConsegnatari: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/atticonsegnatari',
+  apiDestinatariRaccomandate: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/destinatariraccomandate',
+  apiRaccomandate: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/raccomandate',
   apiSse: 'http://srv-webapi.ad.comune.rimini.it:8010/sse',
   apiSocket: 'http://srv-webapi.ad.comune.rimini.it:8010'
 };

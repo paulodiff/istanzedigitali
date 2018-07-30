@@ -47,11 +47,12 @@ export class AppService {
       this.username = 'USER_TEST';
     }
 
+    // --------------------- ATTI ---------------------------------
+
     private cache$: Observable<Array<LookupObject>>;
 
     private cacheConsegnatari: any[];
 
-    
     get consegnatariPromise() {
       console.log('APP_SERVICE:consegnatariPromise ...');
       if (!this.cacheConsegnatari) {
@@ -200,6 +201,69 @@ export class AppService {
       // console.log(JSON.stringify(options));
       return this.http.get(environment.apiAttiConsegnatari, { params: Params, headers: this.httpOptions } );
     }
+
+    /*
+    saveAtti(options) {
+        // Begin assigning parameters
+        console.log('APP_SERVICE:saveAtti');
+        let Params = new HttpParams();
+        console.log(options);
+
+        let nominativo = options.nominativo ? options.nominativo : '';
+        options.nominativo = nominativo.toUpperCase();
+
+        Params = Params.append('nominativo', nominativo);
+        Params = Params.append('cronologico', options.cronologico);
+        Params = Params.append('maxnumrighe', options.maxnumrighe);
+        // console.log(JSON.stringify(options));
+        return this.http.post(environment.apiAtti, JSON.stringify(options), this.httpOptions );
+    }
+    */
+
+    // --------------------- RACCOMANDATE ---------------------------------
+
+    get destinatariRaccomandate() {
+      console.log('APP_SERVICE:destinatariRaccomandate ...');
+      if (!this.cache$) {
+        console.log('APP_SERVICE:destinatariRaccomandate:RELOAD CACHE!');
+        this.cache$ = this.requestDestinatariRaccomandate().pipe(
+          // tap(val => console.log(`BEFORE MAP: ${val}`)),
+          shareReplay(CACHE_SIZE)
+        );
+      }
+      return this.cache$;
+    }
+
+    private requestDestinatariRaccomandate() {
+      console.log('requestDestinatariRaccomandate req:', environment.apiDestinatariRaccomandate);
+      // return this.http.get<any>(environment.apiAttiConsegnatari)
+      return this.http.get<any>(environment.apiDestinatariRaccomandate, {} );
+    }
+
+    getRaccomandate(options) {
+      // Begin assigning parameters
+      console.log('APP_SERVICE:getRaccomandate');
+      let Params = new HttpParams();
+      console.log(options);
+      console.log(environment.apiRaccomandate);
+      Params = Params.append('dataricerca', options.dataricerca);
+      Params = Params.append('numero', options.numero);
+      Params = Params.append('mittente', options.mittente);
+      Params = Params.append('maxnumrighe', options.maxnumrighe);
+      console.log(JSON.stringify(options));
+      return this.http.get(environment.apiRaccomandate, { params: Params, headers: this.httpOptions } );
+  }
+
+    saveRaccomandata(options) {
+      // Begin assigning parameters
+      console.log('APP_SERVICE:saveRaccomandata');
+      let Params = new HttpParams();
+      console.log(options);
+
+      // console.log(JSON.stringify(options));
+      return this.http.post(environment.apiRaccomandate, JSON.stringify(options), this.httpOptions );
+  }
+    // --------------------- LOGIN / AUTH ---------------------------------
 
   // generate a random user id
   public fakeLogin() {

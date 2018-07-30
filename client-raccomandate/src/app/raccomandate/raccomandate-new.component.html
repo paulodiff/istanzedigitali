@@ -12,34 +12,33 @@
 <table class="table table-striped bg-light">
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Data Reg.</th>
-      <th scope="col">Nominativo</th>
-      <th scope="col">Consegnatario</th>
-      <th scope="col">Cronologico</th>
-      <th scope="col">Operatore</th>
-      <th scope="col">Azione</th>
+            <th scope="col">Id</th>
+            <th scope="col">Data</th>
+            <th scope="col">Destinatario</th>
+            <th scope="col">Mittente</th>
+            <th scope="col">Numero</th>
+             <th scope="col">Operatore</th>
+            <th scope="col">Azione</th>
     </tr>
   </thead>
   <tbody *ngFor="let item of items">
     <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
-      <td>
-          <a  
-          [routerLink]="['/loginfo', item.id]"
-          >{{item.id}}</a>
-      </td>
-      <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
-      <td>{{item.atti_nominativo}}</td>
-      <td>{{item.Consegnatari.consegnatario_descrizione}}</td>
-      <td>{{item.atti_cronologico}}</td>
-      <td>{{item.atti_operatore}}</td>
+        <td>
+            <a  
+            [routerLink]="['/loginfo', item.id]"
+            >{{item.id}}</a>
+        </td>
+        <td>{{item.raccomandate_data_reg | date : "dd/MM/yyyy"}}</td>
+        <td>{{item.raccomandate_destinatari.destinatario_codice}} - {{item.raccomandate_destinatari.destinatario_descrizione}}</td>
+        <td>{{item.raccomandate_mittente}}</td>
+        <td>{{item.raccomandate_numero}}</td>
+        <td>{{item.raccomandate_operatore}}</td>
 
 
-      <td *ngIf="item.atti_flag_consegna == '0'">
+
         <button type="submit" 
                       (click)="showModificaAttoForm(item)"
                       class="btn btn-primary submit-button">Modifica</button>
-      </td>
 
     </tr>
     <tr *ngIf="form2show == item.id">

@@ -9,6 +9,8 @@ export const environment = {
   apiInfo: 'http://localhost:8010/raccomandatemgr/info',
   apiInfoLog: 'http://localhost:8010/raccomandatemgr/infolog',
   apiAttiConsegnatari: 'http://localhost:8010/raccomandatemgr/atticonsegnatari',
+  apiDestinatariRaccomandate: 'http://localhost:8010/raccomandatemgr/destinatariraccomandate',
+  apiRaccomandate: 'http://localhost:8010/raccomandatemgr/raccomandate',
   apiSse: 'http://localhost:8010/sse',
   apiSocket: 'http://localhost:8010'
 };

@@ -567,7 +567,118 @@ saveConsegna: function(data){
 },
 
 
+// RACCOMANDATE --------------------------------------------------------
 
+getDestinatariRaccomandate: function(){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getDestinatariRaccomandate');
+
+        models.Destinatari.findAll()
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+getRaccomandate: function(opts){
+    return new Promise(function(resolve, reject) {
+
+        console.log('databaseModule:getRaccomandate');
+
+        console.log(opts);
+
+        var parametriFiltro = {};
+        var maxNumRighe = 100;
+
+        if (opts.mittente != 'undefined') {
+            parametriFiltro.raccomandate_mittente = { $like: '%' + opts.mittente + '%' };;
+        }
+
+        if (opts.numero != 'undefined') {
+            parametriFiltro.raccomandate_numero = { $like: '%' + opts.numero + '%' };;
+        }
+
+        if (opts.maxnumrighe != 'undefined') {
+            maxnumrighe = parseInt(opts.maxnumrighe);
+        }
+
+        //if (opts.dataricerca != 'undefined' || opts.dataricerca != '') {
+        var dataPosta = moment(opts.dataricerca, "DD/MM/YYYY").format();
+        console.log(dataPosta);
+        if(dataPosta != 'Invalid date') {
+            console.log(opts.dataricerca);
+
+            var daDataPosta = moment(opts.dataricerca, "DD/MM/YYYY").hours(0).minutes(0).seconds(0).milliseconds(0).format();
+            var aDataPosta = moment(opts.dataricerca, "DD/MM/YYYY").hours(23).minutes(59).seconds(59).milliseconds(0).format();
+            console.log(daDataPosta);
+            console.log(aDataPosta);
+            /*
+            ts : {
+                $between: [obj.daDataPosta, obj.aDataPosta]
+            }
+            */
+            parametriFiltro.raccomandate_data_reg = { $between: [daDataPosta, aDataPosta] };
+        }
+
+
+        console.log('---PAMETRI FILTRO FINALE-------------------------------------------------');
+        console.log(parametriFiltro);
+        console.log('---PAMETRI FILTRO FINALE-------------------------------------------------');
+
+        
+        models.Raccomandate.findAll({
+            include: [
+                {   
+                    model: models.Destinatari,
+                    as: 'raccomandate_destinatari'
+                    // ,where: { state: Sequelize.col('project.state') }
+                }
+            ],
+            where: parametriFiltro,
+            order: [['id','ASC']],
+            limit: maxNumRighe
+        /*
+        models.Posta.findAll({
+          where: {
+            userid : opts.userid,
+            posta_id: {
+                $like: opts.today + '%'
+            }
+        } 
+        */
+        }).then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+// memorizza i dati di una istanza per consultazioni
+saveRaccomandata: function(data){
+
+    return new Promise(function(resolve, reject) {
+        console.log('databaseModule:saveRaccomandata');
+        console.log(data);
+
+        models.Raccomandate.build({
+            raccomandate_data_reg: new Date(),
+            raccomandate_numero: data.numero,
+            raccomandate_destinatario_codice: data.destinatario,
+            raccomandate_mittente: data.mittente,
+            raccomandate_operatore: data.operatore
+        })
+        .save()
+        .then(function(anotherTask) {
+            resolve(anotherTask);
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
 
 
 // aggiorna i dati di una istanza per consultazioni

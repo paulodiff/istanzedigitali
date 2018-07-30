@@ -17,7 +17,7 @@ import * as moment from 'moment';
 // Component class
 export class RaccomandateListComponent implements OnInit, OnDestroy {
 
-public name = 'Atti - ricerca - consegna';
+public name = 'Raccomandate - ricerca - consegna';
 public action: any;
 private sub: any;
 
@@ -54,17 +54,17 @@ public fieldsSearch: FormlyFieldConfig[] = [
         {
           className: 'col-3',
           type: 'inputR',
-          key: 'nominativo',
+          key: 'mittente',
           templateOptions: {
-            label: 'Nominativo',
+            label: 'Mittente',
           },
         },
         {
           className: 'col-3',
           type: 'inputR',
-          key: 'cronologico',
+          key: 'numero',
           templateOptions: {
-            label: 'Cronologico',
+            label: 'Numero',
           }
         },
         {
@@ -340,7 +340,7 @@ toUpperCase(value) {
 }
 
 ngOnInit() {
-  console.log('ATTI_LIST:ngOnInit');
+  console.log('RACCOMANDATE_LIST:ngOnInit');
   /*
   this.sub = this._route.params.subscribe(params => {
     this.action = params['action'];
@@ -351,56 +351,35 @@ ngOnInit() {
   });
   */
 
-  console.log('ATTI_LIST:getAtti call');
-  this.getAtti({dataricerca : this.oggi});
+  console.log('RACCOMANDATE_LIST:getAtti call');
+  this.getRaccomandate({dataricerca : this.oggi});
 
 }
 
 
 ngOnDestroy() {
-  console.log('ATTI_LIST:ngOnDestroy');
+  console.log('RACCOMANDATE_LIST:ngOnDestroy');
 
 }
 
 
 submitSearch(modelSearch) {
-  console.log('ATTI_LIST:submitSearch');
+  console.log('RACCOMANDATE_LIST:submitSearch');
   this.form2show = 0;
   console.log(this.modelSearch);
-  this.getAtti(this.modelSearch);
+  this.getRaccomandate(this.modelSearch);
 }
 
-/*
-submitNew(modelNew) {
-  console.log('ATTI_LIST:submitNew');
-  console.log(this.modelNew);
-  this._appService.saveAtti(this.modelNew).subscribe(
-    data => {
-      this.dataReturned = data;
-      console.log(data);
-      this.lastInsertedId = this.dataReturned.newId;
-    },
-    err => { console.log('ERRORE:'); console.log(err);},
-    () => { console.log('submitNew ok reload!'); 
-            this.modelNew.nominativo = '';
-            this.modelNew.cronologico = '';
-            this.getAtti({dataricerca : this.oggi});
-            this._toastr.success('Atto inserito!', 'Tutto ok!');
-    }
-  );
-  // this.getTodos(this.modelSearch);
-}
-*/
 
-getAtti(ops) {
-  console.log('ATTI_LIST:getAtti');
-  this._appService.getAtti(ops).subscribe(
+getRaccomandate(ops) {
+  console.log('RACCOMANDATE_LIST:getRaccomandate');
+  this._appService.getRaccomandate(ops).subscribe(
       data => { 
         console.log(data);
         this.items = data;
       },
       err => console.log(err),
-      () => console.log('ATTI_LIST:getAtti done loading atti')
+      () => console.log('RACCOMANDATE_LIST:getRaccomandate done loading atti')
     );
 }
 
@@ -409,34 +388,16 @@ eliminaAtto(id){
   this._toastr.success('Hello world!', 'Toastr fun!');
 }
 
-/*
-updateConsegna(id){
-  console.log('ATTI_LIST:Update Consegna');
-  console.log(id);
-  console.log(this.modelConsegna);
-  this.modelConsegna.id = id;
-  this._appService.updateConsegnaAtti(this.modelConsegna).subscribe(
-    data => { 
-      console.log('ATTI_LIST:Update SUCCESS!');
-      console.log(data);
-      this.form2show = 0;
-      this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
-    },
-    err => console.log(err),
-    () => console.log('done loading atti')
-  );
-}
-*/
 
 showConsegnaForm(id){
-  console.log('ATTI_LIST:showConsegnaForm Consegna ..');
+  console.log('RACCOMANDATE_LIST:showConsegnaForm Consegna ..');
   console.log(id);
   this.form2show = id;
   this.lastInsertedId = id;
 }
 
 resetFormConsegna(){
-  console.log('ATTI_LIST:resetForm Consegna ..');
+  console.log('RACCOMANDATE_LIST:resetForm Consegna ..');
   this.form2show = 0;
 }
 
@@ -445,36 +406,8 @@ filterValue(obj, key, value) {
   return obj.find(function(v){ return v[key] === value});
 }
 
-/*
-// controlla se la notifica di aggiornamento ha modificato la lista in visualizzazione
-updateListFromMessage(msg){
-  console.log('ATTI_LIST:updateListFromMessage ..');
-
-  // solo se ricerca
-  if (this.action == 'ricerca') {
-    var itemId  = msg.msg.id;
-    console.log(this.items);
-    console.log('ATTI_LIST: search for ', itemId);
-
-    for (var i in this.items) {
-      if (this.items[i].id == itemId) {
-        console.log('ATTI_LIST: ITEM FOUND update!');
-        this.items[i].atti_note = msg.msg.atti_note + ' @@ ';
-        this.items[i].atti_documento = msg.msg.atti_documento;
-        this.items[i].atti_soggetto = msg.msg.atti_soggetto;
-        this.items[i].atti_flag_consegna = msg.msg.atti_flag_consegna;
-        break; 
-      }
-    }
-  }
-
-}
-*/
-
-
-
 showModificaAttoForm(item) {
-  console.log('ATTI_LIST:showModificaAttoForm show form! ..');
+  console.log('RACCOMANDATE_LIST:showModificaAttoForm show form! ..');
   console.log(item);
   this.form2show = item.id;
   this.lastInsertedId = item.id;
@@ -488,31 +421,13 @@ showModificaAttoForm(item) {
 }
 
 hideModificaAttoForm(){
-  console.log('ATTI_LIST:hideModificaAttoForm Consegna ..');
+  console.log('RACCOMANDATE_LIST:hideModificaAttoForm Consegna ..');
   this.form2show = 0;
 }
 
-updateAtto(id){
-  console.log('ATTI_LIST:updateAtto');
-  console.log(id);
-  console.log(this.modelModifica);
-
-  this.modelModifica.id = id;
-  this._appService.updateAtti(this.modelModifica).subscribe(
-    data => { 
-      console.log('ATTI_LIST:updateAtto SUCCESS!');
-      console.log(data);
-      this.form2show = 0;
-      this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
-      this.getAtti(this.modelSearch);
-    },
-    err => { console.log(err); this._toastr.error('Errore - Aggiornamento errato', err.statusText); },
-    () => console.log('ATTI_LIST:updateAtto completed!')
-  );
-}
 
 aggiungiAllaConsegna(item) {
-  console.log('ATTI_LIST:aggiungiAllaConsegna');
+  console.log('RACCOMANDATE_LIST:aggiungiAllaConsegna');
   console.log(item);
   let bFound = false;
   this._appService.carrello.forEach(function(el){

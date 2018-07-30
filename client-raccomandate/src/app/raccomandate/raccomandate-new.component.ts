@@ -18,14 +18,14 @@ import * as moment from 'moment';
 // Component class
 export class RaccomandateNewComponent implements OnInit, OnDestroy {
 
-public name = 'Atti - Inserimento del ' + moment().format("YYYYMMDD");
+public name = 'Raccomandate - Inserimento del ' + moment().format('"YYYYMMDD');
 public action:any;
 private sub:any;
 
-public items: any;
+public items: any[];
 public attiConsegnatari: any;
 public form2show = 131102;
-public oggi = moment().format("DD/MM/YYYY");
+public oggi = moment().format('"DD/MM/YYYY');
 public lastInsertedId:any;
 public dataReturned:any;
 public sseEventBus:any;
@@ -42,15 +42,15 @@ public fieldsNew: FormlyFieldConfig[] = [
       fieldGroupClassName: 'row',
       fieldGroup: [
         {
-          className: 'col-3',
-          key: 'consegnatario',
+          className: 'col-4',
+          key: 'destinatario',
           type: 'select',
-          defaultValue: 'MESSI_NOTIFICATORI',
+          defaultValue: '1',
           templateOptions: {
-            label: 'Consegnatario',
-            options: this._appService.getAttiConsegnatari({}),
+            label: 'Destinatario',
+            options: this._appService.destinatariRaccomandate,
             valueProp: 'id',
-            labelProp: 'consegnatario_descrizione'
+            labelProp: 'destinatario_descrizione'
             /*
             options: [
               { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
@@ -62,9 +62,9 @@ public fieldsNew: FormlyFieldConfig[] = [
         {
           className: 'col-3',
           type: 'input',
-          key: 'nominativo',
+          key: 'mittente',
           templateOptions: {
-            label: 'Nominativo',
+            label: 'Mittente',
             required: true
           }
           // ,parsers: [this.toUpperCase],
@@ -73,9 +73,9 @@ public fieldsNew: FormlyFieldConfig[] = [
         {
           className: 'col-3',
           type: 'input',
-          key: 'cronologico',
+          key: 'numero',
           templateOptions: {
-            label: 'Cronologico',
+            label: 'Numero',
             required: true
           }
           //,expressionProperties: {
@@ -83,7 +83,7 @@ public fieldsNew: FormlyFieldConfig[] = [
           //}
         },
         {
-          className: 'col-3',
+          className: 'col-2',
           type: 'button',
           templateOptions: {
             btnType: 'btn btn-success',
@@ -130,9 +130,9 @@ public fieldsModifica: FormlyFieldConfig[] = [
               { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
             ],
             */
-          options: this._appService.getAttiConsegnatari({}),
+          options: this._appService.destinatariRaccomandate,
           valueProp: 'id',
-          labelProp: 'consegnatario_descrizione'
+          labelProp: 'destinatario_descrizione'
           },
         },
         {
@@ -184,7 +184,7 @@ toUpperCase(value) {
 }
 
 ngOnInit() {
-  console.log('ATTI_NEW:ngOnInit:new');
+  console.log('RACCOMANDATE_NEW:ngOnInit:new');
   /*
   this.sub = this._route.params.subscribe(params => {
     this.action = params['action'];
@@ -195,38 +195,40 @@ ngOnInit() {
   });
   */
 
+  /*
   this.socketConnection = this._socketService.getMessages().subscribe(message => {
-    console.log('ATTI_NEW:message received from socket!');
+    console.log('RACCOMANDATE_NEW:message received from socket!');
     console.log(message);
 
     switch (message.type)
     {
-       case "newItemMessage":
-        console.log('ATTI_NEW: reloading data...');
-        this.getAtti({dataricerca : this.oggi});
+       case '"newItemMessage':
+        console.log('RACCOMANDATE_NEW: reloading data...');
+        this.getRaccomandate({dataricerca : this.oggi});
         break;
 
        default: 
-       console.log('ATTI_NEW: no action form message type:', message.type);
+       console.log('RACCOMANDATE_NEW: no action form message type:', message.type);
     }
 
     // this.messages.push(message);
   });
+  */
 
-  console.log('ATTI_NEW:getAtti call');
-  this.getAttiConsegnatari();
-  this.getAtti({dataricerca : this.oggi});
-}
+  console.log('RACCOMANDATE_NEW:getRaccomandate call');
+  // this.getDestinatariRaccomandate();
+    this.getRaccomandate({dataricerca : this.oggi});
+  }
 
 ngOnDestroy() {
-  console.log('ATTI_NEW:ngOnDestroy');
-  console.log('ATTI_NEW:ngOnDestroy:unsubscribe');
-  this.socketConnection.unsubscribe();
+  console.log('RACCOMANDATE_NEW:ngOnDestroy');
+  console.log('RACCOMANDATE_NEW:ngOnDestroy:unsubscribe');
+  // this.socketConnection.unsubscribe();
 }
 
 /*
 submitSearch(modelSearch) {
-  console.log('ATTI_NEW:submitSearch');
+  console.log('RACCOMANDATE_NEW:submitSearch');
   this.form2show = 0;
   console.log(this.modelSearch);
   this.getAtti(this.modelSearch);
@@ -234,10 +236,10 @@ submitSearch(modelSearch) {
 */
 
 submitNew(modelNew) {
-  console.log('ATTI_NEW:submitNew');
+  console.log('RACCOMANDATE_NEW:submitNew');
   console.log(this.modelNew);
   if (this.formNew.valid) {
-    this._appService.saveAtti(this.modelNew).subscribe(
+    this._appService.saveRaccomandata(this.modelNew).subscribe(
       data => {
         this.dataReturned = data;
         console.log(data);
@@ -248,7 +250,7 @@ submitNew(modelNew) {
               console.log('submitNew ok reload!'); 
               //this.modelNew.nominativo = '';
               //this.modelNew.cronologico = '';
-              this.getAtti({dataricerca : this.oggi});
+              this.getRaccomandate({dataricerca : this.oggi});
               // this._socketService.sendMessage({action: 'updateMessage'});
               this._toastr.success('Atto inserito!', 'Tutto ok!');
       }
@@ -259,20 +261,23 @@ submitNew(modelNew) {
   // this.getTodos(this.modelSearch);
 }
 
-getAtti(ops) {
-  console.log('ATTI_NEW:getAtti');
-  this._appService.getAtti(ops).subscribe(
+getRaccomandate(ops) {
+  console.log('RACCOMANDATE_NEW:getAtti');
+  this._appService.getRaccomandate(ops).subscribe(
       data => {
+        console.log('-------------------------------------------');
         console.log(data);
+        console.log('-------------------------------------------');
         this.items = data;
       },
       err => console.log(err),
-      () => console.log('ATTI_NEW:getAtti done loading atti')
+      () => console.log('RACCOMANDATE_NEW:getRaccomandate done loading atti')
     );
 }
 
-getAttiConsegnatari() {
-  console.log('ATTI_NEW:getAttiConsegnatari');
+/*
+getDestinatariRaccomandate() {
+  console.log('RACCOMANDATE_NEW:getAttiConsegnatari');
   var ops = {};
   this._appService.getAttiConsegnatari(ops).subscribe(
       data => { 
@@ -280,64 +285,12 @@ getAttiConsegnatari() {
         this.attiConsegnatari = data;
       },
       err => console.log(err),
-      () => console.log('ATTI_NEW:getAttiConsegnatari done loading atti')
+      () => console.log('RACCOMANDATE_NEW:getAttiConsegnatari done loading atti')
     );
 }
-
-getInfo() {
-  this._appService.getStatus().subscribe(
-    data => { 
-      console.log(data);
-    },
-    err => console.log(err),
-    () => console.log('ATTI_NEW:getInfo')
-  );
-
-}
-
-
-/*
-eliminaAtto(id){
-  console.log(id);
-  this._toastr.success('Hello world!', 'Toastr fun!');
-}
 */
 
-/*
 
-updateConsegna(id){
-  console.log('ATTI_NEW:Update Consegna');
-  console.log(id);
-  console.log(this.modelConsegna);
-  this.modelConsegna.id = id;
-  this._appService.updateConsegnaAtti(this.modelConsegna).subscribe(
-    data => { 
-      console.log('ATTI_NEW:Update SUCCESS!');
-      console.log(data);
-      this.form2show = 0;
-      this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
-    },
-    err => console.log(err),
-    () => console.log('done loading atti')
-  );
-}
-*/
-
-/*
-showConsegnaForm(id){
-  console.log('ATTI_NEW:showConsegnaForm Consegna ..');
-  console.log(id);
-  this.form2show = id;
-  this.lastInsertedId = id;
-}
-*/
-
-/*
-resetFormConsegna(){
-  console.log('ATTI_NEW:resetForm Consegna ..');
-  this.form2show = 0;
-}
-*/
 
 
 filterValue(obj, key, value) {
@@ -346,17 +299,17 @@ filterValue(obj, key, value) {
 
 // controlla se la notifica di aggiornamento ha modificato la lista in visualizzazione
 updateListFromMessage(msg){
-  console.log('ATTI_NEW:updateListFromMessage ..');
+  console.log('RACCOMANDATE_NEW:updateListFromMessage ..');
 
   // solo se ricerca
   if (this.action == 'ricerca') {
     var itemId  = msg.msg.id;
     console.log(this.items);
-    console.log('ATTI_NEW: search for ', itemId);
+    console.log('RACCOMANDATE_NEW: search for ', itemId);
 
     for (var i in this.items) {
       if (this.items[i].id == itemId) {
-        console.log('ATTI_NEW: ITEM FOUND update!');
+        console.log('RACCOMANDATE_NEW: ITEM FOUND update!');
         this.items[i].atti_note = msg.msg.atti_note + ' @@ ';
         this.items[i].atti_documento = msg.msg.atti_documento;
         this.items[i].atti_soggetto = msg.msg.atti_soggetto;
@@ -370,49 +323,39 @@ updateListFromMessage(msg){
 
 
 showModificaAttoForm(item) {
-  console.log('ATTI_NEW:showModificaAttoForm show form! ..');
+  console.log('RACCOMANDATE_NEW:showModificaAttoForm show form! ..');
   console.log(item);
   this.form2show = item.id;
   this.lastInsertedId = item.id;
   this.modelModifica.nominativo = item.atti_nominativo;
   this.modelModifica.cronologico = item.atti_cronologico;
   this.modelModifica.consegnatario = item.atti_consegnatario_codice;
-    
 }
 
 hideModificaAttoForm(){
-  console.log('ATTI_NEW:hideModificaAttoForm Consegna ..');
+  console.log('RACCOMANDATE_NEW:hideModificaAttoForm Consegna ..');
   this.form2show = 0;
 }
 
-updateAtto(id){
-  console.log('ATTI_NEW:updateAtto');
+updateRaccomandata(id){
+  console.log('RACCOMANDATE_NEW:updateRaccomandata');
   console.log(id);
   console.log(this.modelModifica);
 
   this.modelModifica.id = id;
   this._appService.updateAtti(this.modelModifica).subscribe(
     data => { 
-      console.log('ATTI_NEW:updateAtto SUCCESS!');
+      console.log('RACCOMANDATE_NEW:updateRaccomandata SUCCESS!');
       console.log(data);
       this.modelNew.nominativo = '';
       this.modelNew.cronologico = '';
-      this.getAtti({dataricerca : this.oggi});
+      this.getRaccomandate({dataricerca : this.oggi});
       this.form2show = 0;
       this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
     },
     err => { console.log(err); this._toastr.error('Errore - Aggiornamento errato', err.statusText); },
-    () => console.log('ATTI_NEW:updateAtto completed!')
+    () => console.log('RACCOMANDATE_NEW:updateAtto completed!')
   );
 }
-
-/*
-aggiungiAllaConsegna(item) {
-  console.log('ATTI_NEW:aggiungiAllaConsegna');
-  console.log(item);
-  this._appService.carrello.push(item);
-  console.log(this._appService.carrello);
-}
-*/
 
 }

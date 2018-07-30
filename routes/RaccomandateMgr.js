@@ -186,40 +186,6 @@ router.put('/atti',
 
 });
 
-
-// PUT aggiorna una riga già inserita
-
-router.put('/posta', 
-            utilityModule.ensureAuthenticated, 
-            function(req, res) {
-
-  log.log2console('PostaMgr PUT /posta UPDATE data');
-  log.log2console(req.user);
-  log.log2console(req.body);
-
-  // verifica se il dato è storico 
-  var d1 = (req.body.posta_id).split("@")[0];
-  //console.log(d1);
-  if (d1 == moment().format('YYYYMMDD') ){
-    databaseModule.updatePosta(req.body).then(function (response) {
-      console.log('PostaMgr posta saved!');
-      return res.status(200).send('ok');
-    }).catch(function (err) {
-      console.log(err)
-      return res.status(500).send(err);
-    });
-  } else {
-    console.log('errore autorizzazione aggiornamento dati...');
-    return res.status(420)
-      .send({
-              success: false,
-              title: 'Azione non possibile',
-              message: 'Non è possibile aggiornare i dati storici.',
-      });
-  }
-
-});
-
 // POST inserisce una nuovo atto
 router.post('/atti', 
             // utilityModule.ensureAuthenticated, 
@@ -327,6 +293,80 @@ router.get('/consegna',
      
 });
 
+
+// RACCOMANDATE ------------------------------------------------------------------------------------
+
+
+router.get('/destinatariraccomandate', 
+  //utilityModule.ensureAuthenticated, 
+  function(req, res) {
+    console.log('RaccomandateMgr get /destinatariraccomandate : ');
+
+    console.log(req.query);
+
+    databaseModule.getDestinatariRaccomandate()
+    .then( function (result) {
+      // log.log2console(result);
+      return res.status(200).send(result);
+    })
+    .catch(function (err) {
+      console.log(err);
+      return res.status(500).send(err);
+    });
+});
+
+// GET recupera i dati inseriti con alcuni filtri da sistemare
+// 
+router.get('/raccomandate', 
+    // utilityModule.ensureAuthenticated, 
+    function(req, res) {
+    log.info('RaccomandateMgr get /raccomandate : ');
+   
+    console.log(req.query);
+    var options = req.query;
+    databaseModule.getRaccomandate(options)
+         .then( function (result) {
+                  // log.log2console(result);
+                  return res.status(200).send(result);
+               })
+         .catch(function (err) {
+                  log.info(err);
+                  return res.status(200).send(err);
+                });
+    
+});
+
+// POST inserisce una nuova raccomandata
+router.post('/raccomandate', 
+            // utilityModule.ensureAuthenticated, 
+            function(req, res) {
+              
+  console.log('RaccomandateMgr POST /raccomandate');
+
+  req.user = {userid: 'USER_TEST', userEmail: 'USER_EMAIL_TEST', displayName: 'USER_DISPLAY_NAME_TEST'};
+
+  console.log(req.user);
+  console.log(req.body);
+
+  // assegna il campo id utente da autenticazione
+  req.body.userid = req.user.userid;
+  req.body.userEmail = req.user.userEmail;
+  req.body.userDisplayName = req.user.displayName;
+  req.body.operatore = req.user.userid;
+
+    //req.user.uuidV4 = uuidV4();
+    databaseModule.saveRaccomandata(req.body).then(function (response) {
+      console.log('RaccomandateMgr raccomandata saved!');
+      console.log(response.id);
+      console.log(response.dataValues.id);
+      emitterBus.eventBus.sendEvent('newItemMessage', { msg: 'newItem', newId: response.id});
+      //newItemMessage
+      return res.status(200).send({msg:'ok:raccomandata:saved!', newId: response.id, data: response});
+    }).catch(function (err) {
+      console.log(err)
+      return res.status(500).send(err);
+    });
+});
 
 
 // DELETE elimina righe inserite

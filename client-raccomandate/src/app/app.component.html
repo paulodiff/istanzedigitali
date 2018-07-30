@@ -24,6 +24,12 @@
             [routerLink]="['/consegna/ricerca']"><span>ATTI CONSEGNE</span></a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link text-white" 
+            [routerLinkActive]="['bg-warning']"
+            [routerLink]="['/consegna/inserimento']"><span>ATTI DA CONSEGNARE: {{_userService.carrello.length}}</span></a>
+        </li>
+
 
         <li class="nav-item">
             <a class="nav-link text-white" 
@@ -37,6 +43,7 @@
             [routerLink]="['/raccomandate/ricerca']"><span>RACCOMANDATE RICERCA</span></a>
         </li>
 
+
 <!--
         <li class="nav-item">
             <a class="nav-link text-white" 
@@ -45,10 +52,6 @@
         </li>
 -->
       </ul>
-
-      <a class="nav-link text-white my-2 my-sm-0" 
-        [routerLinkActive]="['bg-warning']"
-        [routerLink]="['/consegna/inserimento']"><span>Da consegnare: {{_userService.carrello.length}}</span></a>
 
         
         <a class="nav-link text-white" 
