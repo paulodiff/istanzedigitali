@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { ErrorHandlerService } from '../services/error-handler.service';
 
 @Component({
   selector: 'app-error',
@@ -13,15 +14,23 @@ export class ErrorsComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private errorHandlerService: ErrorHandlerService
   ) { }
 
   ngOnInit() {
-    this.routeParams = this.activatedRoute.snapshot.queryParams;
-    let errorData = ''; // JSON.parse(this.routeParams.error);
-    console.log(errorData);
-    this.data = this.activatedRoute.snapshot.data;
+    // this.routeParams = this.activatedRoute.snapshot.queryParams;
+    // let errorData = ''; // JSON.parse(this.routeParams.error);
+    // console.log(errorData);
+    if (this.activatedRoute.snapshot.data){
+      console.log(this.activatedRoute.snapshot.data);
+      this.data = this.activatedRoute.snapshot.data;
+    }
+
+    if (this.errorHandlerService.errorMsg){
+      this.data = this.errorHandlerService.errorMsg;
+    }
+    // this.data = this.activatedRoute.snapshot.data;
+
     console.log(this.data);
-    console.log(this.routeParams);
-    this.routeParams = errorData;
   }
 }

@@ -369,6 +369,52 @@ router.post('/raccomandate',
 });
 
 
+// PUT aggiorna i dati di una raccomandata
+
+router.put('/raccomandate', 
+            // utilityModule.ensureAuthenticated, 
+            function(req, res) {
+
+    log.info('RaccomandateMgr PUT /raccomandate UPDATE data');
+    log.info(req.user);
+    log.info(req.body);
+      
+    /*
+    if(req.body.action == 'updateConsegna') {
+      log.info('updateConsegna');
+      databaseModule.updateConsegnaAtti(req.body).then(function (response) {
+        console.log('RaccomandateMgr atti consegna updated!');
+        // emitterBus.eventBus.sendEvent('updateMessage', { sseId: 'MYSSEDID', msg: response});
+        return res.status(200).send({action: 'updateConsegna', status: 'ok', data: response});
+      }).catch(function (err) {
+        console.log('##ERRORE## RaccomandateMgr updateConsegna');
+        console.log(err);
+        return res.status(405).send(err);
+      });
+    };
+    */
+
+    if(req.body.action == 'updateRaccomandata') {
+      log.info('updateRaccomandata');
+      databaseModule.updateRaccomandata(req.body).then(function (response) {
+        console.log('RaccomandateMgr updateRaccomandata success!');
+        emitterBus.eventBus.sendEvent('updateItemMessage', { msg: 'updateItem', newId: response.id});
+        return res.status(200).send({action: 'updateRaccomandata', status: 'ok'});
+      }).catch(function (err) {
+        console.log('##ERRORE## RaccomandateMgr updateRaccomandata');
+        console.log(err);
+        return res.status(500).send(err);
+      });
+    };
+    
+    // return res.status(500).send({msg: 'action NOT found!'});
+
+});
+
+
+
+// ########################################################################################
+
 // DELETE elimina righe inserite
 router.delete(  '/posta/:posta_id', 
                 utilityModule.ensureAuthenticated, 

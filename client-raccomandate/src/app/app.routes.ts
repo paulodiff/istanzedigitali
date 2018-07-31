@@ -27,13 +27,13 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'socket', component: SocketComponent },
   { path: 'consegna', component: ConsegnaComponent },
-  { path: 'loginfo/:id', component: LogInfoComponent },
+  { path: 'loginfo/:tableName/:id', component: LogInfoComponent },
   // ...dogRoutes,
   ...attiRoutes,
   ...raccomandateRoutes,
   ...consegnaRoutes,
   { path: 'error', component: ErrorsComponent },
-  { path: '**', component: ErrorsComponent, data: { error: 404 } }
+  { path: '**', component: ErrorsComponent, data: { status: 404, message: 'Page not found', name: 'Page not found' } }
     // ,  { path: 'dogs', component: DogListComponent }
 ];
 

@@ -12,12 +12,12 @@
             <th scope="col">Azione</th>
           </tr>
         </thead>
-        <tbody *ngFor="let item of messages">
+        <tbody *ngFor="let item of _appService.carrello">
           <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
             <td>{{item.id}}</td>
-            <td>{{item.atti_data_reg | date : "dd/MM/yyyy"}}</td>
+            <td>{{item.atti_data_registrazione | date : "dd/MM/yyyy"}}</td>
             <td>{{item.atti_nominativo}}</td>
-            <td>{{item.atti_consegnatario}}</td>
+            <td>{{item.atti_consegnatari.consegnatario_descrizione}}</td>
             <td>{{item.atti_cronologico}}</td>
             <td>
                     <button 

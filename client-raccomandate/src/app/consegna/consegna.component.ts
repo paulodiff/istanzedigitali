@@ -107,10 +107,10 @@ public fieldsConsegna: FormlyFieldConfig[] = [
 
   ngOnInit() {
 
-    this._appService.carrello = this.initData;
-    this.messages = this._appService.carrello;
-    this.modelConsegna.nominativo = 'MARIO PROVA';
-    this.modelConsegna.estremidocumento = 'PAT. 2134';
+    // this._appService.carrello = this.initData;
+    // this.messages = this._appService.carrello;
+    this.modelConsegna.nominativo = 'MARIO PROVA TEST ';
+    this.modelConsegna.estremidocumento = 'PAT. 2134 - TEST';
     /*
     this.connection = this._socketService.getMessages().subscribe(message => {
       this.messages.push(message);
@@ -140,6 +140,7 @@ public fieldsConsegna: FormlyFieldConfig[] = [
 
     if (this._appService.carrello.length == 0 ) {
         this._toastr.error('Non vi sono elementi selezionati', 'Errore!');
+        return;
     }
 
     if (this.formConsegna.valid && this._appService.carrello ) {

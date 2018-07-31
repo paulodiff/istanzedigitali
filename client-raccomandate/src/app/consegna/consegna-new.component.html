@@ -1,15 +1,16 @@
 <hello name="{{ name }}"></hello>
 
-<h1>Consegna</h1>
+<h3>Consegna n. {{item?.id}} del {{item?.consegna_data_reg | date : "dd/MM/yyyy"}} operatore {{item?.consegna_soggetto}}</h3>
 
 
 <table class="table table-striped bg-light">
-      <tr><td>Id</td><td>{{item?.id}}</td></tr>
+      <tr><td>Stato</td><td>{{item?.consegna_stato}}</td></tr>
       <tr><td>Soggetto</td><td>{{item?.consegna_soggetto}}</td></tr>
       <tr><td>Data</td><td>{{item?.consegna_data_reg | date : "dd/MM/yyyy"}}</td></tr>
       <tr><td>Documento</td><td>{{item?.consegna_documento}}</td></tr>
 </table>  
 
+<h3>Atti in consegna</h3>
 
 <table class="table table-striped bg-light">
   <thead class="thead-dark">

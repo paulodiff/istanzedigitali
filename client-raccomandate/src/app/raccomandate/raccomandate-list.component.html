@@ -22,11 +22,11 @@
     <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
       <td>
           <a  
-          [routerLink]="['/loginfo', item.id]"
+          [routerLink]="['/loginfo', 'Raccomandate', item.id]"
           >{{item.id}}</a>
       </td>
       <td>{{item.raccomandate_data_reg | date : "dd/MM/yyyy"}}</td>
-      <td>{{item.raccomandate_destinatari.destinatario_codice}} - {{item.raccomandate_destinatari.destinatario_descrizione}}</td>
+      <td>{{item.raccomandate_destinatari.destinatario_descrizione}}</td>
       <td>{{item.raccomandate_mittente}}</td>
       <td>{{item.raccomandate_numero}}</td>
       <td>{{item.raccomandate_operatore}}</td>

@@ -138,7 +138,8 @@ getInfoLog: function(opts){
           where: {
              tblName : opts.tblName,
              tblId : opts.tblId
-            } 
+            },
+          order : [ ['id', 'DESC'] ] 
         }).then(function(anotherTask) {
             resolve(anotherTask);
         }).catch(function(error) {
@@ -156,7 +157,7 @@ getAttiList: function(opts){
         console.log(opts);
 
         var parametriFiltro = {};
-        var maxNumRighe = 100;
+        var maxNumRighe = 1000;
 
         if (opts.nominativo != 'undefined') {
             parametriFiltro.atti_nominativo = { $like: '%' + opts.nominativo + '%' };;
@@ -459,8 +460,6 @@ updateAtto: function(data){
     });
 },
 
-
-
 getAttiConsegnatari: function(){
 
     return new Promise(function(resolve, reject) {
@@ -545,7 +544,7 @@ saveConsegna: function(data){
             consegna_documento:  data.estremidocumento,        
             consegna_soggetto:   data.nominativo,        
             consegna_note:       data.note,        
-            consegna_stato: 'PENDING',        
+            consegna_stato: 'PREPARATA',        
             consegna_operatore: data.operatore,
             consegna_ids_atti: data.idList,
             consegna_numero_atti: listId.length,
@@ -591,7 +590,7 @@ getRaccomandate: function(opts){
         console.log(opts);
 
         var parametriFiltro = {};
-        var maxNumRighe = 100;
+        var maxNumRighe = 1000;
 
         if (opts.mittente != 'undefined') {
             parametriFiltro.raccomandate_mittente = { $like: '%' + opts.mittente + '%' };;
@@ -638,7 +637,7 @@ getRaccomandate: function(opts){
                 }
             ],
             where: parametriFiltro,
-            order: [['id','ASC']],
+            order: [['raccomandate_destinatario_codice','ASC'],['id','ASC']],
             limit: maxNumRighe
         /*
         models.Posta.findAll({
@@ -679,6 +678,98 @@ saveRaccomandata: function(data){
         });
     })
 },
+
+// aggiorna i dati di una raccomandata
+updateRaccomandata: function(data){
+
+    return new Promise(function(resolve, reject) {
+        console.log('databaseModuleRaccomandate:updateRaccomandata');
+        console.log('atto updateRaccomandata:' + data.id);
+
+        var tmpValues = {};
+
+        async.waterfall([
+
+            function(callback){
+                console.log('dMR:getRaccomandata');
+                models.Raccomandate.findOne({ where: {id: data.id} }).then(function(item) {
+                    tmpValues = _.clone(item.dataValues);
+                    console.log(item.dataValues);
+                    callback(null, item);
+                }).catch(function(error) { 
+                    callback(error, null);
+                    // reject(error); 
+                });
+            },
+
+            function(item, callback){
+                console.log('dMR:updateRaccomandata');
+                item.update({
+                    raccomandate_numero: data.numero,
+                    raccomandate_mittente: data.mittente,
+                    raccomandate_destinatario_codice : data.consegnatario
+                }).then(function(anotherTask) {
+                    console.log('dMR:updateRaccomandata:ok');
+                    callback(null, item, anotherTask);
+                }).catch(function(error){
+                    console.log('dMR:updateRaccomandata:error');
+                    callback(error, null);
+                });
+            },
+
+            function(oldData, newData, callback){
+                console.log('dMR:updateLog');
+                console.log(oldData.dataValues);
+                console.log(newData);
+                console.log(tmpValues);
+                logArray = [];
+                for (var key in newData._changed) {
+
+                    logArray.push({
+                        ts: new Date(),
+                        tblName: 'Raccomandate',
+                        tblId: data.id,
+                        fldName: key,
+                        oldValue: tmpValues[key],
+                        newValue: newData.dataValues[key],
+                        userId: 'TODO'
+                    });
+                    console.log(key);
+                    console.log(tmpValues[key],newData.dataValues[key]);
+                }
+
+                console.log(logArray);
+
+                models.logSequelize.bulkCreate(logArray)
+                .then(function() {
+                    console.log('dMR:updateLog:ok');
+                    callback(null, 'logOk');
+                }).catch(function(error){
+                    console.log('dMR:updateLog:error');
+                    callback(error, null);
+                });
+                
+            }
+
+        ],function(err, results) {
+            // results is now equal to: {one: 1, two: 2}
+            console.log('dMR:Final!');
+            if(err){
+                console.log('dMR:Final:ERROR!');
+                console.log(err);
+                reject(err); 
+                // res.status(500).send(err);
+            } else {
+                console.log('dMR:Final:SUCCESS!');
+                // res.status(200).send();
+                resolve({updateAtto:'ok'});
+            }
+        });
+
+    });
+},
+
+// ###################################################################################################
 
 
 // aggiorna i dati di una istanza per consultazioni

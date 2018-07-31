@@ -14,6 +14,7 @@ export class LogInfoComponent implements OnInit, OnDestroy {
     public name = 'LogInfo Informazioni di Log';
     public items: any;
     public id;
+    public tableName;
     connection;
     message;
   // form Consegna
@@ -27,11 +28,12 @@ export class LogInfoComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.id = this.route.snapshot.paramMap.get('id');
+    this.tableName = this.route.snapshot.paramMap.get('tableName');
 
     if (this.id) {
       console.log(this.id);
       this.name = this.name + ' registrazione numero: ' +  this.id;
-      let opts = {tblName : 'rAtti', tblId : this.id };
+      let opts = {tblName : this.tableName, tblId : this.id };
       this._appService.getLogs(opts).subscribe(
         data => { 
           console.log(data);

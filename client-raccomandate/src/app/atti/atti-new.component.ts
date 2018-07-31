@@ -405,8 +405,8 @@ showModificaAttoForm(item) {
   this.lastInsertedId = item.id;
   this.modelModifica.nominativo = item.atti_nominativo;
   this.modelModifica.cronologico = item.atti_cronologico;
-  this.modelModifica.consegnatario = item.atti_consegnatario_codice;
-    
+  this.modelModifica.consegnatario = item.atti_consegnatario_id;
+
 }
 
 hideModificaAttoForm(){

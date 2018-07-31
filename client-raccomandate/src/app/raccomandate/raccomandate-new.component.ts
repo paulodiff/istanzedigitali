@@ -118,12 +118,12 @@ public fieldsModifica: FormlyFieldConfig[] = [
           }
         },*/
         {
-          className: 'col-3',
-          key: 'consegnatario',
+          className: 'col-4',
+          key: 'destinatario',
           type: 'select',
-          defaultValue: 'MESSI_NOTIFICATORI',
+          defaultValue: '1',
           templateOptions: {
-            label: 'Consegnatario',
+            label: 'Destinatario',
             /*
             options: [
               { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
@@ -136,11 +136,11 @@ public fieldsModifica: FormlyFieldConfig[] = [
           },
         },
         {
-          className: 'col-4',
+          className: 'col-3',
           type: 'input',
-          key: 'nominativo',
+          key: 'mittente',
           templateOptions: {
-            label: 'Nominativo',
+            label: 'Mittente',
           },
           validators: {
             validation: Validators.compose([Validators.required])
@@ -151,11 +151,11 @@ public fieldsModifica: FormlyFieldConfig[] = [
         },
         
         {
-          className: 'col-4',
+          className: 'col-3',
           type: 'input',
-          key: 'cronologico',
+          key: 'numero',
           templateOptions: {
-            label: 'Cronologico',
+            label: 'Numero',
           },
           validators: {
             validation: Validators.compose([Validators.required])
@@ -195,25 +195,25 @@ ngOnInit() {
   });
   */
 
-  /*
+  
   this.socketConnection = this._socketService.getMessages().subscribe(message => {
     console.log('RACCOMANDATE_NEW:message received from socket!');
     console.log(message);
 
     switch (message.type)
     {
-       case '"newItemMessage':
+       case 'newItemMessage':
         console.log('RACCOMANDATE_NEW: reloading data...');
         this.getRaccomandate({dataricerca : this.oggi});
         break;
 
        default: 
-       console.log('RACCOMANDATE_NEW: no action form message type:', message.type);
+       console.log('RACCOMANDATE_NEW: no action for message type:', message.type);
     }
 
     // this.messages.push(message);
   });
-  */
+
 
   console.log('RACCOMANDATE_NEW:getRaccomandate call');
   // this.getDestinatariRaccomandate();
@@ -223,7 +223,7 @@ ngOnInit() {
 ngOnDestroy() {
   console.log('RACCOMANDATE_NEW:ngOnDestroy');
   console.log('RACCOMANDATE_NEW:ngOnDestroy:unsubscribe');
-  // this.socketConnection.unsubscribe();
+  this.socketConnection.unsubscribe();
 }
 
 /*
@@ -327,9 +327,9 @@ showModificaAttoForm(item) {
   console.log(item);
   this.form2show = item.id;
   this.lastInsertedId = item.id;
-  this.modelModifica.nominativo = item.atti_nominativo;
-  this.modelModifica.cronologico = item.atti_cronologico;
-  this.modelModifica.consegnatario = item.atti_consegnatario_codice;
+  this.modelModifica.mittente = item.raccomandate_mittente;
+  this.modelModifica.numero = item.raccomandate_numero;
+  this.modelModifica.destinatario = item.raccomandate_destinatario_codice;
 }
 
 hideModificaAttoForm(){
@@ -343,7 +343,7 @@ updateRaccomandata(id){
   console.log(this.modelModifica);
 
   this.modelModifica.id = id;
-  this._appService.updateAtti(this.modelModifica).subscribe(
+  this._appService.updateRaccomandata(this.modelModifica).subscribe(
     data => { 
       console.log('RACCOMANDATE_NEW:updateRaccomandata SUCCESS!');
       console.log(data);
@@ -351,10 +351,10 @@ updateRaccomandata(id){
       this.modelNew.cronologico = '';
       this.getRaccomandate({dataricerca : this.oggi});
       this.form2show = 0;
-      this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
+      this._toastr.success('Dati raccomandata aggiornati con successo', 'Operazione completata!');
     },
     err => { console.log(err); this._toastr.error('Errore - Aggiornamento errato', err.statusText); },
-    () => console.log('RACCOMANDATE_NEW:updateAtto completed!')
+    () => console.log('RACCOMANDATE_NEW:updateRaccomandata completed!')
   );
 }
 

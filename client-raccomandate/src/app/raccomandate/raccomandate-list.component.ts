@@ -7,6 +7,7 @@ import { AppService} from '../services/app.service';
 import { ToastrService } from 'ngx-toastr';
 // import { SseEventService } from '../services/sseevent.service';
 import { ActivatedRoute } from '@angular/router';
+import { ReportService } from '../services/report.service';
 import * as moment from 'moment';
 
 
@@ -330,6 +331,7 @@ public fieldsModifica: FormlyFieldConfig[] = [
 constructor(
             private _appService: AppService,
             private _route: ActivatedRoute,
+            private _reportService: ReportService,
             private _toastr: ToastrService) {
   // this.items = db.collection('/items').valueChanges();
   // https://jsonplaceholder.typicode.com/todos
@@ -435,6 +437,11 @@ aggiungiAllaConsegna(item) {
   });
   if (!bFound) { this._appService.carrello.push(item); }
   console.log(this._appService.carrello);
+}
+
+stampaReport() {
+  console.log('RACCOMANDATE_LIST:stampaReport');
+  this._reportService.stampaRaccomandata(this.items);
 }
 
 }

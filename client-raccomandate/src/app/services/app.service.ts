@@ -31,6 +31,7 @@ export class AppService {
     public username: string;
 
     public carrello: any = [];
+    public errorMsg: {};
 
     // error messages received from the login attempt
     public errors: any = [];
@@ -47,9 +48,11 @@ export class AppService {
       this.username = 'USER_TEST';
     }
 
+ 
     // --------------------- ATTI ---------------------------------
 
-    private cache$: Observable<Array<LookupObject>>;
+    private cacheConsegnatari$: Observable<Array<LookupObject>>;
+    private cacheDestinatari$: Observable<Array<LookupObject>>;
 
     private cacheConsegnatari: any[];
 
@@ -75,14 +78,14 @@ export class AppService {
 
     get consegnatari() {
         console.log('APP_SERVICE:consegnatari ...');
-        if (!this.cache$) {
+        if (!this.cacheConsegnatari$) {
           console.log('APP_SERVICE:consegnatari:RELOAD CACHE!');
-          this.cache$ = this.requestConsegnatari().pipe(
+          this.cacheConsegnatari$ = this.requestConsegnatari().pipe(
             // tap(val => console.log(`BEFORE MAP: ${val}`)),
             shareReplay(CACHE_SIZE)
           );
         }
-        return this.cache$;
+        return this.cacheConsegnatari$;
     }
 
     private requestConsegnatari() {
@@ -222,16 +225,17 @@ export class AppService {
 
     // --------------------- RACCOMANDATE ---------------------------------
 
+
     get destinatariRaccomandate() {
       console.log('APP_SERVICE:destinatariRaccomandate ...');
-      if (!this.cache$) {
+      if (!this.cacheDestinatari$) {
         console.log('APP_SERVICE:destinatariRaccomandate:RELOAD CACHE!');
-        this.cache$ = this.requestDestinatariRaccomandate().pipe(
+        this.cacheDestinatari$ = this.requestDestinatariRaccomandate().pipe(
           // tap(val => console.log(`BEFORE MAP: ${val}`)),
           shareReplay(CACHE_SIZE)
         );
       }
-      return this.cache$;
+      return this.cacheDestinatari$;
     }
 
     private requestDestinatariRaccomandate() {
@@ -254,7 +258,7 @@ export class AppService {
       return this.http.get(environment.apiRaccomandate, { params: Params, headers: this.httpOptions } );
   }
 
-    saveRaccomandata(options) {
+  saveRaccomandata(options) {
       // Begin assigning parameters
       console.log('APP_SERVICE:saveRaccomandata');
       let Params = new HttpParams();
@@ -263,6 +267,19 @@ export class AppService {
       // console.log(JSON.stringify(options));
       return this.http.post(environment.apiRaccomandate, JSON.stringify(options), this.httpOptions );
   }
+
+  updateRaccomandata(options) {
+    // Begin assigning parameters
+    console.log('APP_SERVICE:updateRaccomandata');
+    let Params = new HttpParams();
+    console.log(options);
+    options.action = 'updateRaccomandata';
+    // console.log(JSON.stringify(options));
+    return this.http.put(environment.apiRaccomandate, JSON.stringify(options), this.httpOptions );
+  }
+
+
+
     // --------------------- LOGIN / AUTH ---------------------------------
 
   // generate a random user id

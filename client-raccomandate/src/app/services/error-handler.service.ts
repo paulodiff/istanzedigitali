@@ -13,18 +13,21 @@ export class ErrorHandlerService implements ErrorHandler {
     constructor(
         private injector: Injector,
     ) {}
-
+    
+    public errorMsg: {};
 
     // handleError(error: Error | HttpErrorResponse) {
     handleError(error) {
         console.log('##HANDLE ERRORE SERVICE##', error);
         // const message = error.message ? error.message : error.toString();
-        const notificationService = this.injector.get(NotificationService);
+        // const notificationService = this.injector.get(NotificationService);
         const router = this.injector.get(Router);
 
         console.error(error);
         console.log('handleError:navigate to /error');
-        // router.navigate(['/error'], { queryParams: {error: error} });
+        // const myError = this.addContextInfo(error);
+        this.errorMsg = error;
+        router.navigate(['/error']);
 
         /*
         if (error instanceof HttpErrorResponse) {
@@ -44,5 +47,19 @@ export class ErrorHandlerService implements ErrorHandler {
         */
 
         // throw error;
+    }
+
+    addContextInfo(error) {
+        // All the context details that you want (usually coming from other services; Constants, UserService...)
+        const name = error.name || '';
+        const appId = 'raccomandate';
+        const time = new Date().getTime();
+        // const url = location instanceof PathLocationStrategy ? location.path() : '';
+        const url = error.url || '';
+        const status = error.status || '';
+        const statusText = error.statusText || '';
+        const message = error.message || error.toString();
+        const errorToSend = {appId, name, time, url, status, statusText, message};
+        return errorToSend;
     }
 }

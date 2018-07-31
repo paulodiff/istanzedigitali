@@ -25,7 +25,7 @@
     <tr [ngClass]="[lastInsertedId == item.id  ? 'bg-warning' : '' ]"> 
       <td>
           <a  
-          [routerLink]="['/loginfo', item.id]"
+          [routerLink]="['/loginfo', 'Atti', item.id]"
           >{{item.id}}</a>
       </td>
       <td>{{item.atti_data_registrazione | date : "dd/MM/yyyy"}}</td>

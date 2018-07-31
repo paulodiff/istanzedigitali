@@ -154,13 +154,14 @@ export class ReportService {
 
         consegna.atti_in_consegna.forEach(function(obj){
           elencoTabellare.push([
-                {text: obj.id, fontSize: 12, border: [true, false, false, false]},
-                {text: moment(obj.atti_data_reg).format('DD/MM/YYYY'), fontSize: 12,border: [false, true, false, false]},
-                {text: obj.atti_nominativo, fontSize: 12, border: [false, false, false, false]},
-                {text: '', fontSize: 10, border: [true, false, false, false]},
-                {text: obj.id, fontSize: 12, alignment: 'right',border: [false, false, true, false]}
+                {text: obj.attiinconsegna_codice_atto, fontSize: 12, border: [true, false, false, false]},
+                {text: moment(obj.codice_atto.atti_data_registrazione).format('DD/MM/YYYY'), fontSize: 12,border: [false, true, false, false]},
+                {text: obj.codice_atto.atti_nominativo, fontSize: 12, border: [false, false, false, false]},
+                {text: obj.codice_atto.atti_consegnatari.consegnatario_descrizione, fontSize: 10, border: [true, false, false, false]},
+                {text: obj.codice_atto.atti_cronologico, fontSize: 12, alignment: 'right',border: [false, false, true, false]}
           ]);
 
+          /*
         elencoTabellare.push([
             {   text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
                 colSpan: 3, 
@@ -178,6 +179,7 @@ export class ReportService {
             },
              ''
           ]);
+          */
         });
 
         let tabellaStampa = {
@@ -196,17 +198,22 @@ export class ReportService {
         });
 
         contenutoStampa.push({
-            text: 'Ricevuta per consegna n:' + consegna.id, 
-            fontSize: 18
+            text: 'Ricevuta per consegna n:' + consegna.id,
+            fontSize: 16
         });
 
         contenutoStampa.push({ 
-            text: 'Il sottoscritto ' + consegna.consegna_soggetto + ' identificato da:' + consegna.consegna_documento, 
+            text: 'Il sottoscritto ' + consegna.consegna_soggetto,
+            fontSize: 16 
+        });
+
+        contenutoStampa.push({ 
+            text: ' identificato da:' + consegna.consegna_documento,
             fontSize: 16 
         });
 
         contenutoStampa.push( { 
-            text: 'dichiara di ricevere i seguenti atti ... ', 
+            text: 'dichiara di ricevere i seguenti atti', 
             fontSize: 16 } 
         );
 
@@ -251,6 +258,113 @@ export class ReportService {
         pdfMake.createPdf(docDefinition).open();
     }
 
+
+// RACCOMANDATA
+
+stampaRaccomandata(items) {
+
+    let contenutoStampa = [];
+    let elencoTabellare = [];
+    let progressivo = 1;
+    let tableWidhts = [];
+    let tabellaStampa =  {};
+    let prevDestinatario = 0;
+    let prevDestinatarioDescrizione = '';
+
+
+    console.log(items);
+
+    // elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
+    tableWidhts =        [  50,      150,       150       ];
+
+    items.forEach(function(obj) {
+
+        if (prevDestinatario !== obj.raccomandate_destinatario_codice) {
+
+            if (prevDestinatario === 0) { // il primo elemento
+                prevDestinatario = obj.raccomandate_destinatario_codice;
+                prevDestinatarioDescrizione = obj.raccomandate_destinatari.destinatario_descrizione;
+                elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
+            } else { // cambio di gruppo chiude la stampa corrente
+
+                contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo', fontSize: 18 });
+                contenutoStampa.push({ text: 'Settore:' + prevDestinatarioDescrizione, fontSize: 16 });
+                tabellaStampa = {
+                    table: {
+                      headerRows: 1,
+                      widths: tableWidhts,
+                      body: elencoTabellare
+                    }
+                };
+                contenutoStampa.push( tabellaStampa );
+                contenutoStampa.push({ text: 'Data ritiro:' + moment().format('DD/MM/YYYY'), fontSize: 14 });
+                contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
+                elencoTabellare = [];
+                elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
+                prevDestinatario = obj.raccomandate_destinatario_codice;
+                prevDestinatarioDescrizione = obj.raccomandate_destinatari.destinatario_descrizione;
+            }
+
+        }
+
+        elencoTabellare.push([
+            {text: obj.id, fontSize: 12, border: [true, true, true, true]},
+            {text: obj.raccomandate_numero, fontSize: 12, border: [true, true, true, true]},
+            {text: obj.raccomandate_mittente, fontSize: 10, border: [true, true, true, true]},
+        ]);
+
+    });
+
+    // Ultima pagina
+    contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo', fontSize: 18 });
+    contenutoStampa.push({ text: 'Settore:' + prevDestinatarioDescrizione, fontSize: 16 });
+    tabellaStampa = {
+        table: {
+          headerRows: 1,
+          widths: tableWidhts,
+          body: elencoTabellare
+        }
+    };
+    contenutoStampa.push( tabellaStampa );
+    contenutoStampa.push({ text: 'Data ritiro:' + moment().format('DD/MM/YYYY'), fontSize: 14 });
+    contenutoStampa.push({ text: ' ', fontSize: 12, bold: true,  margin: [0, 0, 0, 8] });
+
+
+    /*
+    if(numeroPagina == maxPagina){
+      contenutoStampa.push({ text: '  ', fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
+    }else{
+      contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
+    }
+    */
+
+    const docDefinition = {
+      info: {
+            title: 'raccomandate_stampa_lista',
+            author: 'Comune di Rimini - Protocollo Generale',
+            subject: 'Elenco Raccomandate',
+            keywords: 'Elenco Raccomandate',
+      },
+      pageSize: 'A4',
+      // pageOrientation: 'landscape',
+      pageMargins: [ 30, 30, 30, 30 ],
+      footer: function(currentPage, pageCount) {
+        return   { 
+                    text: 'pagina ' + currentPage.toString() + ' di ' + pageCount,
+                    alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
+                  }
+       },
+      header: function(currentPage, pageCount) {
+         return {
+                  text: 'pagina generata il: ' + moment().format('DD/MM/YYYY'), fontSize: 8,
+                  alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
+                };
+      },
+      content: [contenutoStampa]
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+}
 
 
 
