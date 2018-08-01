@@ -73,7 +73,7 @@ export class ReportService {
           ]);
 
         elencoTabellare.push([
-            {   text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
+            {   text: obj.atti_consegnatari.consegnatario_descrizione + ' - ' + obj.atti_cronologico, 
                 colSpan: 3, 
                 fontSize: 12,
                 alignment: 'left', 
@@ -149,37 +149,18 @@ export class ReportService {
 
         console.log(consegna);
         
-        elencoTabellare.push([ 'Progr.', 'Data', 'Nominativo', 'Data Consegna - Documento - Firma  ', 'Progr' ]);
-        tableWidhts =        [ 50,        65,     150,         '*',                                     60 ];
+        elencoTabellare.push([ 'Progr.', 'Data', 'Nominativo', 'Consegnatario', 'Cronologico' ]);
+        tableWidhts =        [ 50,        65,     150,         '*',                        '*' ];
 
         consegna.atti_in_consegna.forEach(function(obj){
           elencoTabellare.push([
-                {text: obj.attiinconsegna_codice_atto, fontSize: 12, border: [true, false, false, false]},
-                {text: moment(obj.codice_atto.atti_data_registrazione).format('DD/MM/YYYY'), fontSize: 12,border: [false, true, false, false]},
-                {text: obj.codice_atto.atti_nominativo, fontSize: 12, border: [false, false, false, false]},
-                {text: obj.codice_atto.atti_consegnatari.consegnatario_descrizione, fontSize: 10, border: [true, false, false, false]},
-                {text: obj.codice_atto.atti_cronologico, fontSize: 12, alignment: 'right',border: [false, false, true, false]}
+                {text: obj.attiinconsegna_codice_atto, fontSize: 10, border: [true, true, true, true]},
+                {text: moment(obj.codice_atto.atti_data_registrazione).format('DD/MM/YYYY'), fontSize: 10,border: [true, true, true, true]},
+                {text: obj.codice_atto.atti_nominativo, fontSize: 10, border: [true, true, true, true]},
+                {text: obj.codice_atto.atti_consegnatari.consegnatario_descrizione, fontSize: 10, border: [true, true, true, true]},
+                {text: obj.codice_atto.atti_cronologico, fontSize: 10, alignment: 'left',border: [true, true, true, true]}
           ]);
 
-          /*
-        elencoTabellare.push([
-            {   text: obj.atti_consegnatario + ' - ' + obj.atti_cronologico, 
-                colSpan: 3, 
-                fontSize: 12,
-                alignment: 'left', 
-                border: [true, false, false, true]
-              },
-              '',
-              '',
-            { text: '', 
-              colSpan: 2, 
-              fontSize: 10,
-              alignment: 'center',
-              border: [true, false, true, true]
-            },
-             ''
-          ]);
-          */
         });
 
         let tabellaStampa = {
@@ -193,12 +174,12 @@ export class ReportService {
         };
 
         contenutoStampa.push({
-          text: 'Comune di Rimini - Ufficio Protocollo', 
+          text: 'Comune di Rimini - Ufficio Protocollo - Ricevuta', 
           fontSize: 18
         });
 
         contenutoStampa.push({
-            text: 'Ricevuta per consegna n:' + consegna.id,
+            text: 'Consegna n:' + consegna.id + ' creata il :' + moment(consegna.consegna_data_reg).format('DD/MM/YYYY') ,
             fontSize: 16
         });
 
@@ -213,14 +194,23 @@ export class ReportService {
         });
 
         contenutoStampa.push( { 
-            text: 'dichiara di ricevere i seguenti atti', 
+            text: 'dichiara di ricevere i seguenti atti:', 
             fontSize: 16 } 
         );
 
+        contenutoStampa.push( { 
+            text: '', 
+            fontSize: 16 } 
+        );
 
         // contenutoStampa.push( { text: 'Matricola: ' + 'MMMMMM', fontSize: 12 } );
         contenutoStampa.push( tabellaStampa );
-        contenutoStampa.push({ text: 'Totale: 44' , fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
+        contenutoStampa.push( {  text: '-',  fontSize: 30 } );
+        contenutoStampa.push( {
+            text: 'Firma ___________________________________',
+            fontSize: 16 }
+        );
+        contenutoStampa.push({ text: '' , fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
 
         /*
         if(numeroPagina == maxPagina){
@@ -256,6 +246,7 @@ export class ReportService {
         };
 
         pdfMake.createPdf(docDefinition).open();
+        //pdfMake.createPdf(docDefinition).download('optionalName.pdf');
     }
 
 

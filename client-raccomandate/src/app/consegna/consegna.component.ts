@@ -149,14 +149,16 @@ public fieldsConsegna: FormlyFieldConfig[] = [
         this.modelConsegna.idList = itemIds;
 
         this._appService.saveConsegna(this.modelConsegna).subscribe(
-        data => { 
+        data => {
+            let d: any;
+            d = data;
             console.log('CONSEGNA:buildConsegna SUCCESS!');
-            console.log(data);
-            console.log('consegna:', data.newId);
+            console.log(d);
+            console.log('consegna:', d.newId);
             this._toastr.success('Dati consegna aggiornati con successo', 'Operazione completata!');
             this._appService.carrello = [];
             console.log(this.messages);
-            this._router.navigate(['/consegna/visualizzazione/' ,  data.newId ] );
+            this._router.navigate(['/consegna/visualizzazione/' ,  d.newId ] );
         },
         err => {
             console.log(err);

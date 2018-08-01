@@ -25,14 +25,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     public options: FormlyFormOptions = {};
     public fields: FormlyFieldConfig[] = [
         // {template: '<div class="alert alert-success" role="alert">'},
-        
+
         {
             fieldGroupClassName: 'row',
             fieldGroup: [ 
                 {
                     className: 'col-6',
                     type: 'inputR',
-                    key: 'userName',
+                    key: 'username',
                     templateOptions: {
                         label: 'User Name',
                     },
@@ -46,14 +46,10 @@ export class LoginComponent implements OnInit, OnDestroy {
                         label: 'Password',
                         placeholder: 'Password',
                         pattern: ''
-                    },
-                    validators: {
-                        validation: Validators.compose([Validators.required])
                     }
                 }
             ],
-        } 
-        //{template: '</div>B'}
+        }
     ];
 
     submitSearch() {
@@ -62,13 +58,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     submit(model) {
         console.log(this.model);
-        this._userService.login({'username': this.model.username, 'password': this.model.password});
+        this._userService.login(this.model);
     }
 
     ngOnInit() {
         this.model = {
-            username: 'prova',
-            password: ''
+            username: 'M05831',
+            password: 'giugno2018'
         };
 
         console.log('LOGIN INIT ... ');

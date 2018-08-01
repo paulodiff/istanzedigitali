@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { SocketService } from '../services/socket.service';
 // import { SseEventService } from '../services/sseevent.service';
 import { ActivatedRoute } from '@angular/router';
+import { ReportService } from '../services/report.service';
 import * as moment from 'moment';
 
 
@@ -22,7 +23,7 @@ public name = 'Raccomandate - Inserimento del ' + moment().format('"YYYYMMDD');
 public action:any;
 private sub:any;
 
-public items: any[];
+public items: any;
 public attiConsegnatari: any;
 public form2show = 131102;
 public oggi = moment().format('"DD/MM/YYYY');
@@ -173,6 +174,7 @@ constructor(
             private _appService: AppService,
             private _socketService: SocketService,
             private _route: ActivatedRoute,
+            private _reportService: ReportService,
             private _toastr: ToastrService
           ) {
   // this.items = db.collection('/items').valueChanges();
@@ -262,12 +264,10 @@ submitNew(modelNew) {
 }
 
 getRaccomandate(ops) {
-  console.log('RACCOMANDATE_NEW:getAtti');
+  console.log('RACCOMANDATE_NEW:getRaccomandate');
   this._appService.getRaccomandate(ops).subscribe(
       data => {
-        console.log('-------------------------------------------');
         console.log(data);
-        console.log('-------------------------------------------');
         this.items = data;
       },
       err => console.log(err),
@@ -356,6 +356,11 @@ updateRaccomandata(id){
     err => { console.log(err); this._toastr.error('Errore - Aggiornamento errato', err.statusText); },
     () => console.log('RACCOMANDATE_NEW:updateRaccomandata completed!')
   );
+}
+
+stampaReport() {
+  console.log('RACCOMANDATE_LIST:stampaReport');
+  this._reportService.stampaRaccomandata(this.items);
 }
 
 }

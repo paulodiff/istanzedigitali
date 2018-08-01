@@ -257,9 +257,11 @@ app.use('/postamgr', PostaMgr);
 var ProfileMgr = require('./routes/ProfileMgr')();
 app.use('/profilemgr', ProfileMgr);
 
-var LoginMgr = require('./routes/LoginMgr')();
-app.use('/loginmgr', LoginMgr);
 */
+
+var LoginLDAPMgr = require('./routes/LoginLDAPMgr')();
+app.use('/loginldap', LoginLDAPMgr);
+
 
 // Define routes.
 

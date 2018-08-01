@@ -52,7 +52,7 @@ router.get('/atticonsegnatari',
 });
 
 router.get('/infolog', 
-  //utilityModule.ensureAuthenticated, 
+  utilityModule.ensureAuthenticated, 
   function(req, res) {
     log.info('RaccomandateMgr get /atti : ');
 
@@ -298,7 +298,7 @@ router.get('/consegna',
 
 
 router.get('/destinatariraccomandate', 
-  //utilityModule.ensureAuthenticated, 
+  utilityModule.ensureAuthenticated, 
   function(req, res) {
     console.log('RaccomandateMgr get /destinatariraccomandate : ');
 
@@ -318,7 +318,7 @@ router.get('/destinatariraccomandate',
 // GET recupera i dati inseriti con alcuni filtri da sistemare
 // 
 router.get('/raccomandate', 
-    // utilityModule.ensureAuthenticated, 
+    utilityModule.ensureAuthenticated, 
     function(req, res) {
     log.info('RaccomandateMgr get /raccomandate : ');
    
@@ -338,7 +338,7 @@ router.get('/raccomandate',
 
 // POST inserisce una nuova raccomandata
 router.post('/raccomandate', 
-            // utilityModule.ensureAuthenticated, 
+            utilityModule.ensureAuthenticated, 
             function(req, res) {
               
   console.log('RaccomandateMgr POST /raccomandate');
@@ -372,7 +372,7 @@ router.post('/raccomandate',
 // PUT aggiorna i dati di una raccomandata
 
 router.put('/raccomandate', 
-            // utilityModule.ensureAuthenticated, 
+            utilityModule.ensureAuthenticated, 
             function(req, res) {
 
     log.info('RaccomandateMgr PUT /raccomandate UPDATE data');

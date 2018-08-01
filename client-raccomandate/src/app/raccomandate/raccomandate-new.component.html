@@ -33,13 +33,13 @@
         <td>{{item.raccomandate_mittente}}</td>
         <td>{{item.raccomandate_numero}}</td>
         <td>{{item.raccomandate_operatore}}</td>
-
-
+        <td>
 
         <button type="submit" 
                       (click)="showModificaAttoForm(item)"
                       class="btn btn-primary submit-button">Modifica</button>
-
+        </td>
+        
     </tr>
     <tr *ngIf="form2show == item.id">
       <td colspan="10" class="bg-warning">
@@ -56,6 +56,4 @@
   </tbody>
 </table>
 
-<button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa report</button>
-<button type="button" class="btn btn-success btn-default" (click)="getInfo()">S</button>
-
+<button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa elenco</button>

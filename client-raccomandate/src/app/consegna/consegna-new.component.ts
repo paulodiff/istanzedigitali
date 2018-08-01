@@ -49,7 +49,7 @@ public fieldsNew: FormlyFieldConfig[] = [
           defaultValue: 'MESSI_NOTIFICATORI',
           templateOptions: {
             label: 'Consegnatario',
-            options: this._appService.getAttiConsegnatari({}),
+            options: this._appService.consegnatari,
             valueProp: 'id',
             labelProp: 'consegnatario_descrizione'
             /*
@@ -131,7 +131,7 @@ public fieldsModifica: FormlyFieldConfig[] = [
               { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
             ],
             */
-          options: this._appService.getAttiConsegnatari({}),
+          options: this._appService.consegnatari,
           valueProp: 'id',
           labelProp: 'consegnatario_descrizione'
           },

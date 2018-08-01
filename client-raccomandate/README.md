@@ -20,5 +20,22 @@ Funzionalità:
 - Stampe riepilogative Raccomandate
 - Statistiche 
 
+Sviluppato con Angular 6
+
+Note link
+
+
+
+https://scotch.io/tutorials/routing-angular-2-single-page-apps-with-the-component-router
+
+https://www.metaltoad.com/blog/angular-5-making-api-calls-httpclient-service
+
+https://formly-js.github.io/ngx-formly/
+
+https://www.code-sample.com/2018/05/angular-5-6-7-routing-and-navigation.html
+
+
+
+
 
 

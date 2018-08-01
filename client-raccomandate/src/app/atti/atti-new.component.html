@@ -57,10 +57,5 @@
   </tbody>
 </table>
 
-<button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa report</button>
-<button type="button" class="btn btn-success btn-default" (click)="getInfo()">S</button>
-<button type="button" class="btn btn-success btn-default" (click)="stampaReportService()">S2</button>
+<button type="button" class="btn btn-success btn-default" (click)="stampaReportService()">Stampa elenco</button>
 
-<b>START</b>
-<div *ngFor="let joke of consegnatari$ | async">1 - {{joke.id}} {{joke.consegnatario_descrizione}}</div>
-<b>END!</b>

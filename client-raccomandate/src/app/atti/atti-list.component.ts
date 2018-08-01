@@ -7,11 +7,9 @@ import { AppService} from '../services/app.service';
 import { ToastrService } from 'ngx-toastr';
 // import { SseEventService } from '../services/sseevent.service';
 import { ActivatedRoute } from '@angular/router';
+import { ReportService } from '../services/report.service';
 import * as moment from 'moment';
-import * as pdfMake from 'pdfmake/build/pdfmake.js';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts.js';
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   templateUrl: './atti-list.component.html',
@@ -334,6 +332,7 @@ public fieldsModifica: FormlyFieldConfig[] = [
 constructor(
             private _appService: AppService,
             private _route: ActivatedRoute,
+            private _reportService: ReportService,
             private _toastr: ToastrService) {
   // this.items = db.collection('/items').valueChanges();
   // https://jsonplaceholder.typicode.com/todos
@@ -491,6 +490,11 @@ aggiungiAllaConsegna(item) {
   });
   if (!bFound) { this._appService.carrello.push(item); }
   console.log(this._appService.carrello);
+}
+
+stampaReportService(){
+  console.log('ATTI_NEW:stampaReportService ..');
+  this._reportService.stampaReport(this.items);
 }
 
 }

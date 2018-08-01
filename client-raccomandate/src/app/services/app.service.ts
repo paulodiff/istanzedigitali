@@ -23,12 +23,11 @@ export class AppService {
     
     // the actual JWT token
     public token: string;
-
     // the token expiration date
     public token_expires: Date;
-
     // the username of the logged in user
     public username: string;
+    public isAdmin: Boolean;
 
     public carrello: any = [];
     public errorMsg: {};
@@ -61,7 +60,7 @@ export class AppService {
       if (!this.cacheConsegnatari) {
         console.log('APP_SERVICE:consegnatari:RELOAD CACHE!');
         // this.person = this.http.get("https://jsonplaceholder.typicode.com/posts/1").map(res => res.json()).toPromise()
-        this.http.get<any>(environment.apiAttiConsegnatari, {} )
+        this.http.get<any>(environment.apiAttiConsegnatari, { headers: this.httpOptions.headers } )
         // .pipe(map(res => res.json()))
         .toPromise()
         .then((data: any) => {
@@ -91,7 +90,7 @@ export class AppService {
     private requestConsegnatari() {
       console.log('req:', environment.apiAttiConsegnatari);
       // return this.http.get<any>(environment.apiAttiConsegnatari)
-      return this.http.get<any>(environment.apiAttiConsegnatari, {} );
+      return this.http.get<any>(environment.apiAttiConsegnatari, { headers: this.httpOptions.headers } );
       /*
       .pipe(
         tap(val => console.log(`BEFORE MAP: ${val}`)),
@@ -111,7 +110,7 @@ export class AppService {
         Params = Params.append('cronologico', options.cronologico);
         Params = Params.append('maxnumrighe', options.maxnumrighe);
         console.log(JSON.stringify(options));
-        return this.http.get(environment.apiAtti, { params: Params, headers: this.httpOptions } );
+        return this.http.get(environment.apiAtti, { params: Params, headers: this.httpOptions.headers } );
     }
 
     saveAtti(options) {
@@ -140,7 +139,7 @@ export class AppService {
       Params = Params.append('order', options.maxnumrighe);
       console.log(JSON.stringify(options));
       console.log(environment.apiConsegna);
-      return this.http.get(environment.apiConsegna, { params: Params, headers: this.httpOptions } );
+      return this.http.get(environment.apiConsegna, { params: Params, headers: this.httpOptions.headers } );
   }
 
     saveConsegna(options) {
@@ -168,9 +167,6 @@ export class AppService {
       return this.http.put(environment.apiAtti, JSON.stringify(options), this.httpOptions );
     }
 
-
-
-
     updateAtti(options) {
       // Begin assigning parameters
       console.log('APP_SERVICE:updateAtti');
@@ -189,7 +185,7 @@ export class AppService {
       Params = Params.append('tblId', options.tblId);
       console.log(options);
       // console.log(JSON.stringify(options));
-      return this.http.get(environment.apiInfoLog, { params: Params, headers: this.httpOptions } );
+      return this.http.get(environment.apiInfoLog, { params: Params, headers: this.httpOptions.headers } );
     }
 
     // atticonsegnatari
@@ -202,7 +198,7 @@ export class AppService {
       Params = Params.append('tblId', options.tblId);
       // console.log(options);
       // console.log(JSON.stringify(options));
-      return this.http.get(environment.apiAttiConsegnatari, { params: Params, headers: this.httpOptions } );
+      return this.http.get(environment.apiAttiConsegnatari, { params: Params, headers: this.httpOptions.headers } );
     }
 
     /*
@@ -241,7 +237,7 @@ export class AppService {
     private requestDestinatariRaccomandate() {
       console.log('requestDestinatariRaccomandate req:', environment.apiDestinatariRaccomandate);
       // return this.http.get<any>(environment.apiAttiConsegnatari)
-      return this.http.get<any>(environment.apiDestinatariRaccomandate, {} );
+      return this.http.get<any>(environment.apiDestinatariRaccomandate, { headers: this.httpOptions.headers } );
     }
 
     getRaccomandate(options) {
@@ -255,7 +251,7 @@ export class AppService {
       Params = Params.append('mittente', options.mittente);
       Params = Params.append('maxnumrighe', options.maxnumrighe);
       console.log(JSON.stringify(options));
-      return this.http.get(environment.apiRaccomandate, { params: Params, headers: this.httpOptions } );
+      return this.http.get(environment.apiRaccomandate, { params: Params, headers: this.httpOptions.headers } );
   }
 
   saveRaccomandata(options) {
@@ -284,14 +280,16 @@ export class AppService {
 
   // generate a random user id
   public fakeLogin() {
-    this.username = ('M' + Math.random() * (10000) + 10000).substring(0, 5);
+    // this.username = ('M' + Math.random() * (10000) + 10000).substring(0, 5);
+    this.username = 'LOGIN';
     console.log(this.username);
   }
 
     // Uses http.post() to get an auth token from djangorestframework-jwt endpoint
   public login(user) {
-      this.http.post('/api-token-auth/', JSON.stringify(user), this.httpOptions).subscribe(
+      this.http.post(environment.apiLogin, JSON.stringify(user), this.httpOptions).subscribe(
         data => {
+          console.log('APP_SERVICE:login');
           this.updateData(data['token']);
         },
         err => {
@@ -316,7 +314,12 @@ export class AppService {
   public logout() {
     this.token = null;
     this.token_expires = null;
-    this.username = null;
+    this.username = 'LOGIN';
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
   }
 
   private updateData(token) {
@@ -326,15 +329,27 @@ export class AppService {
     // decode the token to read the username and expiration timestamp
     const token_parts = this.token.split(/\./);
     const token_decoded = JSON.parse(window.atob(token_parts[1]));
+    console.log('APP_SERVICE:updateData'):
+    console.log(token_decoded):
     this.token_expires = new Date(token_decoded.exp * 1000);
-    this.username = token_decoded.username;
+    this.username = token_decoded.sub.name;
+    // is admin
+    this.isAdmin = token_decoded.sub.isAdmin;
+
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + token
+      })
+    };
+
   }
 
   getStatus() {
     console.log('APP_SERVICE:getStatus');
     const sseUrl = environment.apiInfo;
     console.log(sseUrl);
-    return this.http.get(sseUrl);
+    return this.http.get(sseUrl, { headers: this.httpOptions });
   }
 
 }
