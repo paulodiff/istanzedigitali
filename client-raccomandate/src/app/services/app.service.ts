@@ -77,6 +77,8 @@ export class AppService {
 
     get consegnatari() {
         console.log('APP_SERVICE:consegnatari ...');
+        return this.http.get<any>(environment.apiAttiConsegnatari, { headers: this.httpOptions.headers } );
+        /*
         if (!this.cacheConsegnatari$) {
           console.log('APP_SERVICE:consegnatari:RELOAD CACHE!');
           this.cacheConsegnatari$ = this.requestConsegnatari().pipe(
@@ -85,11 +87,13 @@ export class AppService {
           );
         }
         return this.cacheConsegnatari$;
+        */
     }
 
     private requestConsegnatari() {
       console.log('req:', environment.apiAttiConsegnatari);
       // return this.http.get<any>(environment.apiAttiConsegnatari)
+      console.log(this.httpOptions);
       return this.http.get<any>(environment.apiAttiConsegnatari, { headers: this.httpOptions.headers } );
       /*
       .pipe(
@@ -224,6 +228,8 @@ export class AppService {
 
     get destinatariRaccomandate() {
       console.log('APP_SERVICE:destinatariRaccomandate ...');
+      return this.http.get<any>(environment.apiDestinatariRaccomandate, { params: {}, headers: this.httpOptions.headers } );
+      /*
       if (!this.cacheDestinatari$) {
         console.log('APP_SERVICE:destinatariRaccomandate:RELOAD CACHE!');
         this.cacheDestinatari$ = this.requestDestinatariRaccomandate().pipe(
@@ -232,12 +238,13 @@ export class AppService {
         );
       }
       return this.cacheDestinatari$;
+      */
     }
 
     private requestDestinatariRaccomandate() {
       console.log('requestDestinatariRaccomandate req:', environment.apiDestinatariRaccomandate);
       // return this.http.get<any>(environment.apiAttiConsegnatari)
-      return this.http.get<any>(environment.apiDestinatariRaccomandate, { headers: this.httpOptions.headers } );
+      return this.http.get<any>(environment.apiDestinatariRaccomandate, { params: {}, headers: this.httpOptions.headers } );
     }
 
     getRaccomandate(options) {
@@ -329,8 +336,8 @@ export class AppService {
     // decode the token to read the username and expiration timestamp
     const token_parts = this.token.split(/\./);
     const token_decoded = JSON.parse(window.atob(token_parts[1]));
-    console.log('APP_SERVICE:updateData'):
-    console.log(token_decoded):
+    console.log('APP_SERVICE:updateData');
+    console.log(token_decoded);
     this.token_expires = new Date(token_decoded.exp * 1000);
     this.username = token_decoded.sub.name;
     // is admin
@@ -343,6 +350,19 @@ export class AppService {
       })
     };
 
+  }
+
+  // STATISTICHE --------------------------------------------------------
+
+  getStats(options) {
+    // get info log di una registrazione
+    console.log('APP_SERVICE:getStats');
+    let Params = new HttpParams();
+    Params = Params.append('anno', options.anno);
+    // Params = Params.append('tblId', options.tblId);
+    // console.log(options);
+    // console.log(JSON.stringify(options));
+    return this.http.get(environment.apiStats, { params: Params, headers: this.httpOptions.headers } );
   }
 
   getStatus() {

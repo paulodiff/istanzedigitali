@@ -34,7 +34,7 @@ router.get('/info',
 });
 
 router.get('/atticonsegnatari', 
-  //utilityModule.ensureAuthenticated, 
+  utilityModule.ensureAuthenticated, 
   function(req, res) {
     console.log('RaccomandateMgr get /atticonsegnatari : ');
 
@@ -73,7 +73,7 @@ router.get('/infolog',
 // GET recupera i dati inseriti con alcuni filtri da sistemare
 // 
 router.get('/atti', 
-    // utilityModule.ensureAuthenticated, 
+    utilityModule.ensureAuthenticated, 
     function(req, res) {
     log.info('RaccomandateMgr get /atti : ');
 
@@ -103,58 +103,19 @@ router.get('/atti',
                   log.info(err);
                   return res.status(200).send(err);
                 });
-
-
-    /*
-    async.series([
-      function(callback) { 
-          databaseModule.getAuthList(req.user.userid)
-         .then( function (result) {
-                  // log.log2console(result);
-                  key.AuthEvents = result;
-                  callback(null, result);
-               })
-         .catch(function (err) {
-                  log.log2console(err);
-                  callback(err, null);
-                });
-      },
-      function(callback) { 
-          databaseModule.getIstanzeList(req.user.userid)
-         .then( function (result) {
-                  // log.log2console(result);
-                  key.Istanze = result;
-                  callback(null, result);
-               })
-         .catch(function (err) {
-                  log.log2console(err);
-                  callback(err, null);
-                });
-      },
-    ],function(err, results) {
-        // results is now equal to: {one: 1, two: 2}
-        log.log2console('ASYNC -- FINAL!:');
-        if(err){
-            log.log2console(err);
-            res.status(500).send(err);
-        } else {
-            //log.log2console(results);
-            return res.status(200).send(key);
-        }
-    });
-    */
-     
 });
 
 // PUT aggiorna i dati di consegna degli atti o i dati dell'atto a seconda del parametro
 
 router.put('/atti', 
-            // utilityModule.ensureAuthenticated, 
+            utilityModule.ensureAuthenticated, 
             function(req, res) {
 
     log.info('RaccomandateMgr PUT /atti UPDATE data');
     log.info(req.user);
     log.info(req.body);
+
+    req.body.__userid__ = req.user.userid;
       
     if(req.body.action == 'updateConsegna') {
       log.info('updateConsegna');
@@ -188,34 +149,24 @@ router.put('/atti',
 
 // POST inserisce una nuovo atto
 router.post('/atti', 
-            // utilityModule.ensureAuthenticated, 
+            utilityModule.ensureAuthenticated, 
             function(req, res) {
               
               console.log('RaccomandateMgr POST /atti');
 
-  req.user = {userid: 'USER_TEST', userEmail: 'USER_EMAIL_TEST', displayName: 'USER_DISPLAY_NAME_TEST'};
+  if (!req.user){
+    req.user = {userid: 'USER_TEST', userEmail: 'USER_EMAIL_TEST', displayName: 'USER_DISPLAY_NAME_TEST'};
+  }            
+  
 
   console.log(req.user);
   console.log(req.body);
 
   // assegna il campo id utente da autenticazione
-  req.body.userid = req.user.userid;
-  req.body.userEmail = req.user.userEmail;
-  req.body.userDisplayName = req.user.displayName;
-  req.body.operatore = req.user.userid;
-
-  // console.log(moment().format('YYYYMMDD'));
-  // var d1 = (req.body.posta_id).split("@")[0];
-  // console.log(d1);
-
-//  if (d1 == moment().format('YYYYMMDD') ){
-    
-    // console.log('root post /login/callback');
-
-
-
-    //req.user.uuidV4 = uuidV4();
-    databaseModule.saveAtti(req.body).then(function (response) {
+  req.body.__userid__ = req.user.userid;
+  
+  //req.user.uuidV4 = uuidV4();
+  databaseModule.saveAtti(req.body).then(function (response) {
       console.log('RaccomandateMgr posta saved!');
       console.log(response.id);
       console.log(response.dataValues.id);
@@ -225,18 +176,8 @@ router.post('/atti',
     }).catch(function (err) {
       console.log(err)
       return res.status(500).send(err);
-    });
-/*
-  } else {
+  });
 
-    console.log('errore...');
-    return res.status(420).send({
-                          success: false,
-                          title: 'Azione non possibile',
-                          message: 'Non è possibile aggiungere elementi con data diversa da quella odierna.',
-                      });
-  }
-*/
 });
 
 
@@ -247,17 +188,18 @@ router.post('/consegna',
               
               console.log('RaccomandateMgr POST /consegna');
 
-  req.user = {userid: 'USER_TEST', userEmail: 'USER_EMAIL_TEST', displayName: 'USER_DISPLAY_NAME_TEST'};
-
+              if (!req.user){
+                req.user = {userid: 'USER_TEST', userEmail: 'USER_EMAIL_TEST', displayName: 'USER_DISPLAY_NAME_TEST'};
+              }            
+              
+  
   console.log(req.user);
   console.log(req.body);
 
   // assegna il campo id utente da autenticazione
-  req.body.userid = req.user.userid;
-  req.body.userEmail = req.user.userEmail;
-  req.body.userDisplayName = req.user.displayName;
-  req.body.operatore = req.user.userid;
-    //req.user.uuidV4 = uuidV4();
+  req.body.__userid__ = req.user.userid;
+
+  //req.user.uuidV4 = uuidV4();
   databaseModule.saveConsegna(req.body).then(function (response) {
       console.log('RaccomandateMgr consegna saved!');
       console.log(response.id);
@@ -343,16 +285,15 @@ router.post('/raccomandate',
               
   console.log('RaccomandateMgr POST /raccomandate');
 
-  req.user = {userid: 'USER_TEST', userEmail: 'USER_EMAIL_TEST', displayName: 'USER_DISPLAY_NAME_TEST'};
-
+  if (!req.user){
+    req.user = {userid: 'USER_TEST', userEmail: 'USER_EMAIL_TEST', displayName: 'USER_DISPLAY_NAME_TEST'};
+  }            
+  
   console.log(req.user);
   console.log(req.body);
 
   // assegna il campo id utente da autenticazione
-  req.body.userid = req.user.userid;
-  req.body.userEmail = req.user.userEmail;
-  req.body.userDisplayName = req.user.displayName;
-  req.body.operatore = req.user.userid;
+  req.body.__userid__ = req.user.userid;
 
     //req.user.uuidV4 = uuidV4();
     databaseModule.saveRaccomandata(req.body).then(function (response) {
@@ -379,20 +320,7 @@ router.put('/raccomandate',
     log.info(req.user);
     log.info(req.body);
       
-    /*
-    if(req.body.action == 'updateConsegna') {
-      log.info('updateConsegna');
-      databaseModule.updateConsegnaAtti(req.body).then(function (response) {
-        console.log('RaccomandateMgr atti consegna updated!');
-        // emitterBus.eventBus.sendEvent('updateMessage', { sseId: 'MYSSEDID', msg: response});
-        return res.status(200).send({action: 'updateConsegna', status: 'ok', data: response});
-      }).catch(function (err) {
-        console.log('##ERRORE## RaccomandateMgr updateConsegna');
-        console.log(err);
-        return res.status(405).send(err);
-      });
-    };
-    */
+    req.body.__userid__ = req.user.userid;
 
     if(req.body.action == 'updateRaccomandata') {
       log.info('updateRaccomandata');
@@ -411,9 +339,107 @@ router.put('/raccomandate',
 
 });
 
+// Statistiche ----- --
+
+// ritorna le statistiche
+router.get('/stats', 
+    //utilityModule.ensureAuthenticated, 
+    function(req, res) {
+    console.log('RaccomandateMgr get /stats : ');
+
+    console.log(req.query);
+
+    /*
+    console.log(req.query.aDataPosta);
+    console.log(moment(req.query.aDataPosta).format());
+    console.log(moment(req.query.aDataPosta).utc().format());
 
 
-// ########################################################################################
+    console.log(req.query.daDataPosta);
+    console.log(moment(req.query.daDataPosta).format());
+    console.log(moment(req.query.daDataPosta).utc().format());
+    
+    */
+    var options = {};
+       
+    options = req.query;
+
+    console.log(options); 
+
+    var key = {};
+    
+    async.series([
+      function(callback) { 
+          databaseModule.getStatsRaccomandateDestinatario(options)
+         .then( function (result) { key.RaccomandateDestinatario = result;   callback(null, result);  })
+         .catch(function (err) {  console.log(err);  callback(err, null);  });
+      },
+
+      function(callback) { 
+        databaseModule.getStatsRaccomandateOperatore(options)
+       .then( function (result) { key.RaccomandateOperatore = result;   callback(null, result);  })
+       .catch(function (err) {  console.log(err);  callback(err, null);  });
+      },
+
+      function(callback) { 
+        databaseModule.getStatsAttiConsegnatario(options)
+       .then( function (result) { key.AttiConsegnatario = result;   callback(null, result);  })
+       .catch(function (err) {  console.log(err);  callback(err, null);  });
+      },
+      
+      function(callback) { 
+        databaseModule.getStatsAttiOperatore(options)
+       .then( function (result) { key.AttiOperatore = result;   callback(null, result);  })
+       .catch(function (err) {  console.log(err);  callback(err, null);  });
+      },
+
+      function(callback) { 
+        databaseModule.getStatsAttiConsegnatiOperatore(options)
+       .then( function (result) { key.AttiConsegnatiOperatore = result;   callback(null, result);  })
+       .catch(function (err) {  console.log(err);  callback(err, null);  });
+      }
+
+      /*
+      ,function(callback) { 
+          databaseModule.getPostaStatsCountMatricole(options)
+         .then( function (result) {
+                  // log.log2console(result);
+                  key.StatsCountMatricole = result;
+                  callback(null, result);
+               })
+         .catch(function (err) {
+                  log.log2console(err);
+                  callback(err, null);
+                });
+      }, //getPostaStatsCountTipi
+      function(callback) { 
+          databaseModule.getPostaStatsCountTipi(options)
+         .then( function (result) {
+                  // log.log2console(result);
+                  key.StatsCountTipi = result;
+                  callback(null, result);
+               })
+         .catch(function (err) {
+                  log.log2console(err);
+                  callback(err, null);
+                });
+      }
+      */
+    ],function(err, results) {
+        // results is now equal to: {one: 1, two: 2}
+        console.log('Stats async -- FINAL!:');
+        if(err){
+          console.log(err);
+            res.status(500).send(err);
+        } else {
+            //console.log(results);
+            return res.status(200).send(key);
+        }
+    });
+
+});
+
+
 
 // DELETE elimina righe inserite
 router.delete(  '/posta/:posta_id', 
@@ -460,91 +486,6 @@ router.delete(  '/posta/:posta_id',
 
 });
 
-// ritorna le statistiche
-router.get('/stats', utilityModule.ensureAuthenticated, function(req, res) {
-    log.log2console('PostaMgr get /stats : ');
-
-    console.log(req.query);
-
-    console.log(req.query.aDataPosta);
-    console.log(moment(req.query.aDataPosta).format());
-    console.log(moment(req.query.aDataPosta).utc().format());
-
-
-    console.log(req.query.daDataPosta);
-    console.log(moment(req.query.daDataPosta).format());
-    console.log(moment(req.query.daDataPosta).utc().format());
-    
-    var options = {};
-    options.aDataPosta = moment(req.query.aDataPosta).format();
-    options.daDataPosta = moment(req.query.daDataPosta).format();
-
-    console.log(options); 
-
-    var key = {};
-    async.series([
-      function(callback) { 
-          databaseModule.getPostaStatsCountItem(options)
-         .then( function (result) {
-                  // log.log2console(result);
-                  key.StatsCountItem = result;
-                  callback(null, result);
-               })
-         .catch(function (err) {
-                  log.log2console(err);
-                  callback(err, null);
-                });
-      },
-      function(callback) { 
-          databaseModule.getPostaStatsCountCdc(options)
-         .then( function (result) {
-                  // log.log2console(result);
-                  key.StatsCountCdc = result;
-                  callback(null, result);
-               })
-         .catch(function (err) {
-                  log.log2console(err);
-                  callback(err, null);
-                });
-      },
-      function(callback) { 
-          databaseModule.getPostaStatsCountMatricole(options)
-         .then( function (result) {
-                  // log.log2console(result);
-                  key.StatsCountMatricole = result;
-                  callback(null, result);
-               })
-         .catch(function (err) {
-                  log.log2console(err);
-                  callback(err, null);
-                });
-      }, //getPostaStatsCountTipi
-      function(callback) { 
-          databaseModule.getPostaStatsCountTipi(options)
-         .then( function (result) {
-                  // log.log2console(result);
-                  key.StatsCountTipi = result;
-                  callback(null, result);
-               })
-         .catch(function (err) {
-                  log.log2console(err);
-                  callback(err, null);
-                });
-      }
-    ],function(err, results) {
-        // results is now equal to: {one: 1, two: 2}
-        log.log2console('Stats async -- FINAL!:');
-        if(err){
-            log.log2console(err);
-            res.status(500).send(err);
-        } else {
-            //log.log2console(results);
-
-            return res.status(200).send(key);
-        }
-    });
-
-});
 
 
 

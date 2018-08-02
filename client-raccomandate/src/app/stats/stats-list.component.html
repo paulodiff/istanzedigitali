@@ -1,0 +1,118 @@
+<hello name="{{ name }}"></hello>
+
+<div class="alert alert-info">
+<form [formGroup]="formSearch" (ngSubmit)="submitSearch()"> 
+  <formly-form [model]="modelSearch" [fields]="fieldsSearch" [options]="optionsSearch" [form]="form">
+  </formly-form>
+</form>
+</div>
+
+<h3>Statistiche anno: {{this.modelSearch.anno}}</h3>
+
+<h4>Raccomandate per destinatario</h4>
+
+<table class="table table-striped bg-light">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Destinatario</th>
+        <th scope="col">Numero</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items?.RaccomandateDestinatario"> 
+        <td>{{item.raccomandate_destinatari.destinatario_descrizione}}</td>
+        <td>{{item.raccomandate_count}}</td>
+      </tr>
+      <tr>
+          <td><b>TOTALE</b></td>
+          <td><b>{{items?.RaccomandateDestinatarioTotale}}</b></td>
+      </tr>
+    </tbody>
+</table>
+  
+<h4>Raccomandate per operatore</h4>
+
+<table class="table table-striped bg-light">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Operatore</th>
+        <th scope="col">Numero</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items?.RaccomandateOperatore">
+        <td>{{item.raccomandate_operatore}}</td>
+        <td>{{item.raccomandate_count}}</td>
+      </tr>
+      <tr>
+          <td><b>TOTALE</b></td>
+          <td><b>{{items?.RaccomandateOperatoreTotale}}</b></td>
+      </tr>
+    </tbody>
+</table>
+
+<h4>Atti per consegnatario</h4>
+
+<table class="table table-striped bg-light">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Consegnatario</th>
+        <th scope="col">Numero</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items?.AttiConsegnatario">
+        <td>{{item.atti_consegnatari.consegnatario_descrizione}}</td>
+        <td>{{item.atti_count}}</td>
+      </tr>
+      <tr>
+          <td><b>TOTALE</b></td>
+          <td><b>{{items?.AttiConsegnatarioTotale}}</b></td>
+      </tr>
+    </tbody>
+</table>
+
+
+<h4>Atti per operatore</h4>
+
+<table class="table table-striped bg-light">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Operatore</th>
+        <th scope="col">Numero</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items?.AttiOperatore">
+        <td>{{item.atti_operatore_inserimento}}</td>
+        <td>{{item.atti_count}}</td>
+      </tr>
+      <tr>
+          <td><b>TOTALE</b></td>
+          <td><b>{{items?.AttiOperatoreTotale}}</b></td>
+      </tr>
+    </tbody>
+</table>
+
+<h4>Atti consegnati per operatore</h4>
+
+<table class="table table-striped bg-light">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Operatore</th>
+        <th scope="col">Numero</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items?.AttiConsegnatiOperatore">
+        <td>{{item.atti_operatore_inserimento}}</td>
+        <td>{{item.atti_count}}</td>
+      </tr>
+      <tr>
+          <td><b>TOTALE</b></td>
+          <td><b>{{items?.AttiConsegnatiOperatoreTotale}}</b></td>
+      </tr>
+    </tbody>
+</table>
+
+<button type="button" class="btn btn-success btn-default" (click)="stampaReport()">Stampa elenco</button>

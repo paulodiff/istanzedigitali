@@ -12,6 +12,7 @@ import { LogInfoComponent } from './loginfo/loginfo.component';
 // import { dogRoutes } from './dogs/dog.routes';
 import { attiRoutes } from './atti/atti.routes';
 import { raccomandateRoutes } from './raccomandate/raccomandate.routes';
+import { statsRoutes } from './stats/stats.routes';
 import { consegnaRoutes } from './consegna/consegna.routes';
 import { ErrorsComponent } from './errors/errors.component';
 
@@ -32,6 +33,7 @@ export const routes: Routes = [
   ...attiRoutes,
   ...raccomandateRoutes,
   ...consegnaRoutes,
+  ...statsRoutes,
   { path: 'error', component: ErrorsComponent },
   { path: '**', component: ErrorsComponent, data: { status: 404, message: 'Page not found', name: 'Page not found' } }
     // ,  { path: 'dogs', component: DogListComponent }

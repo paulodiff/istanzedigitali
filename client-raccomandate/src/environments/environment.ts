@@ -11,6 +11,7 @@ export const environment = {
   apiAttiConsegnatari: 'http://localhost:8010/raccomandatemgr/atticonsegnatari',
   apiDestinatariRaccomandate: 'http://localhost:8010/raccomandatemgr/destinatariraccomandate',
   apiRaccomandate: 'http://localhost:8010/raccomandatemgr/raccomandate',
+  apiStats: 'http://localhost:8010/raccomandatemgr/stats',
   apiLogin: 'http://localhost:8010/loginldap/LDAPlogin',
   apiLogout: 'http://localhost:8010/loginldap/LDAPlogout',
   apiSse: 'http://localhost:8010/sse',

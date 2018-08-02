@@ -236,7 +236,7 @@ saveAtti: function(data){
             atti_consegnatario_id: data.consegnatario,
             atti_cronologico: data.cronologico,
             atti_consegna_flag: '0',
-            atti_operatore_inserimento: data.operatore
+            atti_operatore_inserimento: data.__userid__
         })
         .save()
         .then(function(anotherTask) {
@@ -299,7 +299,7 @@ updateConsegnaAtti: function(data){
                         atti_data_consegna : new Date(),
                         atti_data_consegna_ok : new Date(),
                         atti_flag_consegna : '1',
-                        atti_operatore_consegna : 'TODO'
+                        atti_operatore_consegna : data.__userid__
                     },
                     { 
                         where: {
@@ -317,39 +317,6 @@ updateConsegnaAtti: function(data){
                 });
             }
             
-            /* ,function(oldData, callback){
-                console.log('dMR:updateLog');
-                console.log(oldData.dataValues);
-                console.log(newData);
-                console.log(tmpValues);
-                logArray = [];
-                for (var key in listIdArray) {
-
-                    logArray.push({
-                        ts: new Date(),
-                        tblName: 'Atti',
-                        tblId: data.id,
-                        fldName: key,
-                        oldValue: tmpValues[key],
-                        newValue: newData.dataValues[key],
-                        userId: 'TODO'
-                    });
-                    console.log(key);
-                    console.log(tmpValues[key],newData.dataValues[key]);
-                }
-
-                console.log(logArray);
-
-                models.logSequelize.bulkCreate(logArray)
-                .then(function() {
-                    console.log('dMR:updateLog:ok');
-                    callback(null, 'logOk');
-                }).catch(function(error){
-                    console.log('dMR:updateLog:error');
-                    callback(error, null);
-                });
-                
-            }*/
 
         ],function(err, results) {
             // results is now equal to: {one: 1, two: 2}
@@ -376,8 +343,10 @@ updateAtto: function(data){
     return new Promise(function(resolve, reject) {
         console.log('databaseModuleRaccomandate:updateAtto');
         console.log('atto update:' + data.id);
+        console.log(data);
 
         var tmpValues = {};
+        var MyUserId = '';
 
         async.waterfall([
 
@@ -385,6 +354,7 @@ updateAtto: function(data){
                 console.log('dMR:getAtto');
                 models.Atti.findOne({ where: {id: data.id} }).then(function(item) {
                     tmpValues = _.clone(item.dataValues);
+                    MyUserId = data.__userid__;
                     console.log(item.dataValues);
                     callback(null, item);
                 }).catch(function(error) { 
@@ -423,7 +393,7 @@ updateAtto: function(data){
                         fldName: key,
                         oldValue: tmpValues[key],
                         newValue: newData.dataValues[key],
-                        userId: 'TODO'
+                        userId: MyUserId
                     });
                     console.log(key);
                     console.log(tmpValues[key],newData.dataValues[key]);
@@ -545,7 +515,7 @@ saveConsegna: function(data){
             consegna_soggetto:   data.nominativo,        
             consegna_note:       data.note,        
             consegna_stato: 'PREPARATA',        
-            consegna_operatore: data.operatore,
+            consegna_operatore: data.__userid__,
             consegna_ids_atti: data.idList,
             consegna_numero_atti: listId.length,
             atti_in_consegna: attiArray
@@ -668,7 +638,7 @@ saveRaccomandata: function(data){
             raccomandate_numero: data.numero,
             raccomandate_destinatario_codice: data.destinatario,
             raccomandate_mittente: data.mittente,
-            raccomandate_operatore: data.operatore
+            raccomandate_operatore: data.__userid__
         })
         .save()
         .then(function(anotherTask) {
@@ -732,7 +702,7 @@ updateRaccomandata: function(data){
                         fldName: key,
                         oldValue: tmpValues[key],
                         newValue: newData.dataValues[key],
-                        userId: 'TODO'
+                        userId: data.__userid__
                     });
                     console.log(key);
                     console.log(tmpValues[key],newData.dataValues[key]);
@@ -768,6 +738,234 @@ updateRaccomandata: function(data){
 
     });
 },
+
+// Statistiche ---------------------------------------------------------------------------------
+
+getStatsRaccomandateOperatore: function(obj){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getStatsRaccomandateOperatore');
+        console.log(obj);
+
+        var dataInizio = obj.anno + '-01-01T00:00:00';
+        var dataFine = obj.anno + '-12-31T00:00:00';
+
+        // var daData = moment(dataInizio, 'DD/MM/YYYY").hours(0).minutes(0).seconds(0).milliseconds(0).format();
+        // var aData = moment(dataFine, 'DD/MM/YYYY").hours(23).minutes(59).seconds(59).milliseconds(0).format();
+        console.log(dataInizio);
+        console.log(dataFine);
+
+       models.Raccomandate.findAll({
+            attributes: [   'raccomandate_operatore',
+                            // [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'raccomandate_operatore'), 'raccomandate_count'],
+                        ],
+            where : { 
+                raccomandate_data_reg : {
+                        $between: [dataInizio, dataFine]
+                    }
+            },
+            group: ['raccomandate_operatore'],
+            order : [ 
+                    [Sequelize.col('raccomandate_count'), 'DESC']
+                    // , ['tipo_spedizione'] 
+            ]
+        })
+
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+getStatsRaccomandateDestinatario: function(obj){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getStatsRaccomandateDestinatario');
+        console.log(obj);
+
+        var dataInizio = obj.anno + '-01-01T00:00:00';
+        var dataFine = obj.anno + '-12-31T00:00:00';
+
+        // var daData = moment(dataInizio, 'DD/MM/YYYY").hours(0).minutes(0).seconds(0).milliseconds(0).format();
+        // var aData = moment(dataFine, 'DD/MM/YYYY").hours(23).minutes(59).seconds(59).milliseconds(0).format();
+        console.log(dataInizio);
+        console.log(dataFine);
+
+       models.Raccomandate.findAll({
+            
+            attributes: [   'raccomandate_destinatari.destinatario_descrizione',
+                            // [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'raccomandate_destinatari.destinatario_descrizione'), 'raccomandate_count'],
+                        ],
+            
+            include: [
+                            {   
+                                model: models.Destinatari,
+                                as: 'raccomandate_destinatari'
+                                // ,where: { state: Sequelize.col('project.state') }
+                            }
+                        ],
+            where : { 
+                raccomandate_data_reg : {
+                        $between: [dataInizio, dataFine]
+                    }
+            },
+            group: ['raccomandate_destinatari.destinatario_descrizione'],
+            order : [ 
+                    [Sequelize.col('raccomandate_count'), 'DESC']
+                    // , ['tipo_spedizione'] 
+            ]
+        })
+
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+
+getStatsAttiConsegnatario: function(obj){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getAttiConsegnatario');
+        console.log(obj);
+
+        var dataInizio = obj.anno + '-01-01T00:00:00';
+        var dataFine = obj.anno + '-12-31T00:00:00';
+
+        // var daData = moment(dataInizio, 'DD/MM/YYYY").hours(0).minutes(0).seconds(0).milliseconds(0).format();
+        // var aData = moment(dataFine, 'DD/MM/YYYY").hours(23).minutes(59).seconds(59).milliseconds(0).format();
+        console.log(dataInizio);
+        console.log(dataFine);
+
+       models.Atti.findAll({
+            
+            attributes: [   'atti_consegnatari.consegnatario_descrizione',
+                            // [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'atti_consegnatari.consegnatario_descrizione'), 'atti_count'],
+                        ],
+            
+            include: [
+                            {   
+                                model: models.Consegnatari,
+                                as: 'atti_consegnatari'
+                                // ,where: { state: Sequelize.col('project.state') }
+                            }
+                        ],
+            where : { 
+                atti_data_registrazione : {
+                        $between: [dataInizio, dataFine]
+                    }
+            },
+            group: ['atti_consegnatari.consegnatario_descrizione'],
+            order : [ 
+                    [Sequelize.col('atti_count'), 'DESC']
+                    // , ['tipo_spedizione'] 
+            ]
+        })
+
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+
+
+getStatsAttiOperatore: function(obj){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getStatsAttiOperatore');
+        console.log(obj);
+
+        var dataInizio = obj.anno + '-01-01T00:00:00';
+        var dataFine = obj.anno + '-12-31T00:00:00';
+
+        // var daData = moment(dataInizio, 'DD/MM/YYYY").hours(0).minutes(0).seconds(0).milliseconds(0).format();
+        // var aData = moment(dataFine, 'DD/MM/YYYY").hours(23).minutes(59).seconds(59).milliseconds(0).format();
+        console.log(dataInizio);
+        console.log(dataFine);
+
+       models.Atti.findAll({
+            attributes: [   'atti_operatore_inserimento',
+                            // [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'atti_operatore_inserimento'), 'atti_count'],
+                        ],
+            where : { 
+                atti_data_registrazione : {
+                        $between: [dataInizio, dataFine]
+                    }
+            },
+            group: ['atti_operatore_inserimento'],
+            order : [ 
+                    [Sequelize.col('atti_count'), 'DESC']
+                    // , ['tipo_spedizione'] 
+            ]
+        })
+
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+getStatsAttiConsegnatiOperatore: function(obj){
+
+    return new Promise(function(resolve, reject) {
+        console.log('getStatsAttiConsegnatiOperatore');
+        console.log(obj);
+
+        var dataInizio = obj.anno + '-01-01T00:00:00';
+        var dataFine = obj.anno + '-12-31T00:00:00';
+
+        // var daData = moment(dataInizio, 'DD/MM/YYYY").hours(0).minutes(0).seconds(0).milliseconds(0).format();
+        // var aData = moment(dataFine, 'DD/MM/YYYY").hours(23).minutes(59).seconds(59).milliseconds(0).format();
+        console.log(dataInizio);
+        console.log(dataFine);
+
+       models.Atti.findAll({
+            attributes: [   'atti_operatore_inserimento',
+                            // [Sequelize.fn('LEFT', Sequelize.col('posta_id'), 8), 'posta_id_cut'],
+                            [Sequelize.fn('COUNT', 'atti_operatore_inserimento'), 'atti_count'],
+                        ],
+            where : { 
+                atti_data_registrazione : {
+                        $between: [dataInizio, dataFine]
+                    },
+                atti_consegna_flag: 1
+            },
+            group: ['atti_operatore_inserimento'],
+            order : [ 
+                    [Sequelize.col('atti_count'), 'DESC']
+                    // , ['tipo_spedizione'] 
+            ]
+        })
+
+        .then(function(anotherTask) {
+            resolve(anotherTask)
+        }).catch(function(error) {
+            reject(error);
+        });
+    })
+},
+
+
+
+
+
+
+
+
+
 
 // ###################################################################################################
 

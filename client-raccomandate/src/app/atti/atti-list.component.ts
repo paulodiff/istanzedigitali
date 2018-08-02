@@ -25,7 +25,7 @@ private sub: any;
 public items: any;
 public attiConsegnatari: any;
 public form2show = 131102;
-public oggi = moment().format('YYYYMMDD');
+public oggi = moment().format("DD/MM/YYYY");
 public lastInsertedId: any;
 public dataReturned: any;
 public sseEventBus: any;

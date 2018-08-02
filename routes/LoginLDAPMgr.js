@@ -89,6 +89,7 @@ router.post('/LDAPlogin', function(req, res) {
                 log.info('Utente senza profilo!');
                 callback({msg: 'Utente senza profilo!'}, null);
             } else {
+                userLogin.isAdmin = result.rows[0].dataValues.utente_amministratore;
                 callback(null, result.rows[0]);
             }
         }).catch(function(error) { 
@@ -128,7 +129,7 @@ router.post('/LDAPlogin', function(req, res) {
             // reject(err); 
             // res.status(500).send(err);
         } else {
-            var token = utilityModule.createJWT(userLogin);
+            var token = utilityModule.createJWT(userLogin, 5, 'h');
             log.info('AuthOk',userLogin);
             console.log('LdapAuth:Final:SUCCESS!');
             res.status(200).json({

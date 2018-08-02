@@ -382,7 +382,7 @@ module.exports = {
 
         //"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiY29tcGFueU5hbWUiOiJDb211bmVfZGlfUmltaW5pIiwiYXBwIjoicHJvdG9jb2xsbyJ9LCJpYXQiOjE0Nzk5OTkwMzQsImV4cCI6MTU2NjM5NTQzNH0.5Ako1xZ9If5bNrKN3ns8sZ8YaqaJD7FWDt07zcRb8c0"
 
-        console.log('[#AUTH#] ensureAuthenticated (start)');
+        console.log('[#AUTH#] ensureAuthenticated ... ');
         if (!req.header('Authorization')) {
             console.log('[#AUTH#] ensureAuthenticated : 401 NO TOKEN');
             return res.status(401).send({ message: 'Effettuare login prima di procedere (401 NO TOKEN)' });
@@ -405,7 +405,7 @@ module.exports = {
           if(payload){
             if (payload.exp) {
               if (payload.exp <= moment().unix()) {
-                console.log('[#AUTH#] token expired');
+                console.log('[#AUTH#] ensureAuthenticated token expired');
                 return res.status(401).send({ 
                   title: 'Sessione scaduta',
                   message: 'Sessione scaduta - Disconnettersi e poi rifare la procedura di autenticazione'
@@ -422,7 +422,7 @@ module.exports = {
             return res.status(401).send({ message: msg });
           }
 
-          console.log('[#AUTH#] ok pass');
+          console.log('[#AUTH#] ensureAuthenticated ok pass');
           req.user = payload.sub;
           req.token = token;
           next();
@@ -470,6 +470,8 @@ module.exports = {
     
     createJWT: function(user, timeout1, timeout2) {
           // moment.js syntax 
+          // https://momentjs.com/docs/#/manipulating/add/
+          // moment().add(7, 'd');
           timeout1 = timeout1 || ENV.sessionTokenTimeOut;
           timeout2 = timeout2 || ENV.sessionTokenTimeType;
           timeOut = moment().add(timeout1, timeout2).unix();

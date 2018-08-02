@@ -357,7 +357,112 @@ stampaRaccomandata(items) {
     pdfMake.createPdf(docDefinition).open();
 }
 
+// stampaStatistica
 
+stampaStatistica(items) {
+
+    let contenutoStampa = [];
+    let elencoTabellare = [];
+    let progressivo = 1;
+    let tableWidhts = [];
+    let tabellaStampa =  {};
+    let prevDestinatario = 0;
+    let prevDestinatarioDescrizione = '';
+
+
+    console.log(items);
+
+    // elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
+    tableWidhts =        [  50,      150,       150       ];
+
+    items.forEach(function(obj) {
+
+        if (prevDestinatario !== obj.raccomandate_destinatario_codice) {
+
+            if (prevDestinatario === 0) { // il primo elemento
+                prevDestinatario = obj.raccomandate_destinatario_codice;
+                prevDestinatarioDescrizione = obj.raccomandate_destinatari.destinatario_descrizione;
+                elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
+            } else { // cambio di gruppo chiude la stampa corrente
+
+                contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo', fontSize: 18 });
+                contenutoStampa.push({ text: 'Settore:' + prevDestinatarioDescrizione, fontSize: 16 });
+                tabellaStampa = {
+                    table: {
+                      headerRows: 1,
+                      widths: tableWidhts,
+                      body: elencoTabellare
+                    }
+                };
+                contenutoStampa.push( tabellaStampa );
+                contenutoStampa.push({ text: 'Data ritiro:' + moment().format('DD/MM/YYYY'), fontSize: 14 });
+                contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
+                elencoTabellare = [];
+                elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
+                prevDestinatario = obj.raccomandate_destinatario_codice;
+                prevDestinatarioDescrizione = obj.raccomandate_destinatari.destinatario_descrizione;
+            }
+
+        }
+
+        elencoTabellare.push([
+            {text: obj.id, fontSize: 12, border: [true, true, true, true]},
+            {text: obj.raccomandate_numero, fontSize: 12, border: [true, true, true, true]},
+            {text: obj.raccomandate_mittente, fontSize: 10, border: [true, true, true, true]},
+        ]);
+
+    });
+
+    // Ultima pagina
+    contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo', fontSize: 18 });
+    contenutoStampa.push({ text: 'Settore:' + prevDestinatarioDescrizione, fontSize: 16 });
+    tabellaStampa = {
+        table: {
+          headerRows: 1,
+          widths: tableWidhts,
+          body: elencoTabellare
+        }
+    };
+    contenutoStampa.push( tabellaStampa );
+    contenutoStampa.push({ text: 'Data ritiro:' + moment().format('DD/MM/YYYY'), fontSize: 14 });
+    contenutoStampa.push({ text: ' ', fontSize: 12, bold: true,  margin: [0, 0, 0, 8] });
+
+
+    /*
+    if(numeroPagina == maxPagina){
+      contenutoStampa.push({ text: '  ', fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
+    }else{
+      contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
+    }
+    */
+
+    const docDefinition = {
+      info: {
+            title: 'statistiche_lista',
+            author: 'Comune di Rimini - Protocollo Generale',
+            subject: 'Statistiche',
+            keywords: 'Statistiche',
+      },
+      pageSize: 'A4',
+      // pageOrientation: 'landscape',
+      pageMargins: [ 30, 30, 30, 30 ],
+      footer: function(currentPage, pageCount) {
+        return   { 
+                    text: 'pagina ' + currentPage.toString() + ' di ' + pageCount,
+                    alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
+                  }
+       },
+      header: function(currentPage, pageCount) {
+         return {
+                  text: 'pagina generata il: ' + moment().format('DD/MM/YYYY'), fontSize: 8,
+                  alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
+                };
+      },
+      content: [contenutoStampa]
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+}
 
 
 }
