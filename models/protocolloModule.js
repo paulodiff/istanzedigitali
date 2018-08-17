@@ -17,7 +17,7 @@ var log = require('log4js').getLogger("app");
 log.info('START protocolloModule.js');
 
 exports.verificaReCaptcha = function(fieldsObj, envData){
-    log.info('[' + envData.idIstanza + '] protocolloModule.js:buildOggetto');
+    log.info('[' + envData.idIstanza + '] protocolloModule.js:verificaReCaptcha');
     var fileContents = '';
     var templateFileName = envData.templateOggetto;
 
@@ -26,7 +26,7 @@ exports.verificaReCaptcha = function(fieldsObj, envData){
     } 
     catch (err) 
     {
-        log.error('[' + envData.idIstanza + '] protocolloModule.js:buildOggetto');
+        log.error('[' + envData.idIstanza + '] protocolloModule.js:verificaReCaptcha');
         log.error(err);
         return false;
     }
@@ -310,18 +310,16 @@ exports.sanitizeInput = function (fieldList, fieldsObj,  envData) {
      
 }
 
-/*
-
-    Controllo dei dati di input per il form dinamico
-
-*/
-
+/* Controllo dei dati di input per il form dinamico  */
 
 exports.sanitizeInputDinamic = function (fieldList, fieldsObj,  envData) {
     
     log.info('[' + envData.idIstanza + '] protocolloModule:sanitizeInputDinamico');
     log.info('---------- fieldList -----------------------------------------------------------');
     log.info(fieldList);
+
+    var bValid = true; // variabile per la verifica
+    var msgValidator = ''; // eventuale messaggio di errore
 
     fieldsObj.reqId = envData.reqId;
 
@@ -338,14 +336,49 @@ exports.sanitizeInputDinamic = function (fieldList, fieldsObj,  envData) {
 
     });
 
+    // test con envData.vm_fields
+
+    log.info(envData.vm_fields);
+
+    envData.vm_fields.forEach(function(item) {
+        // log.info(item);
+        log.info('## CHECK type :', item.type);
+        if (item.type === 'input'){
+            if (item.templateOptions.required){
+                log.info('## CHECK item :', item.key);
+                log.info('## CHECK value:', fieldsObj[item.key]);
+
+                if( fieldsObj[item.key] === 'undefined') {
+                    bValid = false;
+                    msgValidator = 'Campo richiesto non valorizzato ' + item.key;
+                }
+
+                if( fieldsObj[item.key] !== 'undefined') {
+                    log.info('## CHECK validator ... ');
+                    if(item.validators) {
+                        Object.keys(item.validators).forEach(function(validatorId){
+                            log.info('## validator : ', validatorId);
+                            log.info('## run validator with value : ', fieldsObj[item.key]);
+                            log.info('## validator return value ', item.validators[validatorId].expression(fieldsObj[item.key]));
+                            // raise error
+                            if(!item.validators[validatorId].expression(fieldsObj[item.key])) {
+                                bValid = false;
+                                msgValidator = 'Errore nella validazione del campo ' + item.key;
+                            }
+                        });      
+                    }
+                }
+            }
+        }
+    });
+
     // validate object
     // https://www.npmjs.com/package/validator
 
     log.info('---------- fieldsObj -----------------------------------------------------------');
     log.info(fieldsObj);
     log.info('protocolloModule:validate data ...');
-    var bValid = true;
-    var msgValidator = '';
+
 
     /* validazione esistenza */
 
@@ -361,9 +394,7 @@ exports.sanitizeInputDinamic = function (fieldList, fieldsObj,  envData) {
         log.error(msgValidator);
         return false;
     }
-     
 }
-
 
 /* SALVA NELLA CARTELLA TEMPORANEA I DATI DI INPUT CON IL PROTOCOLLO */
 
@@ -575,6 +606,7 @@ exports.log2email = function(data){
 
 exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
 
+    log.info('[' + ENV_DATA.idIstanza + '] --------- protocolloWS ----------------------------');    
     log.info('[' + ENV_DATA.idIstanza + '] protocolloModule:protocolloWS:START');
     log.info(objFilesList);
     log.info(reqId);
@@ -585,6 +617,7 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
     WS_IRIDE = ENV_DATA.wsJiride.url;
     WS_IRIDE_ENDPOINT = ENV_DATA.wsJiride.endpoint;
 
+    log.info('[' + ENV_DATA.idIstanza + '] protocolloModule:protocolloWS:Endpoint');
     log.info(WS_IRIDE);
     log.info(WS_IRIDE_ENDPOINT);
 
@@ -611,7 +644,9 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
                MittentiDestinatari: {
                 MittenteDestinatario: [
                   {
-                    // PATCH per segnalazione Maggioli - Miriam Saladino  
+                    // PATCH per segnalazione Maggioli - Miriam Saladino 
+                    // RIMOZIONE DEL CODICE FISCALE NEI PARAMETRI PER EVITARE LA CONTAMINAZIONE CON LE
+                    // ANAGRAFICHE 
                     // CodiceFiscale : objFilesList.codiceFiscaleRichiedente,
                     CodiceFiscale : '',
                     CognomeNome: objFilesList.cognomeRichiedente + ' ' + objFilesList.nomeRichiedente,
@@ -642,32 +677,11 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
             }
         };
 
-    log.info('---------WS ARGS ----------------------------');    
+    log.info('[' + ENV_DATA.idIstanza + '] protocolloModule:protocolloWS:args');
     log.info(args);
 
-    // costruzione degli allegati con i metadati
-
-    // Aggiunta allegato principale
-    /*
-    var fname = objFilesList.domandaPermessoFormatoPDF.nomeFile;
-    var ext = fname.substring(fname.length - 3);
-    log.info(fname);
-    log.info(ext);
-    var mtype =  mime.lookup(ext);
-    log.info(mtype);
-
-    args.ProtoIn.Allegati.Allegato.push(
-            {
-                TipoFile : ext,
-                ContentType : mtype,
-                Image: objFilesList.domandaPermessoFormatoPDF.base64,
-                NomeAllegato: objFilesList.domandaPermessoFormatoPDF.nomeFile,
-                Commento : objFilesList.domandaPermessoFormatoPDF.tipoDescrizione
-            }
-        );
-    */    
-
-    // Aggiunta allegati successivi al primo
+    // Aggiunta allegati
+    log.info('[' + ENV_DATA.idIstanza + '] protocolloModule:protocolloWS:aggiunta allegati');
 
     var DW_PATH = ENV_DATA.storageFolder;
     var dir = DW_PATH + "/" + reqId;
@@ -690,6 +704,7 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
     });
 
     // AGGIUNGE I metadati
+    log.info('[' + ENV_DATA.idIstanza + '] protocolloModule:protocolloWS:aggiunta metadati');
     var fMetadati = reqId + '.txt';
     log.info('aggiunta metadati', fMetadati);
     args.ProtoIn.Allegati.Allegato.push(
@@ -702,29 +717,15 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
         }
     );
 
-    // AGGIUNGE I metadati
-    /*
-    var fMetadati = reqId + '.txt';
-    log.info('aggiunta metadati', fMetadati);
-    args.ProtoIn.Allegati.Allegato.push(
-        {
-            TipoFile : 'txt',
-            ContentType : mime.lookup(dir + '/' + fMetadati),
-            Image: utilityModule.base64_encode(dir + '/' + fMetadati),
-            NomeAllegato: fMetadati,
-            Commento : ''
-        }
-    );
-    */
-
-
+ 
     var soapResult = { result : '....'};
  
     var soapOptions = {
         endpoint: WS_IRIDE_ENDPOINT
     };
 
-    log.info('create client');
+    log.info('[' + ENV_DATA.idIstanza + '] protocolloModule:protocolloWS:crate and execute client');
+
 
     return new Promise(function (resolve, reject) {
 
@@ -761,24 +762,253 @@ exports.protocolloWS = function(objFilesList,  reqId, ENV_DATA, ENV_PROT) {
      }); 
 }
 
+// protocolloWS_V2
 
-/* EMAIL
+exports.protocolloWS_V2 = function(options) {
 
-type: 'smtp',
-     recipients: 'ruggero.ruggeri@comune.rimini.it',
-     sender: 'ruggero.ruggeri@comune.rimini.it',
-     category: 'email-log',
-     subject : '[ISTANZE DIGITALI]',
-     sendInterval: 60,
-     'SMTP': {
-            "host": "srv-mail.comune.rimini.it",
-            "secure": false,
-            "port": 25
-            // , "auth": { "user": "foo@bar.com", "pass": "bar_foo"  }
-        }
+    log.info('[' + options.idIstanza + '] --------- protocolloWS_V2 ----------------------------');    
+    log.info(options);
+    
+    WS_IRIDE = options.ws_url;
+    WS_IRIDE_ENDPOINT = options.ws_endpoint;
+
+    log.info('[' + options.idIstanza + '] protocolloModule:protocolloWS:Endpoint');
+    log.info(WS_IRIDE);
+    log.info(WS_IRIDE_ENDPOINT);
+
+    // formattazione data per il WS
+    // log.info(body);
+
+    // preparazione dati
+
+    var args = { 
+           ProtoIn : {
+                Data: moment().format('DD/MM/YYYY'),
+                DataDocumento: moment().format('DD/MM/YYYY'),
+
+                NumeroDocumento: 1,
+                Classifica: options.classificaDocumento,
+                TipoDocumento: options.tipoDocumento,
+                Oggetto: options.oggettoDocumento,
+                Origine: options.origineDocumento,
+                MittenteInterno: options.ufficioInternoMittenteDocumento,
+                //MittenteInterno_Descrizione": "",
+                AnnoPratica: options.annoPratica,
+                NumeroPratica: options.numeroPratica,
+                 
+               MittentiDestinatari: {
+                MittenteDestinatario: [
+                  {
+                    // PATCH per segnalazione Maggioli - Miriam Saladino 
+                    // RIMOZIONE DEL CODICE FISCALE NEI PARAMETRI PER EVITARE LA CONTAMINAZIONE CON LE
+                    // ANAGRAFICHE 
+                    // CodiceFiscale : objFilesList.codiceFiscaleRichiedente,
+                    CodiceFiscale : '',
+                    CognomeNome: options.cognomeRichiedente + ' ' + options.nomeRichiedente,
+                    DataNascita : options.dataNascitaRichiedente,
+                    Indirizzo : options.indirizzoRichiedente,
+                    Localita : options.cittaRichiedente,
+                    DataRicevimento: moment().format('DD/MM/YYYY'),
+                    // Spese_NProt : 0,
+                    // TipoSogg: 'S',
+                    TipoPersona: options.tipoPersona,
+                    Recapiti: {
+                        Recapito: [
+                            {
+                                TipoRecapito: 'EMAIL',
+                                ValoreRecapito: options.emailRichiedente
+                            }
+                        ]
+                    }
+                  }
+                ]
+              },
+              
+              AggiornaAnagrafiche : options.aggiornaAnagrafiche,
+              InCaricoA : options.ufficioInternoDestinatarioDocumento,
+              Utente : options.Utente,
+              // Ruolo : ENV_DEFAULT_USER.wsJiride.ruolo,              
+              Allegati: {  Allegato: []  }
+            }
+        };
+
+    log.info('[' + options.idIstanza + '] protocolloModule:protocolloWS:args pacchetto per il protocollo');
+    log.info(args);
+        
+    // Aggiunta allegati
+    log.info('[' + options.idIstanza + '] protocolloModule:protocolloWS:aggiunta allegati');
+
+    var DW_PATH = options.storageFolder;
+    var dir = DW_PATH + "/" + options.reqId;
+    
+    // se esistono allegati ...
+    if(options.files) {
+
+    options.files.forEach(function(obj){
+        log.info('adding:', dir + '/' + obj.name);
+        ext = obj.name.substring(obj.name.length - 3);
+        log.info(ext);
+
+        // allegato principale
+        args.ProtoIn.Allegati.Allegato.push(
+            {
+                TipoFile : ext,
+                ContentType : mime.lookup(dir + '/' + obj.name),
+                Image: utilityModule.base64_encode(dir + '/' + obj.name),
+                NomeAllegato: obj.name,
+                Commento : ''
+            }
+        );
+    });
+
     }
 
+    if (options.metadata) {
+
+    // AGGIUNGE I metadati
+    log.info('[' + options.idIstanza + '] protocolloModule:protocolloWS:aggiunta metadati');
+    var fMetadati = options.reqId + '.txt';
+    log.info('aggiunta metadati', fMetadati);
+    args.ProtoIn.Allegati.Allegato.push(
+        {
+            TipoFile : 'txt',
+            ContentType : mime.lookup(dir + '/' + fMetadati),
+            Image: utilityModule.base64_encode(dir + '/' + fMetadati),
+            NomeAllegato: fMetadati,
+            Commento : ''
+        }
+    );
+
+    }
+
+ 
+    var soapResult = { result : '....'};
+ 
+    var soapOptions = {
+        endpoint: WS_IRIDE_ENDPOINT
+    };
+
+    log.info('[' + options.idIstanza + '] protocolloModule:protocolloWS:crate and execute client');
 
 
-*/
+    return new Promise(function (resolve, reject) {
 
+
+        soap.createClient(WS_IRIDE, soapOptions, function(err, client){
+            
+            if (err) {
+                var msg = 'Errore nella creazione del client soap';
+                log.error('[' + options.idIstanza + ']' + msg);
+                log.error(msg); 
+                log.error(err); 
+                reject(err);
+            } else {
+
+                client.InserisciProtocolloEAnagrafiche(args,  function(err, result) {
+                //client.InserisciProtocollo(args,  function(err, result) {
+                
+                    if (err) {
+                        var msg = 'Errore nella chiamata ad InserisciProtocollo';
+                        log.error('[' + options.idIstanza + ']' + msg);
+                        log.error(msg);  
+                        log.error(err);  
+                        log.info(args);
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+
+                }); //client.InserisciProtocollo
+            }
+
+            });  //soap.createClient
+
+     }); 
+}
+
+
+// mailWS invia una mail attraverso JIRIDE
+
+exports.mailWS = function(options) {
+
+    log.info('[' + options.idIstanza + '] --------- mailWS ----------------------------');    
+    log.info(options);
+    
+    WS_POSTA = options.ws_posta;
+    WS_POSTA_ENDPOINT = options.ws_posta_endpoint;
+
+    log.info('[' + options.idIstanza + '] protocolloModule:protocolloWS:Endpoint');
+    log.info(WS_POSTA);
+    log.info(WS_POSTA_ENDPOINT);
+
+    // formattazione data per il WS
+    // log.info(body);
+
+    // preparazione dati
+
+    var args = { 
+           messaggioIn : {
+                docId: options.docId,
+                oggettoMail : options.oggettoMail,
+                testoMail : options.FormatoTesto,
+                mittenteMail: options.mittenteMail,
+                destinatariMail: {
+                    destinatarioMail : 'ruggero.ruggeri@comune.rimini.it'
+                },
+                FormatoTesto : options.FormatoTesto,
+                Utente : options.Utente,
+                ruolo : options.ruolo
+
+            }
+        };
+
+    log.info('[' + options.idIstanza + '] mailWS:args ');
+    log.info(args);
+        
+     
+    var soapResult = { result : '....'};
+ 
+    var soapOptions = {
+        endpoint: WS_POSTA_ENDPOINT
+    };
+
+    log.info('[' + options.idIstanza + '] protocolloModule:mailWS:crate and execute client');
+
+
+    return new Promise(function (resolve, reject) {
+
+
+        soap.createClient(WS_POSTA, soapOptions, function(err, client){
+            
+            if (err) {
+                var msg = 'Errore nella creazione del client soap';
+                log.error('[' + options.idIstanza + ']' + msg);
+                log.error(msg); 
+                log.error(err); 
+                reject(err);
+            } else {
+
+                client.InviaMail(args,  function(err, result) {
+                //client.InserisciProtocollo(args,  function(err, result) {
+                
+                    if (err) {
+                        var msg = 'Errore nella chiamata ad InviaMail';
+                        log.error('[' + options.idIstanza + ']' + msg);
+                        log.error(msg);  
+                        log.error(err);  
+                        log.info(args);
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+
+                }); //client.InserisciProtocollo
+            }
+
+            });  //soap.createClient
+
+     }); 
+}
+
+
+// end

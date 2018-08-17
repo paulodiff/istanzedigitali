@@ -281,12 +281,14 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         objRet.contattiFooter = ENV_FORM_CONFIG.contattiFooter;
         objRet.statoIstanza = 0;
         // jsonString = JSON.stringify(person, functionReplacer);
+        // per invio dati dinamici
         objRet.vm_fields = JSON.stringify(ENV_FORM_CONFIG.vm_fields,uM.functionReplacer);
         //objRet.vm_fields = btoa(String.fromCharCode.apply(null, new Uint8Array(ENV_FORM_CONFIG.vm_fields)));
         objRet.vm_model = ENV_FORM_CONFIG.vm_model;
 
         var token = uM.createJWT(uM.getTimestampPlusRandom(), 1, 'd');
         log.info(token);
+        // Sicurezza : aggiunta token alla lista per la verifica delle richieste istanza
         uM.addTokenToList(token);
 
         objRet.token = token;
@@ -317,8 +319,8 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
     function(req, res) {
 
 
-    log.info('@UPLOAD@DINAMICO@@@@@@@@ UPLOAD: after authorization ...');
-    log.info(req.params.formId);
+    log.info('@@@@ UPLOAD@DINAMICO start ...');
+    log.info('UPLOAD formid : ' + req.params.formId);
     var bRaisedError = false;
     var ErrorMsg = {};
     var ENV_FORM_CONFIG = {};
@@ -331,16 +333,6 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
     log.info('UPLOAD: reqId ...' + reqId);
 
     ErrorMsg.reqId = reqId;
-
-    // aggiunge reqId all'utente identificato
-    /*
-    if(req.user) {
-        req.user.reqId = reqId;
-    } else {
-        req.user = {};
-        req.user.reqId = reqId;
-    }
-    */
 
 
     var objFilesList = {};
@@ -356,12 +348,12 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
 
     async.series([
 
-        // ##### LOADING default ---------------------------------------
+        // ##### d LOADING default ---------------------------------------
         function(callback){
-            log.info('UPLOAD: ASYNC loadingDefault:');
+            log.info('@@@@@ UPLOAD: ASYNC loadingDefault:');
 
             if(!req.params.formId){
-                log.error('loadingDefault:userCompany property not found');
+                log.error('UPLOAD loadingDefault:formId property not found');
                 log.error(reqId);
                 ErrorMsg = {
                     title: 'Errore loadingDefault messaggio',
@@ -372,7 +364,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             } else {
                 var fConfigName = ENV_PROT.baseFolder + '/' + ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + req.params.formId + '.js';
                 // var fConfigName = ENV_PROT.configUserFolder + '/' + ENV_PROT.configFilePREFIX + '-' + user.userCompany + '.js';
-                log.info('loadingDefault : load default data : ' + fConfigName);
+                log.info('UPLOAD loadingDefault : load default data : ' + fConfigName);
          
                 try {
                     ENV_FORM_CONFIG = require(fConfigName);
@@ -396,16 +388,16 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
            
         },
 
-        // ##### recaptchaVerifier ------------------------------------------------ 
+        // ##### d recaptchaVerifier ------------------------------------------------ 
         
         function(callback){
-            log.info(ID_ISTANZA+'UPLOAD: ASYNC recaptchaVerifier:');
+            log.info('@@@@ ' + ID_ISTANZA+'UPLOAD: ASYNC recaptchaVerifier:');
 
             log.info(req.header('RECAPTCHA-TOKEN'));
 
             if(ENV_FORM_CONFIG.NORECAPTCHA) { 
             
-                log.info('@@ RECAPTCHA DISABLED!---------------- @@@@@@');
+                log.info('@@@@ RECAPTCHA DISABLED!---------------- @@@@@@');
                 callback(null, 'recaptchaVerifier DISABLED!');
             
             } else {
@@ -430,9 +422,9 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             }
         },
 
-        // ##### PARSING ------------------------------------------------
+        // ##### d PARSING ------------------------------------------------
         function(callback) {
-            log.info(ID_ISTANZA +' UPLOAD: ASYNC form parsing');
+            log.info('@@@@ ' +  ID_ISTANZA +' UPLOAD: ASYNC form parsing');
         
             var options = {  
                 maxFilesSize: ENV_PROT.upload_size,
@@ -469,7 +461,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
                     }
                 });
         },
-        // ##### Input sanitizer & validator------------------------------------------------------------------------
+        // ##### d Input sanitizer & validator------------------------------------------------------------------------
 
         function(callback){
             log.info(ID_ISTANZA+' UPLOAD: ASYNC sanitizeInput:');
@@ -487,7 +479,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
                     ErrorMsg = {
                         title: 'Check input error',
                         msg:   'Errore nei dati di input. ' + supportMsg,
-                        code : 456
+                        code: 456
                     }
                     log.error(reqId);
                     log.error(ErrorMsg);
@@ -496,7 +488,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             } 
         },
 
-        // ##### FILE Input sanitizer & validator------------------------------------------------------------------------
+        // ##### d FILE Input sanitizer & validator------------------------------------------------------------------------
 
         function(callback){
             log.info(ID_ISTANZA+' UPLOAD: ASYNC sanitizefile:');
@@ -522,7 +514,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             }
         },
 
-        // ##### Saving files to DISK ------------------------------------------------------------------------
+        // ##### d Saving files to DISK ------------------------------------------------------------------------
 
         function(callback){
             log.info(ID_ISTANZA+'UPLOAD: ASYNC savingFiles:');
@@ -542,7 +534,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             }
         },
 
-        // ###### Build oggetto from template --------------------------------------------------------
+        // ###### d Build oggetto from template --------------------------------------------------------
 
         function(callback){
             log.info(ID_ISTANZA+'UPLOAD:ASYNC build oggetto:');
@@ -562,7 +554,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             }
         },
 
-        // ##### Protocollazione ------------------------------------------------------------------------
+        // ##### d Protocollazione ------------------------------------------------------------------------
 
         function(callback){
 
@@ -589,8 +581,38 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
 
                     callback(null, 'protocolloWS ... FAKE!!!!');
                 } else {
-                    
-                        pM.protocolloWS(objFieldSanitized, reqId, ENV_FORM_CONFIG, ENV_PROT)
+                        var options = {};
+                        options.reqId = reqId;
+                        options.idIstanza = ENV_FORM_CONFIG.idIstanza;
+                        options.ws_url = ENV_FORM_CONFIG.wsJiride.url;
+                        options.ws_endpoint = ENV_FORM_CONFIG.wsJiride.endpoint;
+                        options.storageFolder = ENV_FORM_CONFIG.storageFolder;
+                        
+                        options.classificaDocumento = ENV_FORM_CONFIG.wsJiride.classificaDocumento;
+                        options.tipoDocumento = ENV_FORM_CONFIG.wsJiride.tipoDocumento;
+                        options.oggettoDocumento = ENV_FORM_CONFIG.wsJiride.oggettoDocumento;
+                        options.origineDocumento = ENV_FORM_CONFIG.wsJiride.origineDocumento;
+                        options.ufficioInternoMittenteDocumento = ENV_FORM_CONFIG.wsJiride.ufficioInternoMittenteDocumento;
+                        options.annoPratica = ENV_FORM_CONFIG.wsJiride.annoPratica;
+                        options.numeroPratica = ENV_FORM_CONFIG.wsJiride.numeroPratica;
+                        options.tipoPersona = ENV_FORM_CONFIG.wsJiride.tipoPersona; 
+
+                        options.cognomeRichiedente = objFieldSanitized.cognomeRichiedente;
+                        options.nomeRichiedente = objFieldSanitized.nomeRichiedente;
+                        options.dataNascitaRichiedente = objFieldSanitized.dataNascitaRichiedente;
+                        options.indirizzoRichiedente = objFieldSanitized.indirizzoRichiedente;
+                        options.cittaRichiedente = objFieldSanitized.cittaRichiedente;
+                        options.emailRichiedente = objFieldSanitized.emailRichiedente;
+                        
+                        options.aggiornaAnagrafiche = ENV_FORM_CONFIG.wsJiride.aggiornaAnagrafiche;
+                        options.ufficioInternoDestinatarioDocumento = ENV_FORM_CONFIG.wsJiride.ufficioInternoDestinatarioDocumento;
+                        options.Utente = ENV_FORM_CONFIG.wsJiride.Utente;
+                        options.files = objFieldSanitized.files;
+                        options.metadata = true;
+
+
+                        // pM.protocolloWS(objFieldSanitized, reqId, ENV_FORM_CONFIG, ENV_PROT)
+                        pM.protocolloWS_V2(options)
                         .then( function (result) {
                             log.info(result);
                             objDatiProtocollo = result;
@@ -617,7 +639,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
                     
         },
 
-          // ###### SALVA DATI CON PROTOCOLLO ----------------------------------------------------------------
+          // ###### d SALVA DATI CON PROTOCOLLO ----------------------------------------------------------------
 
         function(callback){
             log.info(ID_ISTANZA+'UPLOAD:salvaDatiConProtocollo build response message:');
@@ -637,7 +659,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
         },
 
 
-        // ###### BUILD Response Message ----------------------------------------------------------------
+        // ###### d BUILD Response Message ----------------------------------------------------------------
 
         function(callback){
             log.info(ID_ISTANZA+'UPLOAD:ASYNC build response message:');
@@ -657,7 +679,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             }
         },
 
-        // ###### BUILD invio mail di conferma ----------------------------------------------------------------
+        // ###### d BUILD invio mail di conferma ----------------------------------------------------------------
     
         function(callback){
             
@@ -696,6 +718,34 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
             }
         },
 
+        // d CARICAMENTO MODULO FUNZIONI AGGIUNTIVE ------------------------------------
+        // d Ogni form può richiedere un modulo aggiuntive di funzionalià
+        function(callback){
+            log.info(ID_ISTANZA+' Verifica funzionalità aggintive ');
+                var fExtensionName =  '../extensions/' + req.params.formId + '.js';
+                
+                log.info(ID_ISTANZA+'EXTENSION loadingDefault : load default data : ' + fExtensionName);
+         
+                try {
+                    var EXTENSION_MODULE = require(fExtensionName);
+                    EXTENSION_MODULE.execute(objFieldSanitized, reqId, ENV_FORM_CONFIG, ENV_PROT)
+                    .then(function(result) {
+                        log.info(result);
+                        callback(null, 'MODULE EXTENSION ... ok');
+                    })
+                    .catch(function (err) {
+                        log.info(err);
+                        callback('MODULE EXTENSION ERROR', null);    
+                    });
+                }
+                catch (e) {
+                    log.info(ID_ISTANZA+'NESSUN MODULO AGGIUNTIVO TROVATO : ' + fExtensionName);
+                    callback(null, ID_ISTANZA+ 'NESSUN MODULO AGGIUNTIVO');
+                }
+
+        },
+
+
         // ###### OUTPUT dati verso CSV EXCEL-----------------------------------------    
 
         function(callback){
@@ -722,7 +772,7 @@ router.get('/getInfoIstanza/:formId', function (req, res) {
 
     ],function(err, results) {
         // results is now equal to: {one: 1, two: 2}
-        log.info(ID_ISTANZA+'UPLOAD: ASYNC FINAL!:');
+        log.info(ID_ISTANZA+'UPLOAD DINAMICO: ASYNC FINAL!:');
         if(err){
             log.error(err);
             res.status(ErrorMsg.code).send(ErrorMsg);
