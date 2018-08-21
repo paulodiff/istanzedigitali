@@ -1,0 +1,8 @@
+{
+  "verbose": true,
+  "ignore": [
+                "client-istanze/*", 
+                "client-istanze-v6/*", 
+                "client-raccomandate/*"
+            ]
+}

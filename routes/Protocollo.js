@@ -45,7 +45,6 @@ log4js.configure(ENV.log4jsConfig);
 var log = log4js.getLogger("app");
 var logEmail = log4js.getLogger("email-log");
 var logElastic = log4js.getLogger("elastic");
-
 // var ReCaptcha = require("../models/recaptchaModule.js");
 var pM = require("../models/protocolloModule.js");
 

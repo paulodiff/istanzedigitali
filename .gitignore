@@ -20,6 +20,8 @@ client/dist
 client-raccomandate/bower_components
 client-raccomandate/scripts/configuration.js
 client-raccomandate/dist
+client-istanze-v6/dist
+client-istanze-v6/node_modules
 coverage
 platforms
 plugins

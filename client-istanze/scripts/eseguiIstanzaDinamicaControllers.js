@@ -11,6 +11,7 @@ angular.module('myApp.controllers')
     
   $log.info('eseguiIstanzaDinamicaCtrl', $stateParams.id);    
   
+  
   $scope.iC = {};
   $scope.iC.idIstanza = 0;
   $scope.iC.statoIstanza = 0;
