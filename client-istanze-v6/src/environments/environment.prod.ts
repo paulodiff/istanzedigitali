@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  apiIstanzeRecuperaImpostazioni:'http://srv-webapi.ad.comune.rimini.it:8009/protocollo/getInfoIstanza',
   apiAtti: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/atti',
   apiConsegna: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/consegna',
   apiInfo: 'http://srv-webapi.ad.comune.rimini.it:8010/raccomandatemgr/info',

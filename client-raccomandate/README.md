@@ -38,4 +38,6 @@ https://www.code-sample.com/2018/05/angular-5-6-7-routing-and-navigation.html
 
 
 
-
+Messo in produzione http://srv-webapi.ad.comune.rimini.it:8010
+Base dati 
+su 

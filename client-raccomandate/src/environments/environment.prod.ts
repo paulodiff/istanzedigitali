@@ -11,5 +11,7 @@ export const environment = {
   apiLogin: 'http://srv-webapi.ad.comune.rimini.it:8010/loginldap/LDAPlogin',
   apiLogout: 'http://srv-webapi.ad.comune.rimini.it:8010/loginldap/LDAPlogout',
   apiSse: 'http://srv-webapi.ad.comune.rimini.it:8010/sse',
-  apiSocket: 'http://srv-webapi.ad.comune.rimini.it:8010'
+  apiSocket: 'http://srv-webapi.ad.comune.rimini.it:8010',
+  testUserName: '',
+  testUserPassword: ''
 };

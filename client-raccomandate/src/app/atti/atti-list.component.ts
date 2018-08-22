@@ -233,7 +233,7 @@ public fieldsModifica: FormlyFieldConfig[] = [
           defaultValue: 'MESSI_NOTIFICATORI',
           templateOptions: {
             label: 'Consegnatario',
-            options: this.attiConsegnatari,
+            options: this._appService.consegnatari,
             valueProp: 'id',
             labelProp: 'consegnatario_descrizione'
           },
@@ -450,11 +450,7 @@ showModificaAttoForm(item) {
   this.lastInsertedId = item.id;
   this.modelModifica.nominativo = item.atti_nominativo;
   this.modelModifica.cronologico = item.atti_cronologico;
-  this.modelModifica.consegnatario = item.atti_consegnatario_codice;
-  this.modelModifica.nominativoConsegna = item.atti_soggetto;
-  this.modelModifica.note = item.atti_note;
-  this.modelModifica.estremidocumento = item.atti_documento;
-  this.modelModifica.flag_consegna = item.atti_flag_consegna;
+  this.modelModifica.consegnatario = item.atti_consegnatario_id;
 }
 
 hideModificaAttoForm(){

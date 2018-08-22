@@ -21,11 +21,7 @@ import { ErrorsComponent } from './errors/errors.component';
 // Route Configuration
 export const routes: Routes = [
 
-  {
-    path: '',
-    redirectTo: '/atti/inserimento',
-    pathMatch: 'full'
-  },
+  { path: '',  redirectTo: 'istanza/DIN02',   pathMatch: 'full' },
 
   // { path: 'login', component: LoginComponent },
   // { path: 'socket', component: SocketComponent },

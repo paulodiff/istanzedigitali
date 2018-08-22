@@ -1,8 +1,8 @@
 <hello name="{{ name }}"></hello>
 
 <div class="alert alert-info">
-<form [formGroup]="formSearch" (ngSubmit)="submitSearch()"> 
-  <formly-form [model]="modelSearch" [fields]="fieldsSearch" [options]="optionsSearch" [form]="form">
+<form [formGroup]="formSearch" (ngSubmit)="submitSearch({})"> 
+  <formly-form [model]="modelSearch" [fields]="fieldsSearch" [options]="optionsSearch" [form]="formSearch">
   </formly-form>
 </form>
 </div>
@@ -62,7 +62,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let item of items?.AttiConsegnatario">
-        <td>{{item.atti_consegnatari.consegnatario_descrizione}}</td>
+        <td>{{item.atti_consegnatari?.consegnatario_descrizione}}</td>
         <td>{{item.atti_count}}</td>
       </tr>
       <tr>

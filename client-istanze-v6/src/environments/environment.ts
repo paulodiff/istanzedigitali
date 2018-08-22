@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  apiIstanzeRecuperaImpostazioni:'http://localhost:8009/protocollo/getInfoIstanza',
   apiAtti: 'http://localhost:8010/raccomandatemgr/atti',
   apiConsegna: 'http://localhost:8010/raccomandatemgr/consegna',
   apiInfo: 'http://localhost:8010/raccomandatemgr/info',

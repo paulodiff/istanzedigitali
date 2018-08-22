@@ -290,9 +290,11 @@ getInfo() {
 stampaRicevuta(item) {
   console.log('CONSEGNA_NEW:stampaRicevuta');
   this._reportService.stampaRicevuta(item);
-
 }
 
+stampaReportService() {
+  console.log('CONSEGNA_NEW:stampaReportService:TODO');
+}
 
 /*
 resetFormConsegna(){

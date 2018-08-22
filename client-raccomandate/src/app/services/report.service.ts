@@ -54,40 +54,40 @@ export class ReportService {
       this.username = "USER_TEST";
     }
 
+// stampa elenco ATTI
+
     stampaReport(items) {
 
         let contenutoStampa = [];
         let elencoTabellare = [];
         let progressivo = 1;
         let tableWidhts = [];
-        elencoTabellare.push([ 'Progr.', 'Data', 'Nominativo', 'Data Consegna - Documento - Firma  ', 'Progr' ]);
-        tableWidhts =        [ 50,        65,     150,         '*',                                     60 ];
+        elencoTabellare.push([ 'Progr.', 'Data', 'Nominativo',
+        {text: 'Data Consegna - Documento - Firma  ', alignment: 'right'},
+        'Progr' ]);
+        tableWidhts =   [ 50, 65, 150, '*', 60 ];
 
         items.forEach(function(obj){
           elencoTabellare.push([
                 {text: obj.id, fontSize: 12, border: [true, false, false, false]},
-                {text: moment(obj.atti_data_reg).format('DD/MM/YYYY'), fontSize: 12,border: [false, true, false, false]},
-                {text: obj.atti_nominativo, fontSize: 12, border: [false, false, false, false]},
-                {text: '', fontSize: 10, border: [true, false, false, false]},
+                {text: moment(obj.atti_data_registrazione).format('DD/MM/YYYY'), fontSize: 12,border: [false, true, false, false]},
+                {text: obj.atti_nominativo, colSpan: 2, fontSize: 12, border: [false, false, false, false]},
+                '',
+                // {text: '', fontSize: 10, border: [false, false, false, false]},
                 {text: obj.id, fontSize: 12, alignment: 'right',border: [false, false, true, false]}
           ]);
 
         elencoTabellare.push([
             {   text: obj.atti_consegnatari.consegnatario_descrizione + ' - ' + obj.atti_cronologico, 
-                colSpan: 3, 
+                colSpan: 5, 
                 fontSize: 12,
                 alignment: 'left', 
-                border: [true, false, false, true]
+                border: [true, false, true, true]
               },
               '',
               '',
-            { text: '', 
-              colSpan: 2, 
-              fontSize: 10,
-              alignment: 'center',
-              border: [true, false, true, true]
-            },
-             ''
+              '',
+              ''
           ]);
         });
 
@@ -95,15 +95,20 @@ export class ReportService {
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
+              dontBreakRows: true,
+              keepWithHeaderRows: 1,
               headerRows: 1,
               widths: tableWidhts,
               body: elencoTabellare
             }
         };
 
-        contenutoStampa.push( { 
-          text: 'Comune di Rimini - Ufficio Protocollo - Deposito atti comunali - Data deposito: ' + moment().format('DD/MM/YYYY'), fontSize: 18 } 
-        );
+        /*
+        contenutoStampa.push( {
+          text: 'Comune di Rimini - Ufficio Protocollo - Deposito atti comunali - Data deposito: ' + moment().format('DD/MM/YYYY'),
+          fontSize: 18
+        });
+        */
         // contenutoStampa.push( { text: 'Matricola: ' + 'MMMMMM', fontSize: 12 } );
         contenutoStampa.push( tabellaStampa );
         contenutoStampa.push({ text: 'Totale: ' + items.length , fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
@@ -119,18 +124,35 @@ export class ReportService {
         const docDefinition = {
           pageSize: 'A4',
           pageOrientation: 'landscape',
-          pageMargins: [ 30, 30, 30, 30 ],
+          pageMargins: [ 50, 30, 40, 40 ],
           footer: function(currentPage, pageCount) {
-            return    { 
+            return    {
                         text: 'pagina ' + currentPage.toString() + ' di ' + pageCount,
-                        alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
+                        fontSize: 8,
+                        // alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
+                        alignment: 'right',
+                        margin: [8, 8, 40, 0]
                       }
            },
           header: function(currentPage, pageCount) {
              return {
-                      text: 'Report generato il: ' + moment().format('DD/MM/YYYY'), fontSize: 8,
-                      alignment: (currentPage % 2) ? 'left' : 'right', margin: [8, 8, 8, 8]
-                    };
+                columns: [
+                    {
+                        text: 'Comune di Rimini - Ufficio Protocollo - Atti',
+                        width: '*',
+                        alignment: 'left',
+                        fontSize: 12
+                    },
+                    {
+                        text: 'pagina generata il: ' + moment().format('DD/MM/YYYY'), 
+                        fontSize: 12,
+                        alignment: 'right',
+                        width: '*'
+                    }
+                ],
+                margin: [50, 10]
+            }
+
           },
           content: [contenutoStampa]
         };
@@ -167,6 +189,7 @@ export class ReportService {
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
+              dontBreakRows: true,
               headerRows: 1,
               widths: tableWidhts,
               body: elencoTabellare
@@ -174,8 +197,8 @@ export class ReportService {
         };
 
         contenutoStampa.push({
-          text: 'Comune di Rimini - Ufficio Protocollo - Ricevuta', 
-          fontSize: 18
+          text: 'Comune di Rimini - Ufficio Protocollo - Ricevuta consegna atti', 
+          fontSize: 16
         });
 
         contenutoStampa.push({
@@ -266,7 +289,7 @@ stampaRaccomandata(items) {
     console.log(items);
 
     // elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
-    tableWidhts =        [  50,      150,       150       ];
+    tableWidhts =        [  50,      150,       '*'       ];
 
     items.forEach(function(obj) {
 
@@ -278,8 +301,8 @@ stampaRaccomandata(items) {
                 elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
             } else { // cambio di gruppo chiude la stampa corrente
 
-                contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo', fontSize: 18 });
-                contenutoStampa.push({ text: 'Settore:' + prevDestinatarioDescrizione, fontSize: 16 });
+                contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo - Raccomandate', fontSize: 18 });
+                contenutoStampa.push({ text: 'Settore: ' + prevDestinatarioDescrizione, fontSize: 16 });
                 tabellaStampa = {
                     table: {
                       headerRows: 1,
@@ -288,7 +311,7 @@ stampaRaccomandata(items) {
                     }
                 };
                 contenutoStampa.push( tabellaStampa );
-                contenutoStampa.push({ text: 'Data ritiro:' + moment().format('DD/MM/YYYY'), fontSize: 14 });
+                contenutoStampa.push({ text: 'Data:' + moment().format('DD/MM/YYYY'), fontSize: 12 });
                 contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
                 elencoTabellare = [];
                 elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
@@ -307,17 +330,18 @@ stampaRaccomandata(items) {
     });
 
     // Ultima pagina
-    contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo', fontSize: 18 });
-    contenutoStampa.push({ text: 'Settore:' + prevDestinatarioDescrizione, fontSize: 16 });
+    contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo - Raccomandate', fontSize: 18 });
+    contenutoStampa.push({ text: 'Settore: ' + prevDestinatarioDescrizione, fontSize: 16 });
     tabellaStampa = {
         table: {
           headerRows: 1,
+          dontBreakRows: true,
           widths: tableWidhts,
           body: elencoTabellare
         }
     };
     contenutoStampa.push( tabellaStampa );
-    contenutoStampa.push({ text: 'Data ritiro:' + moment().format('DD/MM/YYYY'), fontSize: 14 });
+    contenutoStampa.push({ text: 'Data :' + moment().format('DD/MM/YYYY'), fontSize: 12 });
     contenutoStampa.push({ text: ' ', fontSize: 12, bold: true,  margin: [0, 0, 0, 8] });
 
 
@@ -373,49 +397,28 @@ stampaStatistica(items) {
     console.log(items);
 
     // elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
-    tableWidhts =        [  50,      150,       150       ];
+    contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo - Statistica ' +  items.AnnoStatistica, fontSize: 18 });
 
-    items.forEach(function(obj) {
+    // Atti per consegnatario
 
-        if (prevDestinatario !== obj.raccomandate_destinatario_codice) {
+    contenutoStampa.push({ text: 'Atti per consegnatario', fontSize: 16 });
 
-            if (prevDestinatario === 0) { // il primo elemento
-                prevDestinatario = obj.raccomandate_destinatario_codice;
-                prevDestinatarioDescrizione = obj.raccomandate_destinatari.destinatario_descrizione;
-                elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
-            } else { // cambio di gruppo chiude la stampa corrente
+    tableWidhts =        [  '*',      '*'  ];
 
-                contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo', fontSize: 18 });
-                contenutoStampa.push({ text: 'Settore:' + prevDestinatarioDescrizione, fontSize: 16 });
-                tabellaStampa = {
-                    table: {
-                      headerRows: 1,
-                      widths: tableWidhts,
-                      body: elencoTabellare
-                    }
-                };
-                contenutoStampa.push( tabellaStampa );
-                contenutoStampa.push({ text: 'Data ritiro:' + moment().format('DD/MM/YYYY'), fontSize: 14 });
-                contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
-                elencoTabellare = [];
-                elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
-                prevDestinatario = obj.raccomandate_destinatario_codice;
-                prevDestinatarioDescrizione = obj.raccomandate_destinatari.destinatario_descrizione;
-            }
-
-        }
-
+    elencoTabellare.push([
+        {text: 'CONSEGNATARIO', bold: false, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+        {text: 'NUMERO', bold: false, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+    ]);
+    items.AttiConsegnatario.forEach(function(obj) {
         elencoTabellare.push([
-            {text: obj.id, fontSize: 12, border: [true, true, true, true]},
-            {text: obj.raccomandate_numero, fontSize: 12, border: [true, true, true, true]},
-            {text: obj.raccomandate_mittente, fontSize: 10, border: [true, true, true, true]},
+            {text: obj.atti_consegnatari.consegnatario_descrizione, fontSize: 12, border: [true, true, true, true]},
+            {text: obj.atti_count, fontSize: 12, border: [true, true, true, true]},
         ]);
-
     });
-
-    // Ultima pagina
-    contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo', fontSize: 18 });
-    contenutoStampa.push({ text: 'Settore:' + prevDestinatarioDescrizione, fontSize: 16 });
+    elencoTabellare.push([
+        {text: 'TOTALE', fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+        {text: items.AttiConsegnatarioTotale, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+    ]);
     tabellaStampa = {
         table: {
           headerRows: 1,
@@ -424,18 +427,133 @@ stampaStatistica(items) {
         }
     };
     contenutoStampa.push( tabellaStampa );
+
+    // Atti per operatore
+    elencoTabellare = [];
+    contenutoStampa.push({ text: 'Atti per operatore', fontSize: 16 });
+
+    tableWidhts =        [  '*',      '*'  ];
+
+    elencoTabellare.push([
+        {text: 'OPERATORE', bold: false, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+        {text: 'NUMERO', bold: false, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+    ]);
+    items.AttiOperatore.forEach(function(obj) {
+        elencoTabellare.push([
+            {text: obj.atti_operatore_inserimento, fontSize: 12, border: [true, true, true, true]},
+            {text: obj.atti_count, fontSize: 12, border: [true, true, true, true]},
+        ]);
+    });
+    elencoTabellare.push([
+        {text: 'TOTALE', fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+        {text: items.AttiOperatoreTotale, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+    ]);
+    tabellaStampa = {
+        table: {
+          headerRows: 1,
+          widths: tableWidhts,
+          body: elencoTabellare
+        }
+    };
+    contenutoStampa.push( tabellaStampa );
+
+    // Atti per operatore
+    elencoTabellare = [];
+    contenutoStampa.push({ text: 'Atti consegnati per operatore', fontSize: 16 });
+
+    tableWidhts =        [  '*',      '*'  ];
+
+    elencoTabellare.push([
+        {text: 'OPERATORE', bold: false, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+        {text: 'NUMERO', bold: false, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+    ]);
+    items.AttiConsegnatiOperatore.forEach(function(obj) {
+        elencoTabellare.push([
+            {text: obj.atti_operatore_inserimento, fontSize: 12, border: [true, true, true, true]},
+            {text: obj.atti_count, fontSize: 12, border: [true, true, true, true]},
+        ]);
+    });
+    elencoTabellare.push([
+        {text: 'TOTALE', fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+        {text: items.AttiConsegnatiOperatoreTotale, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+    ]);
+    tabellaStampa = {
+        table: {
+            headerRows: 1,
+            widths: tableWidhts,
+            body: elencoTabellare
+        }
+    };
+    contenutoStampa.push( tabellaStampa );
+
+    // pagina nuova
+    contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
+
+     // Raccomandate per destinatario
+     elencoTabellare = [];
+     contenutoStampa.push({ text: 'Raccomandate per destinatario', fontSize: 16 });
+ 
+     tableWidhts =        [  '*',      '*'  ];
+ 
+     elencoTabellare.push([
+         {text: 'DESTINATARIO', bold: false, fillColor: '#eeeeee', fontSize: 10, border: [true, true, true, true]},
+         {text: 'NUMERO', bold: false, fillColor: '#eeeeee', fontSize: 10, border: [true, true, true, true]},
+     ]);
+     items.RaccomandateDestinatario.forEach(function(obj) {
+         elencoTabellare.push([
+             {text: obj.raccomandate_destinatari.destinatario_descrizione, fontSize: 10, border: [true, true, true, true]},
+             {text: obj.raccomandate_count, fontSize: 10, border: [true, true, true, true]},
+         ]);
+     });
+     elencoTabellare.push([
+         {text: 'TOTALE', fillColor: '#eeeeee', fontSize: 10, border: [true, true, true, true]},
+         {text: items.RaccomandateDestinatarioTotale, fillColor: '#eeeeee', fontSize: 10, border: [true, true, true, true]},
+     ]);
+     tabellaStampa = {
+         table: {
+             headerRows: 1,
+             widths: tableWidhts,
+             body: elencoTabellare
+         }
+     };
+     contenutoStampa.push( tabellaStampa );
+
+    // Raccomandate per operatore
+     elencoTabellare = [];
+     contenutoStampa.push({ text: 'Raccomandate per operatore', fontSize: 16 });
+ 
+     tableWidhts =        [  '*',      '*'  ];
+ 
+     elencoTabellare.push([
+         {text: 'OPERATORE', bold: false, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+         {text: 'NUMERO', bold: false, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+     ]);
+     items.RaccomandateOperatore.forEach(function(obj) {
+         elencoTabellare.push([
+             {text: obj.raccomandate_operatore, fontSize: 12, border: [true, true, true, true]},
+             {text: obj.raccomandate_count, fontSize: 12, border: [true, true, true, true]},
+         ]);
+     });
+     elencoTabellare.push([
+         {text: 'TOTALE', fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+         {text: items.RaccomandateOperatoreTotale, fillColor: '#eeeeee', fontSize: 12, border: [true, true, true, true]},
+     ]);
+     tabellaStampa = {
+         table: {
+             headerRows: 1,
+             widths: tableWidhts,
+             body: elencoTabellare
+         }
+     };
+     contenutoStampa.push( tabellaStampa );
+
+
+
     contenutoStampa.push({ text: 'Data ritiro:' + moment().format('DD/MM/YYYY'), fontSize: 14 });
     contenutoStampa.push({ text: ' ', fontSize: 12, bold: true,  margin: [0, 0, 0, 8] });
 
 
-    /*
-    if(numeroPagina == maxPagina){
-      contenutoStampa.push({ text: '  ', fontSize: 12, bold: true, margin: [0, 0, 0, 8] });
-    }else{
-      contenutoStampa.push({ text: ' ', fontSize: 12, bold: true, pageBreak: 'after', margin: [0, 0, 0, 8] });
-    }
-    */
-
+    
     const docDefinition = {
       info: {
             title: 'statistiche_lista',

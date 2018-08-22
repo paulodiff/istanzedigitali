@@ -21,7 +21,7 @@ export const routes: Routes = [
 
   {
     path: '',
-    redirectTo: '/atti/inserimento',
+    redirectTo: '/login',
     pathMatch: 'full'
   },
 

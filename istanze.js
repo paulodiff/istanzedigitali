@@ -26,7 +26,8 @@ app.use(helmet.noSniff());
 // that can be used to enable CORS with various options.
 var cors  = require('cors');
 app.use(cors({
-      origin: 'https://idp.ssocircle.com',
+      // origin: 'https://idp.ssocircle.com',
+      origin: 'http://localhost:4200',
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
   }));
  

@@ -1,3 +1,12 @@
+<div class="jumbotron" *ngIf="!_userService.token">
+    <h1 class="display-4">Gestione Atti e Raccomandate</h1>
+    <p>Gestione atti e raccomandate per l'Ufficio Protocollo. </p>
+    <p>Per ogni informazione rivolgersi a Vincenzo Mirra e Ruggero Ruggeri.</p>
+    
+    <div class="alert alert-danger" role="alert">
+        Usare utente e password di accesso al pc!
+    </div>
+</div>
 
 <!-- Not logged! -->
 
@@ -9,7 +18,6 @@
       <button type="submit" class="btn btn-primary submit-button" [disabled]="!form.valid">Invia</button>
     </formly-form>
   </form>
-   
 
 </div>
 
@@ -20,15 +28,27 @@
   <h3>Accesso effettuato con i seguenti dati:</h3>
   <table class="table table-striped bg-light">
         <tr><td>Utente</td><td> {{ _userService.username }}</td></tr>
-        <tr><td>Scadenza</td><td> {{ _userService.token_expires }}</td></tr>
+        <tr><td>Scadenza accesso</td><td> {{ _userService.token_expires | date : "dd/MM/yyyy HH:mm:ss" }}</td></tr>
         <tr><td>Ruolo</td><td> {{ _userService.role }}</td></tr>
         <tr><td>Amministratore</td><td>{{ _userService.isAdmin }}</td></tr>
   </table>  
 
+  <h3 class="alert alert-danger">Effettuare una scelta dal menù in alto per la gestione degli Atti e delle Raccomandate</h3>
+
+
+
+
   <!-- <button (click)="refreshToken()" class="btn btn-primary">Refresh Token</button> -->
   <br/>
-  <button (click)="logout()" class="btn btn-primary">Esci</button>
-  
+  <button (click)="logout()" class="btn btn-danger btn-lg">Esci</button>
+
+  <hr>
+
+  <a class="btn btn-primary btn-lg" 
+  [routerLinkActive]="['bg-warning']"
+  [routerLink]="['/stats']"><span>Statistiche</span></a>
+
+
 </div>
 
 

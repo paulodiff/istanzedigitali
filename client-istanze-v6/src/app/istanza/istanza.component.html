@@ -1,8 +1,21 @@
+
+
 <h3>Istanza  {{istanzaId}}</h3>
 
 <form [formGroup]="form" (ngSubmit)="submit()">
-  <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form">
+  <formly-form 
+    [model]="model" 
+    [fields]="fields" 
+    [options]="options" 
+    [form]="form"
+    (modelChange)="modelChange($event)"
+    >
     <button type="submit" class="btn btn-primary submit-button" [disabled]="!form.valid">Submit</button>
   </formly-form>
 </form>
+
+<p>Form Data</p>
+<pre>{{model | json}}</pre>
+<p>Form Error</p>
+<pre>{{errors | json}}</pre>
 

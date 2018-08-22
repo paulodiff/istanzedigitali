@@ -59,6 +59,19 @@ public fieldsSearch: FormlyFieldConfig[] = [
           className: 'col-4',
           type: 'inputR',
           key: 'anno',
+          validators: {
+            fieldMatch: {
+              expression: (control) => {
+                const value = control.value;
+                console.log(control.value);
+                this.items = [];
+                return control.value;
+                // return value.passwordConfirm === value.password  || (!value.passwordConfirm || !value.password);
+              },
+              message: 'Password Not Matching',
+              errorPath: 'passwordConfirm',
+            }
+          },
           templateOptions: {
             label: 'Anno',
           }
@@ -252,6 +265,7 @@ filterValue(obj, key, value) {
   return obj.find(function(v){ return v[key] === value});
 }
 
+/*
 showModificaAttoForm(item) {
   console.log('STATS_LIST:showModificaAttoForm show form! ..');
   console.log(item);
@@ -265,6 +279,7 @@ showModificaAttoForm(item) {
   this.modelModifica.estremidocumento = item.atti_documento;
   this.modelModifica.flag_consegna = item.atti_flag_consegna;
 }
+*/
 
 hideModificaAttoForm(){
   console.log('STATS_LIST:hideModificaAttoForm Consegna ..');

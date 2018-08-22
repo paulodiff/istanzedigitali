@@ -373,4 +373,8 @@ aggiungiAllaConsegna(item) {
   console.log(this._appService.carrello);
 }
 
+stampaReport() {
+  console.log('CONSEGNA_LIST:stampaReport:TODO');
+}
+
 }

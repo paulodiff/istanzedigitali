@@ -15,7 +15,9 @@ export const environment = {
   apiLogin: 'http://localhost:8010/loginldap/LDAPlogin',
   apiLogout: 'http://localhost:8010/loginldap/LDAPlogout',
   apiSse: 'http://localhost:8010/sse',
-  apiSocket: 'http://localhost:8010'
+  apiSocket: 'http://localhost:8010',
+  testUserName: 'M05831',
+  testUserPassword: 'agosto2018'
 };
 
 /*

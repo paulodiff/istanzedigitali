@@ -18,8 +18,11 @@ client/bower_components
 client/scripts/configuration.js
 client/dist
 client-raccomandate/bower_components
+client-raccomandate/node_modules
 client-raccomandate/scripts/configuration.js
 client-raccomandate/dist
+client-istanze/dist
+client-istanze/bower_components
 client-istanze-v6/dist
 client-istanze-v6/node_modules
 coverage

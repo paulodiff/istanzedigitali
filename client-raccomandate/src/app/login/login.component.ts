@@ -4,6 +4,7 @@ import { AppService } from '../services/app.service';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { Validators, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -28,24 +29,24 @@ export class LoginComponent implements OnInit, OnDestroy {
 
         {
             fieldGroupClassName: 'row',
-            fieldGroup: [ 
+            fieldGroup: [
                 {
                     className: 'col-6',
                     type: 'inputR',
                     key: 'username',
                     templateOptions: {
-                        label: 'User Name',
+                        label: 'Matricola',
+                        placeholder: 'matricola'
                     },
                 },
                 {
                     key: 'password',
                     className: 'col-6',
-                    type: 'inputR',
+                    type: 'input',
                     templateOptions: {
                         type: 'password',
                         label: 'Password',
-                        placeholder: 'Password',
-                        pattern: ''
+                        placeholder: 'password'
                     }
                 }
             ],
@@ -63,8 +64,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.model = {
-            username: 'M05831',
-            password: 'giugno2018'
+            username: environment.testUserName,
+            password: environment.testUserPassword
         };
 
         console.log('LOGIN INIT ... ');

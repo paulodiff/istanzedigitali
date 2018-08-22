@@ -98,7 +98,7 @@ public fieldsConsegna: FormlyFieldConfig[] = [
                 private _toastr: ToastrService,
                 private _route: ActivatedRoute,
                 private _router: Router,
-                private _appService: AppService ) {}
+                public _appService: AppService ) {}
 
   sendMessage() {
     // this._socketService.sendMessage(this.message);
@@ -205,5 +205,10 @@ public fieldsConsegna: FormlyFieldConfig[] = [
         this._toastr.error('Mancano i dati obbligatori', 'Errore!');
     }
   }
+
+  resetFormConsegna() {
+    console.log('CONSEGNA:resetFormConsegna:TODO');
+  }
+
 
 }

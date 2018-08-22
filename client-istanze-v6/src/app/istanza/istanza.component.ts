@@ -32,6 +32,7 @@ export class IstanzaComponent implements OnInit, OnDestroy {
       defaultValue: 'This is a default value',
       templateOptions: {
         label: 'First Name (initialized via default value)',
+        required: true
       },
     },
     {
@@ -83,17 +84,21 @@ export class IstanzaComponent implements OnInit, OnDestroy {
     if (this.istanzaId) {
       console.log(this.istanzaId);
       // this.name = this.name + ' registrazione numero: ' +  this.istanzaId;
-      // let opts = {tblName : this.tableName, tblId : this.istanzaId };
-      /*
-      this._appService.getLogs(opts).subscribe(
-        data => { 
+      const opts = {istanzaId : this.istanzaId };
+      this._appService.getInfoIstanza(opts).subscribe(
+        data => {
           console.log(data);
-          this.items = data;
+          let my_data: any;
+          my_data = data;
+          // $scope.vm.fields =  response.data.vm_fields;         
+          // this.fields = JSON.parse(my_data.vm_fields, this._appService.functionReviver);
+          this.fields = JSON.parse(my_data.vm_fields);
+          this.model =  my_data.vm_model;
         },
         err => console.log(err),
-        () => console.log('ATTI:getLogs')
+        () => console.log('Istanza:getInfoIstanza')
       );
-      */
+
     }
 
     /*
@@ -105,6 +110,11 @@ export class IstanzaComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // this.connection.unsubscribe();
+  }
+
+  modelChange(ev) {
+    console.log(ev);
+    console.log(this.form.valid);
   }
 
 }
