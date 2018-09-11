@@ -1,11 +1,9 @@
-<div class="card" style="background-color:aqua"><div class="card-body">
-
+<div class="container-fluid">
 <form [formGroup]="formSearch" (ngSubmit)="submitSearch({})"> 
   <formly-form [model]="modelSearch" [fields]="fieldsSearch" [options]="optionsSearch" [form]="formSearch">
   </formly-form>
 </form>
-
-</div></div>
+</div>
 
 <table class="table table-striped bg-light">
   <thead class="thead-dark">

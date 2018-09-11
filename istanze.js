@@ -177,6 +177,10 @@ app.use('/protocollo', Protocollo);
 var ProfileMgr = require('./routes/ProfileMgr')();
 app.use('/profilemgr', ProfileMgr);
 
+var LiveFormSync = require('./routes/LiveFormSync')();
+app.use('/live', LiveFormSync);
+
+
 
 //var IstanzeMgr = require('./routes/IstanzeMgr')();
 //app.use('/istanzemgr', IstanzeMgr);

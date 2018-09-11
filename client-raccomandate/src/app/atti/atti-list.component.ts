@@ -184,7 +184,7 @@ public fieldsConsegna: FormlyFieldConfig[] = [
           //  'templateOptions.disabled': '!model.nominativo',
           //}
         },
-        
+
         {
           className: 'col-4',
           type: 'input',

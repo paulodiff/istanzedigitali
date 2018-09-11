@@ -13,7 +13,14 @@ module.exports = function(sequelize, DataTypes) {
         destinatario_codice: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+
+        destinatario_visibile: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
+
+
     },
      {
        tableName: 'Destinatari',

@@ -24,7 +24,6 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class ReportService {
     // http options used for making API calls
 
-    
 
     private httpOptions: any;
     
@@ -284,6 +283,7 @@ stampaRaccomandata(items) {
     let tabellaStampa =  {};
     let prevDestinatario = 0;
     let prevDestinatarioDescrizione = '';
+    let progressivoRaccomandata = 0;
 
 
     console.log(items);
@@ -299,6 +299,7 @@ stampaRaccomandata(items) {
                 prevDestinatario = obj.raccomandate_destinatario_codice;
                 prevDestinatarioDescrizione = obj.raccomandate_destinatari.destinatario_descrizione;
                 elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
+                progressivoRaccomandata = 0;
             } else { // cambio di gruppo chiude la stampa corrente
 
                 contenutoStampa.push({ text: 'Comune di Rimini - Ufficio Protocollo - Raccomandate', fontSize: 18 });
@@ -317,12 +318,16 @@ stampaRaccomandata(items) {
                 elencoTabellare.push([ 'Progr.', 'Numero', 'Mittente' ]);
                 prevDestinatario = obj.raccomandate_destinatario_codice;
                 prevDestinatarioDescrizione = obj.raccomandate_destinatari.destinatario_descrizione;
+                progressivoRaccomandata = 0;
             }
 
         }
 
+        progressivoRaccomandata = progressivoRaccomandata + 1;
+
         elencoTabellare.push([
-            {text: obj.id, fontSize: 12, border: [true, true, true, true]},
+            // {text: obj.id, fontSize: 12, border: [true, true, true, true]},
+            {text: progressivoRaccomandata, fontSize: 12, border: [true, true, true, true]},
             {text: obj.raccomandate_numero, fontSize: 12, border: [true, true, true, true]},
             {text: obj.raccomandate_mittente, fontSize: 10, border: [true, true, true, true]},
         ]);

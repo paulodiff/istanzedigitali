@@ -21,6 +21,10 @@ client-raccomandate/bower_components
 client-raccomandate/node_modules
 client-raccomandate/scripts/configuration.js
 client-raccomandate/dist
+client-raccomandate-angular-electron/bower_components
+client-raccomandate-angular-electron/node_modules
+client-raccomandate-angular-electron/release
+client-raccomandate-angular-electron/dist
 client-istanze/dist
 client-istanze/bower_components
 client-istanze-v6/dist

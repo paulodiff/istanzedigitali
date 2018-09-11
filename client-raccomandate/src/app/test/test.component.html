@@ -1,0 +1,11 @@
+<p>TEST</p>
+
+
+
+<ng-select [items]="people$ | async"
+  bindLabel="name"
+  bindValue="id"
+  [(ngModel)]="selectedPersonId">
+</ng-select>
+
+<app-child [btnName]="'mario'" (valueChange)='displayCounter($event)'></app-child>

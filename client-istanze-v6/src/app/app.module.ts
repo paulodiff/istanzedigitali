@@ -25,6 +25,12 @@ import { AppComponent } from './app.component';
 import { IstanzaComponent } from './istanza/istanza.component';
 import { ErrorsComponent } from './errors/errors.component';
 
+import { FileValueAccessor } from './file-value-accessor';
+import { FormlyFieldFile } from './file-type.component';
+
+// upload https://github.com/bleenco/ngx-uploader
+import { NgxUploaderModule } from 'ngx-uploader';
+
 // mgx-formly validation custom message
 
 export function minlengthValidationMessage(err, field) {
@@ -71,6 +77,26 @@ export function emailValidatorMessage(err, field: FormlyFieldConfig) {
   return `"${field.formControl.value}" is not a valid __ EMAIL`;
 }
 
+// fileTypeSizeValidator
+export function fileTypeSizeValidator(control: FormControl): ValidationErrors {
+  console.log('fileTypeSizeValidator:', control.value);
+  if (!control.value) { return null; }
+  console.log('check control.value', control.value);
+  if (control.value[0]) {
+    if (control.value[0].type !== 'application/pdf') {
+      return  { 'fileTypeSize': true };
+    }
+  }
+  return null;
+  // return !control.value || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(control.value) ? null : { 'email': true };
+}
+
+export function fileTypeSizeValidatorMessage(err, field: FormlyFieldConfig) {
+  console.log('fileTypeSizeValidatorMessage:', err);
+  console.log('fileTypeSizeValidatorMessage:', field);
+  return `Tipo o dimensione del file non valida`;
+}
+
 
 @NgModule({
   imports: [
@@ -78,12 +104,17 @@ export function emailValidatorMessage(err, field: FormlyFieldConfig) {
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    NgxUploaderModule,
     // FormlyModule.forRoot(),
     FormlyModule.forRoot({
+      types: [
+        { name: 'file', component: FormlyFieldFile, extends: 'input' },
+      ],
       validators: [
         { name: 'ip', validation: IpValidator },
         { name: 'email', validation: emailValidator },
-        { name: 'dataGG_MM_AAAA', validation: dataGG_MM_AAAA_Validator }
+        { name: 'dataGG_MM_AAAA', validation: dataGG_MM_AAAA_Validator },
+        { name: 'fileTypeSize', validation: fileTypeSizeValidator },
       ],
       validationMessages: [
         { name: 'required', message: 'This field is required' },
@@ -93,7 +124,8 @@ export function emailValidatorMessage(err, field: FormlyFieldConfig) {
         { name: 'max', message: maxValidationMessage },
         { name: 'ip', message: IpValidatorMessage },
         { name: 'dataGG_MM_AAAA', message: dataGG_MM_AAAA_ValidatorMessage },
-        { name: 'email', message: emailValidatorMessage }
+        { name: 'email', message: emailValidatorMessage },
+        { name: 'fileTypeSize', message: fileTypeSizeValidatorMessage }
       ],
     }),
     /*
@@ -128,7 +160,9 @@ export function emailValidatorMessage(err, field: FormlyFieldConfig) {
   declarations: [
     AppComponent,
     IstanzaComponent,
-    ErrorsComponent
+    ErrorsComponent,
+    FileValueAccessor,
+    FormlyFieldFile
   ],
   providers: [
     AppService,

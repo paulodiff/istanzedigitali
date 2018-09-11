@@ -9,6 +9,7 @@ import { HttpModule, JsonpModule } from '@angular/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyBootstrapModule } from '@ngx-formly/bootstrap';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
@@ -29,11 +30,16 @@ import { SocketComponent } from './socket/socket.component';
 import { ConsegnaComponent } from './consegna/consegna.component';
 import { LogInfoComponent } from './loginfo/loginfo.component';
 
+import { TestComponent } from './test/test.component';
+import { AppChildComponent } from './test/appchild.component';
+
 import { AppService } from './services/app.service';
 
 import { FormlyFieldButton } from './formly/button-type.component';
 import { FormlyFieldInput } from './formly/input-type.component';
 import { FormlyFieldSelect } from './formly/select-type.component';
+import { FormlyFieldTypeahead } from './formly/typeahead-type.component';
+import { FormlyFieldNgSelect } from './formly/ng-select-type.component';
 
 import { routing } from './app.routes';
 
@@ -48,13 +54,16 @@ import { RequestInterceptor } from './services/http-interceptor.service';
 
 
 @NgModule({
-  imports:      [ 
+  imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    NgSelectModule,
     FormlyModule.forRoot({
       types: [
+        { name: 'ng-select-formly', component: FormlyFieldNgSelect, wrappers: ['fieldset', 'label'] },
+        { name: 'typeahead', component: FormlyFieldTypeahead, wrappers: ['fieldset', 'label'] },
         { name: 'inputR', component: FormlyFieldInput,  wrappers: ['fieldset', 'label'] },
         {
           name: 'button',
@@ -90,6 +99,8 @@ import { RequestInterceptor } from './services/http-interceptor.service';
     ConsegnaListComponent,
     ConsegnaNewComponent,
     LoginComponent,
+    TestComponent,
+    AppChildComponent,
     SocketComponent,
     ConsegnaComponent,
     LogInfoComponent,
@@ -97,7 +108,9 @@ import { RequestInterceptor } from './services/http-interceptor.service';
     StatsListComponent,
     FormlyFieldButton,
     FormlyFieldInput,
-    FormlyFieldSelect
+    FormlyFieldSelect,
+    FormlyFieldTypeahead,
+    FormlyFieldNgSelect
   ],
   providers: [
     AppService,

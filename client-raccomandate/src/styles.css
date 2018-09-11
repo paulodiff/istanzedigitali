@@ -1,4 +1,19 @@
 /* Add application styles & imports to this file! */
 /* Add application styles & imports to this file! */
 @import '~bootstrap/dist/css/bootstrap.css';
-body { padding: 10px;  background-color: #DDDDDD }
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+.basic-container {
+  padding: 5px;
+}
+
+.version-info {
+  font-size: 8pt;
+  float: right;
+}
+
+body { 
+    font-family: Roboto, Arial, sans-serif;
+    padding: 5px;  
+    background-color: #DDDDDD 
+} 

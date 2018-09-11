@@ -1,6 +1,6 @@
 <hello name="{{ name }}"></hello>
 
-<div class="alert alert-info">
+<div class="container-fluid">
 <form [formGroup]="formSearch" (ngSubmit)="submitSearch({})"> 
   <formly-form [model]="modelSearch" [fields]="fieldsSearch" [options]="optionsSearch" [form]="formSearch">
   </formly-form>

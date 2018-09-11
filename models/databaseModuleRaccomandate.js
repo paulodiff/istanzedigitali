@@ -543,7 +543,13 @@ getDestinatariRaccomandate: function(){
     return new Promise(function(resolve, reject) {
         console.log('getDestinatariRaccomandate');
 
-        models.Destinatari.findAll()
+        /* elenca solo quelli attivi */
+
+        models.Destinatari.findAll({
+            where: {
+                destinatario_visibile : 1
+            }
+        })
         .then(function(anotherTask) {
             resolve(anotherTask)
         }).catch(function(error) {
@@ -677,7 +683,7 @@ updateRaccomandata: function(data){
                 item.update({
                     raccomandate_numero: data.numero,
                     raccomandate_mittente: data.mittente,
-                    raccomandate_destinatario_codice : data.consegnatario
+                    raccomandate_destinatario_codice : data.destinatario
                 }).then(function(anotherTask) {
                     console.log('dMR:updateRaccomandata:ok');
                     callback(null, item, anotherTask);

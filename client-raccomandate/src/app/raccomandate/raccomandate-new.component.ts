@@ -10,6 +10,16 @@ import { SocketService } from '../services/socket.service';
 import { ActivatedRoute } from '@angular/router';
 import { ReportService } from '../services/report.service';
 import * as moment from 'moment';
+import { of as observableOf } from 'rxjs/observable/of';
+
+const states = ['Alabama', 'Alaska', 'American Samoa', 'Arizona', 'Arkansas', 'California', 'Colorado',
+  'Connecticut', 'Delaware', 'District Of Columbia', 'Federated States Of Micronesia', 'Florida', 'Georgia',
+  'Guam', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine',
+  'Marshall Islands', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana',
+  'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+  'Northern Mariana Islands', 'Ohio', 'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico', 'Rhode Island',
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virgin Islands', 'Virginia',
+  'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
 
 
 @Component({
@@ -32,6 +42,8 @@ public dataReturned:any;
 public sseEventBus:any;
 public socketConnection:any;
 
+public people$:any;
+
 // form New
 
 public formNew = new FormGroup({});
@@ -42,24 +54,61 @@ public fieldsNew: FormlyFieldConfig[] = [
     {
       fieldGroupClassName: 'row',
       fieldGroup: [
+
+
+        {
+          className: 'col-4',
+          key: 'destinatario', /* suppose this field as "my_select"  */
+          type: 'ng-select-formly',
+          defaultValue: '0',
+          templateOptions: {
+            multiple: false,
+            label: 'Destinatario',
+            placeholder: '# Selezionare destinatario #',
+            bindLabel: 'destinatario_descrizione',
+            bindValue: 'id',
+            options$: this._appService.destinatariRaccomandate
+          }
+        },
+
+/*
+
+        {
+          className: 'col-4',
+          key: 'destinatarioTH',
+          type: 'typeahead',
+          templateOptions: {
+            label: 'Destinatario1',
+            placeholder: '__destinatario__:',
+            bindLabel: 'destinatario_descrizione',
+            bindValue: 'id',
+            search$: (term) => {
+              if ((!term || term === '')) {
+                return this._appService.destinatariRaccomandate;
+                // return observableOf(states);
+              }
+              return observableOf(states.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10));
+            },
+          }
+        },
+
+*/
+
+/*
         {
           className: 'col-4',
           key: 'destinatario',
           type: 'select',
-          defaultValue: '1',
+          defaultValue: '0',
           templateOptions: {
             label: 'Destinatario',
             options: this._appService.destinatariRaccomandate,
             valueProp: 'id',
             labelProp: 'destinatario_descrizione'
-            /*
-            options: [
-              { label: 'MESSI_NOTIFICATORI', value: 'MESSI_NOTIFICATORI' },
-              { label: 'UFFICI_GIUDIZIARI', value: 'UFFICI_GIUDIZIARI' }
-            ],
-            */
           },
         },
+*/
+
         {
           className: 'col-3',
           type: 'input',
@@ -76,12 +125,35 @@ public fieldsNew: FormlyFieldConfig[] = [
           type: 'input',
           key: 'numero',
           templateOptions: {
-            label: 'Numero',
-            required: true
-          }
-          //,expressionProperties: {
+            type: 'number',
+            label: 'Numero*',
+            required: true,
+          },
+          expressionProperties: {
           //  'templateOptions.disabled': '!model.nominativo',
-          //}
+          /*
+            keyup: (field, event) => {
+              console.log('keyup');
+              console.log(field);
+              console.log(event);
+              if (field) {
+                if (field.formControl) {
+                  console.log(field.formControl.value); 
+                }
+              }
+            },
+            keypress: (field, event) => {
+              console.log('keypress');
+              console.log(field);
+              console.log(event);
+              if (field) {
+                if (field.formControl) {
+                  console.log(field.formControl.value); 
+                }
+              }
+            }
+          */
+          }
         },
         {
           className: 'col-2',
@@ -122,7 +194,7 @@ public fieldsModifica: FormlyFieldConfig[] = [
           className: 'col-4',
           key: 'destinatario',
           type: 'select',
-          defaultValue: '1',
+          defaultValue: '0',
           templateOptions: {
             label: 'Destinatario',
             /*
@@ -187,6 +259,7 @@ toUpperCase(value) {
 
 ngOnInit() {
   console.log('RACCOMANDATE_NEW:ngOnInit:new');
+  this.people$ = this._appService.destinatariRaccomandate;
   /*
   this.sub = this._route.params.subscribe(params => {
     this.action = params['action'];
@@ -240,7 +313,7 @@ submitSearch(modelSearch) {
 submitNew(modelNew) {
   console.log('RACCOMANDATE_NEW:submitNew');
   console.log(this.modelNew);
-  if (this.formNew.valid) {
+  if ( (this.formNew.valid) && (this.modelNew.destinatario > 0)) {
     this._appService.saveRaccomandata(this.modelNew).subscribe(
       data => {
         this.dataReturned = data;
@@ -249,12 +322,13 @@ submitNew(modelNew) {
       },
       err => { console.log('ERRORE:'); console.log(err);},
       () =>  { 
-              console.log('submitNew ok reload!'); 
-              //this.modelNew.nominativo = '';
-              //this.modelNew.cronologico = '';
+              console.log('submitNew ok reload!');
+              this.formNew.get('destinatario').patchValue(0);
+              this.formNew.get('mittente').patchValue('');
+              this.formNew.get('numero').patchValue('');
               this.getRaccomandate({dataricerca : this.oggi});
               // this._socketService.sendMessage({action: 'updateMessage'});
-              this._toastr.success('Atto inserito!', 'Tutto ok!');
+              this._toastr.success('Raccomandata inserita!', 'Tutto ok!');
       }
     );
   } else {

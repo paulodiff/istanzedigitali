@@ -48,7 +48,7 @@ public fieldsNew: FormlyFieldConfig[] = [
           className: 'col-3',
           key: 'consegnatario',
           type: 'select',
-          defaultValue: 'MESSI_NOTIFICATORI',
+          defaultValue: '0',
           templateOptions: {
             label: 'Consegnatario',
             options: this._appService.consegnatari,
@@ -243,7 +243,7 @@ submitSearch(modelSearch) {
 submitNew(modelNew) {
   console.log('ATTI_NEW:submitNew');
   console.log(this.modelNew);
-  if (this.formNew.valid) {
+  if (this.formNew.valid && (this.modelNew.consegnatario > 0) ) {
     this._appService.saveAtti(this.modelNew).subscribe(
       data => {
         this.dataReturned = data;
@@ -253,6 +253,9 @@ submitNew(modelNew) {
       err => { console.log('ERRORE:'); console.log(err);},
       () =>  { 
               console.log('submitNew ok reload!');
+              this.formNew.get('consegnatario').patchValue(0);
+              this.formNew.get('nominativo').patchValue('');
+              this.formNew.get('cronologico').patchValue('');
               // this.modelNew.nominativo = '';
               // this.modelNew.cronologico = '';
               this.getAtti({dataricerca : this.oggi});

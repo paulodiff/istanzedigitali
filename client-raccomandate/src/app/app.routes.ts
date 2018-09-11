@@ -15,16 +15,19 @@ import { raccomandateRoutes } from './raccomandate/raccomandate.routes';
 import { statsRoutes } from './stats/stats.routes';
 import { consegnaRoutes } from './consegna/consegna.routes';
 import { ErrorsComponent } from './errors/errors.component';
+import { TestComponent } from './test/test.component';
 
 // Route Configuration
 export const routes: Routes = [
 
   {
     path: '',
-    redirectTo: '/login',
+    // redirectTo: '/login',
+    redirectTo: '/test',
     pathMatch: 'full'
   },
 
+  { path: 'test', component: TestComponent },
   { path: 'login', component: LoginComponent },
   { path: 'socket', component: SocketComponent },
   { path: 'consegna', component: ConsegnaComponent },
