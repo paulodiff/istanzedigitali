@@ -67,17 +67,6 @@ Applicazione del framework con reingegnerizzazione del procedimento:
 - 0541/704607 335.5703086
 
 
-## Documentazione per installazione ed utilizzo
-
-- Work in progress... [documentazione](https://github.com/paulodiff/istanzedigitali/wiki)
-
-## Screenshot
-
-[![Schermata demo 1](http://pmlab.comune.rimini.it/FORUMPA1.PNG)]
-[![Schermata demo 2](http://pmlab.comune.rimini.it/FORUMPA2.PNG)]
-[![Schermata demo 3](http://pmlab.comune.rimini.it/FORUMPA3.PNG)]
-[![Schermata demo 4](http://pmlab.comune.rimini.it/FORUMPA4.PNG)]
-
 
 # Caratteristiche
 
